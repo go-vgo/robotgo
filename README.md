@@ -29,7 +29,7 @@ This is a work in progress.
 package main
 
 import (
-	. "fmt"
+	//. "fmt"
 
 	"github.com/go-vgo/robotgo"
 )
@@ -45,7 +45,7 @@ func main() {
 package main
 
 import (
-	. "fmt"
+	//. "fmt"
 
 	"github.com/go-vgo/robotgo"
 )
