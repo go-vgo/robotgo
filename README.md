@@ -11,6 +11,15 @@ This is a work in progress.
 
   It's that easy!
 
+###Requirements
+
+####For Mac OS X:
+    Xcode Command Line Tools
+####For Windows:
+    MinGW or other's GCC
+####For everything else:
+    X11 with the XTest extension (also known as the Xtst library)
+
 
 ##Examples:
 
@@ -29,3 +38,43 @@ func main() {
   robotgo.ScrollMouse(10, "up")
 } 
 ``` 
+
+###Keyboard
+
+```Go
+package main
+
+import (
+	. "fmt"
+
+	"github.com/go-vgo/robotgo"
+)
+
+func main() {
+  robotgo.TypeString("Hello World")
+	robotgo.KeyTap("enter")
+	robotgo.TypeString("en")
+} 
+```
+
+###Screen
+
+```Go
+package main
+
+import (
+	. "fmt"
+
+	"github.com/go-vgo/robotgo"
+)
+
+func main() {
+  x, y := robotgo.GetMousePos()
+	Println("pos:", x, y)
+} 
+```
+
+##API
+  This is a work in progress.
+
+
