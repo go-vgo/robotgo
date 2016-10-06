@@ -7,7 +7,7 @@ RobotGo supports Mac, Windows, and Linux(X11).
 This is a work in progress.
 
 ##Installation:
-  go get github.com/go-vgo/robotgo
+    go get github.com/go-vgo/robotgo
 
   It's that easy!
 
