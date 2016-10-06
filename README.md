@@ -2,7 +2,7 @@
   
   >Golang Desktop Automation. Control the mouse, keyboard, and read the screen.
   
-RobotGo supports Mac, Windows, and Linux.
+RobotGo supports Mac, Windows, and Linux(X11).
 
 This is a work in progress.
 
