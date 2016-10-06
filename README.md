@@ -52,8 +52,8 @@ import (
 
 func main() {
   robotgo.TypeString("Hello World")
-	robotgo.KeyTap("enter")
-	robotgo.TypeString("en")
+  robotgo.KeyTap("enter")
+  robotgo.TypeString("en")
 } 
 ```
 
@@ -70,7 +70,7 @@ import (
 
 func main() {
   x, y := robotgo.GetMousePos()
-	Println("pos:", x, y)
+  Println("pos:", x, y)
 } 
 ```
 
