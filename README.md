@@ -16,7 +16,7 @@ This is a work in progress.
 ####For Mac OS X:
     Xcode Command Line Tools
 ####For Windows:
-    MinGW or other's GCC
+    MinGW or other GCC
 ####For everything else:
     X11 with the XTest extension (also known as the Xtst library)
 
