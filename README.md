@@ -11,7 +11,10 @@ This is a work in progress.
 
   It's that easy!
 
-###Requirements
+###Requirements:
+
+####ALL  
+    Golang
 
 ####For Mac OS X:
     Xcode Command Line Tools
