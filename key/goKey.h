@@ -163,7 +163,7 @@ int CheckKeyFlags(char* f, MMKeyFlags* flags)
 // 	return GetFlagsFromString(value, flags);
 // }
 
-int akeyTap(char *k){
+char* akeyTap(char *k,char *aval){
 	MMKeyFlags flags = (MMKeyFlags) MOD_NONE;
 	// MMKeyFlags flags = 0;
 	MMKeyCode key;
@@ -171,19 +171,30 @@ int akeyTap(char *k){
 	// char *k;
 	// k = *kstr;
 
+	if (strcmp(aval, "null") != 0){
+		switch (CheckKeyFlags(aval,&flags)){
+				case -1:
+					return "Null pointer in key flag.";
+					break;
+				case -2:
+					return "Invalid key flag specified.";
+					break;
+			}
+	}
+
 	switch(CheckKeyCodes(k, &key)){
 		case -1:
-			return 1;
+			return "Null pointer in key code.";
 			break;
 		case -2:
-			return 1;
+			return "Invalid key code specified.";
 			break;
 		default:
 			tapKeyCode(key, flags);
 			microsleep(keyboardDelay);
 	}
 
-	return 0;
+	return "0";
 }
 
 char* akeyToggle(char *k,char *d){

@@ -13,7 +13,7 @@ This is a work in progress.
 
 ###Requirements:
 
-####ALL  
+####ALL:  
     Golang
 
 ####For Mac OS X:
