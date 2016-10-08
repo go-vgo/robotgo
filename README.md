@@ -6,6 +6,13 @@ RobotGo supports Mac, Windows, and Linux(X11).
 
 This is a work in progress.
 
+
+
+##[API](https://github.com/go-vgo/robotgo/blob/master/doc.md)
+  Please click API;This is a work in progress.
+
+
+
 ##Installation:
     go get github.com/go-vgo/robotgo
 
@@ -76,8 +83,3 @@ func main() {
   Println("pos:", x, y)
 } 
 ```
-
-##[API](https://github.com/go-vgo/robotgo/blob/master/doc.md)
-  Please click API;This is a work in progress.
-
-
