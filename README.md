@@ -78,6 +78,6 @@ func main() {
 ```
 
 ##[API](https://github.com/go-vgo/robotgo/blob/master/doc.md)
-  This is a work in progress.
+  Please click API;This is a work in progress.
 
 
