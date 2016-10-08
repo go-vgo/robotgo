@@ -1,4 +1,4 @@
-#Methods
+#Methods:
 
 ##Keyboard
     Keys
@@ -23,6 +23,7 @@
     GetXDisplayName(Linux)
     SetXDisplayName(Linux)
 ##Bitmap
+    This is a work in progress.
 
 
 ##Keyboard
@@ -73,7 +74,7 @@
 
     Sets the delay in milliseconds to sleep after a mouse event. This is 10ms by default.
 
-####Arguments
+####Arguments:
 
     ms - Time to sleep in milliseconds.
 
@@ -81,7 +82,7 @@
 
     Moves mouse to x, y instantly, with the mouse button up.
 
-####Arguments
+####Arguments:
 
     x,y
 
@@ -96,7 +97,7 @@ robotgo.MoveMouse(100, 100);
 
     Moves mouse to x, y human like, with the mouse button up.
 
-####Arguments
+####Arguments:
 
     x,y
 
@@ -104,7 +105,7 @@ robotgo.MoveMouse(100, 100);
 
     Clicks the mouse.
 
-####Arguments
+####Arguments:
 
     button (optional) - Accepts left, right, or middle. Defaults to left.
     double (optional) - Set to true to perform a double click. Defaults to false.
@@ -159,7 +160,7 @@ robotgo.MouseToggle("up");
 ####Examples:
 
 ```Go
-x,y = robotgo.GetMousePos();
+x,y := robotgo.GetMousePos();
 fmt.Println("pos:", x, y)
 ```
 
@@ -206,7 +207,7 @@ robotgo.ScrollMouse(50, "down");
 
     Gets part or all of the screen.
 
-####Arguments
+####Arguments:
 
     x (optional)
     y (optional)
