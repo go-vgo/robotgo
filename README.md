@@ -77,7 +77,7 @@ func main() {
 } 
 ```
 
-##API(https://github.com/go-vgo/robotgo/blob/master/doc.md)
+##[API](https://github.com/go-vgo/robotgo/blob/master/doc.md)
   This is a work in progress.
 
 
