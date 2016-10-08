@@ -1,6 +1,6 @@
 #Robotgo
   
-  >Golang Desktop Automation. Control the mouse, keyboard, and read the screen.
+  >Golang Desktop Automation(robot). Control the mouse, keyboard, and read the screen.
   
 RobotGo supports Mac, Windows, and Linux(X11).
 
@@ -77,7 +77,7 @@ func main() {
 } 
 ```
 
-##API
+##API(https://github.com/go-vgo/robotgo/blob/master/doc.md)
   This is a work in progress.
 
 
