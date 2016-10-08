@@ -80,18 +80,46 @@ func ScrollMouse(x C.int, y string) {
 |_|\_\___|\__, |_.__/ \___/ \__,_|_|  \__,_|
 		  |___/
 */
-
-func KeyTap(x string) {
-	z := C.CString(x)
-	// Println("----")
-	C.akeyTap(z)
+func Try(fun func(), handler func(interface{})) {
+	defer func() {
+		if err := recover(); err != nil {
+			handler(err)
+		}
+	}()
+	fun()
 }
 
-func KeyToggle(x string, y string) {
-	cx := C.CString(x)
-	cy := C.CString(y)
-	str := C.akeyToggle(cx, cy)
-	Println(str)
+func KeyTap(args ...string) {
+	var apara string
+	Try(func() {
+		apara = args[1]
+	}, func(e interface{}) {
+		// Println("err:::", e)
+		apara = "null"
+	})
+
+	zkey := C.CString(args[0])
+	amod := C.CString(apara)
+	defer func() {
+		C.akeyTap(zkey, amod)
+	}()
+}
+
+func KeyToggle(args ...string) {
+	var apara string
+	Try(func() {
+		apara = args[1]
+	}, func(e interface{}) {
+		// Println("err:::", e)
+		apara = "null"
+	})
+
+	zkey := C.CString(args[0])
+	amod := C.CString(apara)
+	defer func() {
+		str := C.akeyToggle(zkey, amod)
+		Println(str)
+	}()
 }
 
 func TypeString(x string) {
