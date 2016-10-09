@@ -8,8 +8,7 @@ This is a work in progress.
 
 
 
-##[API](https://github.com/go-vgo/robotgo/blob/master/doc.md)
-##[中文文档](https://github.com/go-vgo/robotgo/blob/master/zh_doc.md)
+##[API](https://github.com/go-vgo/robotgo/blob/master/doc.md);[中文文档](https://github.com/go-vgo/robotgo/blob/master/zh_doc.md)
   Please click API;This is a work in progress.
 
 
