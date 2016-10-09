@@ -131,7 +131,7 @@ robotgo.MoveMouse(100, 100);
 robot.MouseToggle("down");
 ```
 
-###.dragMouse(x, y)
+###.DragMouse(x, y)
 
     Moves mouse to x, y instantly, with the mouse button held down.
 
