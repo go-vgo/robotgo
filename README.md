@@ -28,7 +28,8 @@ This is a work in progress.
 ####For Windows:
     MinGW or other GCC
 ####For everything else:
-    Gcc
+    GCC
+    
     X11 with the XTest extension (also known as the Xtst library)
 
 
