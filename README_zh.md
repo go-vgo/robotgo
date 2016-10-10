@@ -4,7 +4,7 @@
   
 RobotGo 支持 Mac, Windows, and Linux(X11).
 
-这是一项正在改善中的工作.
+这是一项正在完善中的工作.
 
 
 
@@ -27,7 +27,8 @@ RobotGo 支持 Mac, Windows, and Linux(X11).
     Xcode Command Line Tools
 ####For Windows:
     MinGW or other GCC
-####For everything else:
+####For everything else(Linux等其他系统):
+    Gcc
     X11 with the XTest extension (also known as the Xtst library)
 
 
