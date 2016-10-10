@@ -23,7 +23,7 @@
     GetXDisplayName(Linux)
     SetXDisplayName(Linux)
 ##位图
-    This is a work in progress.
+    This is a work in progress.(工作正在进行中)
 
 
 ##键盘
