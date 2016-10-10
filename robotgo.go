@@ -18,6 +18,7 @@ import "C"
 
 import (
 	. "fmt"
+	"unsafe"
 	// "runtime"
 	// "syscall"
 )
@@ -70,6 +71,7 @@ func SetMouseDelay(x C.int) {
 func ScrollMouse(x C.int, y string) {
 	z := C.CString(y)
 	C.ascrollMouse(x, z)
+	defer C.free(unsafe.Pointer(z))
 }
 
 /*
@@ -100,9 +102,12 @@ func KeyTap(args ...string) {
 
 	zkey := C.CString(args[0])
 	amod := C.CString(apara)
-	defer func() {
-		C.akeyTap(zkey, amod)
-	}()
+	// defer func() {
+	C.akeyTap(zkey, amod)
+	// }()
+
+	defer C.free(unsafe.Pointer(zkey))
+	defer C.free(unsafe.Pointer(amod))
 }
 
 func KeyToggle(args ...string) {
@@ -116,20 +121,24 @@ func KeyToggle(args ...string) {
 
 	zkey := C.CString(args[0])
 	amod := C.CString(apara)
-	defer func() {
-		str := C.akeyToggle(zkey, amod)
-		Println(str)
-	}()
+	// defer func() {
+	str := C.akeyToggle(zkey, amod)
+	Println(str)
+	// }()
+	defer C.free(unsafe.Pointer(zkey))
+	defer C.free(unsafe.Pointer(amod))
 }
 
 func TypeString(x string) {
 	cx := C.CString(x)
 	C.atypeString(cx)
+	defer C.free(unsafe.Pointer(cx))
 }
 
 func TypeStringDelayed(x string, y C.size_t) {
 	cx := C.CString(x)
 	C.atypeStringDelayed(cx, y)
+	defer C.free(unsafe.Pointer(cx))
 }
 
 func SetKeyboardDelay(x C.size_t) {
@@ -148,6 +157,7 @@ func SetKeyboardDelay(x C.size_t) {
 func GetPixelColor(x, y C.size_t) string {
 	color := C.agetPixelColor(x, y)
 	gcolor := C.GoString(color)
+	defer C.free(unsafe.Pointer(color))
 	return gcolor
 }
 
@@ -160,6 +170,7 @@ func GetScreenSize() (C.size_t, C.size_t) {
 func GetXDisplayName() string {
 	name := C.agetXDisplayName()
 	gname := C.GoString(name)
+	defer C.free(unsafe.Pointer(name))
 	return gname
 }
 
