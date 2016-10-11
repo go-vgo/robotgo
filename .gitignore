@@ -2,6 +2,11 @@
 .DS_Store
 .vscode
 
+# Debug files
+*.dSYM/
+*.su
+debug
+
 # Architecture specific extensions/prefixes
 *.[568vq]
 [568vq].out
@@ -43,6 +48,3 @@ _testmain.go
 *.x86_64
 *.hex
 
-# Debug files
-*.dSYM/
-*.su
