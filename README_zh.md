@@ -1,24 +1,24 @@
 #Robotgo
   
-  >Golang Desktop Automation(robot). Control the mouse, keyboard, and read the screen.
+  >Golang 跨平台自动系统，控制键盘鼠标和读取屏幕
   
-RobotGo supports Mac, Windows, and Linux(X11).
+RobotGo 支持 Mac, Windows, and Linux(X11).
 
-This is a work in progress.
-
-
-
-##[API Document](https://github.com/go-vgo/robotgo/blob/master/doc.md) &nbsp;&nbsp;&nbsp;[中文文档](https://github.com/go-vgo/robotgo/blob/master/zh_doc.md)
-  Please click API Document;This is a work in progress.
+这是一项正在完善中的工作.
 
 
 
-##Installation:
+##[中文文档](http://git.oschina.net/veni0/robotgo/blob/master/zh_doc.md)&nbsp;&nbsp;&nbsp;[API Document](https://github.com/go-vgo/robotgo/blob/master/doc.md) 
+ 英文文档请点击API Document.
+
+
+
+##安装:
     go get github.com/go-vgo/robotgo
 
   It's that easy!
 
-###Requirements:
+###环境要求:
 
 ####ALL:  
     Golang
@@ -27,15 +27,15 @@ This is a work in progress.
     Xcode Command Line Tools
 ####For Windows:
     MinGW or other GCC
-####For everything else:
+####For everything else(Linux等其他系统):
     GCC
     
     X11 with the XTest extension (also known as the Xtst library)
 
 
-##Examples:
+##例子:
 
-###Mouse
+###鼠标
 
 ```Go
 package main
@@ -51,7 +51,7 @@ func main() {
 } 
 ``` 
 
-###Keyboard
+###键盘
 
 ```Go
 package main
@@ -69,7 +69,7 @@ func main() {
 } 
 ```
 
-###Screen
+###屏幕
 
 ```Go
 package main
