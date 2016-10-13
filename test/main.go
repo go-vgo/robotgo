@@ -16,6 +16,7 @@ func arobotgo() {
 	Println("color@@@", color)
 
 	robotgo.TypeString("Hello World")
+	// robotgo.KeyTap("a", "control")
 	robotgo.KeyTap("f1", "control")
 	// robotgo.KeyTap("enter")
 	// robotgo.KeyToggle("enter", "down")
