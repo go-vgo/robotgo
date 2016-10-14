@@ -162,7 +162,7 @@ robotgo.MouseToggle("up");
 ```
 
 ###.GetMousePos()
-    获取设备的位置
+    获取鼠标的位置
 
     Gets the mouse coordinates.
 
