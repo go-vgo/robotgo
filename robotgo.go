@@ -24,6 +24,66 @@ import (
 )
 
 /*
+      _______.  ______ .______       _______  _______ .__   __.
+    /       | /      ||   _  \     |   ____||   ____||  \ |  |
+   |   (----`|  ,----'|  |_)  |    |  |__   |  |__   |   \|  |
+    \   \    |  |     |      /     |   __|  |   __|  |  . `  |
+.----)   |   |  `----.|  |\  \----.|  |____ |  |____ |  |\   |
+|_______/     \______|| _| `._____||_______||_______||__| \__|
+*/
+
+type Bit_map struct {
+	ImageBuffer   *C.uint8_t
+	Width         C.size_t
+	Height        C.size_t
+	Bytewidth     C.size_t
+	BitsPerPixel  C.uint8_t
+	BytesPerPixel C.uint8_t
+}
+
+func GetPixelColor(x, y C.size_t) string {
+	color := C.agetPixelColor(x, y)
+	gcolor := C.GoString(color)
+	defer C.free(unsafe.Pointer(color))
+	return gcolor
+}
+
+func GetScreenSize() (C.size_t, C.size_t) {
+	size := C.agetScreenSize()
+	// Println("...", size, size.width)
+	return size.width, size.height
+}
+
+func GetXDisplayName() string {
+	name := C.agetXDisplayName()
+	gname := C.GoString(name)
+	defer C.free(unsafe.Pointer(name))
+	return gname
+}
+
+func SetXDisplayName(name string) string {
+	cname := C.CString(name)
+	str := C.asetXDisplayName(cname)
+	gstr := C.GoString(str)
+	return gstr
+}
+
+func CaptureScreen(x, y, w, h C.int) Bit_map {
+	bit := C.acaptureScreen(x, y, w, h)
+	// Println("...", bit)
+	bit_map := Bit_map{
+		ImageBuffer:   bit.imageBuffer,
+		Width:         bit.width,
+		Height:        bit.height,
+		Bytewidth:     bit.bytewidth,
+		BitsPerPixel:  bit.bitsPerPixel,
+		BytesPerPixel: bit.bytesPerPixel,
+	}
+
+	return bit_map
+}
+
+/*
  __  __
 |  \/  | ___  _   _ ___  ___
 | |\/| |/ _ \| | | / __|/ _ \
@@ -146,42 +206,32 @@ func SetKeyboardDelay(x C.size_t) {
 }
 
 /*
-  ____
- / ___|  ___ _ __ ___  ___ _ __
- \___ \ / __| '__/ _ \/ _ \ '_ \
-  ___) | (__| | |  __/  __/ | | |
- |____/ \___|_|  \___|\___|_| |_|
+.______    __  .___________..___  ___.      ___      .______
+|   _  \  |  | |           ||   \/   |     /   \     |   _  \
+|  |_)  | |  | `---|  |----`|  \  /  |    /  ^  \    |  |_)  |
+|   _  <  |  |     |  |     |  |\/|  |   /  /_\  \   |   ___/
+|  |_)  | |  |     |  |     |  |  |  |  /  _____  \  |  |
+|______/  |__|     |__|     |__|  |__| /__/     \__\ | _|
+*/
+
+/*
+____    __    ____  __  .__   __.  _______   ______   ____    __    ____
+\   \  /  \  /   / |  | |  \ |  | |       \ /  __  \  \   \  /  \  /   /
+ \   \/    \/   /  |  | |   \|  | |  .--.  |  |  |  |  \   \/    \/   /
+  \            /   |  | |  . `  | |  |  |  |  |  |  |   \            /
+   \    /\    /    |  | |  |\   | |  '--'  |  `--'  |    \    /\    /
+    \__/  \__/     |__| |__| \__| |_______/ \______/      \__/  \__/
 
 */
 
-func GetPixelColor(x, y C.size_t) string {
-	color := C.agetPixelColor(x, y)
-	gcolor := C.GoString(color)
-	defer C.free(unsafe.Pointer(color))
-	return gcolor
-}
+/*
+------------ ---    ---  ------------ ----    ---- ------------
+************ ***    ***  ************ *****   **** ************
+----         ---    ---  ----         ------  ---- ------------
+************ ***    ***  ************ ************     ****
+------------ ---    ---  ------------ ------------     ----
+****          ********   ****         ****  ******     ****
+------------   ------    ------------ ----   -----     ----
+************    ****     ************ ****    ****     ****
 
-func GetScreenSize() (C.size_t, C.size_t) {
-	size := C.agetScreenSize()
-	// Println("...", size, size.width)
-	return size.width, size.height
-}
-
-func GetXDisplayName() string {
-	name := C.agetXDisplayName()
-	gname := C.GoString(name)
-	defer C.free(unsafe.Pointer(name))
-	return gname
-}
-
-func SetXDisplayName(name string) string {
-	cname := C.CString(name)
-	str := C.asetXDisplayName(cname)
-	gstr := C.GoString(str)
-	return gstr
-}
-
-func CaptureScreen(x, y, w, h C.int) {
-	bit := C.acaptureScreen(x, y, w, h)
-	Println("...", bit)
-}
+*/
