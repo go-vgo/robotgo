@@ -22,6 +22,9 @@ func arobotgo() {
 	// robotgo.KeyToggle("enter", "down")
 	robotgo.TypeString("en")
 
+	bit_map := robotgo.CaptureScreen(10, 20, 30, 40)
+	Println("...", bit_map)
+
 	// robotgo.MouseClick()
 	robotgo.ScrollMouse(10, "up")
 }
