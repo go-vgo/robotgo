@@ -102,7 +102,7 @@ robotgo.MoveMouse(100, 100);
 ```
 
 ###.MoveMouseSmooth(x, y)
-    模拟鼠标向X，Y移动(像人类一样)，用鼠标按钮向上
+    模拟鼠标向X，Y平滑移动(像人类一样)，用鼠标按钮向上
 
     Moves mouse to x, y human like, with the mouse button up.
 
@@ -221,7 +221,8 @@ robotgo.ScrollMouse(50, "down");
 
     Returns an object with .width and .height.
 
-###.ScreenCapture
+###.CaptureScreen
+    //ScreenCapture
     获取部分或者全部屏幕
     Gets part or all of the screen.
 

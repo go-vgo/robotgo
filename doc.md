@@ -203,7 +203,8 @@ robotgo.ScrollMouse(50, "down");
 
     Returns an object with .width and .height.
 
-###.ScreenCapture
+###.CaptureScreen
+    //ScreenCapture
 
     Gets part or all of the screen.
 
@@ -213,7 +214,7 @@ robotgo.ScrollMouse(50, "down");
     y (optional)
     height (optional)
     width (optional)
-    If no arguments are provided, screen.capture will get the full screen.
+    If no arguments are provided, screencapture will get the full screen.
 
 ####Return:
 
