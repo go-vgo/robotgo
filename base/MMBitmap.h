@@ -7,6 +7,12 @@
 #include <assert.h>
 #include <stdint.h>
 
+// #if defined(_MSC_VER)
+// 	#include "ms_stdint.h"
+// #else
+// 	#include <stdint.h>
+// #endif
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -24,6 +30,7 @@ struct _MMBitmap {
 
 typedef struct _MMBitmap MMBitmap;
 typedef MMBitmap *MMBitmapRef;
+MMBitmapRef bitmap;
 
 /* Creates new MMBitmap with the given values.
  * Follows the Create Rule (caller is responsible for destroy()'ing object). */
