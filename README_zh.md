@@ -24,13 +24,13 @@ RobotGo 支持 Mac, Windows, and Linux(X11).
 ####ALL:  
     Golang
     //Gcc
-    zlib & libpng (bitmap)
+    //zlib & libpng (bitmap)
 
 ####For Mac OS X:
     Xcode Command Line Tools
 
-    brew install libpng
-    brew install homebrew/dupes/zlib
+    //brew install libpng
+    //brew install homebrew/dupes/zlib
 ####For Windows:
     MinGW or other GCC
 ####For everything else(Linux等其他系统):
