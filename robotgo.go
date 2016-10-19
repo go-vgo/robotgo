@@ -98,15 +98,15 @@ type MPoint struct {
 }
 
 //C.size_t  int
-func MoveMouse(x, y C.int) {
+func MoveMouse(x, y C.size_t) {
 	C.amoveMouse(x, y)
 }
 
-func DragMouse(x, y C.int) {
+func DragMouse(x, y C.size_t) {
 	C.adragMouse(x, y)
 }
 
-func MoveMouseSmooth(x, y C.int) {
+func MoveMouseSmooth(x, y C.size_t) {
 	C.amoveMouseSmooth(x, y)
 }
 
@@ -124,11 +124,11 @@ func MouseToggle() {
 	C.amouseToggle()
 }
 
-func SetMouseDelay(x C.int) {
+func SetMouseDelay(x C.size_t) {
 	C.asetMouseDelay(x)
 }
 
-func ScrollMouse(x C.int, y string) {
+func ScrollMouse(x C.size_t, y string) {
 	z := C.CString(y)
 	C.ascrollMouse(x, z)
 	defer C.free(unsafe.Pointer(z))
