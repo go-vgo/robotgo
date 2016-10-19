@@ -42,20 +42,20 @@ type Bit_map struct {
 }
 
 func GetPixelColor(x, y C.size_t) string {
-	color := C.agetPixelColor(x, y)
+	color := C.aGetPixelColor(x, y)
 	gcolor := C.GoString(color)
 	defer C.free(unsafe.Pointer(color))
 	return gcolor
 }
 
 func GetScreenSize() (C.size_t, C.size_t) {
-	size := C.agetScreenSize()
+	size := C.aGetScreenSize()
 	// Println("...", size, size.width)
 	return size.width, size.height
 }
 
 func GetXDisplayName() string {
-	name := C.agetXDisplayName()
+	name := C.aGetXDisplayName()
 	gname := C.GoString(name)
 	defer C.free(unsafe.Pointer(name))
 	return gname
@@ -63,13 +63,13 @@ func GetXDisplayName() string {
 
 func SetXDisplayName(name string) string {
 	cname := C.CString(name)
-	str := C.asetXDisplayName(cname)
+	str := C.aSetXDisplayName(cname)
 	gstr := C.GoString(str)
 	return gstr
 }
 
 func CaptureScreen(x, y, w, h C.int) Bit_map {
-	bit := C.acaptureScreen(x, y, w, h)
+	bit := C.aCaptureScreen(x, y, w, h)
 	// Println("...", bit)
 	bit_map := Bit_map{
 		ImageBuffer:   bit.imageBuffer,
@@ -99,38 +99,38 @@ type MPoint struct {
 
 //C.size_t  int
 func MoveMouse(x, y C.size_t) {
-	C.amoveMouse(x, y)
+	C.aMoveMouse(x, y)
 }
 
 func DragMouse(x, y C.size_t) {
-	C.adragMouse(x, y)
+	C.aDragMouse(x, y)
 }
 
 func MoveMouseSmooth(x, y C.size_t) {
-	C.amoveMouseSmooth(x, y)
+	C.aMoveMouseSmooth(x, y)
 }
 
 func GetMousePos() (C.size_t, C.size_t) {
-	pos := C.agetMousePos()
+	pos := C.aGetMousePos()
 	// Println("pos:###", pos, pos.x, pos.y)
 	return pos.x, pos.y
 }
 
 func MouseClick() {
-	C.amouseClick()
+	C.aMouseClick()
 }
 
 func MouseToggle() {
-	C.amouseToggle()
+	C.aMouseToggle()
 }
 
 func SetMouseDelay(x C.size_t) {
-	C.asetMouseDelay(x)
+	C.aSetMouseDelay(x)
 }
 
 func ScrollMouse(x C.size_t, y string) {
 	z := C.CString(y)
-	C.ascrollMouse(x, z)
+	C.aScrollMouse(x, z)
 	defer C.free(unsafe.Pointer(z))
 }
 
@@ -163,7 +163,7 @@ func KeyTap(args ...string) {
 	zkey := C.CString(args[0])
 	amod := C.CString(apara)
 	// defer func() {
-	C.akeyTap(zkey, amod)
+	C.aKeyTap(zkey, amod)
 	// }()
 
 	defer C.free(unsafe.Pointer(zkey))
@@ -182,7 +182,7 @@ func KeyToggle(args ...string) {
 	zkey := C.CString(args[0])
 	amod := C.CString(apara)
 	// defer func() {
-	str := C.akeyToggle(zkey, amod)
+	str := C.aKeyToggle(zkey, amod)
 	Println(str)
 	// }()
 	defer C.free(unsafe.Pointer(zkey))
@@ -191,18 +191,18 @@ func KeyToggle(args ...string) {
 
 func TypeString(x string) {
 	cx := C.CString(x)
-	C.atypeString(cx)
+	C.aTypeString(cx)
 	defer C.free(unsafe.Pointer(cx))
 }
 
 func TypeStringDelayed(x string, y C.size_t) {
 	cx := C.CString(x)
-	C.atypeStringDelayed(cx, y)
+	C.aTypeStringDelayed(cx, y)
 	defer C.free(unsafe.Pointer(cx))
 }
 
 func SetKeyboardDelay(x C.size_t) {
-	C.asetKeyboardDelay(x)
+	C.aSetKeyboardDelay(x)
 }
 
 /*
