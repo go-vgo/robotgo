@@ -163,7 +163,7 @@ int CheckKeyFlags(char* f, MMKeyFlags* flags)
 // 	return GetFlagsFromString(value, flags);
 // }
 
-char* akeyTap(char *k,char *aval){
+char* aKeyTap(char *k,char *aval){
 	MMKeyFlags flags = (MMKeyFlags) MOD_NONE;
 	// MMKeyFlags flags = 0;
 	MMKeyCode key;
@@ -197,7 +197,7 @@ char* akeyTap(char *k,char *aval){
 	return "0";
 }
 
-char* akeyToggle(char *k,char *d){
+char* aKeyToggle(char *k,char *d){
 	MMKeyFlags flags = (MMKeyFlags) MOD_NONE;
 	MMKeyCode key;
 
@@ -232,15 +232,15 @@ char* akeyToggle(char *k,char *d){
 	return "success";
 }
 
-void atypeString(char *str){
+void aTypeString(char *str){
 	typeString(str);
 }
 
-void atypeStringDelayed(char *str,size_t cpm){
+void aTypeStringDelayed(char *str,size_t cpm){
 
 	typeStringDelayed(str, cpm);
 }
 
-void asetKeyboardDelay(size_t val){
+void aSetKeyboardDelay(size_t val){
 	keyboardDelay =val;
 }
