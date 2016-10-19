@@ -10,7 +10,7 @@ void padHex(MMRGBHex color, char* hex){
 }
 
 
-char* agetPixelColor(size_t x, size_t y){
+char* aGetPixelColor(size_t x, size_t y){
 	MMBitmapRef bitmap;
 	MMRGBHex color;
 
@@ -40,13 +40,13 @@ char* agetPixelColor(size_t x, size_t y){
 	return s;
 }
 
-MMSize agetScreenSize(){
+MMSize aGetScreenSize(){
 	//Get display size.
 	MMSize displaySize = getMainDisplaySize();
 	return displaySize;
 }
 
-char* agetXDisplayName(){
+char* aGetXDisplayName(){
 	#if defined(USE_X11)
 	const char* display = getXDisplay();
 	char* sd=(char*)calloc(100,sizeof(char*));
@@ -58,7 +58,7 @@ char* agetXDisplayName(){
 	#endif
 }
 
-char* asetXDisplayName(char* name){
+char* aSetXDisplayName(char* name){
 	#if defined(USE_X11)
 	setXDisplay(name);
 	return "success";
@@ -67,7 +67,7 @@ char* asetXDisplayName(char* name){
 	#endif
 }
 
-MMBitmapRef acaptureScreen(int x,int y,int w,int h){
+MMBitmapRef aCaptureScreen(int x,int y,int w,int h){
 	// if (){
 	// 	x = 0;
 	// 	y = 0;
