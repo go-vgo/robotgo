@@ -29,7 +29,7 @@ int mouseDelay = 10;
 // 	return 0;
 // }
 
-int aMoveMouse(int x, int y){
+int aMoveMouse(size_t x, size_t y){
 	MMPoint point;
 	//int x =103;
 	//int y =104;
@@ -39,7 +39,7 @@ int aMoveMouse(int x, int y){
 	return 0;
 }
 
-int aDragMouse(int x, int y){
+int aDragMouse(size_t x, size_t y){
 	// const size_t x=10;
 	// const size_t y=20;
 	MMMouseButton button = LEFT_BUTTON;
@@ -53,7 +53,7 @@ int aDragMouse(int x, int y){
 	return 0;
 }
 
-int aMoveMouseSmooth(int x, int y){
+int aMoveMouseSmooth(size_t x, size_t y){
 	MMPoint point;
 	point = MMPointMake(x, y);
 	smoothlyMoveMouse(point);
@@ -93,14 +93,14 @@ int aMouseToggle(){
 	return 0;
 }
 
-int aSetMouseDelay(int val){
+int aSetMouseDelay(size_t val){
 	// int val=10;
 	mouseDelay = val;
 
 	return 0;
 }
 
-int aScrollMouse(int scrollMagnitude,char *s){
+int aScrollMouse(size_t scrollMagnitude,char *s){
 	// int scrollMagnitude = 20;
 
 	MMMouseWheelDirection scrollDirection;
