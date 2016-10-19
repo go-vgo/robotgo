@@ -214,6 +214,36 @@ func SetKeyboardDelay(x C.size_t) {
 |______/  |__|     |__|     |__|  |__| /__/     \__\ | _|
 */
 
+func OpenBitmap(gpath string) C.MMBitmapRef {
+	path := C.CString(gpath)
+	bit := C.aOpenBitmap(path)
+	Println("opening...", bit)
+	return bit
+	// defer C.free(unsafe.Pointer(path))
+}
+
+func SaveBitmap(args ...interface{}) {
+	var mtype C.MMImageType
+	Try(func() {
+		mtype = args[2].(C.MMImageType)
+	}, func(e interface{}) {
+		Println("err:::", e)
+		mtype = 1
+	})
+
+	path := C.CString(args[1].(string))
+	savebit := C.aSaveBitmap(args[0].(C.MMBitmapRef), path, mtype)
+	Println("opening...", savebit)
+	// return bit
+	// defer C.free(unsafe.Pointer(path))
+}
+
+func TostringBitmap(bit C.MMBitmapRef) *C.char {
+	str_bit := C.aTostringBitmap(bit)
+	// Println("...", str_bit)
+	return str_bit
+}
+
 /*
 ____    __    ____  __  .__   __.  _______   ______   ____    __    ____
 \   \  /  \  /   / |  | |  \ |  | |       \ /  __  \  \   \  /  \  /   /
