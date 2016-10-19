@@ -10,6 +10,7 @@ func arobotgo() {
 	x, y := robotgo.GetMousePos()
 	Println("pos:", x, y)
 
+	robotgo.MoveMouse(x, y)
 	robotgo.MoveMouse(100, 200)
 
 	Println(robotgo.GetPixelColor(x, y))
