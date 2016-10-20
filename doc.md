@@ -25,6 +25,11 @@
 ##Bitmap
     This is a work in progress.
 
+    FindBitmap
+    OpenBitmap
+    SaveBitmap
+    TostringBitmap
+
 
 ##Keyboard
 ###.SetKeyboardDelay(ms)
@@ -223,3 +228,60 @@ robotgo.ScrollMouse(50, "down");
 ##Bitmap
 
     This is a work in progress.
+
+###.FindBitmap
+
+
+    find bitmap.
+
+####Arguments:
+
+    bitmap
+
+####Return:
+
+    Returns a position x and y
+
+
+###.OpenBitmap
+
+
+    open bitmap .
+
+####Arguments:
+
+    bitmap image path 
+
+####Return:
+
+    Returns a bitmap
+
+###.SaveBitmap
+
+
+    save a image with bitmap.
+
+####Arguments:
+
+    bitmap,
+    path,
+    imagetype(int) 
+
+####Return:
+
+    Returns a imgage
+
+
+###.TostringBitmap
+
+
+     bitmap to string .
+
+####Arguments:
+
+    bitmap 
+
+####Return:
+
+    Returns a sting bitmap        
+    
