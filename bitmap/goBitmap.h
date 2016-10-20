@@ -18,6 +18,26 @@
 #include <assert.h>
 #include <stdio.h>
 
+MMPoint aFindBitmap(MMBitmapRef bit_map){
+	// ,MMRect rect
+	MMRect rect;
+	// rect.size.width=10;
+	// rect.size.height=20;
+	// rect.origin.x=10;
+	// rect.origin.y=20;
+
+	float tolerance = 0.0f;
+	MMPoint point;
+
+	tolerance=0.5;
+
+	if (findBitmapInRect(bit_map, bit_map, &point,
+	                     rect, tolerance) == 0) {
+		return point;
+	}
+	return point;
+}
+
 MMBitmapRef aOpenBitmap(char *path){
 	MMImageType type;
 
