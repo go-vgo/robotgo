@@ -71,7 +71,13 @@ func SetXDisplayName(name string) string {
 	return gstr
 }
 
-func CaptureScreen(x, y, w, h C.int) Bit_map {
+func CaptureScreen(x, y, w, h C.int) C.MMBitmapRef {
+	bit := C.aCaptureScreen(x, y, w, h)
+	Println("...", bit.width)
+	return bit
+}
+
+func Capture_Screen(x, y, w, h C.int) Bit_map {
 	bit := C.aCaptureScreen(x, y, w, h)
 	// Println("...", bit)
 	bit_map := Bit_map{
