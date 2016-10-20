@@ -28,6 +28,8 @@ func arobotgo() {
 	bit_map := robotgo.CaptureScreen(10, 20, 30, 40)
 	Println("...", bit_map)
 
+	robotgo.SaveBitmap(bit_map, "test.png", 1)
+
 	// robotgo.MouseClick()
 	robotgo.ScrollMouse(10, "up")
 }
