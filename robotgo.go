@@ -231,29 +231,29 @@ func OpenBitmap(gpath string) C.MMBitmapRef {
 	// defer C.free(unsafe.Pointer(path))
 }
 
-// func SaveBitmap(args ...interface{}) {
-// 	var mtype C.MMImageType
-// 	Try(func() {
-// 		mtype = args[2].(C.MMImageType)
-// 	}, func(e interface{}) {
-// 		Println("err:::", e)
-// 		mtype = 1
-// 	})
+func SaveBitmap(args ...interface{}) {
+	var mtype C.uint16_t
+	Try(func() {
+		mtype = C.uint16_t(args[2].(int))
+	}, func(e interface{}) {
+		Println("err:::", e)
+		mtype = 1
+	})
 
-// 	path := C.CString(args[1].(string))
-// 	savebit := C.aSaveBitmap(args[0].(C.MMBitmapRef), path, mtype)
-// 	Println("opening...", savebit)
-// 	// return bit
-// 	// defer C.free(unsafe.Pointer(path))
-// }
-
-func SaveBitmap(bit C.MMBitmapRef, gpath string, mtype C.MMImageType) {
-	path := C.CString(gpath)
-	savebit := C.aSaveBitmap(bit, path, mtype)
+	path := C.CString(args[1].(string))
+	savebit := C.aSaveBitmap(args[0].(C.MMBitmapRef), path, mtype)
 	Println("opening...", savebit)
 	// return bit
 	// defer C.free(unsafe.Pointer(path))
 }
+
+// func SaveBitmap(bit C.MMBitmapRef, gpath string, mtype C.MMImageType) {
+// 	path := C.CString(gpath)
+// 	savebit := C.aSaveBitmap(bit, path, mtype)
+// 	Println("opening...", savebit)
+// 	// return bit
+// 	// defer C.free(unsafe.Pointer(path))
+// }
 
 func TostringBitmap(bit C.MMBitmapRef) *C.char {
 	str_bit := C.aTostringBitmap(bit)
