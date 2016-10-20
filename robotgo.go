@@ -222,6 +222,11 @@ func SetKeyboardDelay(x C.size_t) {
 |  |_)  | |  |     |  |     |  |  |  |  /  _____  \  |  |
 |______/  |__|     |__|     |__|  |__| /__/     \__\ | _|
 */
+func FindBitmap(bit C.MMBitmapRef) (C.size_t, C.size_t) {
+	pos := C.aFindBitmap(bit)
+	// Println("pos----", pos)
+	return pos.x, pos.y
+}
 
 func OpenBitmap(gpath string) C.MMBitmapRef {
 	path := C.CString(gpath)
