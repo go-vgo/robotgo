@@ -30,11 +30,11 @@ MMBitmapRef aOpenBitmap(char *path){
 
 }
 
-char *aSaveBitmap(MMBitmapRef bitmap,char *path, MMImageType type){
-	if (saveMMBitmapToFile(bitmap, path, type) != 0) {
+char *aSaveBitmap(MMBitmapRef bitmap,char *path, uint16_t type){
+	if (saveMMBitmapToFile(bitmap, path,(MMImageType) type) != 0) {
 		return "Could not save image to file.";
 	}else{
-		saveMMBitmapToFile(bitmap, path, type);
+		saveMMBitmapToFile(bitmap, path, (MMImageType) type);
 	}
 	//destroyMMBitmap(bitmap);
 	return "ok";
