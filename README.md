@@ -32,6 +32,9 @@ This is a work in progress.
     brew install homebrew/dupes/zlib
 ####For Windows:
     MinGW or other GCC
+
+    https://github.com/go-vgo/Mingw
+    
 ####For everything else:
     GCC
     
