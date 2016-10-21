@@ -34,7 +34,7 @@ RobotGo 支持 Mac, Windows, and Linux(X11).
 ####For Windows:
     MinGW or other GCC
 
-    [下载包含zlib和libpng的MinGW](https://github.com/go-vgo/Mingw)
+#####[下载包含zlib和libpng的MinGW](https://github.com/go-vgo/Mingw)
 
 ####For everything else(Linux等其他系统):
     GCC

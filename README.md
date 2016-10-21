@@ -33,7 +33,7 @@ This is a work in progress.
 ####For Windows:
     MinGW or other GCC
 
-    [Download include zlib&libpng Windows GCC](https://github.com/go-vgo/Mingw)
+#####[Download include zlib&libpng Windows GCC](https://github.com/go-vgo/Mingw)
 
 ####For everything else:
     GCC
