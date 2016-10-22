@@ -231,7 +231,6 @@ robotgo.ScrollMouse(50, "down");
 
 ###.FindBitmap
 
-
     find bitmap.
 
 ####Arguments:
@@ -245,7 +244,6 @@ robotgo.ScrollMouse(50, "down");
 
 ###.OpenBitmap
 
-
     open bitmap .
 
 ####Arguments:
@@ -258,7 +256,6 @@ robotgo.ScrollMouse(50, "down");
 
 ###.SaveBitmap
 
-
     save a image with bitmap.
 
 ####Arguments:
@@ -269,13 +266,12 @@ robotgo.ScrollMouse(50, "down");
 
 ####Return:
 
-    Returns a imgage
+    Return a imgage
 
 
 ###.TostringBitmap
 
-
-     bitmap to string .
+     bitmap to string
 
 ####Arguments:
 
@@ -283,5 +279,5 @@ robotgo.ScrollMouse(50, "down");
 
 ####Return:
 
-    Returns a sting bitmap        
+    Return a sting bitmap        
     
