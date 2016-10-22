@@ -241,7 +241,7 @@ robotgo.ScrollMouse(50, "down");
 
 ####返回值:
 
-    Returns a bitmap object.
+    返回一个bitmap object.
 
 ##位图
 
@@ -249,58 +249,54 @@ robotgo.ScrollMouse(50, "down");
 
 ###.FindBitmap
 
+    查找bitmap.
 
-    find bitmap.
-
-####Arguments:
+####参数:
 
     bitmap
 
 ####Return:
 
-    Returns a position x and y
+    查找到,返回bitmap的x和y坐标;没有返回nil
 
 
 ###.OpenBitmap
 
+    打开bitmap图片.
 
-    open bitmap .
+####参数:
 
-####Arguments:
+    bitmap图片路径
 
-    bitmap image path 
+####返回值:
 
-####Return:
-
-    Returns a bitmap
+     返回一个bitmap对象
 
 ###.SaveBitmap
 
+    保存一个bitmap图片.
 
-    save a image with bitmap.
+####参数:
 
-####Arguments:
-
-    bitmap,
-    path,
+    bitmap对象,
+    保存路径,
     imagetype(int) 
 
-####Return:
+####返回值:
 
-    Returns a imgage
+    保存图片
 
 
 ###.TostringBitmap
 
+     将一个bitmap对象转换为字符串对象.
 
-     bitmap to string .
+####参数:
 
-####Arguments:
-
-    bitmap 
+    bitmap对象 
 
 ####Return:
 
-    Returns a sting bitmap 
+    返回一个bitmap字符串 
 
 

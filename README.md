@@ -35,7 +35,7 @@ This is a work in progress.
 
 #####[zlib&libpng Windows32 GCC's Course](https://github.com/go-vgo/Mingw32)
 
-#####[Download include zlib&libpng Windows GCC](https://github.com/go-vgo/Mingw)
+#####[Download include zlib&libpng Windows64 GCC](https://github.com/go-vgo/Mingw)
 
 ####For everything else:
     GCC
