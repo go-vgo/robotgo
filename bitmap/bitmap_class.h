@@ -23,4 +23,4 @@ BitmapObject BitmapObject_FromMMBitmap(MMBitmapRef bitmap);
 
 // #endif /* PY_BITMAP_CLASS_H */
 //,MMRect rect
-MMPoint aFindBitmap(MMBitmapRef bit_map);
+MMPoint aFindBitmap(MMBitmapRef bit_map,MMRect rect);
