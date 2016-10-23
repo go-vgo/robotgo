@@ -95,7 +95,7 @@
 
 ```Go
 //Move the mouse to 100, 100 on the screen. 
-robotgo.MoveMouse(100, 100);
+robotgo.MoveMouse(100, 100)
 ```
 
 ###.MoveMouseSmooth(x, y)
@@ -118,7 +118,7 @@ robotgo.MoveMouse(100, 100);
 ####Examples:
 
 ```Go
-    robogo.MouseClick();
+    robogo.MouseClick()
 ```
 
 ###.mouseToggle(down, button)
@@ -133,7 +133,7 @@ robotgo.MoveMouse(100, 100);
 ####Examples:
 
 ```Go
-robot.MouseToggle("down");
+robotgo.MouseToggle("down")
 ```
 
 ###.DragMouse(x, y)
@@ -148,10 +148,10 @@ robot.MouseToggle("down");
 
 ```Go
 //Mouse down at 0, 0 and then drag to 100, 100 and release. 
-robotgo.MoveMouse(0, 0);
-robotgo.MouseToggle("down");
-robotgo.DragMouse(100, 100);
-robotgo.MouseToggle("up");
+robotgo.MoveMouse(0, 0)
+robotgo.MouseToggle("down")
+robotgo.DragMouse(100, 100)
+robotgo.MouseToggle("up")
 ```
 
 ###.GetMousePos()
@@ -165,7 +165,7 @@ robotgo.MouseToggle("up");
 ####Examples:
 
 ```Go
-x,y := robotgo.GetMousePos();
+x,y := robotgo.GetMousePos()
 fmt.Println("pos:", x, y)
 ```
 
@@ -181,9 +181,9 @@ fmt.Println("pos:", x, y)
 ####Examples:
 
 ```Go
-robotgo.ScrollMouse(50, "up");
+robotgo.ScrollMouse(50, "up")
 
-robotgo.ScrollMouse(50, "down");
+robotgo.ScrollMouse(50, "down")
 ```
 
 
