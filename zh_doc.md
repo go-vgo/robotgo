@@ -29,6 +29,7 @@
     OpenBitmap
     SaveBitmap
     TostringBitmap
+    GetPortion
 
 
 ##键盘
@@ -253,7 +254,8 @@ robotgo.ScrollMouse(50, "down")
 
 ####参数:
 
-    bitmap
+    bitmap;
+    rect(可选参数): x, y, w, h
 
 ####Return:
 
@@ -298,5 +300,18 @@ robotgo.ScrollMouse(50, "down")
 ####Return:
 
     返回一个bitmap字符串 
+
+###.GetPortion
+
+     bitmap from a portion
+
+####参数:
+
+    bitmap,
+    rect: x, y, w, h 
+
+####返回值:
+
+    Returns new bitmap object created from a portion of another    
 
 

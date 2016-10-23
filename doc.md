@@ -29,6 +29,7 @@
     OpenBitmap
     SaveBitmap
     TostringBitmap
+    GetPortion
 
 
 ##Keyboard
@@ -235,7 +236,8 @@ robotgo.ScrollMouse(50, "down")
 
 ####Arguments:
 
-    bitmap
+    bitmap;
+    rect(optional): x, y, w, h
 
 ####Return:
 
@@ -279,5 +281,18 @@ robotgo.ScrollMouse(50, "down")
 
 ####Return:
 
-    Return a sting bitmap        
+    Return a sting bitmap
+
+###.GetPortion
+
+     bitmap from a portion
+
+####Arguments:
+
+    bitmap,
+    rect: x, y, w, h 
+
+####Return:
+
+    Returns new bitmap object created from a portion of another          
     
