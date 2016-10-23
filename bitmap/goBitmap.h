@@ -18,9 +18,8 @@
 #include <assert.h>
 #include <stdio.h>
 
-MMPoint aFindBitmap(MMBitmapRef bit_map){
-	// ,MMRect rect
-	MMRect rect;
+MMPoint aFindBitmap(MMBitmapRef bit_map,MMRect rect){
+	// MMRect rect;
 	// rect.size.width=10;
 	// rect.size.height=20;
 	// rect.origin.x=10;
@@ -67,4 +66,12 @@ char *aTostringBitmap(MMBitmapRef bitmap){
 	buf = (char *)createStringFromMMBitmap(bitmap, &err);
 
 	return buf;
+}
+
+MMBitmapRef aGetPortion(MMBitmapRef bit_map,MMRect rect){
+	// MMRect rect;
+	MMBitmapRef portion = NULL;
+
+	portion = copyMMBitmapFromPortion(bit_map, rect);
+	return portion;
 }

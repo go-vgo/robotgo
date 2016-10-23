@@ -233,8 +233,25 @@ func SetKeyboardDelay(x C.size_t) {
 |  |_)  | |  |     |  |     |  |  |  |  /  _____  \  |  |
 |______/  |__|     |__|     |__|  |__| /__/     \__\ | _|
 */
-func FindBitmap(bit C.MMBitmapRef) (C.size_t, C.size_t) {
-	pos := C.aFindBitmap(bit)
+func FindBitmap(args ...interface{}) (C.size_t, C.size_t) {
+	var bit C.MMBitmapRef
+	bit = args[0].(C.MMBitmapRef)
+
+	var rect C.MMRect
+	Try(func() {
+		rect.origin.x = C.size_t(args[1].(int))
+		rect.origin.y = C.size_t(args[2].(int))
+		rect.size.width = C.size_t(args[3].(int))
+		rect.size.height = C.size_t(args[4].(int))
+	}, func(e interface{}) {
+		Println("err:::", e)
+		// rect.origin.x = x
+		// rect.origin.y = y
+		// rect.size.width = w
+		// rect.size.height = h
+	})
+
+	pos := C.aFindBitmap(bit, rect)
 	// Println("pos----", pos)
 	return pos.x, pos.y
 }
@@ -275,6 +292,17 @@ func TostringBitmap(bit C.MMBitmapRef) *C.char {
 	str_bit := C.aTostringBitmap(bit)
 	// Println("...", str_bit)
 	return str_bit
+}
+
+func GetPortion(bit C.MMBitmapRef, x, y, w, h C.size_t) C.MMBitmapRef {
+	var rect C.MMRect
+	rect.origin.x = x
+	rect.origin.y = y
+	rect.size.width = w
+	rect.size.height = h
+
+	pos := C.aGetPortion(bit, rect)
+	return pos
 }
 
 /*
