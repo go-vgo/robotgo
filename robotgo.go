@@ -107,22 +107,31 @@ type MPoint struct {
 }
 
 //C.size_t  int
-func MoveMouse(x, y C.size_t) {
-	C.aMoveMouse(x, y)
+func MoveMouse(x, y int) {
+	cx := C.size_t(x)
+	cy := C.size_t(y)
+	C.aMoveMouse(cx, cy)
 }
 
-func DragMouse(x, y C.size_t) {
-	C.aDragMouse(x, y)
+func DragMouse(x, y int) {
+	cx := C.size_t(x)
+	cy := C.size_t(y)
+	C.aDragMouse(cx, cy)
 }
 
-func MoveMouseSmooth(x, y C.size_t) {
-	C.aMoveMouseSmooth(x, y)
+func MoveMouseSmooth(x, y int) {
+	cx := C.size_t(x)
+	cy := C.size_t(y)
+	C.aMoveMouseSmooth(cx, cy)
 }
 
-func GetMousePos() (C.size_t, C.size_t) {
+func GetMousePos() (int, int) {
 	pos := C.aGetMousePos()
 	// Println("pos:###", pos, pos.x, pos.y)
-	return pos.x, pos.y
+	x := int(pos.x)
+	y := int(pos.y)
+	// return pos.x, pos.y
+	return x, y
 }
 
 func MouseClick() {
@@ -133,13 +142,15 @@ func MouseToggle() {
 	C.aMouseToggle()
 }
 
-func SetMouseDelay(x C.size_t) {
-	C.aSetMouseDelay(x)
+func SetMouseDelay(x int) {
+	cx := C.size_t(x)
+	C.aSetMouseDelay(cx)
 }
 
-func ScrollMouse(x C.size_t, y string) {
+func ScrollMouse(x int, y string) {
+	cx := C.size_t(x)
 	z := C.CString(y)
-	C.aScrollMouse(x, z)
+	C.aScrollMouse(cx, z)
 	defer C.free(unsafe.Pointer(z))
 }
 
