@@ -6,13 +6,16 @@ package robotgo
 	#cgo darwin LDFLAGS: -framework Cocoa -framework OpenGL -framework IOKit -framework Carbon -framework CoreFoundation
 //#elif defined(USE_X11)
 	#cgo linux CFLAGS:-I/usr/src
-	#cgo linux LDFLAGS:-L/usr/src -lpng -lz -lX11 -lXtst -lm
+	#cgo linux LDFLAGS:-L/usr/src -lX11 -lXtst -lm
 //#endif
 	#cgo windows LDFLAGS: -lgdi32 -luser32
 //#include <AppKit/NSEvent.h>
 #include "screen/goScreen.h"
 #include "mouse/goMouse.h"
 #include "key/goKey.h"
+//#include "bitmap/goBitmap.h"
+//#include "window/goWindow.h"
+//#include "event/goEvent.h"
 */
 import "C"
 
@@ -68,7 +71,13 @@ func SetXDisplayName(name string) string {
 	return gstr
 }
 
-func CaptureScreen(x, y, w, h C.int) Bit_map {
+func CaptureScreen(x, y, w, h C.int) C.MMBitmapRef {
+	bit := C.aCaptureScreen(x, y, w, h)
+	Println("...", bit.width)
+	return bit
+}
+
+func Capture_Screen(x, y, w, h C.int) Bit_map {
 	bit := C.aCaptureScreen(x, y, w, h)
 	// Println("...", bit)
 	bit_map := Bit_map{
@@ -98,22 +107,31 @@ type MPoint struct {
 }
 
 //C.size_t  int
-func MoveMouse(x, y C.size_t) {
-	C.aMoveMouse(x, y)
+func MoveMouse(x, y int) {
+	cx := C.size_t(x)
+	cy := C.size_t(y)
+	C.aMoveMouse(cx, cy)
 }
 
-func DragMouse(x, y C.size_t) {
-	C.aDragMouse(x, y)
+func DragMouse(x, y int) {
+	cx := C.size_t(x)
+	cy := C.size_t(y)
+	C.aDragMouse(cx, cy)
 }
 
-func MoveMouseSmooth(x, y C.size_t) {
-	C.aMoveMouseSmooth(x, y)
+func MoveMouseSmooth(x, y int) {
+	cx := C.size_t(x)
+	cy := C.size_t(y)
+	C.aMoveMouseSmooth(cx, cy)
 }
 
-func GetMousePos() (C.size_t, C.size_t) {
+func GetMousePos() (int, int) {
 	pos := C.aGetMousePos()
 	// Println("pos:###", pos, pos.x, pos.y)
-	return pos.x, pos.y
+	x := int(pos.x)
+	y := int(pos.y)
+	// return pos.x, pos.y
+	return x, y
 }
 
 func MouseClick() {
@@ -124,13 +142,15 @@ func MouseToggle() {
 	C.aMouseToggle()
 }
 
-func SetMouseDelay(x C.size_t) {
-	C.aSetMouseDelay(x)
+func SetMouseDelay(x int) {
+	cx := C.size_t(x)
+	C.aSetMouseDelay(cx)
 }
 
-func ScrollMouse(x C.size_t, y string) {
+func ScrollMouse(x int, y string) {
+	cx := C.size_t(x)
 	z := C.CString(y)
-	C.aScrollMouse(x, z)
+	C.aScrollMouse(cx, z)
 	defer C.free(unsafe.Pointer(z))
 }
 
