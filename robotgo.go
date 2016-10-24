@@ -44,8 +44,11 @@ type Bit_map struct {
 	BytesPerPixel C.uint8_t
 }
 
-func GetPixelColor(x, y C.size_t) string {
-	color := C.aGetPixelColor(x, y)
+func GetPixelColor(x, y int) string {
+	cx := C.size_t(x)
+	cy := C.size_t(y)
+	color := C.aGetPixelColor(cx, cy)
+	// color := C.aGetPixelColor(x, y)
 	gcolor := C.GoString(color)
 	defer C.free(unsafe.Pointer(color))
 	return gcolor
