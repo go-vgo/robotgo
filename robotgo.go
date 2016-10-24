@@ -6,7 +6,7 @@ package robotgo
 	#cgo darwin LDFLAGS: -framework Cocoa -framework OpenGL -framework IOKit -framework Carbon -framework CoreFoundation
 //#elif defined(USE_X11)
 	#cgo linux CFLAGS:-I/usr/src
-	#cgo linux LDFLAGS:-L/usr/src -lX11 -lXtst -lm
+	#cgo linux LDFLAGS:-L/usr/src -lpng -lz -lX11 -lXtst -lm
 //#endif
 	#cgo windows LDFLAGS: -lgdi32 -luser32
 //#include <AppKit/NSEvent.h>
@@ -138,8 +138,16 @@ func MouseClick() {
 	C.aMouseClick()
 }
 
-func MouseToggle() {
-	C.aMouseToggle()
+func MouseToggle(args ...interface{}) {
+	var button C.MMMouseButton
+	Try(func() {
+		button = args[1].(C.MMMouseButton)
+	}, func(e interface{}) {
+		// Println("err:::", e)
+		button = C.LEFT_BUTTON
+	})
+	down := C.CString(args[0].(string))
+	C.aMouseToggle(down, button)
 }
 
 func SetMouseDelay(x int) {
