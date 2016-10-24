@@ -48,7 +48,7 @@
 
     ms - Time to sleep in milliseconds.
 
-###.KeyTap(key, modifier)
+###<h3 id="KeyTap">.KeyTap(key, modifier)</h3>
 
     Press a single key.
 
@@ -67,7 +67,7 @@
     down - Accepts 'down' or 'up'.
     modifier (optional, string or array) - Accepts alt, command (mac), control, and shift.
 
-###.TypeString(string)
+###<h3 id="TypeString">.TypeString(string)</h3>
 
 ####Arguments:
 
@@ -92,7 +92,7 @@
 
     ms - Time to sleep in milliseconds.
 
-###.MoveMouse(x, y)
+###<h3 id="MoveMouse">.MoveMouse(x, y)</h3>
 
     Moves mouse to x, y instantly, with the mouse button up.
 
@@ -163,7 +163,7 @@ robotgo.DragMouse(100, 100)
 robotgo.MouseToggle("up")
 ```
 
-###.GetMousePos()
+###<h3 id="GetMousePos">.GetMousePos()</h3>
 
     Gets the mouse coordinates.
 
