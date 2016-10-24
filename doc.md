@@ -2,40 +2,40 @@
 
 ##[Keyboard](#Keyboard)
 
-###[Keys](#keys)
-###[SetKeyboardDelay](#SetKeyboardDelay)
-###[KeyTap](#KeyTap)
-###[KeyToggle](#KeyToggle)
-###[TypeString](#TypeString)
-###[TypeStringDelayed](#TypeStringDelayed)
+#####[Keys](#keys)
+#####[SetKeyboardDelay](#SetKeyboardDelay)
+#####[KeyTap](#KeyTap)
+#####[KeyToggle](#KeyToggle)
+#####[TypeString](#TypeString)
+#####[TypeStringDelayed](#TypeStringDelayed)
 
 ##[Mouse](#Mouse)
 
-###[SetMouseDelay](#SetMouseDelay)
-###[MoveMouse](#MoveMouse)
-###[MoveMouseSmooth](#MoveMouseSmooth)
-###[MouseClick](#MouseClick)
-###[MouseToggle](#MouseToggle)
-###[DragMouse](#DragMouse)
-###[GetMousePos](#GetMousePos)
-###[ScrollMouse](#ScrollMouse)
+#####[SetMouseDelay](#SetMouseDelay)
+#####[MoveMouse](#MoveMouse)
+#####[MoveMouseSmooth](#MoveMouseSmooth)
+#####[MouseClick](#MouseClick)
+#####[MouseToggle](#MouseToggle)
+#####[DragMouse](#DragMouse)
+#####[GetMousePos](#GetMousePos)
+#####[ScrollMouse](#ScrollMouse)
 
 ##[Screen](#Screen)
 
-###[GetPixelColor](#GetPixelColor)
-###[GetScreenSize](#GetScreenSize)
-###[CaptureScreen](#CaptureScreen)
-###[GetXDisplayName(Linux)](#GetXDisplayName)
-###[SetXDisplayName(Linux)](#SetXDisplayName)
+#####[GetPixelColor](#GetPixelColor)
+#####[GetScreenSize](#GetScreenSize)
+#####[CaptureScreen](#CaptureScreen)
+#####[GetXDisplayName(Linux)](#GetXDisplayName)
+#####[SetXDisplayName(Linux)](#SetXDisplayName)
 
 ##[Bitmap](#Bitmap)
     This is a work in progress.
 
-###[FindBitmap](#FindBitmap)
-###[OpenBitmap](#OpenBitmap)
-###[SaveBitmap](#SaveBitmap)
-###[TostringBitmap](#TostringBitmap)
-###[GetPortion](#GetPortion)
+#####[FindBitmap](#FindBitmap)
+#####[OpenBitmap](#OpenBitmap)
+#####[SaveBitmap](#SaveBitmap)
+#####[TostringBitmap](#TostringBitmap)
+#####[GetPortion](#GetPortion)
 
 
 ##<h2 id="Keyboard">Keyboard</h2>
