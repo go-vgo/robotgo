@@ -13,6 +13,13 @@ func arobotgo() {
 	robotgo.MoveMouse(x, y)
 	robotgo.MoveMouse(100, 200)
 
+	robotgo.MouseToggle("up")
+
+	for i := 0; i < 1080; i += 1000 {
+		Println(i)
+		robotgo.MoveMouse(800, i)
+	}
+
 	Println(robotgo.GetPixelColor(x, y))
 
 	color := robotgo.GetPixelColor(100, 200)
