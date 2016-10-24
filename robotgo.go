@@ -80,10 +80,10 @@ func CaptureScreen(args ...int) C.MMBitmapRef {
 	var w C.size_t
 	var h C.size_t
 	Try(func() {
-		x = C.size_t(args[1])
-		y = C.size_t(args[2])
-		w = C.size_t(args[3])
-		h = C.size_t(args[4])
+		x = C.size_t(args[0])
+		y = C.size_t(args[1])
+		w = C.size_t(args[2])
+		h = C.size_t(args[3])
 	}, func(e interface{}) {
 		// Println("err:::", e)
 		x = 0
