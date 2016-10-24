@@ -1,8 +1,8 @@
 #Methods:
 
 ##Keyboard
-    Keys
-    SetKeyboardDelay
+    [Keys](#keys)
+    [SetKeyboardDelay](#SetKeyboardDelay)
     KeyTap
     KeyToggle
     TypeString
@@ -33,7 +33,7 @@
 
 
 ##Keyboard
-###.SetKeyboardDelay(ms)
+###<span id="SetKeyboardDelay">.SetKeyboardDelay(ms)</span>
 
     Sets the delay in milliseconds to sleep after a keyboard event. This is 10ms by default.
 
