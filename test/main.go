@@ -32,6 +32,9 @@ func arobotgo() {
 	// robotgo.KeyToggle("enter", "down")
 	robotgo.TypeString("en")
 
+	abit_map := robotgo.CaptureScreen()
+	Println("all...", abit_map)
+
 	bit_map := robotgo.CaptureScreen(10, 20, 30, 40)
 	Println("...", bit_map)
 

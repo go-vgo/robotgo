@@ -67,7 +67,7 @@ char* aSetXDisplayName(char* name){
 	#endif
 }
 
-MMBitmapRef aCaptureScreen(int x,int y,int w,int h){
+MMBitmapRef aCaptureScreen(size_t x,size_t y,size_t w,size_t h){
 	// if (){
 	// 	x = 0;
 	// 	y = 0;
