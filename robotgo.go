@@ -138,8 +138,16 @@ func MouseClick() {
 	C.aMouseClick()
 }
 
-func MouseToggle() {
-	C.aMouseToggle()
+func MouseToggle(args ...interface{}) {
+	var button C.MMMouseButton
+	Try(func() {
+		button = args[1].(C.MMMouseButton)
+	}, func(e interface{}) {
+		Println("err:::", e)
+		button = C.LEFT_BUTTON
+	})
+	down := C.CString(args[0].(string))
+	C.aMouseToggle(down, button)
 }
 
 func SetMouseDelay(x int) {

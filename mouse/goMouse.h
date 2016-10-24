@@ -86,10 +86,19 @@ int aMouseClick(){
 	return 0;
 }
 
-int aMouseToggle(){
-	MMMouseButton button = LEFT_BUTTON;
+int aMouseToggle(char* d,MMMouseButton button){
+	// MMMouseButton button = LEFT_BUTTON;
 	bool down = false;
+	if (strcmp(d, "down") == 0){
+		down = true;
+	}else if (strcmp(d, "up") == 0){
+		down = false;
+	}else{
+		return 1;
+	}
 
+	toggleMouse(down, button);
+	microsleep(mouseDelay);
 	return 0;
 }
 
