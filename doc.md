@@ -115,7 +115,7 @@ robotgo.MoveMouse(100, 100)
 
     x,y
 
-###.MouseClick(button, double)
+###<h3 id="MouseClick">.MouseClick(button, double)</h3>
 
     Clicks the mouse.
 
@@ -235,7 +235,7 @@ robotgo.ScrollMouse(50, "down")
 
     Returns a bitmap object.
 
-##<h3 id="Bitmap">Bitmap</h2>
+##<h2 id="Bitmap">Bitmap</h2>
 
     This is a work in progress.
 
