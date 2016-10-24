@@ -74,13 +74,33 @@ func SetXDisplayName(name string) string {
 	return gstr
 }
 
-func CaptureScreen(x, y, w, h C.int) C.MMBitmapRef {
+func CaptureScreen(args ...int) C.MMBitmapRef {
+	var x C.size_t
+	var y C.size_t
+	var w C.size_t
+	var h C.size_t
+	Try(func() {
+		x = C.size_t(args[1])
+		y = C.size_t(args[2])
+		w = C.size_t(args[3])
+		h = C.size_t(args[4])
+	}, func(e interface{}) {
+		// Println("err:::", e)
+		x = 0
+		y = 0
+		//Get screen size.
+		var displaySize C.MMSize
+		displaySize = C.getMainDisplaySize()
+		w = displaySize.width
+		h = displaySize.height
+	})
+
 	bit := C.aCaptureScreen(x, y, w, h)
-	Println("...", bit.width)
+	// Println("...", bit.width)
 	return bit
 }
 
-func Capture_Screen(x, y, w, h C.int) Bit_map {
+func Capture_Screen(x, y, w, h C.size_t) Bit_map {
 	bit := C.aCaptureScreen(x, y, w, h)
 	// Println("...", bit)
 	bit_map := Bit_map{
