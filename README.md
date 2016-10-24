@@ -1,6 +1,6 @@
 #Robotgo
   
-  >Golang Desktop Automation(robot). Control the mouse, keyboard, and read the screen.
+  >Golang Desktop Automation(robot). Control the mouse, keyboard, bitmap, and read the screen.
   
 RobotGo supports Mac, Windows, and Linux(X11).
 
@@ -41,6 +41,16 @@ This is a work in progress.
     GCC
     
     X11 with the XTest extension (also known as the Xtst library)
+
+#####Ubuntu:
+
+      sudo apt-get install libx11-dev
+      sudo apt-get install libgtkglextmm-x11-dev
+      sudo apt-get install libghc6-x11-dev
+      sudo apt-get install libgl1-mesa-swx11-dev
+      sudo apt-get install xorg-dev
+
+      sudo apt-get install libxtst-dev libpng++-dev    
 
 
 ##Examples:

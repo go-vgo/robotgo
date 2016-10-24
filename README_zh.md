@@ -1,6 +1,6 @@
 #Robotgo
   
-  >Golang 跨平台自动系统，控制键盘鼠标和读取屏幕
+  >Golang 跨平台自动系统，控制键盘鼠标位图和读取屏幕
   
 RobotGo 支持 Mac, Windows, and Linux(X11).
 
@@ -41,6 +41,16 @@ RobotGo 支持 Mac, Windows, and Linux(X11).
     GCC
     
     X11 with the XTest extension (also known as the Xtst library)
+
+#####Ubuntu:
+
+      sudo apt-get install libx11-dev
+      sudo apt-get install libgtkglextmm-x11-dev
+      sudo apt-get install libghc6-x11-dev
+      sudo apt-get install libgl1-mesa-swx11-dev
+      sudo apt-get install xorg-dev
+
+      sudo apt-get install libxtst-dev libpng++-dev
 
 
 ##例子:
