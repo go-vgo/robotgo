@@ -1,39 +1,45 @@
 #方法:
 
-##键盘
-    Keys
-    SetKeyboardDelay
-    KeyTap
-    KeyToggle
-    TypeString
-    TypeStringDelayed
-##鼠标
-    SetMouseDelay
-    MoveMouse
-    MoveMouseSmooth
-    MouseClick
-    MouseToggle
-    DragMouse
-    GetMousePos
-    ScrollMouse
-##屏幕
-    GetPixelColor
-    GetScreenSize
-    CaptureScreen
-    GetXDisplayName(Linux)
-    SetXDisplayName(Linux)
-##位图
+##[键盘](#Keyboard)
+
+#####[Keys](#keys)
+#####[SetKeyboardDelay](#SetKeyboardDelay)
+#####[KeyTap](#KeyTap)
+#####[KeyToggle](#KeyToggle)
+#####[TypeString](#TypeString)
+#####[TypeStringDelayed](#TypeStringDelayed)
+
+##[鼠标](#Mouse)
+
+#####[SetMouseDelay](#SetMouseDelay)
+#####[MoveMouse](#MoveMouse)
+#####[MoveMouseSmooth](#MoveMouseSmooth)
+#####[MouseClick](#MouseClick)
+#####[MouseToggle](#MouseToggle)
+#####[DragMouse](#DragMouse)
+#####[GetMousePos](#GetMousePos)
+#####[ScrollMouse](#ScrollMouse)
+
+##[屏幕](#Screen)
+
+#####[GetPixelColor](#GetPixelColor)
+#####[GetScreenSize](#GetScreenSize)
+#####[CaptureScreen](#CaptureScreen)
+#####[GetXDisplayName(Linux)](#GetXDisplayName)
+#####[SetXDisplayName(Linux)](#SetXDisplayName)
+
+##[位图](#Bitmap)
     This is a work in progress.(工作正在进行中)
 
-    FindBitmap
-    OpenBitmap
-    SaveBitmap
-    TostringBitmap
-    GetPortion
+#####[FindBitmap](#FindBitmap)
+#####[OpenBitmap](#OpenBitmap)
+#####[SaveBitmap](#SaveBitmap)
+#####[TostringBitmap](#TostringBitmap)
+#####[GetPortion](#GetPortion)
 
 
-##键盘
-###.SetKeyboardDelay(ms)
+##<h2 id="Keyboard">键盘</h2>
+###<h3 id="SetKeyboardDelay">.SetKeyboardDelay(ms)</h3>
     设置键盘延迟(在键盘一个事件后),单位ms,默认值10ms
 
     Sets the delay in milliseconds to sleep after a keyboard event. This is 10ms by default.
@@ -43,7 +49,7 @@
 
     ms - Time to sleep in milliseconds.
 
-###.KeyTap(key, modifier)
+###<h3 id="KeyTap">.KeyTap(key, modifier)</h3>
     模拟键盘按键
 
     Press a single key.
@@ -55,7 +61,7 @@
     key - See keys.
     modifier (optional, string or array) - Accepts alt, command (win), control, and shift.
 
-###.KeyToggle(key, down, modifier)
+###<h3 id="KeyToggle">.KeyToggle(key, down, modifier)</h3>
     键盘切换,按住或释放一个键位
 
     Hold down or release a key.
@@ -66,13 +72,13 @@
     down - Accepts 'down' or 'up'.
     modifier (optional, string or array) - Accepts alt, command (mac), control, and shift.
 
-###.TypeString(string)
+###<h3 id="TypeString">.TypeString(string)</h3>
 
 ####参数:
 
     string - The string to send.
 
-###.TypeStringDelayed(string, cpm)
+###<h3 id="TypeStringDelayed">.TypeStringDelayed(string, cpm)</h3>
 
 ####参数:
 
@@ -81,8 +87,8 @@
 
 
 
-##鼠标
-###.SetMouseDelay(ms)
+##<h2 id="Mouse">鼠标</h2>
+###<h3 id="SetMouseDelay">.SetMouseDelay(ms)</h3>
     设置鼠标延迟(在一个鼠标事件后),单位ms,默认值10ms
 
     Sets the delay in milliseconds to sleep after a mouse event. This is 10ms by default.
@@ -91,7 +97,7 @@
 
     ms - Time to sleep in milliseconds.
 
-###.MoveMouse(x, y)
+###<h3 id="MoveMouse">.MoveMouse(x, y)</h3>
     移动鼠标
 
     Moves mouse to x, y instantly, with the mouse button up.
@@ -107,7 +113,7 @@
 robotgo.MoveMouse(100, 100)
 ```
 
-###.MoveMouseSmooth(x, y)
+###<h3 id="MoveMouseSmooth">.MoveMouseSmooth(x, y)</h3>
     模拟鼠标向X，Y平滑移动(像人类一样)，用鼠标按钮向上
 
     Moves mouse to x, y human like, with the mouse button up.
@@ -116,7 +122,7 @@ robotgo.MoveMouse(100, 100)
 
     x,y
 
-###.MouseClick(button, double)
+###<h3 id="MouseClick">.MouseClick(button, double)</h3>
     鼠标点击
 
     Clicks the mouse.
@@ -132,7 +138,7 @@ robotgo.MoveMouse(100, 100)
     robogo.MouseClick()
 ```
 
-###.mouseToggle(down, button)
+###<h3 id="MouseToggle">.MouseToggle(down, button)</h3>
     鼠标切换
 
     Toggles mouse button.
@@ -148,7 +154,7 @@ robotgo.MoveMouse(100, 100)
 robotgo.MouseToggle("down")
 ```
 
-###.DragMouse(x, y)
+###<h3 id="DragMouse">.DragMouse(x, y)</h3>
     拖动鼠标
 
     Moves mouse to x, y instantly, with the mouse button held down.
@@ -167,7 +173,7 @@ robotgo.DragMouse(100, 100)
 robotgo.MouseToggle("up")
 ```
 
-###.GetMousePos()
+###<h3 id="GetMousePos">.GetMousePos()</h3>
     获取鼠标的位置
 
     Gets the mouse coordinates.
@@ -183,7 +189,7 @@ x,y := robotgo.GetMousePos()
 fmt.Println("pos:", x, y)
 ```
 
-###.ScrollMouse(magnitude, direction)
+###<h3 id="ScrollMouse">.ScrollMouse(magnitude, direction)</h3>
     滚动鼠标
 
     Scrolls the mouse either up or down.
@@ -204,8 +210,8 @@ robotgo.ScrollMouse(50, "down")
 ```
 
 
-##屏幕
-###.GetPixelColor(x, y)
+##<h2 id="Screen">屏幕</h2>
+###<h3 id="GetPixelColor">.GetPixelColor(x, y)
     获取坐标为x,y位置处的颜色
 
     Gets the pixel color at x, y. This function is perfect for getting a pixel or two, but if you'll be reading large portions of the screen use screen.capture.
@@ -218,7 +224,7 @@ robotgo.ScrollMouse(50, "down")
 
     Returns the hex color code of the pixel at x, y.
 
-###.GetScreenSize()
+###<h3 id="GetScreenSize">.GetScreenSize()</h3>
     获取屏幕大小
 
     Gets the screen width and height.
@@ -227,7 +233,7 @@ robotgo.ScrollMouse(50, "down")
 
     Returns an object with .width and .height.
 
-###.CaptureScreen
+###<h3 id="CaptureScreen">.CaptureScreen</h3>
     //ScreenCapture
     获取部分或者全部屏幕
     Gets part or all of the screen.
@@ -244,11 +250,11 @@ robotgo.ScrollMouse(50, "down")
 
     返回一个bitmap object.
 
-##位图
+##<h2 id="Bitmap">位图</h2>
 
     This is a work in progress.
 
-###.FindBitmap
+###<h3 id="FindBitmap">.FindBitmap</h3>
 
     查找bitmap.
 
@@ -262,7 +268,7 @@ robotgo.ScrollMouse(50, "down")
     查找到,返回bitmap的x和y坐标;没有返回nil
 
 
-###.OpenBitmap
+###<h3 id="OpenBitmap">.OpenBitmap</h3>
 
     打开bitmap图片.
 
@@ -274,7 +280,7 @@ robotgo.ScrollMouse(50, "down")
 
      返回一个bitmap对象
 
-###.SaveBitmap
+###<h3 id="SaveBitmap">.SaveBitmap</h3>
 
     保存一个bitmap图片.
 
@@ -289,7 +295,7 @@ robotgo.ScrollMouse(50, "down")
     保存图片
 
 
-###.TostringBitmap
+###<h3 id="TostringBitmap">.TostringBitmap</h3>
 
      将一个bitmap对象转换为字符串对象.
 
@@ -301,7 +307,7 @@ robotgo.ScrollMouse(50, "down")
 
     返回一个bitmap字符串 
 
-###.GetPortion
+###<h3 id="GetPortion">.GetPortion</h3>
 
      bitmap from a portion
 
