@@ -1,38 +1,45 @@
 #Methods:
 
-##Keyboard
-[Keys](#keys)
-[SetKeyboardDelay](#SetKeyboardDelay)
-    KeyTap
-    KeyToggle
-    TypeString
-    TypeStringDelayed
-##Mouse
-    SetMouseDelay
-    MoveMouse
-    MoveMouseSmooth
-    MouseClick
-    MouseToggle
-    DragMouse
-    GetMousePos
-    ScrollMouse
-##Screen
-    GetPixelColor
-    GetScreenSize
-    CaptureScreen
-    GetXDisplayName(Linux)
-    SetXDisplayName(Linux)
-##Bitmap
+##[Keyboard](#Keyboard)
+
+###[Keys](#keys)
+###[SetKeyboardDelay](#SetKeyboardDelay)
+###[KeyTap](#KeyTap)
+###[KeyToggle](#KeyToggle)
+###[TypeString](#TypeString)
+###[TypeStringDelayed](#TypeStringDelayed)
+
+##[Mouse](#Mouse)
+
+###[SetMouseDelay](#SetMouseDelay)
+###[MoveMouse](#MoveMouse)
+###[MoveMouseSmooth](#MoveMouseSmooth)
+###[MouseClick](#MouseClick)
+###[MouseToggle](#MouseToggle)
+###[DragMouse](#DragMouse)
+###[GetMousePos](#GetMousePos)
+###[ScrollMouse](#ScrollMouse)
+
+##[Screen](#Screen)
+
+###[GetPixelColor](#GetPixelColor)
+###[GetScreenSize](#GetScreenSize)
+###[CaptureScreen](#CaptureScreen)
+###[GetXDisplayName(Linux)](#GetXDisplayName)
+###[SetXDisplayName(Linux)](#SetXDisplayName)
+
+##[Bitmap](#Bitmap)
     This is a work in progress.
 
-    FindBitmap
-    OpenBitmap
-    SaveBitmap
-    TostringBitmap
-    GetPortion
+###[FindBitmap](#FindBitmap)
+###[OpenBitmap](#OpenBitmap)
+###[SaveBitmap](#SaveBitmap)
+###[TostringBitmap](#TostringBitmap)
+###[GetPortion](#GetPortion)
 
 
-##Keyboard
+##<h2 id="Keyboard">Keyboard</h2>
+
 ###<h3 id="SetKeyboardDelay">.SetKeyboardDelay(ms)</h3>
 
     Sets the delay in milliseconds to sleep after a keyboard event. This is 10ms by default.
@@ -50,7 +57,7 @@
     key - See keys.
     modifier (optional, string or array) - Accepts alt, command (win), control, and shift.
 
-###.KeyToggle(key, down, modifier)
+###<h3 id="KeyToggle">.KeyToggle(key, down, modifier)</h3>
 
     Hold down or release a key.
 
@@ -66,7 +73,7 @@
 
     string - The string to send.
 
-###.TypeStringDelayed(string, cpm)
+###<h3 id="TypeStringDelayed">.TypeStringDelayed(string, cpm)</h3>
 
 ####Arguments:
 
@@ -75,8 +82,9 @@
 
 
 
-##Mouse
-###.SetMouseDelay(ms)
+##<h2 id="Mouse">Mouse</h2>
+
+###<h3 id="SetMouseDelay">.SetMouseDelay(ms)</h3>
 
     Sets the delay in milliseconds to sleep after a mouse event. This is 10ms by default.
 
@@ -99,7 +107,7 @@
 robotgo.MoveMouse(100, 100)
 ```
 
-###.MoveMouseSmooth(x, y)
+###<h3 id="MoveMouseSmooth">.MoveMouseSmooth(x, y)</h3>
 
     Moves mouse to x, y human like, with the mouse button up.
 
@@ -122,7 +130,7 @@ robotgo.MoveMouse(100, 100)
     robogo.MouseClick()
 ```
 
-###.mouseToggle(down, button)
+###<h3 id="MouseToggle">.MouseToggle(down, button)</h3>
 
     Toggles mouse button.
 
@@ -137,7 +145,7 @@ robotgo.MoveMouse(100, 100)
 robotgo.MouseToggle("down")
 ```
 
-###.DragMouse(x, y)
+###<h3 id="DragMouse">.DragMouse(x, y)</h3>
 
     Moves mouse to x, y instantly, with the mouse button held down.
 
@@ -170,7 +178,7 @@ x,y := robotgo.GetMousePos()
 fmt.Println("pos:", x, y)
 ```
 
-###.ScrollMouse(magnitude, direction)
+###<h3 id="ScrollMouse">.ScrollMouse(magnitude, direction)</h3>
 
     Scrolls the mouse either up or down.
 
@@ -188,8 +196,9 @@ robotgo.ScrollMouse(50, "down")
 ```
 
 
-##Screen
-###.GetPixelColor(x, y)
+##<h2 id="Screen">Screen</h2>
+
+###<h3 id="GetPixelColor">.GetPixelColor(x, y)
 
     Gets the pixel color at x, y. This function is perfect for getting a pixel or two, but if you'll be reading large portions of the screen use screen.capture.
 
@@ -201,7 +210,7 @@ robotgo.ScrollMouse(50, "down")
 
     Returns the hex color code of the pixel at x, y.
 
-###.GetScreenSize()
+###<h3 id="GetScreenSize">.GetScreenSize()</h3>
 
     Gets the screen width and height.
 
@@ -209,7 +218,7 @@ robotgo.ScrollMouse(50, "down")
 
     Returns an object with .width and .height.
 
-###.CaptureScreen
+###<h3 id="CaptureScreen">.CaptureScreen</h3>
     //ScreenCapture
 
     Gets part or all of the screen.
@@ -226,11 +235,11 @@ robotgo.ScrollMouse(50, "down")
 
     Returns a bitmap object.
 
-##Bitmap
+##<h3 id="Bitmap">Bitmap</h2>
 
     This is a work in progress.
 
-###.FindBitmap
+###<h3 id="FindBitmap">.FindBitmap</h3>
 
     find bitmap.
 
@@ -244,7 +253,7 @@ robotgo.ScrollMouse(50, "down")
     Returns a position x and y
 
 
-###.OpenBitmap
+###<h3 id="OpenBitmap">.OpenBitmap</h3>
 
     open bitmap .
 
@@ -256,7 +265,7 @@ robotgo.ScrollMouse(50, "down")
 
     Returns a bitmap
 
-###.SaveBitmap
+###<h3 id="SaveBitmap">.SaveBitmap</h3>
 
     save a image with bitmap.
 
@@ -271,7 +280,7 @@ robotgo.ScrollMouse(50, "down")
     Return a imgage
 
 
-###.TostringBitmap
+###<h3 id="TostringBitmap">.TostringBitmap</h3>
 
      bitmap to string
 
@@ -283,7 +292,7 @@ robotgo.ScrollMouse(50, "down")
 
     Return a sting bitmap
 
-###.GetPortion
+###<h3 id="GetPortion">.GetPortion</h3>
 
      bitmap from a portion
 
