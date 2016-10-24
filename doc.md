@@ -1,8 +1,8 @@
 #Methods:
 
 ##Keyboard
-    [Keys](#keys)
-    [SetKeyboardDelay](#SetKeyboardDelay)
+[Keys](#keys)
+[SetKeyboardDelay](#SetKeyboardDelay)
     KeyTap
     KeyToggle
     TypeString
