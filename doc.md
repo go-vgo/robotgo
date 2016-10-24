@@ -33,7 +33,7 @@
 
 
 ##Keyboard
-###<span id="SetKeyboardDelay">.SetKeyboardDelay(ms)</span>
+###<h3 id="SetKeyboardDelay">.SetKeyboardDelay(ms)</h3>
 
     Sets the delay in milliseconds to sleep after a keyboard event. This is 10ms by default.
 
