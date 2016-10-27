@@ -6,7 +6,7 @@ import (
 	"github.com/go-vgo/robotgo"
 )
 
-func arobotgo() {
+func aRobotgo() {
 	x, y := robotgo.GetMousePos()
 	Println("pos:", x, y)
 
@@ -48,5 +48,5 @@ func arobotgo() {
 }
 
 func main() {
-	arobotgo()
+	aRobotgo()
 }
