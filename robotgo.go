@@ -166,7 +166,7 @@ func MouseToggle(args ...interface{}) {
 	Try(func() {
 		button = args[1].(C.MMMouseButton)
 	}, func(e interface{}) {
-		Println("err:::", e)
+		// Println("err:::", e)
 		button = C.LEFT_BUTTON
 	})
 	down := C.CString(args[0].(string))
@@ -290,7 +290,7 @@ func FindBitmap(args ...interface{}) (C.size_t, C.size_t) {
 func OpenBitmap(gpath string) C.MMBitmapRef {
 	path := C.CString(gpath)
 	bit := C.aOpenBitmap(path)
-	Println("opening...", bit)
+	// Println("opening...", bit)
 	return bit
 	// defer C.free(unsafe.Pointer(path))
 }
@@ -300,13 +300,13 @@ func SaveBitmap(args ...interface{}) {
 	Try(func() {
 		mtype = C.uint16_t(args[2].(int))
 	}, func(e interface{}) {
-		Println("err:::", e)
+		// Println("err:::", e)
 		mtype = 1
 	})
 
 	path := C.CString(args[1].(string))
 	savebit := C.aSaveBitmap(args[0].(C.MMBitmapRef), path, mtype)
-	Println("opening...", savebit)
+	Println("saved...", savebit)
 	// return bit
 	// defer C.free(unsafe.Pointer(path))
 }
