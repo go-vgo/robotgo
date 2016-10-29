@@ -42,6 +42,8 @@ This is a work in progress.
     
     X11 with the XTest extension (also known as the Xtst library)
 
+    
+
 #####Ubuntu:
 
       sudo apt-get install libx11-dev
@@ -50,7 +52,11 @@ This is a work in progress.
       sudo apt-get install libgl1-mesa-swx11-dev
       sudo apt-get install xorg-dev
 
-      sudo apt-get install libxtst-dev libpng++-dev    
+      sudo apt-get install libxtst-dev libpng++-dev   
+
+      event:
+
+      sudo apt-get install xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev
 
 
 ##Examples:

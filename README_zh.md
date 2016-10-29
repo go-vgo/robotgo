@@ -52,6 +52,10 @@ RobotGo 支持 Mac, Windows, and Linux(X11).
 
       sudo apt-get install libxtst-dev libpng++-dev
 
+      事件:
+
+      sudo apt-get install xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev
+
 
 ##例子:
 
