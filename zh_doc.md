@@ -38,6 +38,10 @@
 #####[GetPortion](#GetPortion)
 #####[Convert](#Convert)
 
+##[Event](#Event)
+
+#####[LEvent](#LEvent)
+
 
 ##<h2 id="Keyboard">键盘</h2>
 ###<h3 id="SetKeyboardDelay">.SetKeyboardDelay(ms)</h3>
@@ -337,3 +341,40 @@ robotgo.ScrollMouse(50, "down")
 ```Go
     robotgo.Convert("test.png", "test.tif")
 ```  
+##<h2 id="Event">事件</h2> 
+
+###<h3 id="LEvent">.LEvent(string)</h3>
+
+    监听全局事件
+
+####参数:
+
+    string
+
+####返回值:
+
+    监听成功返回0
+
+####例子:
+
+```Go
+package main
+
+import (
+    . "fmt"
+
+    "github.com/go-vgo/robotgo"
+)
+
+func main() {
+  keve := robotgo.LEvent("k")
+  if keve == 0 {
+    Println("you press...", "k")
+  }
+
+  mleft := robotgo.LEvent("mleft")
+  if mleft == 0 {
+    Println("you press...", "mouse left button")
+  }
+} 
+```
