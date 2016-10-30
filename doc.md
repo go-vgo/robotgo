@@ -36,7 +36,7 @@
 #####[SaveBitmap](#SaveBitmap)
 #####[TostringBitmap](#TostringBitmap)
 #####[GetPortion](#GetPortion)
-
+#####[Convert](#Convert)
 
 ##<h2 id="Keyboard">Keyboard</h2>
 
@@ -259,7 +259,8 @@ robotgo.ScrollMouse(50, "down")
 
 ####Arguments:
 
-    bitmap image path 
+    bitmap image path,
+    MMImageType(optional) 
 
 ####Return:
 
@@ -303,5 +304,21 @@ robotgo.ScrollMouse(50, "down")
 
 ####Return:
 
-    Returns new bitmap object created from a portion of another          
+    Returns new bitmap object created from a portion of another 
+
+###<h3 id="Convert">.Convert(openpath, savepath,MMImageType)</h3>
+
+    Convert the image format
+
+####Arguments:
+
+    openpath,
+    savepath,
+    MMImageType(optional)
+
+####Examples:
+
+```Go
+    robotgo.Convert("test.png", "test.tif")
+```             
     
