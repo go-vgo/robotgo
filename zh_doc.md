@@ -351,6 +351,8 @@ robotgo.ScrollMouse(50, "down")
 
     string
 
+    (鼠标参数:mleft mright wheelDown wheelUp wheelLeft wheelRight)
+
 ####返回值:
 
     监听成功返回0
