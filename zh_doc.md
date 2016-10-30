@@ -36,6 +36,7 @@
 #####[SaveBitmap](#SaveBitmap)
 #####[TostringBitmap](#TostringBitmap)
 #####[GetPortion](#GetPortion)
+#####[Convert](#Convert)
 
 
 ##<h2 id="Keyboard">键盘</h2>
@@ -274,7 +275,8 @@ robotgo.ScrollMouse(50, "down")
 
 ####参数:
 
-    bitmap图片路径
+    bitmap图片路径,
+    MMImageType(可选)
 
 ####返回值:
 
@@ -320,4 +322,18 @@ robotgo.ScrollMouse(50, "down")
 
     Returns new bitmap object created from a portion of another    
 
+###<h3 id="Convert">.Convert(openpath, savepath,MMImageType)</h3>
 
+    转换bitmap图片格式
+
+####参数:
+
+    openpath,
+    savepath,
+    MMImageType(可选)
+
+####例子:
+
+```Go
+    robotgo.Convert("test.png", "test.tif")
+```  
