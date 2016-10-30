@@ -289,9 +289,16 @@ func FindBitmap(args ...interface{}) (C.size_t, C.size_t) {
 	return pos.x, pos.y
 }
 
-func OpenBitmap(gpath string) C.MMBitmapRef {
-	path := C.CString(gpath)
-	bit := C.aOpenBitmap(path)
+func OpenBitmap(args ...interface{}) C.MMBitmapRef {
+	path := C.CString(args[0].(string))
+	var mtype C.uint16_t
+	Try(func() {
+		mtype = C.uint16_t(args[1].(int))
+	}, func(e interface{}) {
+		// Println("err:::", e)
+		mtype = 1
+	})
+	bit := C.aOpenBitmap(path, mtype)
 	// Println("opening...", bit)
 	return bit
 	// defer C.free(unsafe.Pointer(path))
@@ -336,6 +343,22 @@ func GetPortion(bit C.MMBitmapRef, x, y, w, h C.size_t) C.MMBitmapRef {
 
 	pos := C.aGetPortion(bit, rect)
 	return pos
+}
+
+func Convert(args ...interface{}) {
+	var mtype int
+	Try(func() {
+		mtype = args[2].(int)
+	}, func(e interface{}) {
+		Println("err:::", e)
+		mtype = 1
+	})
+	//C.CString()
+	opath := args[0].(string)
+	spath := args[1].(string)
+	bit_map := OpenBitmap(opath)
+	// Println("a----", bit_map)
+	SaveBitmap(bit_map, spath, mtype)
 }
 
 /*
