@@ -37,13 +37,13 @@ MMPoint aFindBitmap(MMBitmapRef bit_map,MMRect rect){
 	return point;
 }
 
-MMBitmapRef aOpenBitmap(char *path){
-	MMImageType type;
+MMBitmapRef aOpenBitmap(char *path ,uint16_t ttype){
+	// MMImageType type;
 
 	MMBitmapRef bitmap;
 	MMIOError err;
 
-	bitmap = newMMBitmapFromFile(path, type, &err);
+	bitmap = newMMBitmapFromFile(path, ttype, &err);
 	// printf("....%zd\n",bitmap->width);
 	return bitmap;
 
