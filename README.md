@@ -1,6 +1,6 @@
 #Robotgo
   
-  >Golang Desktop Automation(robot). Control the mouse, keyboard, bitmap, and read the screen.
+  >Golang Desktop Automation. Control the mouse, keyboard, bitmap,read the screen and listening global event.
   
 RobotGo supports Mac, Windows, and Linux(X11).
 
@@ -54,7 +54,7 @@ This is a work in progress.
 
       sudo apt-get install libxtst-dev libpng++-dev   
 
-      event:
+      Event:
 
       sudo apt-get install xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev
 
