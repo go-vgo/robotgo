@@ -38,6 +38,11 @@
 #####[GetPortion](#GetPortion)
 #####[Convert](#Convert)
 
+##[Event](#Event)
+
+#####[LEvent](#LEvent)
+
+
 ##<h2 id="Keyboard">Keyboard</h2>
 
 ###<h3 id="SetKeyboardDelay">.SetKeyboardDelay(ms)</h3>
@@ -321,4 +326,41 @@ robotgo.ScrollMouse(50, "down")
 ```Go
     robotgo.Convert("test.png", "test.tif")
 ```             
-    
+
+##<h2 id="Event">Event</h2> 
+
+###<h3 id="LEvent">.LEvent(string)</h3>
+
+    Listening global event
+
+####Arguments:
+
+    string
+
+####Return:
+
+   if listened return 0
+
+####Examples:
+
+```Go
+package main
+
+import (
+    . "fmt"
+
+    "github.com/go-vgo/robotgo"
+)
+
+func main() {
+  keve := robotgo.LEvent("k")
+  if keve == 0 {
+    Println("you press...", "k")
+  }
+
+  mleft := robotgo.LEvent("mleft")
+  if mleft == 0 {
+    Println("you press...", "mouse left button")
+  }
+} 
+```    
