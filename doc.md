@@ -337,6 +337,8 @@ robotgo.ScrollMouse(50, "down")
 
     string
 
+    (mosue arguments:mleft mright wheelDown wheelUp wheelLeft wheelRight)
+
 ####Return:
 
    if listened return 0
