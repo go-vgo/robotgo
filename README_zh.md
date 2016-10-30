@@ -123,12 +123,12 @@ import (
 
 func main() {
   bit_map := robotgo.CaptureScreen(10, 20, 30, 40)
-	Println("...", bit_map)
+  Println("...", bit_map)
 
-	fx, fy := robotgo.FindBitmap(bit_map)
-	Println("FindBitmap------", fx, fy)
+  fx, fy := robotgo.FindBitmap(bit_map)
+  Println("FindBitmap------", fx, fy)
 
-	robotgo.SaveBitmap(bit_map, "test.png")
+  robotgo.SaveBitmap(bit_map, "test.png")
 } 
 ```
 
@@ -145,13 +145,13 @@ import (
 
 func main() {
   keve := robotgo.LEvent("k")
-	if keve == 0 {
-		Println("you press...", "k")
-	}
+  if keve == 0 {
+    Println("you press...", "k")
+  }
 
-	mleft := robotgo.LEvent("mleft")
-	if mleft == 0 {
-	  Println("you press...", "mouse left button")
-	}
+  mleft := robotgo.LEvent("mleft")
+  if mleft == 0 {
+    Println("you press...", "mouse left button")
+  }
 } 
 ```
