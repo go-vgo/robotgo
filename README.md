@@ -1,6 +1,6 @@
 #Robotgo
   
-  >Golang Desktop Automation. Control the mouse, keyboard, bitmap,read the screen and listening global event.
+  >Golang Desktop Automation. Control the mouse, keyboard, bitmap,read the screen and global event listener.
   
 RobotGo supports Mac, Windows, and Linux(X11).
 
