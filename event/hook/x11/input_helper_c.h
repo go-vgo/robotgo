@@ -1874,9 +1874,9 @@ void load_input_helper(Display *disp) {
 		} else
 		#endif
 		if (strncmp(layout_name, prefix_xfree86, strlen(prefix_xfree86)) != 0) {
-			logger(LOG_LEVEL_ERROR,
-					"%s [%u]: Unknown keycode name '%s', please file a bug report!\n",
-					__FUNCTION__, __LINE__, layout_name);
+			// logger(LOG_LEVEL_ERROR,
+			// 		"%s [%u]: Unknown keycode name '%s', please file a bug report!\n",
+			// 		__FUNCTION__, __LINE__, layout_name);
 		}
 		else if (layout_name == NULL) {
 			logger(LOG_LEVEL_ERROR,
