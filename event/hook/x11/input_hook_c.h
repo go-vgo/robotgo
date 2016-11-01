@@ -1098,6 +1098,10 @@ UIOHOOK_API int hook_stop() {
 					// https://bugs.freedesktop.org/show_bug.cgi?id=42356#c4
 					//XFlush(hook->ctrl.display);
 					XSync(hook->ctrl.display, False);
+					if (hook->ctrl.display) {
+						XCloseDisplay(hook->ctrl.display);
+						hook->ctrl.display = NULL;
+					}
 
 					status = UIOHOOK_SUCCESS;
 				}
