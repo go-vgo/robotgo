@@ -57,6 +57,7 @@ This is a work in progress.
       Event:
 
       sudo apt-get install xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev
+      sudo apt-get install libxkbcommon-dev
 
 
 ##Examples:
