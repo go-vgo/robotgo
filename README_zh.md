@@ -42,6 +42,10 @@ RobotGo 支持 Mac, Windows, and Linux(X11).
     
     X11 with the XTest extension (also known as the Xtst library)
 
+    事件:
+    
+    xcb,xkb,libxkbcommon
+
 #####Ubuntu:
 
       sudo apt-get install libx11-dev
