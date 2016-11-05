@@ -10,7 +10,7 @@
 	#include <sys/wait.h> /* For wait() */
 	#include <unistd.h> /* For fork() */
 	#include <sys/types.h> /* For pid_t */
-	#include "snprintf.h" /* For asprintf() */
+	#include "../base/snprintf.h" /* For asprintf() */
 #endif
 
 #if defined(USE_X11)
