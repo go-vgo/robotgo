@@ -390,3 +390,26 @@ ____    __    ____  __  .__   __.  _______   ______   ____    __    ____
     \__/  \__/     |__| |__| \__| |_______/ \______/      \__/  \__/
 
 */
+func ShowAlert(title, msg string, args ...string) {
+	var (
+		// title         string
+		// msg           string
+		defaultButton string
+		cancelButton  string
+	)
+
+	Try(func() {
+		// title = args[0]
+		// msg = args[1]
+		defaultButton = args[0]
+		cancelButton = args[1]
+	}, func(e interface{}) {
+		defaultButton = "Ok"
+		cancelButton = "Cancel"
+	})
+	atitle := C.CString(title)
+	amsg := C.CString(msg)
+	adefaultButton := C.CString(defaultButton)
+	acancelButton := C.CString(cancelButton)
+	C.aShowAlert(atitle, amsg, adefaultButton, acancelButton)
+}
