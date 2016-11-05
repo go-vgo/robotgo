@@ -15,7 +15,7 @@ package robotgo
 #include "key/goKey.h"
 #include "bitmap/goBitmap.h"
 #include "event/goEvent.h"
-//#include "window/goWindow.h"
+#include "window/goWindow.h"
 */
 import "C"
 
