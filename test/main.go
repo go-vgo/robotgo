@@ -7,6 +7,11 @@ import (
 )
 
 func aRobotgo() {
+	abool := robotgo.ShowAlert("test", "robotgo")
+	if abool == 0 {
+		Println("ok@@@", "ok")
+	}
+
 	x, y := robotgo.GetMousePos()
 	Println("pos:", x, y)
 
