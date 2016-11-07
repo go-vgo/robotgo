@@ -411,6 +411,7 @@ func ShowAlert(title, msg string, args ...string) int {
 	amsg := C.CString(msg)
 	adefaultButton := C.CString(defaultButton)
 	acancelButton := C.CString(cancelButton)
+
 	cbool := C.aShowAlert(atitle, amsg, adefaultButton, acancelButton)
 	ibool := int(cbool)
 	return ibool
