@@ -176,5 +176,6 @@ import (
 
 func main() {
    Println("test")
+   robotgo.ShowAlert("test", "robotgo")
 } 
 ```
