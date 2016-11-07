@@ -175,7 +175,10 @@ import (
 )
 
 func main() {
-   Println("test")
-   robotgo.ShowAlert("test", "robotgo")
+  Println("test")
+  abool := robotgo.ShowAlert("test", "robotgo")
+  if abool == 0 {
+ 	  Println("ok@@@", "ok")
+  }
 } 
 ```
