@@ -42,6 +42,11 @@
 
 #####[LEvent](#LEvent)
 
+##[Window](#Window)
+    This is a work in progress.
+
+#####[ShowAlert(support linux as soon as possible)](#ShowAlert)
+
 
 ##<h2 id="Keyboard">键盘</h2>
 ###<h3 id="SetKeyboardDelay">.SetKeyboardDelay(ms)</h3>
@@ -380,3 +385,21 @@ func main() {
   }
 } 
 ```
+
+##<h2 id="Window">Window</h2> 
+
+###<h3 id="ShowAlert">.ShowAlert(title, msg,defaultButton,cancelButton string)</h3>
+
+    Displays alert with the given attributes. If cancelButton is not given, only the defaultButton is displayed
+
+####Arguments:
+
+    title(string),
+    msg(string),
+    defaultButton(optional string),
+    cancelButton(optional string)
+           
+
+####Return:
+
+   Returns True if the default button was pressed, or False if cancelled. 
