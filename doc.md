@@ -388,4 +388,4 @@ func main() {
 
 ####Return:
 
-   Returns True if the default button was pressed, or False if cancelled.   
+   Returns 0(True) if the default button was pressed, or 1(False) if cancelled.   
