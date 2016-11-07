@@ -390,7 +390,7 @@ ____    __    ____  __  .__   __.  _______   ______   ____    __    ____
     \__/  \__/     |__| |__| \__| |_______/ \______/      \__/  \__/
 
 */
-func ShowAlert(title, msg string, args ...string) {
+func ShowAlert(title, msg string, args ...string) int {
 	var (
 		// title         string
 		// msg           string
@@ -411,5 +411,7 @@ func ShowAlert(title, msg string, args ...string) {
 	amsg := C.CString(msg)
 	adefaultButton := C.CString(defaultButton)
 	acancelButton := C.CString(cancelButton)
-	C.aShowAlert(atitle, amsg, adefaultButton, acancelButton)
+	cbool := C.aShowAlert(atitle, amsg, adefaultButton, acancelButton)
+	ibool := int(cbool)
+	return ibool
 }
