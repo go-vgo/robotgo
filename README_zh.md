@@ -176,5 +176,8 @@ func main() {
   if abool == 0 {
     Println("ok@@@", "ok")
   }
+
+  title:=robotgo.GetTitle()
+  Println("title@@@", "title")
 } 
 ```
