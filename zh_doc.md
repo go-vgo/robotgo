@@ -46,6 +46,11 @@
     This is a work in progress.
 
 #####[ShowAlert(support linux as soon as possible)](#ShowAlert)
+#####[CloseWindow](#CloseWindow)
+#####[IsValid](#IsValid)
+#####[GetActive](#GetActive)
+#####[GetHandle](#GetHandle)
+#####[GetTitle](#GetTitle)
 
 
 ##<h2 id="Keyboard">键盘</h2>
@@ -404,3 +409,53 @@ func main() {
 
    Returns 0(True) if the default button was pressed, or 1(False) if cancelled.
    
+###<h3 id="CloseWindow">.CloseWindow()</h3>
+
+    Close the Window
+
+####Arguments:
+           
+
+####Return:
+
+
+###<h3 id="IsValid">.IsValid()</h3>
+
+   Valid the Window
+
+####Arguments:
+           
+
+####Return:
+    Returns true if a window has been selected
+
+
+###<h3 id="GetActive">.GetActive()</h3>
+
+   Get the Active Window
+
+####Arguments:
+           
+
+####Return:
+    Returns hwnd
+
+###<h3 id="GetHandle">.GetHandle()</h3>
+
+   Get the Window Handle
+
+####Arguments:
+           
+
+####Return:
+    Returns hwnd  
+
+###<h3 id="GetTitle">.GetTitle()</h3>
+
+   Get the Window Title
+
+####Arguments:
+           
+
+####Return:
+    Returns Window Title     
