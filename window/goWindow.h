@@ -23,10 +23,10 @@ bool aIsValid(){
 	return abool;
 }
 
-int aFindwindow(char* name){
-	int z=findwindow(name);
-	return z;
-}
+// int aFindwindow(char* name){
+// 	int z=findwindow(name);
+// 	return z;
+// }
 
 void aCloseWindow(void){
 	CloseWin();
