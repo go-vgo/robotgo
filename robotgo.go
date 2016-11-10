@@ -426,3 +426,39 @@ func ShowAlert(title, msg string, args ...string) int {
 	ibool := int(cbool)
 	return ibool
 }
+
+func IsValid() bool {
+	abool := C.aIsValid()
+	gbool := bool(abool)
+	// Println("bool---------", gbool)
+	return gbool
+}
+
+func GetActive() C.MData {
+	mdata := C.aGetActive()
+	// Println("active----", mdata)
+	return mdata
+}
+
+func CloseWindow() {
+	C.aCloseWindow()
+}
+
+func GetHandle() int {
+	hwnd := C.aGetHandle()
+	ghwnd := int(hwnd)
+	// Println("gethwnd---", ghwnd)
+	return ghwnd
+}
+
+// func SetHandle(hwnd int) {
+// 	chwnd := C.uintptr(hwnd)
+// 	C.aSetHandle(chwnd)
+// }
+
+func GetTitle() string {
+	title := C.aGetTitle()
+	gtittle := C.GoString(title)
+	// Println("title...", gtittle)
+	return gtittle
+}

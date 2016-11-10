@@ -9,11 +9,42 @@
 // except according to those terms.
 
 #include "alert_c.h"
-// #include "window.h"
+#include "window.h"
 
 int aShowAlert(const char *title, const char *msg, const char *defaultButton,
               const char *cancelButton){
 	int alert=showAlert(title,msg,defaultButton,cancelButton);
 
 	return alert;
+}
+
+bool aIsValid(){
+	bool abool=IsValid();
+	return abool;
+}
+
+int aFindwindow(char* name){
+	int z=findwindow(name);
+	return z;
+}
+
+void aCloseWindow(void){
+	CloseWin();
+}
+
+uintptr aGetHandle(){
+	uintptr hwnd=getHandle();
+	return hwnd;
+}
+
+MData aGetActive(){
+	MData mdata=GetActive();
+	return mdata;
+}
+
+char* aGetTitle(){
+	////3
+	char* title=GetTitle();
+	// printf("title::::%s\n",title );
+	return title;
 }
