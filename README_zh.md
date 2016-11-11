@@ -1,6 +1,6 @@
 #Robotgo
   
-  >Golang 跨平台自动系统，控制键盘鼠标位图和读取屏幕以及全局事件监听
+  >Golang 跨平台自动系统，控制键盘鼠标位图和读取屏幕,窗口句柄以及全局事件监听
   
 RobotGo 支持 Mac, Windows, and Linux(X11).
 
