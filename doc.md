@@ -249,6 +249,8 @@ robotgo.ScrollMouse(50, "down")
 
     Gets part or all of the screen.
 
+    Capture_Screen Returns a go struct
+
 ####Arguments:
 
     x (optional)
