@@ -14,11 +14,10 @@
 #include <IOKit/hidsystem/IOHIDParameter.h>
 #endif
 #include <stdbool.h>
-// #include <uiohook.h>
 #include "../uiohook.h"
 
 // #include "../logger_c.h"
-#include "input_helper.h"
+#include "input.h"
 
 UIOHOOK_API screen_data* hook_create_screen_info(unsigned char *count) {
 	CGError status = kCGErrorFailure;

@@ -10,10 +10,10 @@
 #include <dlfcn.h>
 #endif
 #include <stdbool.h>
-// #include <uiohook.h>
+
 #include "../uiohook.h"
 
-#include "input_helper.h"
+#include "input.h"
 #include "../logger_c.h"
 
 // Current dead key state.

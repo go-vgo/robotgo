@@ -6,7 +6,6 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-// #include <uiohook.h>
 #include "../uiohook.h"
 #include <X11/Xlib.h>
 #ifdef USE_XKB
@@ -29,7 +28,7 @@ static XtAppContext xt_context;
 static Display *xt_disp;
 #endif
 
-#include "input_helper.h"
+#include "input.h"
 // #include "../logger.h"
 
 Display *properties_disp;

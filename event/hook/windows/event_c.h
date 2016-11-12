@@ -4,11 +4,10 @@
 #endif
 
 #include <stdio.h>
-// #include <uiohook.h>
 #include "../uiohook.h"
 #include <windows.h>
 
-#include "input_helper.h"
+#include "input.h"
 // #include "logger.h"
 
 // Some buggy versions of MinGW and MSys do not include these constants in winuser.h.

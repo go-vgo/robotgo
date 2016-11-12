@@ -168,8 +168,18 @@ func GetMousePos() (int, int) {
 	return x, y
 }
 
-func MouseClick() {
-	C.aMouseClick()
+func MouseClick(args ...interface{}) {
+	var button C.MMMouseButton
+	var double C.bool
+	Try(func() {
+		button = args[0].(C.MMMouseButton)
+		double = C.bool(args[1].(bool))
+	}, func(e interface{}) {
+		// Println("err:::", e)
+		button = C.LEFT_BUTTON
+		double = false
+	})
+	C.aMouseClick(button, double)
 }
 
 func MouseToggle(args ...interface{}) {
@@ -382,6 +392,13 @@ func Convert(args ...interface{}) {
 ************    ****     ************ ****    ****     ****
 
 */
+func AddEvent(aeve string) int {
+	cs := C.CString(aeve)
+	eve := C.aEvent(cs)
+	// Println("event@@", eve)
+	geve := int(eve)
+	return geve
+}
 
 func LEvent(aeve string) int {
 	cs := C.CString(aeve)

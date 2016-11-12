@@ -11,7 +11,6 @@
 #include <pthread.h>
 #endif
 #include <stdint.h>
-// #include <uiohook.h>
 #include "../uiohook.h"
 
 #include <X11/keysym.h>
@@ -33,7 +32,7 @@
 #endif
 
 // #include "../logger.h"
-#include "input_helper.h"
+#include "input.h"
 
 // Thread and hook handles.
 #ifdef USE_XRECORD_ASYNC

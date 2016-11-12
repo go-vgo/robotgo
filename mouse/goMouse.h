@@ -81,9 +81,9 @@ MMPoint aGetMousePos(){
 	return pos;
 }
 
-int aMouseClick(){
-	MMMouseButton button = LEFT_BUTTON;
-	bool doubleC = false;
+int aMouseClick(MMMouseButton button,bool doubleC){
+	// MMMouseButton button = LEFT_BUTTON;
+	// bool doubleC = false;
 
 	if (!doubleC){
 		clickMouse(button);

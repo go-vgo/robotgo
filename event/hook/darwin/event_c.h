@@ -7,10 +7,9 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-// #include <uiohook.h>
 #include "../uiohook.h"
 
-#include "input_helper.h"
+#include "input.h"
 // #include "../logger_c.h"
 
 // TODO Possibly relocate to input helper.
