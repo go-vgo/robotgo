@@ -63,10 +63,10 @@ int aDragMouse(size_t x, size_t y){
 	return 0;
 }
 
-int aMoveMouseSmooth(size_t x, size_t y){
+int aMoveMouseSmooth(size_t x, size_t y,double lowSpeed,double highSpeed){
 	MMPoint point;
 	point = MMPointMake(x, y);
-	smoothlyMoveMouse(point);
+	smoothlyMoveMouse(point, lowSpeed, highSpeed);
 	microsleep(mouseDelay);
 
 	return 0;

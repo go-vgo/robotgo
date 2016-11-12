@@ -153,10 +153,25 @@ func DragMouse(x, y int) {
 	C.aDragMouse(cx, cy)
 }
 
-func MoveMouseSmooth(x, y int) {
+func MoveMouseSmooth(x, y int, args ...float64) {
 	cx := C.size_t(x)
 	cy := C.size_t(y)
-	C.aMoveMouseSmooth(cx, cy)
+
+	var (
+		low  C.double
+		high C.double
+	)
+
+	Try(func() {
+		low = C.double(args[2])
+		high = C.double(args[3])
+	}, func(e interface{}) {
+		// Println("err:::", e)
+		low = 5.0
+		high = 500.0
+	})
+
+	C.aMoveMouseSmooth(cx, cy, low, high)
 }
 
 func GetMousePos() (int, int) {
