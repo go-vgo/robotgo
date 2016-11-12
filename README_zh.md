@@ -148,12 +148,12 @@ import (
 )
 
 func main() {
-  keve := robotgo.LEvent("k")
+  keve := robotgo.AddEvent("k")
   if keve == 0 {
     Println("you press...", "k")
   }
 
-  mleft := robotgo.LEvent("mleft")
+  mleft := robotgo.AddEvent("mleft")
   if mleft == 0 {
     Println("you press...", "mouse left button")
   }

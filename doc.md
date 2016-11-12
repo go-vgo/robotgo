@@ -40,7 +40,8 @@
 
 ##[Event](#Event)
 
-#####[LEvent](#LEvent)
+#####[LEvent](#LEvent)(Equivalent to AddEvent)
+#####[AddEvent](#AddEvent)
 
 ##[Window](#Window)
     This is a work in progress.
@@ -339,7 +340,7 @@ robotgo.ScrollMouse(50, "down")
 
 ##<h2 id="Event">Event</h2> 
 
-###<h3 id="LEvent">.LEvent(string)</h3>
+###<h3 id="AddEvent">.AddEvent(string)</h3>
 
     Listening global event
 
@@ -365,12 +366,12 @@ import (
 )
 
 func main() {
-  keve := robotgo.LEvent("k")
+  keve := robotgo.AddEvent("k")
   if keve == 0 {
     Println("you press...", "k")
   }
 
-  mleft := robotgo.LEvent("mleft")
+  mleft := robotgo.AddEvent("mleft")
   if mleft == 0 {
     Println("you press...", "mouse left button")
   }
