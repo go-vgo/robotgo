@@ -321,14 +321,15 @@ func TypeString(x string) {
 	defer C.free(unsafe.Pointer(cx))
 }
 
-func TypeStringDelayed(x string, y C.size_t) {
+func TypeStringDelayed(x string, y int) {
 	cx := C.CString(x)
+	cy := C.C.size_t(y)
 	C.aTypeStringDelayed(cx, y)
 	defer C.free(unsafe.Pointer(cx))
 }
 
-func SetKeyboardDelay(x C.size_t) {
-	C.aSetKeyboardDelay(x)
+func SetKeyboardDelay(x int) {
+	C.aSetKeyboardDelay(C.size_t(x))
 }
 
 /*
@@ -339,7 +340,7 @@ func SetKeyboardDelay(x C.size_t) {
 |  |_)  | |  |     |  |     |  |  |  |  /  _____  \  |  |
 |______/  |__|     |__|     |__|  |__| /__/     \__\ | _|
 */
-func FindBitmap(args ...interface{}) (C.size_t, C.size_t) {
+func FindBitmap(args ...interface{}) (int, int) {
 	var bit C.MMBitmapRef
 	bit = args[0].(C.MMBitmapRef)
 
@@ -350,7 +351,7 @@ func FindBitmap(args ...interface{}) (C.size_t, C.size_t) {
 		rect.size.width = C.size_t(args[3].(int))
 		rect.size.height = C.size_t(args[4].(int))
 	}, func(e interface{}) {
-		Println("err:::", e)
+		// Println("err:::", e)
 		// rect.origin.x = x
 		// rect.origin.y = y
 		// rect.size.width = w
@@ -359,7 +360,7 @@ func FindBitmap(args ...interface{}) (C.size_t, C.size_t) {
 
 	pos := C.aFindBitmap(bit, rect)
 	// Println("pos----", pos)
-	return pos.x, pos.y
+	return int(pos.x), int(pos.y)
 }
 
 func OpenBitmap(args ...interface{}) C.MMBitmapRef {
@@ -396,7 +397,7 @@ func SaveBitmap(args ...interface{}) {
 // func SaveBitmap(bit C.MMBitmapRef, gpath string, mtype C.MMImageType) {
 // 	path := C.CString(gpath)
 // 	savebit := C.aSaveBitmap(bit, path, mtype)
-// 	Println("opening...", savebit)
+// 	Println("saveing...", savebit)
 // 	// return bit
 // 	// defer C.free(unsafe.Pointer(path))
 // }
