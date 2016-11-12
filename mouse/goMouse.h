@@ -9,7 +9,7 @@
 // except according to those terms.
 
 #include "../base/types.h"
-#include "mouse_init.h"
+#include "mouse_c.h"
 
 //Global delays.
 int mouseDelay = 10;
