@@ -14,10 +14,9 @@
 #include <pthread.h>
 #include <stdbool.h>
 #include <sys/time.h>
-// #include <uiohook.h>
 #include "../uiohook.h"
 
-#include "input_helper.h"
+#include "input.h"
 // #include "../logger_c.h"
 
 typedef struct _hook_info {

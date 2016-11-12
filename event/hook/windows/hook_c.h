@@ -4,11 +4,10 @@
 #endif
 
 #include <inttypes.h>
-// #include <uiohook.h>
 #include "../uiohook.h"
 #include <windows.h>
 
-#include "input_helper.h"
+#include "input.h"
 // #include "logger.h"
 
 // Thread and hook handles.
@@ -98,7 +97,7 @@ static void initialize_modifiers() {
 
 
 /* Retrieves the mouse wheel scroll type. This function cannot be included as
- * part of the input_helper.h due to platform specific calling restrictions.
+ * part of the input.h due to platform specific calling restrictions.
  */
 static unsigned short int get_scroll_wheel_type() {
 	unsigned short int value;
@@ -116,7 +115,7 @@ static unsigned short int get_scroll_wheel_type() {
 }
 
 /* Retrieves the mouse wheel scroll amount. This function cannot be included as
- * part of the input_helper.h due to platform specific calling restrictions.
+ * part of the input.h due to platform specific calling restrictions.
  */
 static unsigned short int get_scroll_wheel_amount() {
 	unsigned short int value;

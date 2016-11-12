@@ -15,21 +15,21 @@
 #include "../base/os.h"
 
 #if defined(IS_MACOSX)
-	#include "hook/darwin/input_helper_c.h"
-	#include "hook/darwin/input_hook_c.h"
-	#include "hook/darwin/post_event_c.h"
-	#include "hook/darwin/system_properties_c.h"
+	#include "hook/darwin/input_c.h"
+	#include "hook/darwin/hook_c.h"
+	#include "hook/darwin/event_c.h"
+	#include "hook/darwin/properties_c.h"
 #elif defined(USE_X11)
 	//#define USE_XKBCOMMON 0
-	#include "hook/x11/input_helper_c.h"
-	#include "hook/x11/input_hook_c.h"
-	#include "hook/x11/post_event_c.h"
-	#include "hook/x11/system_properties_c.h"
+	#include "hook/x11/input_c.h"
+	#include "hook/x11/hook_c.h"
+	#include "hook/x11/event_c.h"
+	#include "hook/x11/properties_c.h"
 #elif defined(IS_WINDOWS)
-	#include "hook/windows/input_helper_c.h"
-	#include "hook/windows/input_hook_c.h"
-	#include "hook/windows/post_event_c.h"
-	#include "hook/windows/system_properties_c.h"
+	#include "hook/windows/input_c.h"
+	#include "hook/windows/hook_c.h"
+	#include "hook/windows/event_c.h"
+	#include "hook/windows/properties_c.h"
 #endif
 
 #include <inttypes.h>
@@ -37,7 +37,6 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
-// #include <uiohook.h>
 #include "hook/uiohook.h"
 
 int aStop();
@@ -69,11 +68,8 @@ bool logger_proc(unsigned int level, const char *format, ...) {
 }
 
 // NOTE: The following callback executes on the same thread that hook_run() is called
-// from.  This is important because hook_run() attaches to the operating systems
-// event dispatcher and may delay event delivery to the target application.
-// Furthermore, some operating systems may choose to disable your hook if it
-// takes to long to process.  If you need to do any extended processing, please
-// do so by copying the event to your own queued dispatch thread.
+// from.
+
 struct _MEvent {
 	uint8_t id;
 	size_t mask;

@@ -3,12 +3,11 @@
 #include <config.h>
 #endif
 
-// #include <uiohook.h>
 #include "../uiohook.h"
 #include <windows.h>
 
 // #include "logger.h"
-#include "input_helper.h"
+#include "input.h"
 
 // The handle to the DLL module pulled in DllMain on DLL_PROCESS_ATTACH.
 HINSTANCE hInst;

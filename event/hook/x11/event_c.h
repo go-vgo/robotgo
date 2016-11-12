@@ -6,7 +6,6 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-// #include <uiohook.h>
 #include "../uiohook.h"
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -14,7 +13,7 @@
 #include <X11/extensions/XTest.h>
 #endif
 
-#include "input_helper.h"
+#include "input.h"
 // #include "../logger.h"
 
 extern Display *properties_disp;

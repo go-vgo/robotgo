@@ -8,12 +8,11 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-// #include <uiohook.h>
 #include "../uiohook.h"
 #include <windows.h>
 
 #include "../logger_c.h"
-#include "input_helper.h"
+#include "input.h"
 
 static const uint16_t keycode_scancode_table[][2] = {
 	/* idx		{ vk_code,				scancode				}, */
