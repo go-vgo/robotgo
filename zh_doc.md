@@ -145,13 +145,14 @@ robotgo.MoveMouse(100, 100)
 
 ####参数:
 
-    button (optional) - Accepts left, right, or middle. Defaults to left.
+    button (optional) - Accepts left, right, or center. Defaults to left.
     double (optional) - Set to true to perform a double click. Defaults to false.
 
 ####例子:
 
 ```Go
     robogo.MouseClick()
+    robogo.MouseClick("left",true)
 ```
 
 ###<h3 id="MouseToggle">.MouseToggle(down, button)</h3>
@@ -162,12 +163,13 @@ robotgo.MoveMouse(100, 100)
 ####参数:
 
     down (optional) - Accepts down or up. Defaults to down.
-    button (optional) - Accepts left, right, or middle. Defaults to left.
+    button (optional) - Accepts "left", "right", or "center". Defaults to left.
 
 ####例子:
 
 ```Go
 robotgo.MouseToggle("down")
+robotgo.MouseToggle("down", "right")
 ```
 
 ###<h3 id="DragMouse">.DragMouse(x, y)</h3>

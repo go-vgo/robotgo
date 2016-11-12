@@ -194,7 +194,16 @@ func MouseClick(args ...interface{}) {
 func MouseToggle(args ...interface{}) {
 	var button C.MMMouseButton
 	Try(func() {
-		button = args[1].(C.MMMouseButton)
+		// button = args[1].(C.MMMouseButton)
+		if args[1].(string) == "left" {
+			button = C.LEFT_BUTTON
+		}
+		if args[1].(string) == "center" {
+			button = C.CENTER_BUTTON
+		}
+		if args[1].(string) == "right" {
+			button = C.RIGHT_BUTTON
+		}
 	}, func(e interface{}) {
 		// Println("err:::", e)
 		button = C.LEFT_BUTTON
