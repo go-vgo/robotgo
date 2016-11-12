@@ -46,12 +46,12 @@ import (
 */
 
 type Bit_map struct {
-	ImageBuffer   *C.uint8_t
-	Width         C.size_t
-	Height        C.size_t
-	Bytewidth     C.size_t
-	BitsPerPixel  C.uint8_t
-	BytesPerPixel C.uint8_t
+	ImageBuffer   *uint8
+	Width         int
+	Height        int
+	Bytewidth     int
+	BitsPerPixel  uint8
+	BytesPerPixel uint8
 }
 
 func GetPixelColor(x, y int) string {
@@ -64,10 +64,10 @@ func GetPixelColor(x, y int) string {
 	return gcolor
 }
 
-func GetScreenSize() (C.size_t, C.size_t) {
+func GetScreenSize() (int, int) {
 	size := C.aGetScreenSize()
 	// Println("...", size, size.width)
-	return size.width, size.height
+	return int(size.width), int(size.height)
 }
 
 func GetXDisplayName() string {
@@ -110,16 +110,36 @@ func CaptureScreen(args ...int) C.MMBitmapRef {
 	return bit
 }
 
-func Capture_Screen(x, y, w, h C.size_t) Bit_map {
+func Capture_Screen(args ...int) Bit_map {
+	var x C.size_t
+	var y C.size_t
+	var w C.size_t
+	var h C.size_t
+	Try(func() {
+		x = C.size_t(args[0])
+		y = C.size_t(args[1])
+		w = C.size_t(args[2])
+		h = C.size_t(args[3])
+	}, func(e interface{}) {
+		// Println("err:::", e)
+		x = 0
+		y = 0
+		//Get screen size.
+		var displaySize C.MMSize
+		displaySize = C.getMainDisplaySize()
+		w = displaySize.width
+		h = displaySize.height
+	})
+
 	bit := C.aCaptureScreen(x, y, w, h)
 	// Println("...", bit)
 	bit_map := Bit_map{
-		ImageBuffer:   bit.imageBuffer,
-		Width:         bit.width,
-		Height:        bit.height,
-		Bytewidth:     bit.bytewidth,
-		BitsPerPixel:  bit.bitsPerPixel,
-		BytesPerPixel: bit.bytesPerPixel,
+		ImageBuffer:   (*uint8)(bit.imageBuffer),
+		Width:         int(bit.width),
+		Height:        int(bit.height),
+		Bytewidth:     int(bit.bytewidth),
+		BitsPerPixel:  uint8(bit.bitsPerPixel),
+		BytesPerPixel: uint8(bit.bytesPerPixel),
 	}
 
 	return bit_map

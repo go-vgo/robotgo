@@ -264,6 +264,8 @@ robotgo.ScrollMouse(50, "down")
     获取部分或者全部屏幕
     Gets part or all of the screen.
 
+    Capture_Screen Returns a go struct
+
 ####参数:
 
     x (optional)
