@@ -137,6 +137,14 @@ robotgo.MoveMouse(100, 100)
 ####参数:
 
     x,y
+    lowspeed,highspeed
+
+####例子:
+
+```Go
+    robotgo.MoveMouseSmooth(100, 200)
+	robotgo.MoveMouseSmooth(100, 200, 1.0, 100.0)
+```       
 
 ###<h3 id="MouseClick">.MouseClick(button, double)</h3>
     鼠标点击
