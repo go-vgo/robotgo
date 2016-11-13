@@ -11,18 +11,12 @@
 #include "../base/types.h"
 // #include "keycode.h"
 // #include "keypress.h"
-#include "keypress_init.h"
-#include "keycode_init.h"
+#include "keypress_c.h"
+#include "keycode_c.h"
 
 
 int keyboardDelay = 10;
 
-// struct KeyNames{
-// 	const char* name;
-// 	MMKeyCode   key;
-// };
-
-// static KeyNames key_names[] ={
 struct KeyNames{
 	const char* name;
 	MMKeyCode   key;
@@ -170,10 +164,8 @@ int CheckKeyFlags(char* f, MMKeyFlags* flags)
 }
 
 // 	//If it's not an array, it should be a single string value.
-// 	return GetFlagsFromString(value, flags);
-// }
 
-char* aKeyTap(char *k,char *aval){
+char* aKeyTap(char *k,char *akey){
 	MMKeyFlags flags = (MMKeyFlags) MOD_NONE;
 	// MMKeyFlags flags = 0;
 	MMKeyCode key;
@@ -181,8 +173,8 @@ char* aKeyTap(char *k,char *aval){
 	// char *k;
 	// k = *kstr;
 
-	if (strcmp(aval, "null") != 0){
-		switch (CheckKeyFlags(aval,&flags)){
+	if (strcmp(akey, "null") != 0){
+		switch (CheckKeyFlags(akey,&flags)){
 				case -1:
 					return "Null pointer in key flag.";
 					break;
@@ -239,7 +231,7 @@ char* aKeyToggle(char *k,char *d){
 			microsleep(keyboardDelay);
 	}
 
-	return "success";
+	return "0";
 }
 
 void aTypeString(char *str){

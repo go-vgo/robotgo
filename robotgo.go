@@ -278,16 +278,16 @@ func Try(fun func(), handler func(interface{})) {
 }
 
 func KeyTap(args ...string) {
-	var apara string
+	var akey string
 	Try(func() {
-		apara = args[1]
+		akey = args[1]
 	}, func(e interface{}) {
 		// Println("err:::", e)
-		apara = "null"
+		akey = "null"
 	})
 
 	zkey := C.CString(args[0])
-	amod := C.CString(apara)
+	amod := C.CString(akey)
 	// defer func() {
 	C.aKeyTap(zkey, amod)
 	// }()
@@ -297,16 +297,16 @@ func KeyTap(args ...string) {
 }
 
 func KeyToggle(args ...string) {
-	var apara string
+	var akey string
 	Try(func() {
-		apara = args[1]
+		akey = args[1]
 	}, func(e interface{}) {
 		// Println("err:::", e)
-		apara = "null"
+		akey = "null"
 	})
 
 	zkey := C.CString(args[0])
-	amod := C.CString(apara)
+	amod := C.CString(akey)
 	// defer func() {
 	str := C.aKeyToggle(zkey, amod)
 	Println(str)
