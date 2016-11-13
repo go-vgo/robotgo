@@ -9,8 +9,8 @@
 // except according to those terms.
 
 #include "../base/types.h"
-#include "screengrab_init.h"
-#include "screen_init.h"
+#include "screengrab_c.h"
+#include "screen_c.h"
 // #include "../MMBitmap_init.h"
 
 void padHex(MMRGBHex color, char* hex){
