@@ -323,7 +323,7 @@ func TypeString(x string) {
 
 func TypeStringDelayed(x string, y int) {
 	cx := C.CString(x)
-	cy := C.C.size_t(y)
+	cy := C.size_t(y)
 	C.aTypeStringDelayed(cx, cy)
 	defer C.free(unsafe.Pointer(cx))
 }
