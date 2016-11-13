@@ -278,9 +278,24 @@ func Try(fun func(), handler func(interface{})) {
 }
 
 func KeyTap(args ...string) {
+	// func KeyTap(args ...interface{}) {
 	var akey string
+	var akeyt string
+	// var ckeyarr []*C.char
+	// var keyarr []string
+
 	Try(func() {
 		akey = args[1]
+		// for i, _ := range keyarr {
+		// 	ckeyarr = append(ckeyarr, (*C.char)(unsafe.Pointer(C.CString(keyarr[i]))))
+		// }
+		Try(func() {
+			akeyt = args[2]
+		}, func(e interface{}) {
+			// Println("err:::", e)
+			akeyt = "null"
+		})
+
 	}, func(e interface{}) {
 		// Println("err:::", e)
 		akey = "null"
@@ -288,31 +303,50 @@ func KeyTap(args ...string) {
 
 	zkey := C.CString(args[0])
 	amod := C.CString(akey)
-	// defer func() {
-	C.aKeyTap(zkey, amod)
-	// }()
+	amodt := C.CString(akeyt)
+
+	C.aKeyTap(zkey, amod, amodt)
 
 	defer C.free(unsafe.Pointer(zkey))
 	defer C.free(unsafe.Pointer(amod))
+	defer C.free(unsafe.Pointer(amodt))
 }
 
 func KeyToggle(args ...string) {
-	var akey string
+	var adown string
+	var amkey string
+	var amkeyt string
 	Try(func() {
-		akey = args[1]
+		adown = args[1]
+		Try(func() {
+			amkey = args[2]
+			Try(func() {
+				amkeyt = args[3]
+			}, func(e interface{}) {
+				// Println("err:::", e)
+				amkeyt = "null"
+			})
+		}, func(e interface{}) {
+			// Println("err:::", e)
+			amkey = "null"
+		})
 	}, func(e interface{}) {
 		// Println("err:::", e)
-		akey = "null"
+		adown = "null"
 	})
 
-	zkey := C.CString(args[0])
-	amod := C.CString(akey)
+	ckey := C.CString(args[0])
+	cadown := C.CString(adown)
+	camkey := C.CString(amkey)
+	camkeyt := C.CString(amkeyt)
 	// defer func() {
-	str := C.aKeyToggle(zkey, amod)
+	str := C.aKeyToggle(ckey, cadown, camkey, camkeyt)
 	Println(str)
 	// }()
-	defer C.free(unsafe.Pointer(zkey))
-	defer C.free(unsafe.Pointer(amod))
+	defer C.free(unsafe.Pointer(ckey))
+	defer C.free(unsafe.Pointer(cadown))
+	defer C.free(unsafe.Pointer(camkey))
+	defer C.free(unsafe.Pointer(camkeyt))
 }
 
 func TypeString(x string) {
