@@ -163,18 +163,32 @@ int CheckKeyFlags(char* f, MMKeyFlags* flags)
 	return 0;
 }
 
-// 	//If it's not an array, it should be a single string value.
+int GetFlagsFromValue(char* value[], MMKeyFlags* flags){
+	if (!flags) {return -1;}
 
-char* aKeyTap(char *k,char *akey){
+		for (int i = 0; i <2; i++){
+			MMKeyFlags f = MOD_NONE;
+			const int rv = CheckKeyFlags(value[i], &f);
+			if (rv) return rv;
+
+			*flags = (MMKeyFlags)(*flags | f);
+		}
+	return 0;
+	// return CheckKeyFlags(fstr, flags);
+}
+
+// If it's not an array, it should be a single string value.
+
+char* aKeyTap(char *k,char *akey,char *akeyt){
 	MMKeyFlags flags = (MMKeyFlags) MOD_NONE;
 	// MMKeyFlags flags = 0;
 	MMKeyCode key;
 
 	// char *k;
 	// k = *kstr;
-
 	if (strcmp(akey, "null") != 0){
-		switch (CheckKeyFlags(akey,&flags)){
+		if (strcmp(akeyt, "null") == 0){
+			switch (CheckKeyFlags(akey,&flags)){
 				case -1:
 					return "Null pointer in key flag.";
 					break;
@@ -182,6 +196,17 @@ char* aKeyTap(char *k,char *akey){
 					return "Invalid key flag specified.";
 					break;
 			}
+		}else{
+			char* akeyarr[2] = {akey,akeyt};
+			switch(GetFlagsFromValue(akeyarr,&flags)){
+				case -1:
+					return "Null pointer in key flag.";
+					break;
+				case -2:
+					return "Invalid key flag specified.";
+					break;
+			}
+		}
 	}
 
 	switch(CheckKeyCodes(k, &key)){
@@ -199,7 +224,7 @@ char* aKeyTap(char *k,char *akey){
 	return "0";
 }
 
-char* aKeyToggle(char *k,char *d){
+char* aKeyToggle(char *k,char *d,char *akey,char *akeyt){
 	MMKeyFlags flags = (MMKeyFlags) MOD_NONE;
 	MMKeyCode key;
 
@@ -216,6 +241,30 @@ char* aKeyToggle(char *k,char *d){
 			down = false;
 		}else{
 			return "Invalid key state specified.";
+		}
+	}
+
+	if (strcmp(akey, "null") != 0){
+		if (strcmp(akeyt, "null") == 0){
+			switch (CheckKeyFlags(akey,&flags)){
+				case -1:
+					return "Null pointer in key flag.";
+					break;
+				case -2:
+					return "Invalid key flag specified.";
+					break;
+			}
+		}else{
+			char* akeyarr[2] = {akey,akeyt};
+			switch (GetFlagsFromValue(akeyarr, &flags))
+				{
+					case -1:
+						return "Null pointer in key flag.";
+						break;
+					case -2:
+						return "Invalid key flag specified.";
+						break;
+				}
 		}
 	}
 
