@@ -18,6 +18,9 @@ This is a work in progress.If you think useful,Please star it;If you want to per
 
   It's that easy!
 
+##Update:
+    go get -u github.com/go-vgo/robotgo  
+
 ###Requirements:
 
 ####ALL:  
