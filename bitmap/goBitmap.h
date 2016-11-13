@@ -19,9 +19,9 @@
 // 		uint8_t *image;
 // };
 #include "bitmap_class.h"
-#include "bitmap_find_init.h"
+#include "bitmap_find_c.h"
 #include "../base/color_find_init.h"
-// #include "../screen/screen_init.h"
+// #include "../screen/screen_c.h"
 #include "../base/io_init.h"
 #include "../base/pasteboard_init.h"
 #include "../base/str_io_init.h"
