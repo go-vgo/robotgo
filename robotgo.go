@@ -31,6 +31,7 @@ import "C"
 
 import (
 	. "fmt"
+	"reflect"
 	"unsafe"
 	// "runtime"
 	// "syscall"
@@ -277,39 +278,60 @@ func Try(fun func(), handler func(interface{})) {
 	fun()
 }
 
-func KeyTap(args ...string) {
-	// func KeyTap(args ...interface{}) {
+func KeyTap(args ...interface{}) {
 	var akey string
 	var akeyt string
 	// var ckeyarr []*C.char
-	// var keyarr []string
+	ckeyarr := make([](*_Ctype_char), 0)
+	var keyarr []string
+	var num int
 
 	Try(func() {
-		akey = args[1]
-		// for i, _ := range keyarr {
-		// 	ckeyarr = append(ckeyarr, (*C.char)(unsafe.Pointer(C.CString(keyarr[i]))))
-		// }
-		Try(func() {
-			akeyt = args[2]
-		}, func(e interface{}) {
-			// Println("err:::", e)
-			akeyt = "null"
-		})
+		if reflect.TypeOf(args[1]) == reflect.TypeOf(keyarr) {
+
+			keyarr = args[1].([]string)
+
+			num = len(keyarr)
+
+			for i, _ := range keyarr {
+				ckeyarr = append(ckeyarr, (*C.char)(unsafe.Pointer(C.CString(keyarr[i]))))
+			}
+
+		} else {
+			akey = args[1].(string)
+
+			Try(func() {
+				akeyt = args[2].(string)
+
+			}, func(e interface{}) {
+				// Println("err:::", e)
+				akeyt = "null"
+			})
+		}
 
 	}, func(e interface{}) {
 		// Println("err:::", e)
 		akey = "null"
+		keyarr = []string{"null"}
 	})
+	// }()
 
-	zkey := C.CString(args[0])
-	amod := C.CString(akey)
-	amodt := C.CString(akeyt)
+	zkey := C.CString(args[0].(string))
 
-	C.aKeyTap(zkey, amod, amodt)
+	if akey == "" && len(keyarr) != 0 {
+		C.aKey_Tap(zkey, (**_Ctype_char)(unsafe.Pointer(&ckeyarr[0])), C.int(num))
+	} else {
+		// zkey := C.CString(args[0])
+		amod := C.CString(akey)
+		amodt := C.CString(akeyt)
 
-	defer C.free(unsafe.Pointer(zkey))
-	defer C.free(unsafe.Pointer(amod))
-	defer C.free(unsafe.Pointer(amodt))
+		C.aKeyTap(zkey, amod, amodt)
+
+		defer C.free(unsafe.Pointer(zkey))
+		defer C.free(unsafe.Pointer(amod))
+		defer C.free(unsafe.Pointer(amodt))
+	}
+
 }
 
 func KeyToggle(args ...string) {
