@@ -73,6 +73,15 @@
     key - See keys.
     modifier (optional, string or array) - Accepts alt, command (win), control, and shift.
 
+####Examples:
+
+```Go
+    robotgo.KeyTap("h", "command")
+    robotgo.KeyTap("i", "alt", "command")
+	arr := []string{"alt", "command"}
+	robotgo.KeyTap("i", arr)
+```
+
 ###<h3 id="KeyToggle">.KeyToggle(key, down, modifier)</h3>
 
     Hold down or release a key.

@@ -72,10 +72,18 @@
 
 ####参数:
     键盘值
-    修饰值(可选类型, 字符串或者数组(数组类型正在添加中)) - 可选值: alt, command (win), control, and shift.
+    修饰值(可选类型, 字符串或者数组) - 可选值: alt, command (win), control, and shift.
 
     key - See keys.
     modifier (optional, string or array) - Accepts alt, command (win), control, and shift.
+####Examples:
+
+```Go
+    robotgo.KeyTap("h", "command")
+    robotgo.KeyTap("i", "alt", "command")
+	arr := []string{"alt", "command"}
+	robotgo.KeyTap("i", arr)
+```
 
 ###<h3 id="KeyToggle">.KeyToggle(key, down, modifier)</h3>
     键盘切换,按住或释放一个键位
