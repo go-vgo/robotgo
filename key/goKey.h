@@ -163,10 +163,10 @@ int CheckKeyFlags(char* f, MMKeyFlags* flags)
 	return 0;
 }
 
-int GetFlagsFromValue(char* value[], MMKeyFlags* flags){
+int GetFlagsFromValue(char* value[], MMKeyFlags* flags,int num){
 	if (!flags) {return -1;}
 
-		for (int i = 0; i <2; i++){
+		for (int i = 0; i <num; i++){
 			MMKeyFlags f = MOD_NONE;
 			const int rv = CheckKeyFlags(value[i], &f);
 			if (rv) return rv;
@@ -178,6 +178,35 @@ int GetFlagsFromValue(char* value[], MMKeyFlags* flags){
 }
 
 // If it's not an array, it should be a single string value.
+char* aKey_Tap(char *k,char* keyarr[],int num){
+	MMKeyFlags flags = MOD_NONE;
+	// MMKeyFlags flags = 0;
+	MMKeyCode key;
+
+			switch(GetFlagsFromValue(keyarr,&flags,num)){
+			// switch (CheckKeyFlags(akey,&flags)){
+				case -1:
+					return "Null pointer in key flag.";
+					break;
+				case -2:
+					return "Invalid key flag specified.";
+					break;
+			}
+
+	switch(CheckKeyCodes(k, &key)){
+			case -1:
+				return "Null pointer in key code.";
+				break;
+			case -2:
+				return "Invalid key code specified.";
+				break;
+			default:
+				tapKeyCode(key, flags);
+				microsleep(keyboardDelay);
+		}
+
+	return "0";
+}
 
 char* aKeyTap(char *k,char *akey,char *akeyt){
 	MMKeyFlags flags = (MMKeyFlags) MOD_NONE;
@@ -198,7 +227,7 @@ char* aKeyTap(char *k,char *akey,char *akeyt){
 			}
 		}else{
 			char* akeyarr[2] = {akey,akeyt};
-			switch(GetFlagsFromValue(akeyarr,&flags)){
+			switch(GetFlagsFromValue(akeyarr,&flags,2)){
 				case -1:
 					return "Null pointer in key flag.";
 					break;
@@ -256,7 +285,7 @@ char* aKeyToggle(char *k,char *d,char *akey,char *akeyt){
 			}
 		}else{
 			char* akeyarr[2] = {akey,akeyt};
-			switch (GetFlagsFromValue(akeyarr, &flags))
+			switch (GetFlagsFromValue(akeyarr, &flags,2))
 				{
 					case -1:
 						return "Null pointer in key flag.";
