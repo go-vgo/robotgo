@@ -418,7 +418,7 @@ func main() {
 
     Displays alert with the given attributes. If cancelButton is not given, only the defaultButton is displayed
 
-####Arguments:
+####参数:
 
     title(string),
     msg(string),
@@ -426,7 +426,7 @@ func main() {
     cancelButton(optional string)
            
 
-####Return:
+####返回值:
 
    Returns 0(True) if the default button was pressed, or 1(False) if cancelled.
    
@@ -434,20 +434,20 @@ func main() {
 
     Close the Window
 
-####Arguments:
+####参数:
            
 
-####Return:
+####返回值:
 
 
 ###<h3 id="IsValid">.IsValid()</h3>
 
    Valid the Window
 
-####Arguments:
+####参数:
            
 
-####Return:
+####返回值:
     Returns true if a window has been selected
 
 
@@ -455,28 +455,28 @@ func main() {
 
    Get the Active Window
 
-####Arguments:
+####参数:
            
 
-####Return:
+####返回值:
     Returns hwnd
 
 ###<h3 id="GetHandle">.GetHandle()</h3>
 
    Get the Window Handle
 
-####Arguments:
+####参数:
            
 
-####Return:
+####返回值:
     Returns hwnd  
 
 ###<h3 id="GetTitle">.GetTitle()</h3>
 
    Get the Window Title
 
-####Arguments:
+####参数:
            
 
-####Return:
+####返回值:
     Returns Window Title     
