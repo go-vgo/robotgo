@@ -43,7 +43,7 @@
 #####[LEvent](#LEvent)(相当于AddEvent)
 #####[AddEvent](#AddEvent)
 
-##[Window](#Window)
+##[窗口](#Window)
     This is a work in progress.
 
 #####[ShowAlert(support linux as soon as possible)](#ShowAlert)
@@ -76,7 +76,7 @@
 
     key - See keys.
     modifier (optional, string or array) - Accepts alt, command (win), control, and shift.
-####Examples:
+####例子:
 
 ```Go
     robotgo.KeyTap("h", "command")
@@ -412,7 +412,7 @@ func main() {
 } 
 ```
 
-##<h2 id="Window">Window</h2> 
+##<h2 id="Window">窗口</h2> 
 
 ###<h3 id="ShowAlert">.ShowAlert(title, msg,defaultButton,cancelButton string)</h3>
 
