@@ -165,8 +165,8 @@ int CheckKeyFlags(char* f, MMKeyFlags* flags)
 
 int GetFlagsFromValue(char* value[], MMKeyFlags* flags,int num){
 	if (!flags) {return -1;}
-
-		for (int i = 0; i <num; i++){
+		int i;
+		for ( i= 0; i <num; i++){
 			MMKeyFlags f = MOD_NONE;
 			const int rv = CheckKeyFlags(value[i], &f);
 			if (rv) return rv;
