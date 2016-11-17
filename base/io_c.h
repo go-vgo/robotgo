@@ -1,7 +1,7 @@
 #include "io.h"
 // #include "os.h"
-// #include "bmp_io_init.h"
-#include "png_io_init.h"
+// #include "bmp_io_c.h"
+#include "png_io_c.h"
 #include <stdio.h> /* For fputs() */
 #include <string.h> /* For strcmp() */
 #include <ctype.h> /* For tolower() */

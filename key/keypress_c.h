@@ -1,5 +1,5 @@
 #include "keypress.h"
-// #include "../base/deadbeef_rand_init.h"
+// #include "../base/deadbeef_rand_c.h"
 #include "../base/microsleep.h"
 
 #include <ctype.h> /* For isupper() */
@@ -10,7 +10,7 @@
 	#import <IOKit/hidsystem/ev_keymap.h>
 #elif defined(USE_X11)
 	#include <X11/extensions/XTest.h>
-	// #include "../base/xdisplay_init.h"
+	// #include "../base/xdisplay_c.h"
 #endif
 
 /* Convenience wrappers around ugly APIs. */

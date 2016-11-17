@@ -1,7 +1,7 @@
 #include "mouse.h"
 // #include "../screen/screen.h"
-// #include "../screen/screen_init.h"
-#include "../base/deadbeef_rand_init.h"
+// #include "../screen/screen_c.h"
+#include "../base/deadbeef_rand_c.h"
 // #include "../deadbeef_rand.h"
 #include "../base/microsleep.h"
 
@@ -15,7 +15,7 @@
 	#include <X11/Xlib.h>
 	#include <X11/extensions/XTest.h>
 	#include <stdlib.h>
-	// #include "../base/xdisplay_init.h"
+	// #include "../base/xdisplay_c.h"
 #endif
 
 #if !defined(M_SQRT2)

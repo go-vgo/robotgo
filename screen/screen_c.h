@@ -5,7 +5,7 @@
 	#include <ApplicationServices/ApplicationServices.h>
 #elif defined(USE_X11)
 	#include <X11/Xlib.h>
-	// #include "../base/xdisplay_init.h"
+	// #include "../base/xdisplay_c.h"
 #endif
 
 MMSize getMainDisplaySize(void)

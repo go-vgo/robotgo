@@ -2,8 +2,8 @@
 #ifndef PNG_IO_H
 #define PNG_IO_H
 
-// #include "MMBitmap_init.h"
-// #include "io_init.h"
+// #include "MMBitmap_c.h"
+// #include "io_c.h"
 
 enum _PNGReadError {
 	kPNGGenericError = 0,

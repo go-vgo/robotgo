@@ -11,7 +11,7 @@
 #include "../base/types.h"
 #include "screengrab_c.h"
 #include "screen_c.h"
-// #include "../MMBitmap_init.h"
+// #include "../MMBitmap_c.h"
 
 void padHex(MMRGBHex color, char* hex){
 	//Length needs to be 7 because snprintf includes a terminating null.

@@ -1,5 +1,5 @@
 #include "bitmap_find.h"
-#include "../base/UTHashTable_init.h"
+#include "../base/UTHashTable_c.h"
 #include <assert.h>
 
 /* Node to be used in hash table. */

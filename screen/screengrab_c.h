@@ -1,5 +1,5 @@
 #include "screengrab.h"
-#include "../base/bmp_io_init.h"
+#include "../base/bmp_io_c.h"
 #include "../base/endian.h"
 #include <stdlib.h> /* malloc() */
 
@@ -10,7 +10,7 @@
 #elif defined(USE_X11)
 	#include <X11/Xlib.h>
 	#include <X11/Xutil.h>
-	#include "../base/xdisplay_init.h"
+	#include "../base/xdisplay_c.h"
 #elif defined(IS_WINDOWS)
 	// #include "windows.h"
 	// #include <wingdi.h>

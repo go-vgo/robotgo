@@ -3,7 +3,7 @@
 #define SCREENGRAB_H
 
 #include "../base/types.h"
-#include "../base/MMBitmap_init.h"
+#include "../base/MMBitmap_c.h"
 
 #ifdef __cplusplus
 extern "C"

@@ -1,7 +1,7 @@
 #include "str_io.h"
-#include "zlib_util_init.h"
-#include "base64_init.h"
-#include "snprintf_init.h" /* snprintf() */
+#include "zlib_util_c.h"
+#include "base64_c.h"
+#include "snprintf_c.h" /* snprintf() */
 #include <stdio.h> /* fputs() */
 #include <ctype.h> /* isdigit() */
 #include <stdlib.h> /* atoi() */
