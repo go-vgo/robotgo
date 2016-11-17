@@ -4,7 +4,7 @@
 
 // #include "../base/types.h"
 #include "../base/MMBitmap.h"
-#include "../base/MMPointArray_init.h"
+#include "../base/MMPointArray_c.h"
 
 /* Convenience wrapper around findBitmapInRect(), where |rect| is the bounds
  * of |haystack|. */
