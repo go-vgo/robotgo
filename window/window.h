@@ -10,72 +10,7 @@
 
 // #include "../base/os.h"
 // #include <stdlib.h>
-
-#if defined(IS_MACOSX)
-	#if defined (__x86_64__)
-		#define RobotGo_64
-	#else
-		#define RobotGo_32
-	#endif
-
-	#include <dlfcn.h>
-	#include <ApplicationServices/ApplicationServices.h>
-	// #include <RunningApplications.h>
-	// #include <Foundation/Foundation.h>
-
-	#ifdef MAC_OS_X_VERSION_10_11
-		#define kAXValueCGPointType kAXValueTypeCGPoint
-		#define kAXValueCGSizeType  kAXValueTypeCGSize
-	#endif
-#elif defined(USE_X11)
-	#if defined (__x86_64__)
-		#define RobotGo_64
-	#else
-		#define RobotGo_32
-	#endif
-	#include <X11/Xlib.h>
-	#include <X11/Xatom.h>
-
-	#ifndef X_HAVE_UTF8_STRING
-		#error It appears that X_HAVE_UTF8_STRING is not defined - \
-			   please verify that your version of XLib is supported
-	#endif
-#elif defined(IS_WINDOWS)
-	#if defined (_WIN64)
-		#define RobotGo_64
-	#else
-		#define RobotGo_32
-	#endif
-
-	#include <winuser.h>
-	//#include <windows.h>
-	#include <tchar.h>
-#endif
-
-typedef signed char			int8;		// Signed  8-Bit integer
-typedef signed short		int16;		// Signed 16-Bit integer
-typedef signed int			int32;		// Signed 32-Bit integer
-typedef signed long long	int64;		// Signed 64-Bit integer
-
-typedef unsigned char		uint8;		// Unsigned  8-Bit integer
-typedef unsigned short		uint16;		// Unsigned 16-Bit integer
-typedef unsigned int		uint32;		// Unsigned 32-Bit integer
-typedef unsigned long long	uint64;		// Unsigned 64-Bit integer
-
-typedef float				real32;		// 32-Bit float value
-typedef double				real64;		// 64-Bit float value
-
-#ifdef RobotGo_64
-
-	typedef  int64			 intptr;	//   Signed pointer integer
-	typedef uint64			uintptr;	// Unsigned pointer integer
-
-#else
-
-	typedef  int32			 intptr;	//   Signed pointer integer
-	typedef uint32			uintptr;	// Unsigned pointer integer
-
-#endif
+#include "process.h"
 
 struct _MData{
 #if defined(IS_MACOSX)
