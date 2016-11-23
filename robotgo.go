@@ -561,6 +561,10 @@ func IsValid() bool {
 	return gbool
 }
 
+func SetActive(win C.MData) {
+	C.aSetActive(win)
+}
+
 func GetActive() C.MData {
 	mdata := C.aGetActive()
 	// Println("active----", mdata)

@@ -219,11 +219,48 @@ void aWindow();
 		return NULL;
 	}
 
-	////////////////////////////////////////////////////////////////////////////////
+	//////
 
 	#define STATE_TOPMOST  0
 	#define STATE_MINIMIZE 1
 	#define STATE_MAXIMIZE 2
+
+
+	//////
+	static void SetDesktopForWindow (MData win){
+		Display *rDisplay = XOpenDisplay(NULL);
+		// Validate every atom that we want to use
+		if (WM_DESKTOP != None && WM_CURDESK != None){
+			// Get desktop property
+			long* desktop = (long*)
+				GetWindowProperty (win, WM_DESKTOP,NULL);
+
+			// Check result value
+			if (desktop != NULL){
+				// Retrieve the screen number
+				XWindowAttributes attr = { 0 };
+				XGetWindowAttributes (rDisplay, win.XWin, &attr);
+				int s = XScreenNumberOfScreen (attr.screen);
+				Window root = XRootWindow(rDisplay, s);
+
+				// Prepare an event
+				XClientMessageEvent e = { 0 };
+				e.window = root; e.format = 32;
+				e.message_type = WM_CURDESK;
+				e.display = rDisplay;
+				e.type = ClientMessage;
+				e.data.l[0] = *desktop;
+				e.data.l[1] = CurrentTime;
+
+				// Send the message
+				XSendEvent(rDisplay,
+					root, False, SubstructureNotifyMask |
+					SubstructureRedirectMask, (XEvent*) &e);
+
+				XFree(desktop);
+			}
+		}
+	}
 
 
 #elif defined(IS_WINDOWS)
@@ -457,6 +494,144 @@ bool IsTopMost (void){
 
 	return (GetWindowLongPtr (mData.HWnd,
 		GWL_EXSTYLE) & WS_EX_TOPMOST) != 0;
+
+#endif
+}
+
+bool IsMinimized(void){
+	// Check the window validity
+	if (!IsValid()) return false;
+#if defined(IS_MACOSX)
+
+	CFBooleanRef data = NULL;
+
+	// Determine whether the window is minimized
+	if (AXUIElementCopyAttributeValue (mData.AxID,
+		kAXMinimizedAttribute, (CFTypeRef*) &data)
+		== kAXErrorSuccess && data != NULL)
+	{
+		// Convert resulting data into a bool
+		bool result = CFBooleanGetValue(data);
+		CFRelease (data); return result;
+	}
+
+	return false;
+
+#elif defined(USE_X11)
+
+	// Ignore X errors
+	// XDismissErrors();
+	// return GetState (mData.XWin, STATE_MINIMIZE);
+
+#elif defined(IS_WINDOWS)
+
+	return (GetWindowLongPtr (mData.HWnd,
+			GWL_STYLE) & WS_MINIMIZE) != 0;
+
+#endif
+}
+
+//////
+
+bool IsMaximized(void){
+	// Check the window validity
+	if (!IsValid()) return false;
+#if defined(IS_MACOSX)
+
+	return false; // WARNING: Unavailable
+
+#elif defined(USE_X11)
+
+	// Ignore X errors
+	// XDismissErrors();
+	// return GetState (mData.XWin, STATE_MAXIMIZE);
+
+#elif defined(IS_WINDOWS)
+
+	return (GetWindowLongPtr (mData.HWnd,
+			GWL_STYLE) & WS_MAXIMIZE) != 0;
+
+#endif
+}
+
+void SetActive(const MData win){
+	// Check if the window is valid
+	if (!IsValid()) return;
+#if defined(IS_MACOSX)
+
+	// Attempt to raise the specified window object
+	if (AXUIElementPerformAction (win.AxID,
+				  kAXRaiseAction) == kAXErrorSuccess)
+	{
+		pid_t pid = 0;
+		// Attempt to retrieve the PID of the window
+		if (AXUIElementGetPid (win.AxID, &pid)
+					!= kAXErrorSuccess || !pid) return;
+
+		// Ignore deprecated warnings
+		#pragma clang diagnostic push
+		#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
+		// NOTE: Until Apple actually removes
+		// these functions, there's no real
+		// reason to switch to the NS* flavor
+
+		ProcessSerialNumber psn;
+		// Attempt to retrieve the process psn
+		if (GetProcessForPID (pid, &psn) == 0){
+			// Gracefully activate process
+			SetFrontProcessWithOptions (&psn,
+			kSetFrontProcessFrontWindowOnly);
+		}
+
+		#pragma clang diagnostic pop
+	}
+
+#elif defined(USE_X11)
+
+	// Ignore X errors
+	XDismissErrors();
+
+	// Go to the specified window's desktop
+	SetDesktopForWindow(win);
+	Display *rDisplay = XOpenDisplay(NULL);
+	// Check the atom value
+	if (WM_ACTIVE != None){
+		// Retrieve the screen number
+		XWindowAttributes attr = { 0 };
+		XGetWindowAttributes (rDisplay,
+			win.XWin, &attr);
+		int s = XScreenNumberOfScreen(attr.screen);
+
+		// Prepare an event
+		XClientMessageEvent e = { 0 };
+		e.window = win.XWin;
+		e.format = 32;
+		e.message_type = WM_ACTIVE;
+		e.display = rDisplay;
+		e.type = ClientMessage;
+		e.data.l[0] = 2;
+		e.data.l[1] = CurrentTime;
+
+		// Send the message
+		XSendEvent(rDisplay, XRootWindow (rDisplay, s), False,
+			SubstructureNotifyMask | SubstructureRedirectMask,
+			(XEvent*) &e);
+	}else{
+		// Attempt to raise the specified window
+		XRaiseWindow(rDisplay, win.XWin);
+
+		// Set the specified window's input focus
+		XSetInputFocus(rDisplay, win.XWin,
+						RevertToParent, CurrentTime);
+	}
+
+#elif defined(IS_WINDOWS)
+
+	if (IsMinimized())
+		ShowWindow(win.HWnd, SW_RESTORE);
+
+	SetForegroundWindow (win.HWnd);
 
 #endif
 }
