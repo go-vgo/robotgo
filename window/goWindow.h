@@ -37,6 +37,10 @@ uintptr aGetHandle(){
 	return hwnd;
 }
 
+void aSetActive(const MData win){
+	SetActive(win);
+}
+
 MData aGetActive(){
 	MData mdata=GetActive();
 	return mdata;

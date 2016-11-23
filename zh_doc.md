@@ -49,6 +49,7 @@
 #####[ShowAlert(support linux as soon as possible)](#ShowAlert)
 #####[CloseWindow](#CloseWindow)
 #####[IsValid](#IsValid)
+#####[SetActive](#SetActive)
 #####[GetActive](#GetActive)
 #####[GetHandle](#GetHandle)
 #####[GetTitle](#GetTitle)
@@ -449,6 +450,17 @@ func main() {
 
 ####返回值:
     Returns true if a window has been selected
+
+
+###<h3 id="SetActive">.SetActive()</h3>
+
+   Set the Active Window
+
+####参数:
+         hwnd  
+
+####返回值:
+    void
 
 
 ###<h3 id="GetActive">.GetActive()</h3>
