@@ -82,7 +82,7 @@ import (
 
 func main() {
   robotgo.ScrollMouse(10, "up")
-  robogo.MouseClick("left",true)
+  robotgo.MouseClick("left",true)
   robotgo.MoveMouseSmooth(100, 200, 1.0, 100.0)
 } 
 ``` 
@@ -122,6 +122,8 @@ import (
 func main() {
   x, y := robotgo.GetMousePos()
   Println("pos:", x, y)
+  color := robotgo.GetPixelColor(100, 200)
+  Println("color----", color)
 } 
 ```
 
