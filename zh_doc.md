@@ -433,7 +433,7 @@ func main() {
    
 ###<h3 id="CloseWindow">.CloseWindow()</h3>
 
-    Close the Window
+    关闭窗口
 
 ####参数:
            
@@ -449,12 +449,12 @@ func main() {
            
 
 ####返回值:
-    Returns true if a window has been selected
+    如果窗口selected返回true 
 
 
 ###<h3 id="SetActive">.SetActive()</h3>
 
-   Set the Active Window
+   设为当前窗口
 
 ####参数:
          hwnd  
@@ -465,7 +465,7 @@ func main() {
 
 ###<h3 id="GetActive">.GetActive()</h3>
 
-   Get the Active Window
+   获取当前窗口
 
 ####参数:
            
@@ -475,7 +475,7 @@ func main() {
 
 ###<h3 id="GetHandle">.GetHandle()</h3>
 
-   Get the Window Handle
+   获取窗口 Handle
 
 ####参数:
            
@@ -485,10 +485,10 @@ func main() {
 
 ###<h3 id="GetTitle">.GetTitle()</h3>
 
-   Get the Window Title
+   获取窗口标题
 
 ####参数:
            
 
 ####返回值:
-    Returns Window Title     
+    返回窗口标题     
