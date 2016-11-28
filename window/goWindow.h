@@ -32,6 +32,11 @@ void aCloseWindow(void){
 	CloseWin();
 }
 
+bool aSetHandle (uintptr handle){
+	bool hwnd=setHandle(handle);
+	return hwnd;
+}
+
 uintptr aGetHandle(){
 	uintptr hwnd=getHandle();
 	return hwnd;

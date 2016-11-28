@@ -51,6 +51,7 @@
 #####[IsValid](#IsValid)
 #####[SetActive](#SetActive)
 #####[GetActive](#GetActive)
+#####[SetHandle](#SetHandle)
 #####[GetHandle](#GetHandle)
 #####[GetTitle](#GetTitle)
 
@@ -459,6 +460,16 @@ func main() {
 
 ####Return:
     Returns hwnd
+
+###<h3 id="SetHandle">.SetHandle()</h3>
+
+   Set the Window Handle
+
+####Arguments:
+    int 
+
+####Return:
+    bool
 
 ###<h3 id="GetHandle">.GetHandle()</h3>
 

@@ -582,10 +582,10 @@ func GetHandle() int {
 	return ghwnd
 }
 
-// func SetHandle(hwnd int) {
-// 	chwnd := C.uintptr(hwnd)
-// 	C.aSetHandle(chwnd)
-// }
+func SetHandle(hwnd int) {
+	chwnd := C.uintptr(hwnd)
+	C.aSetHandle(chwnd)
+}
 
 func GetTitle() string {
 	title := C.aGetTitle()
