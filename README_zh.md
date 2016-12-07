@@ -188,6 +188,6 @@ func main() {
   }
 
   title:=robotgo.GetTitle()
-  Println("title@@@", "title")
+  Println("title@@@", title)
 } 
 ```
