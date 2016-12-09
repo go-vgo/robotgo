@@ -118,9 +118,9 @@ func CaptureScreen(args ...int) C.MMBitmapRef {
 	return bit
 }
 
-//CaptureScreen Capture the Screen
-// func Capture_Screen(args ...int) Bit_map {
-func BCaptureScreen(args ...int) Bitmap {
+//BCaptureScreen Capture the Screen
+func Capture_Screen(args ...int) Bitmap {
+	// func BCaptureScreen(args ...int) Bitmap {
 	var x C.size_t
 	var y C.size_t
 	var w C.size_t
