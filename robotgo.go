@@ -46,8 +46,9 @@ import (
 |_______/     \______|| _| `._____||_______||_______||__| \__|
 */
 
-//Bit_map is Bitmap struct
-type Bit_map struct {
+//Bitmap is Bitmap struct
+// type Bit_map struct {
+type Bitmap struct {
 	ImageBuffer   *uint8
 	Width         int
 	Height        int
@@ -117,8 +118,9 @@ func CaptureScreen(args ...int) C.MMBitmapRef {
 	return bit
 }
 
-//Capture_Screen Capture the Screen
-func Capture_Screen(args ...int) Bit_map {
+//CaptureScreen Capture the Screen
+// func Capture_Screen(args ...int) Bit_map {
+func BCaptureScreen(args ...int) Bitmap {
 	var x C.size_t
 	var y C.size_t
 	var w C.size_t
@@ -141,7 +143,8 @@ func Capture_Screen(args ...int) Bit_map {
 
 	bit := C.aCaptureScreen(x, y, w, h)
 	// Println("...", bit)
-	bit_map := Bit_map{
+	// bit_map := Bit_map{
+	bitmap := Bitmap{
 		ImageBuffer:   (*uint8)(bit.imageBuffer),
 		Width:         int(bit.width),
 		Height:        int(bit.height),
@@ -150,7 +153,8 @@ func Capture_Screen(args ...int) Bit_map {
 		BytesPerPixel: uint8(bit.bytesPerPixel),
 	}
 
-	return bit_map
+	// return bit_map
+	return bitmap
 }
 
 /*
@@ -169,8 +173,8 @@ type MPoint struct {
 	y int
 }
 
-//C.size_t  int
 //MoveMouse Move the Mouse
+//C.size_t  int
 func MoveMouse(x, y int) {
 	cx := C.size_t(x)
 	cy := C.size_t(y)
@@ -487,9 +491,11 @@ func SaveBitmap(args ...interface{}) {
 
 //TostringBitmap Tostring Bitmap
 func TostringBitmap(bit C.MMBitmapRef) *C.char {
-	str_bit := C.aTostringBitmap(bit)
+	// str_bit := C.aTostringBitmap(bit)
+	strBit := C.aTostringBitmap(bit)
 	// Println("...", str_bit)
-	return str_bit
+	// return str_bit
+	return strBit
 }
 
 //GetPortion Get Portion
