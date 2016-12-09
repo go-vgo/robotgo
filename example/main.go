@@ -58,7 +58,8 @@ func main() {
 	// bit_map := robotgo.CaptureScreen()
 	// Println("CaptureScreen...", bit_map)
 	// gbit_map := robotgo.Capture_Screen()
-	gbitMap := robotgo.BCaptureScreen()
+	gbitMap := robotgo.Capture_Screen()
+	// gbitMap := robotgo.BCaptureScreen()
 	Println("Capture_Screen...", gbitMap.Width)
 
 	sx, sy := robotgo.GetScreenSize()
