@@ -2,6 +2,7 @@ package main
 
 import (
 	. "fmt"
+
 	"github.com/go-vgo/robotgo"
 	// "go-vgo/robotgo"
 )
@@ -56,8 +57,9 @@ func main() {
 	// robotgo.CaptureScreen()
 	// bit_map := robotgo.CaptureScreen()
 	// Println("CaptureScreen...", bit_map)
-	gbit_map := robotgo.Capture_Screen()
-	Println("Capture_Screen...", gbit_map.Width)
+	// gbit_map := robotgo.Capture_Screen()
+	gbitMap := robotgo.BCaptureScreen()
+	Println("Capture_Screen...", gbitMap.Width)
 
 	sx, sy := robotgo.GetScreenSize()
 	//Gets the screen width and height
@@ -72,39 +74,40 @@ func main() {
 	Println("color---", color2)
 
 	// Bitmap
-	abit_map := robotgo.CaptureScreen()
+	abitMap := robotgo.CaptureScreen()
 	//Gets all of the screen
-	Println("a...", abit_map)
+	Println("a...", abitMap)
 
-	bit_map := robotgo.CaptureScreen(100, 200, 30, 40)
+	bitmap := robotgo.CaptureScreen(100, 200, 30, 40)
 	//Gets part of the screen
-	Println("CaptureScreen...", bit_map)
+	Println("CaptureScreen...", bitmap)
 	// Println("...", bit_map.Width, bit_map.BytesPerPixel)
 
-	fx, fy := robotgo.FindBitmap(bit_map)
+	fx, fy := robotgo.FindBitmap(bitmap)
 	//Searches for needle in bitmap
 	Println("FindBitmap------", fx, fy)
 
-	bit_pos := robotgo.GetPortion(bit_map, 10, 10, 11, 10)
+	bitpos := robotgo.GetPortion(bitmap, 10, 10, 11, 10)
 	//Returns new bitmap object created from a portion of another
-	Println(bit_pos)
+	Println(bitpos)
 
-	bit_str := robotgo.TostringBitmap(bit_map)
+	bitstr := robotgo.TostringBitmap(bitmap)
 	//Creates bitmap from string by bit_map
-	Println("bit_str...", bit_str)
+	Println("bit_str...", bitstr)
 
 	// sbit_map := robotgo.BitmapFromstring(bit_str, 2)
 	// Println("...", sbit_map)
 
-	robotgo.SaveBitmap(bit_map, "test.png")
+	robotgo.SaveBitmap(bitmap, "test.png")
 	//Saves image to absolute filepath in the given format
-	robotgo.SaveBitmap(bit_map, "test31.tif", 1)
+	robotgo.SaveBitmap(bitmap, "test31.tif", 1)
 	robotgo.Convert("test.png", "test.tif")
 	//Convert image
 
-	open_bit := robotgo.OpenBitmap("test.tif")
+	// open_bit := robotgo.OpenBitmap("test.tif")
+	openbit := robotgo.OpenBitmap("test.tif")
 	// open image bitmap
-	Println("open...", open_bit)
+	Println("open...", openbit)
 
 	//global event listener
 	Println("---please press v---")
