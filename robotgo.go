@@ -30,7 +30,8 @@ package robotgo
 import "C"
 
 import (
-	. "fmt"
+	// . "fmt"
+	"fmt"
 	"reflect"
 	"unsafe"
 	// "runtime"
@@ -119,8 +120,8 @@ func CaptureScreen(args ...int) C.MMBitmapRef {
 }
 
 //BCaptureScreen Capture the Screen
-func Capture_Screen(args ...int) Bitmap {
-	// func BCaptureScreen(args ...int) Bitmap {
+// func Capture_Screen(args ...int) Bitmap {
+func BCaptureScreen(args ...int) Bitmap {
 	var x C.size_t
 	var y C.size_t
 	var w C.size_t
@@ -516,7 +517,7 @@ func Convert(args ...interface{}) {
 	Try(func() {
 		mtype = args[2].(int)
 	}, func(e interface{}) {
-		Println("err:::", e)
+		fmt.Println("err:::", e)
 		mtype = 1
 	})
 	//C.CString()
