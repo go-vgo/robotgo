@@ -1,5 +1,7 @@
-// Copyright 2016 The go-vgo Project Developers. See the COPYRIGHT
-// file at the top-level directory of this distribution and at
+// Copyright 2016 The go-vgo Project Developers.
+
+// All Rights Reserved. See the COPYRIGHT file at
+// the top-level directory of this distribution and at
 // https://github.com/go-vgo/robotgo/blob/master/LICENSE
 //
 // Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
@@ -388,7 +390,7 @@ func KeyToggle(args ...string) {
 	camkeyt := C.CString(amkeyt)
 	// defer func() {
 	str := C.aKeyToggle(ckey, cadown, camkey, camkeyt)
-	Println(str)
+	fmt.Println(str)
 	// }()
 	defer C.free(unsafe.Pointer(ckey))
 	defer C.free(unsafe.Pointer(cadown))
@@ -477,7 +479,7 @@ func SaveBitmap(args ...interface{}) {
 
 	path := C.CString(args[1].(string))
 	savebit := C.aSaveBitmap(args[0].(C.MMBitmapRef), path, mtype)
-	Println("saved...", savebit)
+	fmt.Println("saved...", savebit)
 	// return bit
 	// defer C.free(unsafe.Pointer(path))
 }
