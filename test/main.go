@@ -47,16 +47,16 @@ func aRobotgo() {
 	// robotgo.KeyToggle("enter", "down")
 	robotgo.TypeString("en")
 
-	abit_map := robotgo.CaptureScreen()
-	Println("all...", abit_map)
+	abitmap := robotgo.CaptureScreen()
+	Println("all...", abitmap)
 
-	bit_map := robotgo.CaptureScreen(10, 20, 30, 40)
-	Println("...", bit_map)
+	bitmap := robotgo.CaptureScreen(10, 20, 30, 40)
+	Println("...", bitmap)
 
-	fx, fy := robotgo.FindBitmap(bit_map)
+	fx, fy := robotgo.FindBitmap(bitmap)
 	Println("FindBitmap------", fx, fy)
 
-	robotgo.SaveBitmap(bit_map, "test.png", 1)
+	robotgo.SaveBitmap(bitmap, "test.png", 1)
 
 	// robotgo.MouseClick()
 	robotgo.ScrollMouse(10, "up")
