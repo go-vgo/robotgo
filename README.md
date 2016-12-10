@@ -23,15 +23,15 @@ This is a work in progress.
 ####ALL:  
     Golang
     //Gcc
-    //zlib & libpng (bitmap)
 
 ####For Mac OS X:
+
     Xcode Command Line Tools
 
-    //brew install libpng
-    //brew install homebrew/dupes/zlib
 ####For Windows:
+
     MinGW or other GCC
+    
 ####For everything else:
     GCC
     
