@@ -522,9 +522,9 @@ func Convert(args ...interface{}) {
 	//C.CString()
 	opath := args[0].(string)
 	spath := args[1].(string)
-	bit_map := OpenBitmap(opath)
+	bitmap := OpenBitmap(opath)
 	// Println("a----", bit_map)
-	SaveBitmap(bit_map, spath, mtype)
+	SaveBitmap(bitmap, spath, mtype)
 }
 
 /*
