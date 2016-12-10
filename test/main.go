@@ -1,6 +1,6 @@
 // Copyright 2016 The go-vgo Project Developers. See the COPYRIGHT
 // file at the top-level directory of this distribution and at
-// http://www.
+// https://github.com/go-vgo/robotgo/blob/master/LICENSE
 //
 // Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
 // http://www.apache.org/licenses/LICENSE-2.0> or the MIT license
@@ -11,7 +11,8 @@
 package main
 
 import (
-	. "fmt"
+	// . "fmt"
+	"fmt"
 
 	"github.com/go-vgo/robotgo"
 )
@@ -19,11 +20,11 @@ import (
 func aRobotgo() {
 	abool := robotgo.ShowAlert("test", "robotgo")
 	if abool == 0 {
-		Println("ok@@@", "ok")
+		fmt.Println("ok@@@", "ok")
 	}
 
 	x, y := robotgo.GetMousePos()
-	Println("pos:", x, y)
+	fmt.Println("pos:", x, y)
 
 	robotgo.MoveMouse(x, y)
 	robotgo.MoveMouse(100, 200)
@@ -31,14 +32,14 @@ func aRobotgo() {
 	robotgo.MouseToggle("up")
 
 	for i := 0; i < 1080; i += 1000 {
-		Println(i)
+		fmt.Println(i)
 		robotgo.MoveMouse(800, i)
 	}
 
-	Println(robotgo.GetPixelColor(x, y))
+	fmt.Println(robotgo.GetPixelColor(x, y))
 
 	color := robotgo.GetPixelColor(100, 200)
-	Println("color@@@", color)
+	fmt.Println("color@@@", color)
 
 	robotgo.TypeString("Hello World")
 	// robotgo.KeyTap("a", "control")
@@ -48,13 +49,13 @@ func aRobotgo() {
 	robotgo.TypeString("en")
 
 	abitmap := robotgo.CaptureScreen()
-	Println("all...", abitmap)
+	fmt.Println("all...", abitmap)
 
 	bitmap := robotgo.CaptureScreen(10, 20, 30, 40)
-	Println("...", bitmap)
+	fmt.Println("...", bitmap)
 
 	fx, fy := robotgo.FindBitmap(bitmap)
-	Println("FindBitmap------", fx, fy)
+	fmt.Println("FindBitmap------", fx, fy)
 
 	robotgo.SaveBitmap(bitmap, "test.png", 1)
 

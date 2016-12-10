@@ -1,7 +1,8 @@
 package main
 
 import (
-	. "fmt"
+	// . "fmt"
+	"fmt"
 
 	"github.com/go-vgo/robotgo"
 	// "go-vgo/robotgo"
@@ -39,9 +40,9 @@ func main() {
 	robotgo.MoveMouseSmooth(100, 200)    //Smooth move the mouse to 100, 200
 	robotgo.MoveMouseSmooth(100, 200, 1.0, 100.0)
 	x, y := robotgo.GetMousePos() //Gets the mouse coordinates
-	Println("pos:", x, y)
+	fmt.Println("pos:", x, y)
 	if x == 456 && y == 586 {
-		Println("mouse...", "586")
+		fmt.Println("mouse...", "586")
 	}
 
 	robotgo.MouseToggle("up")
@@ -49,7 +50,7 @@ func main() {
 	robotgo.MoveMouse(100, 200)
 
 	for i := 0; i < 1080; i += 1000 {
-		Println(i)
+		fmt.Println(i)
 		robotgo.MoveMouse(800, i)
 	}
 
@@ -58,43 +59,43 @@ func main() {
 	// bit_map := robotgo.CaptureScreen()
 	// Println("CaptureScreen...", bit_map)
 	// gbit_map := robotgo.Capture_Screen()
-	gbitMap := robotgo.Capture_Screen()
-	// gbitMap := robotgo.BCaptureScreen()
-	Println("Capture_Screen...", gbitMap.Width)
+	// gbitMap := robotgo.Capture_Screen()
+	gbitMap := robotgo.BCaptureScreen()
+	fmt.Println("Capture_Screen...", gbitMap.Width)
 
 	sx, sy := robotgo.GetScreenSize()
 	//Gets the screen width and height
-	Println("...", sx, sy)
+	fmt.Println("...", sx, sy)
 
 	color := robotgo.GetPixelColor(100, 200)
 	//Gets the pixel color at 100, 200.
-	Println("color----", color, "-----------------")
+	fmt.Println("color----", color, "-----------------")
 
 	color2 := robotgo.GetPixelColor(10, 20)
 	//Gets the pixel color at 10, 20.
-	Println("color---", color2)
+	fmt.Println("color---", color2)
 
 	// Bitmap
 	abitMap := robotgo.CaptureScreen()
 	//Gets all of the screen
-	Println("a...", abitMap)
+	fmt.Println("a...", abitMap)
 
 	bitmap := robotgo.CaptureScreen(100, 200, 30, 40)
 	//Gets part of the screen
-	Println("CaptureScreen...", bitmap)
+	fmt.Println("CaptureScreen...", bitmap)
 	// Println("...", bit_map.Width, bit_map.BytesPerPixel)
 
 	fx, fy := robotgo.FindBitmap(bitmap)
 	//Searches for needle in bitmap
-	Println("FindBitmap------", fx, fy)
+	fmt.Println("FindBitmap------", fx, fy)
 
 	bitpos := robotgo.GetPortion(bitmap, 10, 10, 11, 10)
 	//Returns new bitmap object created from a portion of another
-	Println(bitpos)
+	fmt.Println(bitpos)
 
 	bitstr := robotgo.TostringBitmap(bitmap)
 	//Creates bitmap from string by bit_map
-	Println("bit_str...", bitstr)
+	fmt.Println("bit_str...", bitstr)
 
 	// sbit_map := robotgo.BitmapFromstring(bit_str, 2)
 	// Println("...", sbit_map)
@@ -108,26 +109,26 @@ func main() {
 	// open_bit := robotgo.OpenBitmap("test.tif")
 	openbit := robotgo.OpenBitmap("test.tif")
 	// open image bitmap
-	Println("open...", openbit)
+	fmt.Println("open...", openbit)
 
 	//global event listener
-	Println("---please press v---")
+	fmt.Println("---please press v---")
 	eve := robotgo.AddEvent("v")
 
 	if eve == 0 {
-		Println("---you press v---", "v")
+		fmt.Println("---you press v---", "v")
 	}
 
-	Println("---please press k---")
+	fmt.Println("---please press k---")
 	keve := robotgo.AddEvent("k")
 	if keve == 0 {
-		Println("---you press k---", "k")
+		fmt.Println("---you press k---", "k")
 	}
 
-	Println("---please press left mouse button---")
+	fmt.Println("---please press left mouse button---")
 	mleft := robotgo.AddEvent("mleft")
 	if mleft == 0 {
-		Println("---you press left mouse button---", "mleft")
+		fmt.Println("---you press left mouse button---", "mleft")
 	}
 
 	// mright := robotgo.AddEvent("mright")
@@ -140,15 +141,15 @@ func main() {
 	//Window Handle
 	abool := robotgo.ShowAlert("hello", "robotgo") //Show Alert Window
 	if abool == 0 {
-		Println("ok@@@", "ok")
+		fmt.Println("ok@@@", "ok")
 	}
 	robotgo.ShowAlert("hello", "robotgo", "Ok", "Cancel")
 	// robotgo.GetPID()
 	mdata := robotgo.GetActive() //Get current Window Active
 	hwnd := robotgo.GetHandle()  //Get current Window Handle
-	Println("hwnd---", hwnd)
+	fmt.Println("hwnd---", hwnd)
 	title := robotgo.GetTitle() //Get current Window title
-	Println("title-----", title)
+	fmt.Println("title-----", title)
 	robotgo.CloseWindow()    //close current Window
 	robotgo.SetActive(mdata) //set Window Active
 }
