@@ -3,7 +3,8 @@
 ##[键盘](#Keyboard)
 
 #####[Keys](#keys)
-#####[SetKeyboardDelay](#SetKeyboardDelay)
+#####[SetKeyboardDelay](#SetKeyDelay)(相当于SetKeyDelay)
+#####[SetKeyDelay](#SetKeyDelay)
 #####[KeyTap](#KeyTap)
 #####[KeyToggle](#KeyToggle)
 #####[TypeString](#TypeString)
@@ -40,7 +41,7 @@
 
 ##[事件](#Event)
 
-#####[LEvent](#LEvent)(相当于AddEvent)
+#####[LEvent](#AddEvent)(相当于AddEvent)
 #####[AddEvent](#AddEvent)
 
 ##[窗口](#Window)
@@ -57,7 +58,7 @@
 
 
 ##<h2 id="Keyboard">键盘</h2>
-###<h3 id="SetKeyboardDelay">.SetKeyboardDelay(ms)</h3>
+###<h3 id="SetKeyDelay">.SetKeyDelay(ms)</h3>
     设置键盘延迟(在键盘一个事件后),单位ms,默认值10ms
 
     Sets the delay in milliseconds to sleep after a keyboard event. This is 10ms by default.
@@ -274,7 +275,8 @@ robotgo.ScrollMouse(50, "down")
     获取部分或者全部屏幕
     Gets part or all of the screen.
 
-    Capture_Screen Returns a go struct
+    BCaptureScreen Returns a go struct
+    Capture_Screen(Drop support)
 
 ####参数:
 

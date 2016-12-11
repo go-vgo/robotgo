@@ -412,6 +412,12 @@ func TypeStringDelayed(x string, y int) {
 	defer C.free(unsafe.Pointer(cx))
 }
 
+
+//SetKeyDelay Set Keyboard Delay
+func SetKeyDelay(x int) {
+	C.aSetKeyboardDelay(C.size_t(x))
+}
+
 //SetKeyboardDelay Set Keyboard Delay
 func SetKeyboardDelay(x int) {
 	C.aSetKeyboardDelay(C.size_t(x))

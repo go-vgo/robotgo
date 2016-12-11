@@ -3,7 +3,8 @@
 ##[Keyboard](#Keyboard)
 
 #####[Keys](#keys)
-#####[SetKeyboardDelay](#SetKeyboardDelay)
+#####[SetKeyboardDelay](#SetKeyDelay)(Equivalent to SetKeyDelay)
+#####[SetKeyDelay](#SetKeyDelay)
 #####[KeyTap](#KeyTap)
 #####[KeyToggle](#KeyToggle)
 #####[TypeString](#TypeString)
@@ -58,7 +59,7 @@
 
 ##<h2 id="Keyboard">Keyboard</h2>
 
-###<h3 id="SetKeyboardDelay">.SetKeyboardDelay(ms)</h3>
+###<h3 id="SetKeyDelay">.SetKeyDelay(ms)</h3>
 
     Sets the delay in milliseconds to sleep after a keyboard event. This is 10ms by default.
 
@@ -260,7 +261,8 @@ robotgo.ScrollMouse(50, "down")
 
     Gets part or all of the screen.
 
-    Capture_Screen Returns a go struct
+    BCaptureScreen Returns a go struct
+    Capture_Screen(Drop support)
 
 ####Arguments:
 
