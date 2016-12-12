@@ -3,12 +3,13 @@
 ##[Keyboard](#Keyboard)
 
 #####[Keys](#keys)
-#####[SetKeyboardDelay](#SetKeyDelay)(Equivalent to SetKeyDelay)
+#####[SetKeyboardDelay](#SetKeyDelay)(Equivalent to SetKeyDelay,Wno-deprecated)
 #####[SetKeyDelay](#SetKeyDelay)
 #####[KeyTap](#KeyTap)
 #####[KeyToggle](#KeyToggle)
 #####[TypeString](#TypeString)
-#####[TypeStringDelayed](#TypeStringDelayed)
+#####[TypeStringDelayed](#TypeStrDelay)(Equivalent to TypeStrDelay,Wno-deprecated)
+#####[TypeStrDelay](#TypeStrDelay)
 
 ##[Mouse](#Mouse)
 
@@ -41,7 +42,7 @@
 
 ##[Event](#Event)
 
-#####[LEvent](#LEvent)(Equivalent to AddEvent)
+#####[LEvent](#LEvent)(Equivalent to AddEvent,Wno-deprecated)
 #####[AddEvent](#AddEvent)
 
 ##[Window](#Window)
@@ -101,7 +102,7 @@
 
     string - The string to send.
 
-###<h3 id="TypeStringDelayed">.TypeStringDelayed(string, cpm)</h3>
+###<h3 id="TypeStrDelay">.TypeStrDelay(string, cpm)</h3>
 
 ####Arguments:
 

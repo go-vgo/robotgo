@@ -1,6 +1,5 @@
-// Copyright 2016 The go-vgo Project Developers.
-// All Rights Reserved. See the COPYRIGHT file at
-// the top-level directory of this distribution and at
+// Copyright 2016 The go-vgo Project Developers. See the COPYRIGHT
+// file at the top-level directory of this distribution and at
 // https://github.com/go-vgo/robotgo/blob/master/LICENSE
 //
 // Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
@@ -404,6 +403,14 @@ func TypeString(x string) {
 	defer C.free(unsafe.Pointer(cx))
 }
 
+//TypeStrDelay Type String Delayed
+func TypeStrDelay(x string, y int) {
+	cx := C.CString(x)
+	cy := C.size_t(y)
+	C.aTypeStringDelayed(cx, cy)
+	defer C.free(unsafe.Pointer(cx))
+}
+
 //TypeStringDelayed Type String Delayed
 func TypeStringDelayed(x string, y int) {
 	cx := C.CString(x)
@@ -411,7 +418,6 @@ func TypeStringDelayed(x string, y int) {
 	C.aTypeStringDelayed(cx, cy)
 	defer C.free(unsafe.Pointer(cx))
 }
-
 
 //SetKeyDelay Set Keyboard Delay
 func SetKeyDelay(x int) {
