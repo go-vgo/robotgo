@@ -3,12 +3,13 @@
 ##[键盘](#Keyboard)
 
 #####[Keys](#keys)
-#####[SetKeyboardDelay](#SetKeyDelay)(相当于SetKeyDelay)
+#####[SetKeyboardDelay](#SetKeyDelay)(相当于SetKeyDelay,Wno-deprecated)
 #####[SetKeyDelay](#SetKeyDelay)
 #####[KeyTap](#KeyTap)
 #####[KeyToggle](#KeyToggle)
 #####[TypeString](#TypeString)
-#####[TypeStringDelayed](#TypeStringDelayed)
+#####[TypeStringDelayed](#TypeStrDelay)(相当于TypeStrDelay,Wno-deprecated)
+#####[TypeStrDelay](#TypeStrDelay)
 
 ##[鼠标](#Mouse)
 
@@ -41,7 +42,7 @@
 
 ##[事件](#Event)
 
-#####[LEvent](#AddEvent)(相当于AddEvent)
+#####[LEvent](#AddEvent)(相当于AddEvent,Wno-deprecated)
 #####[AddEvent](#AddEvent)
 
 ##[窗口](#Window)
@@ -105,7 +106,7 @@
 
     string - The string to send.
 
-###<h3 id="TypeStringDelayed">.TypeStringDelayed(string, cpm)</h3>
+###<h3 id="TypeStrDelay">.TypeStrDelay(string, cpm)</h3>
 
 ####参数:
 
