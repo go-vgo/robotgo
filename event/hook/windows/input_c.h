@@ -8,7 +8,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include "../uiohook.h"
+#include "../iohook.h"
 #include <windows.h>
 
 #include "../logger_c.h"
@@ -383,7 +383,7 @@ static BOOL is_wow64() {
 
 // Locate the DLL that contains the current keyboard layout.
 static int get_keyboard_layout_file(char *layoutFile, DWORD bufferSize) {
-	int status = UIOHOOK_FAILURE;
+	int status = IOHOOK_FAILURE;
 	HKEY hKey;
 	DWORD varType = REG_SZ;
 
@@ -395,7 +395,7 @@ static int get_keyboard_layout_file(char *layoutFile, DWORD bufferSize) {
 		if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, (LPCTSTR) kbdKeyPath, 0, KEY_QUERY_VALUE, &hKey) == ERROR_SUCCESS) {
 			if (RegQueryValueEx(hKey, "Layout File", NULL, &varType, (LPBYTE) layoutFile, &bufferSize) == ERROR_SUCCESS) {
 				RegCloseKey(hKey);
-				status = UIOHOOK_SUCCESS;
+				status = IOHOOK_SUCCESS;
 			}
 		}
 	}
@@ -496,7 +496,7 @@ static int refresh_locale_list() {
 
 					// Try to pull the current keyboard layout DLL from the registry.
 					char layoutFile[MAX_PATH];
-					if (get_keyboard_layout_file(layoutFile, sizeof(layoutFile)) == UIOHOOK_SUCCESS) {
+					if (get_keyboard_layout_file(layoutFile, sizeof(layoutFile)) == IOHOOK_SUCCESS) {
 						// You can't trust the %SYSPATH%, look it up manually.
 						char systemDirectory[MAX_PATH];
 						if (GetSystemDirectory(systemDirectory, MAX_PATH) != 0) {

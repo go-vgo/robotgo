@@ -14,7 +14,7 @@
 #include <pthread.h>
 #include <stdbool.h>
 #include <sys/time.h>
-#include "../uiohook.h"
+#include "../iohook.h"
 
 #include "input.h"
 // #include "../logger_c.h"
@@ -78,12 +78,12 @@ static bool mouse_dragged = false;
 static struct timeval system_time;
 
 // Virtual event pointer.
-static uiohook_event event;
+static iohook_event event;
 
 // Event dispatch callback.
 static dispatcher_t dispatcher = NULL;
 
-UIOHOOK_API void hook_set_dispatch_proc(dispatcher_t dispatch_proc) {
+IOHOOK_API void hook_set_dispatch_proc(dispatcher_t dispatch_proc) {
 	logger(LOG_LEVEL_DEBUG,	"%s [%u]: Setting new dispatch callback to %#p.\n",
 			__FUNCTION__, __LINE__, dispatch_proc);
 
@@ -91,7 +91,7 @@ UIOHOOK_API void hook_set_dispatch_proc(dispatcher_t dispatch_proc) {
 }
 
 // Send out an event if a dispatcher was set.
-static inline void dispatch_event(uiohook_event *const event) {
+static inline void dispatch_event(iohook_event *const event) {
 	if (dispatcher != NULL) {
 		logger(LOG_LEVEL_DEBUG,	"%s [%u]: Dispatching event type %u.\n",
 				__FUNCTION__, __LINE__, event->type);
@@ -217,7 +217,7 @@ static void message_port_proc(void *info) {
 }
 
 static int start_message_port_runloop() {
-	int status = UIOHOOK_FAILURE;
+	int status = IOHOOK_FAILURE;
 
 	if (tis_message != NULL) {
 		// Create a runloop observer for the main runloop.
@@ -256,13 +256,13 @@ static int start_message_port_runloop() {
 				logger(LOG_LEVEL_DEBUG, "%s [%u]: Successful.\n",
 						__FUNCTION__, __LINE__);
 
-				status = UIOHOOK_SUCCESS;
+				status = IOHOOK_SUCCESS;
 			}
 			else {
 				logger(LOG_LEVEL_ERROR,	"%s [%u]: CFRunLoopSourceCreate failure!\n",
 						__FUNCTION__, __LINE__);
 
-				status = UIOHOOK_ERROR_CREATE_RUN_LOOP_SOURCE;
+				status = IOHOOK_ERROR_CREATE_RUN_LOOP_SOURCE;
 			}
 
 			pthread_mutex_unlock(&msg_port_mutex);
@@ -271,7 +271,7 @@ static int start_message_port_runloop() {
 			logger(LOG_LEVEL_ERROR,	"%s [%u]: CFRunLoopObserverCreate failure!\n",
 					__FUNCTION__, __LINE__);
 
-			status = UIOHOOK_ERROR_CREATE_OBSERVER;
+			status = IOHOOK_ERROR_CREATE_OBSERVER;
 		}
 	}
 	else {
@@ -1100,8 +1100,8 @@ CGEventRef hook_event_proc(CGEventTapProxy tap_proxy, CGEventType type, CGEventR
 	return result_ref;
 }
 
-UIOHOOK_API int hook_run() {
-	int status = UIOHOOK_SUCCESS;
+IOHOOK_API int hook_run() {
+	int status = IOHOOK_SUCCESS;
 
 	do {
 		// Reset the restart flag...
@@ -1213,7 +1213,7 @@ UIOHOOK_API int hook_run() {
 													__FUNCTION__, __LINE__);
 
 											int runloop_status = start_message_port_runloop();
-											if (runloop_status != UIOHOOK_SUCCESS) {
+											if (runloop_status != IOHOOK_SUCCESS) {
 												return runloop_status;
 											}
 											#endif
@@ -1269,7 +1269,7 @@ UIOHOOK_API int hook_run() {
 											__FUNCTION__, __LINE__);
 
 									// Set the exit status.
-									status = UIOHOOK_ERROR_OUT_OF_MEMORY;
+									status = IOHOOK_ERROR_OUT_OF_MEMORY;
 								}
 
 								// Invalidate and free hook observer.
@@ -1283,7 +1283,7 @@ UIOHOOK_API int hook_run() {
 										__FUNCTION__, __LINE__);
 
 								// Set the exit status.
-								status = UIOHOOK_ERROR_CREATE_OBSERVER;
+								status = IOHOOK_ERROR_CREATE_OBSERVER;
 							}
 						}
 						else {
@@ -1291,7 +1291,7 @@ UIOHOOK_API int hook_run() {
 									__FUNCTION__, __LINE__);
 
 							// Set the exit status.
-							status = UIOHOOK_ERROR_GET_RUNLOOP;
+							status = IOHOOK_ERROR_GET_RUNLOOP;
 						}
 
 						// Clean up the event source.
@@ -1302,7 +1302,7 @@ UIOHOOK_API int hook_run() {
 								__FUNCTION__, __LINE__);
 
 						// Set the exit status.
-						status = UIOHOOK_ERROR_CREATE_RUN_LOOP_SOURCE;
+						status = IOHOOK_ERROR_CREATE_RUN_LOOP_SOURCE;
 					}
 
 					// Stop the CFMachPort from receiving any more messages.
@@ -1314,14 +1314,14 @@ UIOHOOK_API int hook_run() {
 							__FUNCTION__, __LINE__);
 
 					// Set the exit status.
-					status = UIOHOOK_ERROR_CREATE_EVENT_PORT;
+					status = IOHOOK_ERROR_CREATE_EVENT_PORT;
 				}
 
 				// Free the hook structure.
 				free(hook);
 			}
 			else {
-				status = UIOHOOK_ERROR_OUT_OF_MEMORY;
+				status = IOHOOK_ERROR_OUT_OF_MEMORY;
 			}
 		}
 		else {
@@ -1329,7 +1329,7 @@ UIOHOOK_API int hook_run() {
 					__FUNCTION__, __LINE__);
 
 			// Set the exit status.
-			status = UIOHOOK_ERROR_AXAPI_DISABLED;
+			status = IOHOOK_ERROR_AXAPI_DISABLED;
 		}
 	} while (restart_tap);
 
@@ -1339,8 +1339,8 @@ UIOHOOK_API int hook_run() {
 	return status;
 }
 
-UIOHOOK_API int hook_stop() {
-	int status = UIOHOOK_FAILURE;
+IOHOOK_API int hook_stop() {
+	int status = IOHOOK_FAILURE;
 
 	CFStringRef mode = CFRunLoopCopyCurrentMode(event_loop);
 	if (mode != NULL) {
@@ -1352,7 +1352,7 @@ UIOHOOK_API int hook_stop() {
 		// Stop the run loop.
 		CFRunLoopStop(event_loop);
 
-		status = UIOHOOK_SUCCESS;
+		status = IOHOOK_SUCCESS;
 	}
 
 	logger(LOG_LEVEL_DEBUG,	"%s [%u]: Status: %#X.\n",

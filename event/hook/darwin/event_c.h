@@ -7,13 +7,13 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "../uiohook.h"
+#include "../iohook.h"
 
 #include "input.h"
 // #include "../logger_c.h"
 
 // TODO Possibly relocate to input helper.
-static inline CGEventFlags get_key_event_mask(uiohook_event * const event) {
+static inline CGEventFlags get_key_event_mask(iohook_event * const event) {
 	CGEventFlags native_mask = 0x00;
 
 	if (event->mask & (MASK_SHIFT))	{ native_mask |= kCGEventFlagMaskShift;		}
@@ -50,7 +50,7 @@ static inline CGEventFlags get_key_event_mask(uiohook_event * const event) {
 	return native_mask;
 }
 
-static inline void post_key_event(uiohook_event * const event) {
+static inline void post_key_event(iohook_event * const event) {
 	bool is_pressed = event->type == EVENT_KEY_PRESSED;
 
 	CGEventSourceRef src = CGEventSourceCreate(kCGEventSourceStateHIDSystemState);
@@ -64,7 +64,7 @@ static inline void post_key_event(uiohook_event * const event) {
 	CFRelease(src);
 }
 
-static inline void post_mouse_button_event(uiohook_event * const event, bool is_pressed) {
+static inline void post_mouse_button_event(iohook_event * const event, bool is_pressed) {
 	CGMouseButton mouse_button;
 	CGEventType mouse_type;
 	if (event->data.mouse.button == MOUSE_BUTTON1) {
@@ -109,7 +109,7 @@ static inline void post_mouse_button_event(uiohook_event * const event, bool is_
 	CFRelease(src);
 }
 
-static inline void post_mouse_wheel_event(uiohook_event * const event) {
+static inline void post_mouse_wheel_event(iohook_event * const event) {
 	// FIXME Should I create a source event with the coords?
 	// It seems to automagically use the current location of the cursor.
 	// Two options: Query the mouse, move it to x/y, scroll, then move back
@@ -136,7 +136,7 @@ static inline void post_mouse_wheel_event(uiohook_event * const event) {
 	CFRelease(src);
 }
 
-static inline void post_mouse_motion_event(uiohook_event * const event) {
+static inline void post_mouse_motion_event(iohook_event * const event) {
 	CGEventSourceRef src = CGEventSourceCreate(kCGEventSourceStateHIDSystemState);
 	CGEventRef cg_event;
 	if (event->mask >> 8 == 0x00) {
@@ -187,7 +187,7 @@ static inline void post_mouse_motion_event(uiohook_event * const event) {
 	CFRelease(src);
 }
 
-UIOHOOK_API void hook_post_event(uiohook_event * const event) {
+IOHOOK_API void hook_post_event(iohook_event * const event) {
 	switch (event->type) {
 		case EVENT_KEY_PRESSED:
 		case EVENT_KEY_RELEASED:

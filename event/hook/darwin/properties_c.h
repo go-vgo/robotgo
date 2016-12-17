@@ -14,12 +14,12 @@
 #include <IOKit/hidsystem/IOHIDParameter.h>
 #endif
 #include <stdbool.h>
-#include "../uiohook.h"
+#include "../iohook.h"
 
 // #include "../logger_c.h"
 #include "input.h"
 
-UIOHOOK_API screen_data* hook_create_screen_info(unsigned char *count) {
+IOHOOK_API screen_data* hook_create_screen_info(unsigned char *count) {
 	CGError status = kCGErrorFailure;
 	screen_data* screens = NULL;
 
@@ -123,7 +123,7 @@ UIOHOOK_API screen_data* hook_create_screen_info(unsigned char *count) {
  * CharSec = 66 / (MS / 15)
  */
 
-UIOHOOK_API long int hook_get_auto_repeat_rate() {
+IOHOOK_API long int hook_get_auto_repeat_rate() {
 	#if defined USE_IOKIT || defined USE_COREFOUNDATION || defined USE_CARBON_LEGACY
 	bool successful = false;
 	SInt64 rate;
@@ -205,7 +205,7 @@ UIOHOOK_API long int hook_get_auto_repeat_rate() {
 	return value;
 }
 
-UIOHOOK_API long int hook_get_auto_repeat_delay() {
+IOHOOK_API long int hook_get_auto_repeat_delay() {
 	#if defined USE_IOKIT || defined USE_COREFOUNDATION || defined USE_CARBON_LEGACY
 	bool successful = false;
 	SInt64 delay;
@@ -287,7 +287,7 @@ UIOHOOK_API long int hook_get_auto_repeat_delay() {
 	return value;
 }
 
-UIOHOOK_API long int hook_get_pointer_acceleration_multiplier() {
+IOHOOK_API long int hook_get_pointer_acceleration_multiplier() {
 	#if defined USE_IOKIT || defined USE_COREFOUNDATION
 	bool successful = false;
 	double multiplier;
@@ -348,7 +348,7 @@ UIOHOOK_API long int hook_get_pointer_acceleration_multiplier() {
 	return value;
 }
 
-UIOHOOK_API long int hook_get_pointer_acceleration_threshold() {
+IOHOOK_API long int hook_get_pointer_acceleration_threshold() {
 	#if defined USE_COREFOUNDATION
 	bool successful = false;
 	SInt32 threshold;
@@ -373,7 +373,7 @@ UIOHOOK_API long int hook_get_pointer_acceleration_threshold() {
 	return value;
 }
 
-UIOHOOK_API long int hook_get_pointer_sensitivity() {
+IOHOOK_API long int hook_get_pointer_sensitivity() {
 	#ifdef USE_IOKIT
 	bool successful = false;
 	double sensitivity;
@@ -420,7 +420,7 @@ UIOHOOK_API long int hook_get_pointer_sensitivity() {
 	return value;
 }
 
-UIOHOOK_API long int hook_get_multi_click_time() {
+IOHOOK_API long int hook_get_multi_click_time() {
 	#if defined USE_IOKIT || defined USE_COREFOUNDATION || defined USE_CARBON_LEGACY
 	bool successful = false;
 	#if defined USE_IOKIT || defined USE_CARBON_LEGACY

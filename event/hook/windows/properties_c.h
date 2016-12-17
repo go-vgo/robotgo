@@ -3,7 +3,7 @@
 #include <config.h>
 #endif
 
-#include "../uiohook.h"
+#include "../iohook.h"
 #include <windows.h>
 
 // #include "logger.h"
@@ -55,7 +55,7 @@ static BOOL CALLBACK monitor_enum_proc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT
 	return TRUE;
 }
 
-UIOHOOK_API screen_data* hook_create_screen_info(unsigned char *count) {
+IOHOOK_API screen_data* hook_create_screen_info(unsigned char *count) {
 	// Initialize count to zero.
 	*count = 0;
 
@@ -98,7 +98,7 @@ UIOHOOK_API screen_data* hook_create_screen_info(unsigned char *count) {
 	return screens.data;
 }
 
-UIOHOOK_API long int hook_get_auto_repeat_rate() {
+IOHOOK_API long int hook_get_auto_repeat_rate() {
 	long int value = -1;
 	long int rate;
 
@@ -112,7 +112,7 @@ UIOHOOK_API long int hook_get_auto_repeat_rate() {
 	return value;
 }
 
-UIOHOOK_API long int hook_get_auto_repeat_delay() {
+IOHOOK_API long int hook_get_auto_repeat_delay() {
 	long int value = -1;
 	long int delay;
 
@@ -126,7 +126,7 @@ UIOHOOK_API long int hook_get_auto_repeat_delay() {
 	return value;
 }
 
-UIOHOOK_API long int hook_get_pointer_acceleration_multiplier() {
+IOHOOK_API long int hook_get_pointer_acceleration_multiplier() {
 	long int value = -1;
 	int mouse[3]; // 0-Threshold X, 1-Threshold Y and 2-Speed.
 
@@ -140,7 +140,7 @@ UIOHOOK_API long int hook_get_pointer_acceleration_multiplier() {
 	return value;
 }
 
-UIOHOOK_API long int hook_get_pointer_acceleration_threshold() {
+IOHOOK_API long int hook_get_pointer_acceleration_threshold() {
 	long int value = -1;
 	int mouse[3]; // 0-Threshold X, 1-Threshold Y and 2-Speed.
 
@@ -157,7 +157,7 @@ UIOHOOK_API long int hook_get_pointer_acceleration_threshold() {
 	return value;
 }
 
-UIOHOOK_API long int hook_get_pointer_sensitivity() {
+IOHOOK_API long int hook_get_pointer_sensitivity() {
 	long int value = -1;
 	int sensitivity;
 
@@ -171,7 +171,7 @@ UIOHOOK_API long int hook_get_pointer_sensitivity() {
 	return value;
 }
 
-UIOHOOK_API long int hook_get_multi_click_time() {
+IOHOOK_API long int hook_get_multi_click_time() {
 	long int value = -1;
 	UINT clicktime;
 

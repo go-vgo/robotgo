@@ -15,6 +15,7 @@
 
 #####[SetMouseDelay](#SetMouseDelay)
 #####[MoveMouse](#MoveMouse)
+#####[Move](#MoveMouse)(Equivalent to MoveMouse)
 #####[MoveMouseSmooth](#MoveMouseSmooth)
 #####[MouseClick](#MouseClick)
 #####[Click](#MouseClick)(Equivalent to MouseClick)

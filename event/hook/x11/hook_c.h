@@ -11,7 +11,7 @@
 #include <pthread.h>
 #endif
 #include <stdint.h>
-#include "../uiohook.h"
+#include "../iohook.h"
 
 #include <X11/keysym.h>
 #include <X11/Xlibint.h>
@@ -86,12 +86,12 @@ static struct xkb_state *state = NULL;
 #endif
 
 // Virtual event pointer.
-static uiohook_event event;
+static iohook_event event;
 
 // Event dispatch callback.
 static dispatcher_t dispatcher = NULL;
 
-UIOHOOK_API void hook_set_dispatch_proc(dispatcher_t dispatch_proc) {
+IOHOOK_API void hook_set_dispatch_proc(dispatcher_t dispatch_proc) {
 	logger(LOG_LEVEL_DEBUG,	"%s [%u]: Setting new dispatch callback to %#p.\n",
 			__FUNCTION__, __LINE__, dispatch_proc);
 
@@ -99,7 +99,7 @@ UIOHOOK_API void hook_set_dispatch_proc(dispatcher_t dispatch_proc) {
 }
 
 // Send out an event if a dispatcher was set.
-static inline void dispatch_event(uiohook_event *const event) {
+static inline void dispatch_event(iohook_event *const event) {
 	if (dispatcher != NULL) {
 		logger(LOG_LEVEL_DEBUG,	"%s [%u]: Dispatching event type %u.\n",
 				__FUNCTION__, __LINE__, event->type);
@@ -811,7 +811,7 @@ static inline bool enable_key_repeate() {
 
 
 static inline int xrecord_block() {
-	int status = UIOHOOK_FAILURE;
+	int status = IOHOOK_FAILURE;
 
 	// Save the data display associated with this hook so it is passed to each event.
 	//XPointer closeure = (XPointer) (ctrl_display);
@@ -856,7 +856,7 @@ static inline int xrecord_block() {
 	#else
 	// Sync blocks until XRecordDisableContext() is called.
 	if (XRecordEnableContext(hook->data.display, hook->ctrl.context, hook_event_proc, closeure) != 0) {
-		status = UIOHOOK_SUCCESS;
+		status = IOHOOK_SUCCESS;
 	}
 	#endif
 	else {
@@ -871,14 +871,14 @@ static inline int xrecord_block() {
 		#endif
 
 		// Set the exit status.
-		status = UIOHOOK_ERROR_X_RECORD_ENABLE_CONTEXT;
+		status = IOHOOK_ERROR_X_RECORD_ENABLE_CONTEXT;
 	}
 
 	return status;
 }
 
 static int xrecord_alloc() {
-	int status = UIOHOOK_FAILURE;
+	int status = IOHOOK_FAILURE;
 
 	// Make sure the data display is synchronized to prevent late event delivery!
 	// See Bug 42356 for more information.
@@ -915,7 +915,7 @@ static int xrecord_alloc() {
 					__FUNCTION__, __LINE__);
 
 			// Set the exit status.
-			status = UIOHOOK_ERROR_X_RECORD_CREATE_CONTEXT;
+			status = IOHOOK_ERROR_X_RECORD_CREATE_CONTEXT;
 		}
 
 		// Free the XRecord range.
@@ -926,14 +926,14 @@ static int xrecord_alloc() {
 				__FUNCTION__, __LINE__);
 
 		// Set the exit status.
-		status = UIOHOOK_ERROR_X_RECORD_ALLOC_RANGE;
+		status = IOHOOK_ERROR_X_RECORD_ALLOC_RANGE;
 	}
 
 	return status;
 }
 
 static int xrecord_query() {
-	int status = UIOHOOK_FAILURE;
+	int status = IOHOOK_FAILURE;
 
 	// Check to make sure XRecord is installed and enabled.
 	int major, minor;
@@ -947,14 +947,14 @@ static int xrecord_query() {
 		logger(LOG_LEVEL_ERROR,	"%s [%u]: XRecord is not currently available!\n",
 				__FUNCTION__, __LINE__);
 
-		status = UIOHOOK_ERROR_X_RECORD_NOT_FOUND;
+		status = IOHOOK_ERROR_X_RECORD_NOT_FOUND;
 	}
 
 	return status;
 }
 
 static int xrecord_start() {
-	int status = UIOHOOK_FAILURE;
+	int status = IOHOOK_FAILURE;
 
 	// Open the control display for XRecord.
 	hook->ctrl.display = XOpenDisplay(NULL);
@@ -1027,7 +1027,7 @@ static int xrecord_start() {
 		logger(LOG_LEVEL_ERROR,	"%s [%u]: XOpenDisplay failure!\n",
 				__FUNCTION__, __LINE__);
 
-		status = UIOHOOK_ERROR_X_OPEN_DISPLAY;
+		status = IOHOOK_ERROR_X_OPEN_DISPLAY;
 	}
 
 	// Close down the XRecord data display.
@@ -1045,8 +1045,8 @@ static int xrecord_start() {
 	return status;
 }
 
-UIOHOOK_API int hook_run() {
-	int status = UIOHOOK_FAILURE;
+IOHOOK_API int hook_run() {
+	int status = IOHOOK_FAILURE;
 
 	// Hook data for future cleanup.
 	hook = malloc(sizeof(hook_info));
@@ -1067,7 +1067,7 @@ UIOHOOK_API int hook_run() {
 		logger(LOG_LEVEL_ERROR,	"%s [%u]: Failed to allocate memory for hook structure!\n",
 				__FUNCTION__, __LINE__);
 
-		status = UIOHOOK_ERROR_OUT_OF_MEMORY;
+		status = IOHOOK_ERROR_OUT_OF_MEMORY;
 	}
 
 	logger(LOG_LEVEL_DEBUG,	"%s [%u]: Something, something, something, complete.\n",
@@ -1076,8 +1076,8 @@ UIOHOOK_API int hook_run() {
 	return status;
 }
 
-UIOHOOK_API int hook_stop() {
-	int status = UIOHOOK_FAILURE;
+IOHOOK_API int hook_stop() {
+	int status = IOHOOK_FAILURE;
 
 	if (hook != NULL && hook->ctrl.display != NULL && hook->ctrl.context != 0) {
 		// We need to make sure the context is still valid.
@@ -1102,14 +1102,14 @@ UIOHOOK_API int hook_stop() {
 						hook->ctrl.display = NULL;
 					}
 
-					status = UIOHOOK_SUCCESS;
+					status = IOHOOK_SUCCESS;
 				}
 			}
 			else {
 				logger(LOG_LEVEL_ERROR,	"%s [%u]: XRecordGetContext failure!\n",
 						__FUNCTION__, __LINE__);
 
-				status = UIOHOOK_ERROR_X_RECORD_GET_CONTEXT;
+				status = IOHOOK_ERROR_X_RECORD_GET_CONTEXT;
 			}
 
 			free(state);
@@ -1118,7 +1118,7 @@ UIOHOOK_API int hook_stop() {
 			logger(LOG_LEVEL_ERROR,	"%s [%u]: Failed to allocate memory for XRecordState!\n",
 					__FUNCTION__, __LINE__);
 
-			status = UIOHOOK_ERROR_OUT_OF_MEMORY;
+			status = IOHOOK_ERROR_OUT_OF_MEMORY;
 		}
 
 		return status;

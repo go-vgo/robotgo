@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "../uiohook.h"
+#include "../iohook.h"
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #ifdef USE_XTEST
@@ -59,7 +59,7 @@ static unsigned int convert_to_native_mask(unsigned int mask) {
 }
 #endif
 
-static inline void post_key_event(uiohook_event * const event) {
+static inline void post_key_event(iohook_event * const event) {
 	#ifdef USE_XTEST
 	// FIXME Currently ignoring EVENT_KEY_TYPED.
 	if (event->type == EVENT_KEY_PRESSED) {
@@ -112,7 +112,7 @@ static inline void post_key_event(uiohook_event * const event) {
 	#endif
 }
 
-static inline void post_mouse_button_event(uiohook_event * const event) {
+static inline void post_mouse_button_event(iohook_event * const event) {
 	#ifdef USE_XTEST
 	Window ret_root;
 	Window ret_child;
@@ -227,7 +227,7 @@ static inline void post_mouse_button_event(uiohook_event * const event) {
 	#endif
 }
 
-static inline void post_mouse_motion_event(uiohook_event * const event) {
+static inline void post_mouse_motion_event(iohook_event * const event) {
     #ifdef USE_XTEST
 	XTestFakeMotionEvent(properties_disp, -1, event->data.mouse.x, event->data.mouse.y, 0);
     #else
@@ -313,7 +313,7 @@ static inline void post_mouse_motion_event(uiohook_event * const event) {
     #endif
 }
 
-UIOHOOK_API void hook_post_event(uiohook_event * const event) {
+IOHOOK_API void hook_post_event(iohook_event * const event) {
 	XLockDisplay(properties_disp);
 
 	#ifdef USE_XTEST

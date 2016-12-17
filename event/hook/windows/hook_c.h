@@ -4,7 +4,7 @@
 #endif
 
 #include <inttypes.h>
-#include "../uiohook.h"
+#include "../iohook.h"
 #include <windows.h>
 
 #include "input.h"
@@ -28,12 +28,12 @@ static unsigned short int click_button = MOUSE_NOBUTTON;
 static POINT last_click;
 
 // Static event memory.
-static uiohook_event event;
+static iohook_event event;
 
 // Event dispatch callback.
 static dispatcher_t dispatcher = NULL;
 
-UIOHOOK_API void hook_set_dispatch_proc(dispatcher_t dispatch_proc) {
+IOHOOK_API void hook_set_dispatch_proc(dispatcher_t dispatch_proc) {
 	logger(LOG_LEVEL_DEBUG,	"%s [%u]: Setting new dispatch callback to %#p.\n",
 			__FUNCTION__, __LINE__, dispatch_proc);
 
@@ -41,7 +41,7 @@ UIOHOOK_API void hook_set_dispatch_proc(dispatcher_t dispatch_proc) {
 }
 
 // Send out an event if a dispatcher was set.
-static inline void dispatch_event(uiohook_event *const event) {
+static inline void dispatch_event(iohook_event *const event) {
 	if (dispatcher != NULL) {
 		logger(LOG_LEVEL_DEBUG,	"%s [%u]: Dispatching event type %u.\n",
 				__FUNCTION__, __LINE__, event->type);
@@ -650,8 +650,8 @@ void CALLBACK win_hook_event_proc(HWINEVENTHOOK hook, DWORD event, HWND hWnd, LO
 }
 
 
-UIOHOOK_API int hook_run() {
-	int status = UIOHOOK_FAILURE;
+IOHOOK_API int hook_run() {
+	int status = IOHOOK_FAILURE;
 
 	// Set the thread id we want to signal later.
 	hook_thread_id = GetCurrentThreadId();
@@ -671,7 +671,7 @@ UIOHOOK_API int hook_run() {
 			logger(LOG_LEVEL_ERROR,	"%s [%u]: Could not determine hInst for SetWindowsHookEx()! (%#lX)\n",
 					__FUNCTION__, __LINE__, (unsigned long) GetLastError());
 
-			status = UIOHOOK_ERROR_GET_MODULE_HANDLE;
+			status = IOHOOK_ERROR_GET_MODULE_HANDLE;
 		}
 	}
 
@@ -701,7 +701,7 @@ UIOHOOK_API int hook_run() {
 		initialize_modifiers();
 
 		// Set the exit status.
-		status = UIOHOOK_SUCCESS;
+		status = IOHOOK_SUCCESS;
 
 		// Windows does not have a hook start event or callback so we need to
 		// manually fake it.
@@ -718,7 +718,7 @@ UIOHOOK_API int hook_run() {
 		logger(LOG_LEVEL_ERROR,	"%s [%u]: SetWindowsHookEx() failed! (%#lX)\n",
 				__FUNCTION__, __LINE__, (unsigned long) GetLastError());
 
-		status = UIOHOOK_ERROR_SET_WINDOWS_HOOK_EX;
+		status = IOHOOK_ERROR_SET_WINDOWS_HOOK_EX;
 	}
 
 
@@ -732,12 +732,12 @@ UIOHOOK_API int hook_run() {
 	return status;
 }
 
-UIOHOOK_API int hook_stop() {
-	int status = UIOHOOK_FAILURE;
+IOHOOK_API int hook_stop() {
+	int status = IOHOOK_FAILURE;
 
 	// Try to exit the thread naturally.
 	if (PostThreadMessage(hook_thread_id, WM_QUIT, (WPARAM) NULL, (LPARAM) NULL)) {
-		status = UIOHOOK_SUCCESS;
+		status = IOHOOK_SUCCESS;
 	}
 
 	logger(LOG_LEVEL_DEBUG,	"%s [%u]: Status: %#X.\n",

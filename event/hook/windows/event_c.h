@@ -4,7 +4,7 @@
 #endif
 
 #include <stdio.h>
-#include "../uiohook.h"
+#include "../iohook.h"
 #include <windows.h>
 
 #include "input.h"
@@ -48,7 +48,7 @@ static UINT keymask_lookup[8] = {
 	VK_RMENU
 };
 
-UIOHOOK_API void hook_post_event(uiohook_event * const event) {
+IOHOOK_API void hook_post_event(iohook_event * const event) {
 	//FIXME implement multiple monitor support
 	uint16_t screen_width   = GetSystemMetrics( SM_CXSCREEN );
 	uint16_t screen_height  = GetSystemMetrics( SM_CYSCREEN );
