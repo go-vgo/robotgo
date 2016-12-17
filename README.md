@@ -73,7 +73,7 @@ This is a work in progress.
       sudo apt-get install libxkbcommon-dev
 
 
-##Examples:
+##[Examples:](https://github.com/go-vgo/robotgo/blob/master/example/main.go)
 
 ###Mouse
 
