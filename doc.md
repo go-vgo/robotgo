@@ -21,6 +21,7 @@
 #####[Click](#MouseClick)(Equivalent to MouseClick)
 #####[MouseToggle](#MouseToggle)
 #####[DragMouse](#DragMouse)
+#####[Drag](#DragMouse)(Equivalent to DragMouse)
 #####[GetMousePos](#GetMousePos)
 #####[ScrollMouse](#ScrollMouse)
 

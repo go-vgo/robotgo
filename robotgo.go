@@ -196,6 +196,13 @@ func DragMouse(x, y int) {
 	C.aDragMouse(cx, cy)
 }
 
+//Drag Drag the Mouse
+func Drag(x, y int) {
+	cx := C.size_t(x)
+	cy := C.size_t(y)
+	C.aDragMouse(cx, cy)
+}
+
 //MoveMouseSmooth Move the Mouse Smooth
 func MoveMouseSmooth(x, y int, args ...float64) {
 	cx := C.size_t(x)
