@@ -221,6 +221,30 @@ func GetMousePos() (int, int) {
 	return x, y
 }
 
+//Click Click the Mouse
+func Click(args ...interface{}) {
+	var button C.MMMouseButton
+	var double C.bool
+	Try(func() {
+		// button = args[0].(C.MMMouseButton)
+		if args[0].(string) == "left" {
+			button = C.LEFT_BUTTON
+		}
+		if args[0].(string) == "center" {
+			button = C.CENTER_BUTTON
+		}
+		if args[0].(string) == "right" {
+			button = C.RIGHT_BUTTON
+		}
+		double = C.bool(args[1].(bool))
+	}, func(e interface{}) {
+		// Println("err:::", e)
+		button = C.LEFT_BUTTON
+		double = false
+	})
+	C.aMouseClick(button, double)
+}
+
 //MouseClick Click the Mouse
 func MouseClick(args ...interface{}) {
 	var button C.MMMouseButton
