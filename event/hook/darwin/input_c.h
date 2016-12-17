@@ -11,7 +11,7 @@
 #endif
 #include <stdbool.h>
 
-#include "../uiohook.h"
+#include "../iohook.h"
 
 #include "input.h"
 #include "../logger_c.h"

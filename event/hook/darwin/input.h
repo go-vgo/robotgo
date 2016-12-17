@@ -77,11 +77,11 @@ extern bool is_accessibility_enabled();
  */
 extern UniCharCount keycode_to_unicode(CGEventRef event_ref, UniChar *buffer, UniCharCount size);
 
-/* Converts an OSX keycode to the appropriate UIOHook scancode constant.
+/* Converts an OSX keycode to the appropriate IOHook scancode constant.
  */
 extern uint16_t keycode_to_scancode(UInt64 keycode);
 
-/* Converts a UIOHook scancode constant to the appropriate OSX keycode.
+/* Converts a IOHook scancode constant to the appropriate OSX keycode.
  */
 extern UInt64 scancode_to_keycode(uint16_t keycode);
 

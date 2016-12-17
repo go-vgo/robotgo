@@ -1,6 +1,6 @@
 
-#ifndef __UIOHOOK_H
-#define __UIOHOOK_H
+#ifndef __IOHOOK_H
+#define __IOHOOK_H
 
 // #include "../../base/os.h"
 
@@ -9,30 +9,30 @@
 #include <stdint.h>
 
 /* Begin Error Codes */
-#define UIOHOOK_SUCCESS							0x00
-#define UIOHOOK_FAILURE							0x01
+#define IOHOOK_SUCCESS							0x00
+#define IOHOOK_FAILURE							0x01
 
 // System level errors.
-#define UIOHOOK_ERROR_OUT_OF_MEMORY				0x02
+#define IOHOOK_ERROR_OUT_OF_MEMORY				0x02
 
 // Unix specific errors.
-#define UIOHOOK_ERROR_X_OPEN_DISPLAY			0x20
-#define UIOHOOK_ERROR_X_RECORD_NOT_FOUND		0x21
-#define UIOHOOK_ERROR_X_RECORD_ALLOC_RANGE		0x22
-#define UIOHOOK_ERROR_X_RECORD_CREATE_CONTEXT	0x23
-#define UIOHOOK_ERROR_X_RECORD_ENABLE_CONTEXT	0x24
-#define UIOHOOK_ERROR_X_RECORD_GET_CONTEXT		0x25
+#define IOHOOK_ERROR_X_OPEN_DISPLAY			0x20
+#define IOHOOK_ERROR_X_RECORD_NOT_FOUND		0x21
+#define IOHOOK_ERROR_X_RECORD_ALLOC_RANGE		0x22
+#define IOHOOK_ERROR_X_RECORD_CREATE_CONTEXT	0x23
+#define IOHOOK_ERROR_X_RECORD_ENABLE_CONTEXT	0x24
+#define IOHOOK_ERROR_X_RECORD_GET_CONTEXT		0x25
 
 // Windows specific errors.
-#define UIOHOOK_ERROR_SET_WINDOWS_HOOK_EX		0x30
-#define UIOHOOK_ERROR_GET_MODULE_HANDLE			0x31
+#define IOHOOK_ERROR_SET_WINDOWS_HOOK_EX		0x30
+#define IOHOOK_ERROR_GET_MODULE_HANDLE			0x31
 
 // Darwin specific errors.
-#define UIOHOOK_ERROR_AXAPI_DISABLED			0x40
-#define UIOHOOK_ERROR_CREATE_EVENT_PORT			0x41
-#define UIOHOOK_ERROR_CREATE_RUN_LOOP_SOURCE	0x42
-#define UIOHOOK_ERROR_GET_RUNLOOP				0x43
-#define UIOHOOK_ERROR_CREATE_OBSERVER			0x44
+#define IOHOOK_ERROR_AXAPI_DISABLED			0x40
+#define IOHOOK_ERROR_CREATE_EVENT_PORT			0x41
+#define IOHOOK_ERROR_CREATE_RUN_LOOP_SOURCE	0x42
+#define IOHOOK_ERROR_GET_RUNLOOP				0x43
+#define IOHOOK_ERROR_CREATE_OBSERVER			0x44
 /* End Error Codes */
 
 /* Begin Log Levels and Function Prototype */
@@ -100,7 +100,7 @@ typedef struct _mouse_wheel_event_data {
 	uint8_t direction;
 } mouse_wheel_event_data;
 
-typedef struct _uiohook_event {
+typedef struct _iohook_event {
 	event_type type;
 	uint64_t time;
 	uint16_t mask;
@@ -110,9 +110,9 @@ typedef struct _uiohook_event {
 		mouse_event_data mouse;
 		mouse_wheel_event_data wheel;
 	} data;
-} uiohook_event;
+} iohook_event;
 
-typedef void (*dispatcher_t)(uiohook_event *const);
+typedef void (*dispatcher_t)(iohook_event *const);
 /* End Virtual Event Types and Data Structures */
 
 
@@ -390,9 +390,9 @@ typedef void (*dispatcher_t)(uiohook_event *const);
 
 
 #ifdef _WIN32
-#define UIOHOOK_API __declspec(dllexport)
+#define IOHOOK_API __declspec(dllexport)
 #else
-#define UIOHOOK_API
+#define IOHOOK_API
 #endif
 
 #ifdef __cplusplus
@@ -400,40 +400,40 @@ extern "C" {
 #endif
 
 	// Set the logger callback functions.
-	UIOHOOK_API void hook_set_logger_proc(logger_t logger_proc);
+	IOHOOK_API void hook_set_logger_proc(logger_t logger_proc);
 
 	// Send a virtual event back to the system.
-	UIOHOOK_API void hook_post_event(uiohook_event * const event);
+	IOHOOK_API void hook_post_event(iohook_event * const event);
 
 	// Set the event callback function.
-	UIOHOOK_API void hook_set_dispatch_proc(dispatcher_t dispatch_proc);
+	IOHOOK_API void hook_set_dispatch_proc(dispatcher_t dispatch_proc);
 
 	// Insert the event hook.
-	UIOHOOK_API int hook_run();
+	IOHOOK_API int hook_run();
 
 	// Withdraw the event hook.
-	UIOHOOK_API int hook_stop();
+	IOHOOK_API int hook_stop();
 
 	// Retrieves an array of screen data for each available monitor.
-	UIOHOOK_API screen_data* hook_create_screen_info(unsigned char *count);
+	IOHOOK_API screen_data* hook_create_screen_info(unsigned char *count);
 
 	// Retrieves the keyboard auto repeat rate.
-	UIOHOOK_API long int hook_get_auto_repeat_rate();
+	IOHOOK_API long int hook_get_auto_repeat_rate();
 
 	// Retrieves the keyboard auto repeat delay.
-	UIOHOOK_API long int hook_get_auto_repeat_delay();
+	IOHOOK_API long int hook_get_auto_repeat_delay();
 
 	// Retrieves the mouse acceleration multiplier.
-	UIOHOOK_API long int hook_get_pointer_acceleration_multiplier();
+	IOHOOK_API long int hook_get_pointer_acceleration_multiplier();
 
 	// Retrieves the mouse acceleration threshold.
-	UIOHOOK_API long int hook_get_pointer_acceleration_threshold();
+	IOHOOK_API long int hook_get_pointer_acceleration_threshold();
 
 	// Retrieves the mouse sensitivity.
-	UIOHOOK_API long int hook_get_pointer_sensitivity();
+	IOHOOK_API long int hook_get_pointer_sensitivity();
 
 	// Retrieves the double/triple click interval.
-	UIOHOOK_API long int hook_get_multi_click_time();
+	IOHOOK_API long int hook_get_multi_click_time();
 
 #ifdef __cplusplus
 }

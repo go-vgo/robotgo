@@ -182,6 +182,13 @@ func MoveMouse(x, y int) {
 	C.aMoveMouse(cx, cy)
 }
 
+//Move Move the Mouse
+func Move(x, y int) {
+	cx := C.size_t(x)
+	cy := C.size_t(y)
+	C.aMoveMouse(cx, cy)
+}
+
 //DragMouse Drag the Mouse
 func DragMouse(x, y int) {
 	cx := C.size_t(x)
@@ -221,8 +228,8 @@ func GetMousePos() (int, int) {
 	return x, y
 }
 
-//Click Click the Mouse
-func Click(args ...interface{}) {
+//MouseClick Click the Mouse
+func MouseClick(args ...interface{}) {
 	var button C.MMMouseButton
 	var double C.bool
 	Try(func() {
@@ -245,8 +252,8 @@ func Click(args ...interface{}) {
 	C.aMouseClick(button, double)
 }
 
-//MouseClick Click the Mouse
-func MouseClick(args ...interface{}) {
+//Click Click the Mouse
+func Click(args ...interface{}) {
 	var button C.MMMouseButton
 	var double C.bool
 	Try(func() {
