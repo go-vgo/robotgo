@@ -64,7 +64,7 @@ RobotGo 支持 Mac, Windows, and Linux(X11).
       sudo apt-get install xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev
       sudo apt-get install libxkbcommon-dev
 
-##例子:
+##[例子:](https://github.com/go-vgo/robotgo/blob/master/example/main.go)
 
 ###鼠标
 
