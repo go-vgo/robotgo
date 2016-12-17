@@ -17,6 +17,7 @@
 #####[MoveMouse](#MoveMouse)
 #####[Move](#MoveMouse)(Equivalent to MoveMouse)
 #####[MoveMouseSmooth](#MoveMouseSmooth)
+#####[MoveSmooth](#MoveMouseSmooth)(Equivalent to MoveMouseSmooth)
 #####[MouseClick](#MouseClick)
 #####[Click](#MouseClick)(Equivalent to MouseClick)
 #####[MouseToggle](#MouseToggle)
