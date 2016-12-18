@@ -16,7 +16,7 @@ package robotgo
 	#cgo darwin LDFLAGS: -framework Cocoa -framework OpenGL -framework IOKit -framework Carbon -framework CoreFoundation -L/usr/local/opt/libpng/lib -lpng -L/usr/local/opt/zlib/lib -lz
 //#elif defined(USE_X11)
 	#cgo linux CFLAGS:-I/usr/src
-	#cgo linux LDFLAGS:-L/usr/src -lpng -lz -lX11 -lXtst -lX11-xcb -lxcb -lxcb-xkb -lxkbcommon -lxkbcommon-x11 -lm -std=c99
+	#cgo linux LDFLAGS:-L/usr/src -lpng -lz -lX11 -lXtst -lX11-xcb -lxcb -lxcb-xkb -lxkbcommon -lxkbcommon-x11 -lm -std=gnu99
 //#endif
 	#cgo windows LDFLAGS: -lgdi32 -luser32 -lpng -lz
 //#include <AppKit/NSEvent.h>
