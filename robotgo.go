@@ -31,7 +31,6 @@ import "C"
 
 import (
 	// . "fmt"
-	"fmt"
 	"reflect"
 	"unsafe"
 	// "runtime"
@@ -542,7 +541,7 @@ func OpenBitmap(args ...interface{}) C.MMBitmapRef {
 }
 
 //SaveBitmap Save the Bitmap
-func SaveBitmap(args ...interface{}) {
+func SaveBitmap(args ...interface{}) string {
 	var mtype C.uint16_t
 	Try(func() {
 		mtype = C.uint16_t(args[2].(int))
@@ -553,9 +552,11 @@ func SaveBitmap(args ...interface{}) {
 
 	path := C.CString(args[1].(string))
 	savebit := C.aSaveBitmap(args[0].(C.MMBitmapRef), path, mtype)
-	fmt.Println("saved...", savebit)
+	// fmt.Println("saved...", savebit)
 	// return bit
 	// defer C.free(unsafe.Pointer(path))
+
+	return C.GoString(savebit)
 }
 
 // func SaveBitmap(bit C.MMBitmapRef, gpath string, mtype C.MMImageType) {
@@ -593,7 +594,7 @@ func Convert(args ...interface{}) {
 	Try(func() {
 		mtype = args[2].(int)
 	}, func(e interface{}) {
-		fmt.Println("err:::", e)
+		// fmt.Println("err:::", e)
 		mtype = 1
 	})
 	//C.CString()
