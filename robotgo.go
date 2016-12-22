@@ -419,7 +419,7 @@ func KeyTap(args ...interface{}) {
 }
 
 //KeyToggle Toggle the Keyboard
-func KeyToggle(args ...string) {
+func KeyToggle(args ...string) string {
 	var adown string
 	var amkey string
 	var amkeyt string
@@ -447,14 +447,16 @@ func KeyToggle(args ...string) {
 	camkey := C.CString(amkey)
 	camkeyt := C.CString(amkeyt)
 	// defer func() {
-	// str := C.aKeyToggle(ckey, cadown, camkey, camkeyt)
+	str := C.aKeyToggle(ckey, cadown, camkey, camkeyt)
 	// fmt.Println(str)
-	C.aKeyToggle(ckey, cadown, camkey, camkeyt)
+	// C.aKeyToggle(ckey, cadown, camkey, camkeyt)
 	// }()
 	defer C.free(unsafe.Pointer(ckey))
 	defer C.free(unsafe.Pointer(cadown))
 	defer C.free(unsafe.Pointer(camkey))
 	defer C.free(unsafe.Pointer(camkeyt))
+
+	return C.GoString(str)
 }
 
 //TypeString Type String
