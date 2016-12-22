@@ -447,8 +447,9 @@ func KeyToggle(args ...string) {
 	camkey := C.CString(amkey)
 	camkeyt := C.CString(amkeyt)
 	// defer func() {
-	str := C.aKeyToggle(ckey, cadown, camkey, camkeyt)
-	fmt.Println(str)
+	// str := C.aKeyToggle(ckey, cadown, camkey, camkeyt)
+	// fmt.Println(str)
+	C.aKeyToggle(ckey, cadown, camkey, camkeyt)
 	// }()
 	defer C.free(unsafe.Pointer(ckey))
 	defer C.free(unsafe.Pointer(cadown))
