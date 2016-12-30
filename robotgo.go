@@ -626,6 +626,11 @@ func AddEvent(aeve string) int {
 	return geve
 }
 
+//StopEvent Stop Event
+func StopEvent() {
+	C.aStop()
+}
+
 //LEvent Add Event
 func LEvent(aeve string) int {
 	cs := C.CString(aeve)

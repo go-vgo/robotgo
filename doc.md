@@ -48,6 +48,7 @@
 
 #####[LEvent](#LEvent)(Equivalent to AddEvent,Wno-deprecated)
 #####[AddEvent](#AddEvent)
+#####[StopEvent](#StopEvent)
 
 ##[Window](#Window)
     This is a work in progress.
@@ -406,7 +407,9 @@ func main() {
     Println("you press...", "mouse left button")
   }
 } 
-```    
+```  
+###<h3 id="StopEvent">.StopEvent()</h3>  
+    stop listen global event
 
 ##<h2 id="Window">Window</h2> 
 

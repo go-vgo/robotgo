@@ -48,6 +48,7 @@
 
 #####[LEvent](#AddEvent)(相当于AddEvent,Wno-deprecated)
 #####[AddEvent](#AddEvent)
+#####[StopEvent](#StopEvent)
 
 ##[窗口](#Window)
     This is a work in progress.
@@ -420,6 +421,9 @@ func main() {
   }
 } 
 ```
+
+###<h3 id="StopEvent">.StopEvent()</h3>  
+    停止事件监听
 
 ##<h2 id="Window">窗口</h2> 
 
