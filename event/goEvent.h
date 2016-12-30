@@ -159,7 +159,7 @@ void dispatch_proc(iohook_event * const event) {
 				event->data.mouse.button, event->data.mouse.clicks);
 				int abutton=event->data.mouse.button;
 				int aclicks=event->data.mouse.clicks;
-				int amouse=0;
+				int amouse=-1;
 				if (strcmp(cevent,"mleft") == 0){
 					amouse=1;
 				}
