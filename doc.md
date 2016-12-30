@@ -101,6 +101,9 @@
     down - Accepts 'down' or 'up'.
     modifier (optional, string or array) - Accepts alt, command (mac), control, and shift.
 
+####Return:
+    return KeyToggle status
+
 ###<h3 id="TypeString">.TypeString(string)</h3>
 
 ####Arguments:
@@ -325,7 +328,7 @@ robotgo.ScrollMouse(50, "down")
 
 ####Return:
 
-    Return a imgage
+    return save image status
 
 
 ###<h3 id="TostringBitmap">.TostringBitmap</h3>

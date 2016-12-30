@@ -104,6 +104,9 @@
     key - See keys.
     down - Accepts 'down' or 'up'.
     modifier (optional, string or array) - Accepts alt, command (mac), control, and shift.
+###返回值:
+
+    返回KeyToggle状态
 
 ###<h3 id="TypeString">.TypeString(string)</h3>
 
@@ -339,7 +342,7 @@ robotgo.ScrollMouse(50, "down")
 
 ####返回值:
 
-    保存图片
+    保存图片,返回保存状态
 
 
 ###<h3 id="TostringBitmap">.TostringBitmap</h3>
