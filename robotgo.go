@@ -37,6 +37,15 @@ import (
 	// "syscall"
 )
 
+const (
+	version string = "v0.41.1,Happy new year!"
+)
+
+//GetVersion get version
+func GetVersion() string {
+	return version
+}
+
 /*
       _______.  ______ .______       _______  _______ .__   __.
     /       | /      ||   _  \     |   ____||   ____||  \ |  |
