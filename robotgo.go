@@ -38,7 +38,7 @@ import (
 )
 
 const (
-	version string = "v0.41.1.179,Happy new year!"
+	version string = "v0.41.1.181,Happy new year!"
 )
 
 //GetVersion get version
