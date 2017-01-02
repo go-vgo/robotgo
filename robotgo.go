@@ -84,20 +84,20 @@ func GetScreenSize() (int, int) {
 	return int(size.width), int(size.height)
 }
 
-//GetXDisplayName Get XDisplay Name
-func GetXDisplayName() string {
-	name := C.aGetXDisplayName()
-	gname := C.GoString(name)
-	defer C.free(unsafe.Pointer(name))
-	return gname
-}
-
 //SetXDisplayName Set XDisplay Name
 func SetXDisplayName(name string) string {
 	cname := C.CString(name)
 	str := C.aSetXDisplayName(cname)
 	gstr := C.GoString(str)
 	return gstr
+}
+
+//GetXDisplayName Get XDisplay Name
+func GetXDisplayName() string {
+	name := C.aGetXDisplayName()
+	gname := C.GoString(name)
+	defer C.free(unsafe.Pointer(name))
+	return gname
 }
 
 //CaptureScreen Capture the Screen
@@ -740,18 +740,18 @@ func CloseWindow() {
 	C.aCloseWindow()
 }
 
+//SetHandle Set the Window Handle
+func SetHandle(hwnd int) {
+	chwnd := C.uintptr(hwnd)
+	C.aSetHandle(chwnd)
+}
+
 //GetHandle Get the Window Handle
 func GetHandle() int {
 	hwnd := C.aGetHandle()
 	ghwnd := int(hwnd)
 	// Println("gethwnd---", ghwnd)
 	return ghwnd
-}
-
-//SetHandle Set the Window Handle
-func SetHandle(hwnd int) {
-	chwnd := C.uintptr(hwnd)
-	C.aSetHandle(chwnd)
 }
 
 //GetTitle Get the Window Title

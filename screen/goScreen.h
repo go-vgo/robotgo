@@ -56,6 +56,15 @@ MMSize aGetScreenSize(){
 	return displaySize;
 }
 
+char* aSetXDisplayName(char* name){
+	#if defined(USE_X11)
+	setXDisplay(name);
+	return "success";
+	#else
+	return "setXDisplayName is only supported on Linux";
+	#endif
+}
+
 char* aGetXDisplayName(){
 	#if defined(USE_X11)
 	const char* display = getXDisplay();
@@ -65,15 +74,6 @@ char* aGetXDisplayName(){
 	return sd;
 	#else
 	return "getXDisplayName is only supported on Linux";
-	#endif
-}
-
-char* aSetXDisplayName(char* name){
-	#if defined(USE_X11)
-	setXDisplay(name);
-	return "success";
-	#else
-	return "setXDisplayName is only supported on Linux";
 	#endif
 }
 
