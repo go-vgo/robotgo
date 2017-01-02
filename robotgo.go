@@ -615,6 +615,7 @@ func Convert(args ...interface{}) {
 }
 
 /*
+
 ------------ ---    ---  ------------ ----    ---- ------------
 ************ ***    ***  ************ *****   **** ************
 ----         ---    ---  ----         ------  ---- ------------
@@ -623,12 +624,39 @@ func Convert(args ...interface{}) {
 ****          ********   ****         ****  ******     ****
 ------------   ------    ------------ ----   -----     ----
 ************    ****     ************ ****    ****     ****
-
 */
+
+//Map a map
+type Map map[string]interface{}
 
 //AddEvent Add Event
 func AddEvent(aeve string) int {
-	cs := C.CString(aeve)
+	keycode := Map{
+		"f1":  "59",
+		"f2":  "60",
+		"f3":  "61",
+		"f4":  "62",
+		"f5":  "63",
+		"f6":  "64",
+		"f7":  "65",
+		"f8":  "66",
+		"f9":  "67",
+		"f10": "68",
+		"f11": "69",
+		"f12": "70",
+	}
+
+	var cs *C.char
+	var keve string
+
+	if len(aeve) > 1 {
+		keve = keycode[aeve].(string)
+		cs = C.CString(keve)
+	} else {
+		cs = C.CString(aeve)
+	}
+
+	// cs := C.CString(aeve)
 	eve := C.aEvent(cs)
 	// Println("event@@", eve)
 	geve := int(eve)
