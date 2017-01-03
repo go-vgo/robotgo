@@ -38,7 +38,7 @@ import (
 )
 
 const (
-	version string = "v0.41.1.182,Happy new year!"
+	version string = "v0.41.1.183,Happy new year!"
 )
 
 //GetVersion get version
@@ -311,6 +311,12 @@ func Click(args ...interface{}) {
 		double = false
 	})
 	C.aMouseClick(button, double)
+}
+
+//MoveClick move and click the Mouse
+func MoveClick(x, y int, args ...interface{}) {
+	MoveMouse(x, y)
+	MouseClick(args)
 }
 
 //MouseToggle Toggle the Mouse

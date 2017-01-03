@@ -1,5 +1,7 @@
 #Methods:
 
+#####[GetVersion](#GetVersion)
+
 ##[Keyboard](#Keyboard)
 
 #####[Keys](#keys)
@@ -20,6 +22,7 @@
 #####[MoveSmooth](#MoveMouseSmooth)(Equivalent to MoveMouseSmooth)
 #####[MouseClick](#MouseClick)
 #####[Click](#MouseClick)(Equivalent to MouseClick)
+#####[MoveClick](#MoveClick)
 #####[MouseToggle](#MouseToggle)
 #####[DragMouse](#DragMouse)
 #####[Drag](#DragMouse)(Equivalent to DragMouse)
@@ -62,6 +65,8 @@
 #####[GetHandle](#GetHandle)
 #####[GetTitle](#GetTitle)
 
+###<h3 id="GetVersion">.GetVersion()</h3>
+    get robotgo version
 
 ##<h2 id="Keyboard">Keyboard</h2>
 
@@ -173,7 +178,25 @@ robotgo.MoveMouse(100, 100)
 
 ```Go
     robogo.MouseClick()
-    robogo.MouseClick("left",true)
+    robogo.MouseClick("left", true)
+```
+
+###<h3 id="MoveClick">.MoveClick(button, double)</h3>
+
+    Move and click the mouse.
+
+####Arguments:
+    x,
+    y,
+
+    button (optional) - Accepts "left", "right", or "center". Defaults to left.
+    double (optional) - Set to true to perform a double click. Defaults to false.
+
+####Examples:
+
+```Go
+    robogo.MoveClick(10, 20)
+    robogo.MoveClick(10, 20, "left", true)
 ```
 
 ###<h3 id="MouseToggle">.MouseToggle(down, button)</h3>

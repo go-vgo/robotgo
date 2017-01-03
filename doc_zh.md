@@ -1,5 +1,7 @@
 #方法:
 
+#####[GetVersion](#GetVersion)
+
 ##[键盘](#Keyboard)
 
 #####[Keys](#keys)
@@ -20,11 +22,15 @@
 #####[MoveSmooth](#MoveMouseSmooth)(相当与MoveMouseSmooth)
 #####[MouseClick](#MouseClick)
 #####[Click](#MouseClick)(相当于MouseClick)
+#####[MoveClick](#MoveClick)
 #####[MouseToggle](#MouseToggle)
 #####[DragMouse](#DragMouse)
 #####[Drag](#DragMouse)(相当于DragMouse)
 #####[GetMousePos](#GetMousePos)
 #####[ScrollMouse](#ScrollMouse)
+
+###<h3 id="GetVersion">.GetVersion()</h3>
+    获取robotgo版本
 
 ##[屏幕](#Screen)
 
@@ -85,7 +91,7 @@
 
     key - See keys.
     modifier (optional, string or array) - Accepts alt, command (win), control, and shift.
-####例子:
+####示例:
 
 ```Go
     robotgo.KeyTap("h", "command")
@@ -142,7 +148,7 @@
 
     x,y
 
-####例子:
+####示例:
 
 ```Go
 //Move the mouse to 100, 100 on the screen. 
@@ -159,7 +165,7 @@ robotgo.MoveMouse(100, 100)
     x,y
     lowspeed,highspeed
 
-####例子:
+####示例:
 
 ```Go
     robotgo.MoveMouseSmooth(100, 200)
@@ -176,11 +182,29 @@ robotgo.MoveMouse(100, 100)
     button (optional) - Accepts left, right, or center. Defaults to left.
     double (optional) - Set to true to perform a double click. Defaults to false.
 
-####例子:
+####示例:
 
 ```Go
     robogo.MouseClick()
-    robogo.MouseClick("left",true)
+    robogo.MouseClick("left", true)
+```
+
+###<h3 id="MoveClick">.MoveClick(button, double)</h3>
+
+    移动并点击鼠标
+
+####参数:
+    x,
+    y,
+
+    button (optional) - Accepts "left", "right", or "center". Defaults to left.
+    double (optional) - Set to true to perform a double click. Defaults to false.
+
+####示例:
+
+```Go
+    robogo.MoveClick(10, 20)
+    robogo.MoveClick(10, 20, "left", true)
 ```
 
 ###<h3 id="MouseToggle">.MouseToggle(down, button)</h3>
@@ -193,7 +217,7 @@ robotgo.MoveMouse(100, 100)
     down (optional) - Accepts down or up. Defaults to down.
     button (optional) - Accepts "left", "right", or "center". Defaults to left.
 
-####例子:
+####示例:
 
 ```Go
 robotgo.MouseToggle("down")
@@ -209,7 +233,7 @@ robotgo.MouseToggle("down", "right")
 
     x,y
 
-####例子:
+####示例:
 
 ```Go
 //Mouse down at 0, 0 and then drag to 100, 100 and release. 
@@ -228,7 +252,7 @@ robotgo.MouseToggle("up")
 
     Returns an object with keys x and y.
 
-####例子:
+####示例:
 
 ```Go
 x,y := robotgo.GetMousePos()
@@ -247,7 +271,7 @@ fmt.Println("pos:", x, y)
     magnitude - The amount to scroll.
     direction - Accepts down or up.
 
-####例子:
+####示例:
 
 ```Go
 robotgo.ScrollMouse(50, "up")
@@ -380,7 +404,7 @@ robotgo.ScrollMouse(50, "down")
     savepath,
     MMImageType(可选)
 
-####例子:
+####示例:
 
 ```Go
     robotgo.Convert("test.png", "test.tif")
@@ -401,7 +425,7 @@ robotgo.ScrollMouse(50, "down")
 
     监听成功返回0
 
-####例子:
+####示例:
 
 ```Go
 package main
