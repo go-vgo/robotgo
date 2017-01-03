@@ -38,7 +38,7 @@ import (
 )
 
 const (
-	version string = "v0.41.1.181,Happy new year!"
+	version string = "v0.41.1.182,Happy new year!"
 )
 
 //GetVersion get version
@@ -649,7 +649,7 @@ func AddEvent(aeve string) int {
 	var cs *C.char
 	var keve string
 
-	if len(aeve) > 1 {
+	if len(aeve) > 1 && len(aeve) < 4 {
 		keve = keycode[aeve].(string)
 		cs = C.CString(keve)
 	} else {
