@@ -189,7 +189,7 @@ robotgo.MoveMouse(100, 100)
     robogo.MouseClick("left", true)
 ```
 
-###<h3 id="MoveClick">.MoveClick(button, double)</h3>
+###<h3 id="MoveClick">.MoveClick(x, y, button, double)</h3>
 
     移动并点击鼠标
 
