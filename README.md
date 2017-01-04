@@ -201,3 +201,8 @@ func main() {
   Println("title@@@", title)
 } 
 ```
+
+##Contributors
+
+- See [contributors page](https://github.com/go-vgo/robotgo/graphs/contributors) for full list of contributors.
+- See [Contribution Guidelines](https://github.com/go-vgo/robotgo/blob/master/CONTRIBUTING.md).
