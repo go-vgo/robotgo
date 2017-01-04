@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This document explains how to contribute changes to the Robotgo project. It assumes you have followed the README.md and [API Document](https://github.com/go-vgo/robotgo/blob/master/doc.md). <!--Sensitive security-related issues should be reported to [security@Robotgo.io](mailto:security@Robotgo.io)-->.
+This document explains how to contribute changes to the Robotgo project. It assumes you have followed the README.md and [API Document](https://github.com/go-vgo/robotgo/blob/master/doc.md). <!--Sensitive security-related issues should be reported to [security@Robotgo.io](mailto:security@Robotgo.io.)-->
 
 ## Bug reports
 
@@ -46,7 +46,7 @@ Since Robotgo is a pure community organization without any company support,Copyr
 
 ## Versions
 
-Robotgo has the `master` branch as a tip branch and has version branches such as `v0.30.0`. `v0.40.0` is a release branch and we will tag `v0.40.0` for binary download. If `v0.40.0` has bugs, we will accept pull requests on the `v0.9` branch and publish a `v0.9.1` tag, after bringing the bug fix also to the master branch.
+Robotgo has the `master` branch as a tip branch and has version branches such as `v0.30.0`. `v0.40.0` is a release branch and we will tag `v0.40.0` for binary download. If `v0.40.0` has bugs, we will accept pull requests on the `v0.40.0` branch and publish a `v0.40.1` tag, after bringing the bug fix also to the master branch.
 
 Since the `master` branch is a tip version, if you wish to use Robotgo in production, please download the latest release tag version. All the branches will be protected via GitHub, all the PRs to every branch must be reviewed by two maintainers and must pass the automatic tests.
 
