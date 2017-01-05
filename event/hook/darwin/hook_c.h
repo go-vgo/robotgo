@@ -417,8 +417,8 @@ static inline void process_key_pressed(uint64_t timestamp, CGEventRef event_ref)
 		else {
 			keycode_to_lookup(tis_message);
 		}
-
-		for (unsigned int i = 0; i < tis_message->length; i++) {
+		unsigned int i;
+		for (i= 0; i < tis_message->length; i++) {
 			// Populate key typed event.
 			event.time = timestamp;
 			event.reserved = 0x00;

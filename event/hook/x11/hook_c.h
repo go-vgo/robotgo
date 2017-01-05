@@ -354,7 +354,8 @@ void hook_event_proc(XPointer closeure, XRecordInterceptData *recorded_data) {
 				count = keysym_to_unicode(keysym, buffer, sizeof(buffer) / sizeof(uint16_t));
 				#endif
 
-				for (unsigned int i = 0; i < count; i++) {
+				unsigned int i; 
+				for (i = 0; i < count; i++) {
 					// Populate key typed event.
 					event.time = timestamp;
 					event.reserved = 0x00;

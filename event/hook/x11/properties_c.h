@@ -132,7 +132,8 @@ IOHOOK_API screen_data* hook_create_screen_info(unsigned char *count) {
 			screens = malloc(sizeof(screen_data) * xine_count);
 
 			if (screens != NULL) {
-				for (int i = 0; i < xine_count; i++) {
+				int i;
+				for (i = 0; i < xine_count; i++) {
 					screens[i] = (screen_data) {
 						.number = xine_info[i].screen_number,
 						.x = xine_info[i].x_org,
@@ -163,7 +164,8 @@ IOHOOK_API screen_data* hook_create_screen_info(unsigned char *count) {
 		screens = malloc(sizeof(screen_data) * xrandr_count);
 
 		if (screens != NULL) {
-			for (int i = 0; i < xrandr_count; i++) {
+			int i;
+			for (i = 0; i < xrandr_count; i++) {
 				XRRCrtcInfo *crtc_info = XRRGetCrtcInfo(properties_disp, xrandr_resources, xrandr_resources->crtcs[i]);
 
 				if (crtc_info != NULL) {

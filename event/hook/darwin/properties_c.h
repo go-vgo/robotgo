@@ -44,7 +44,8 @@ IOHOOK_API screen_data* hook_create_screen_info(unsigned char *count) {
 			// Allocate memory for the number of screens found.
 			screens = malloc(sizeof(screen_data) * (*count));
 			if (screens != NULL) {
-				for (uint8_t i = 0; i < *count; i++) {
+				uint8_t i;
+				for (i = 0; i < *count; i++) {
 					//size_t width = CGDisplayPixelsWide(display_ids[i]);
 					//size_t height = CGDisplayPixelsHigh(display_ids[i]);
 					CGRect boundsDisp = CGDisplayBounds(display_ids[i]);
