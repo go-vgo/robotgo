@@ -65,11 +65,6 @@ func main() {
 	}
 
 	//read the screen
-	// robotgo.CaptureScreen()
-	// bit_map := robotgo.CaptureScreen()
-	// Println("CaptureScreen...", bit_map)
-	// gbit_map := robotgo.Capture_Screen()
-	// gbitMap := robotgo.Capture_Screen()
 	gbitMap := robotgo.BCaptureScreen()
 	fmt.Println("Capture_Screen...", gbitMap.Width)
 
@@ -107,8 +102,8 @@ func main() {
 	//Creates bitmap from string by bit_map
 	fmt.Println("bit_str...", bitstr)
 
-	// sbit_map := robotgo.BitmapFromstring(bit_str, 2)
-	// Println("...", sbit_map)
+	// sbitmap := robotgo.BitmapFromstring(bit_str, 2)
+	// Println("...", sbitmap)
 
 	robotgo.SaveBitmap(bitmap, "test.png")
 	//Saves image to absolute filepath in the given format
@@ -152,7 +147,8 @@ func main() {
 	// 	Println("---you press right mouse button---", "mright")
 	// }
 
-	// robotgo.LStop()
+	//Stop AddEvent
+	// robotgo.StopEvent()
 
 	//Window Handle
 	abool := robotgo.ShowAlert("hello", "robotgo") //Show Alert Window
