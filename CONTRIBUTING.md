@@ -28,7 +28,7 @@ Before sending code out for review, run all the tests for the whole tree to make
 
 ## Code review
 
-Changes to Robotgo must be reviewed before they are accepted, no matter who makes the change even if it is an owner or a maintainer. We use GitHub's pull request workflow to do that and we also use [LGTM](http://lgtm.co) to ensure every PR is reviewed by vz.
+Changes to Robotgo must be reviewed before they are accepted, no matter who makes the change even if it is a maintainer. We use GitHub's pull request workflow to do that and we also use [LGTM](http://lgtm.co) to ensure every PR is reviewed by vz or least 2 maintainers.
 
 
 ## Sign your work
