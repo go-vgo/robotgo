@@ -667,6 +667,7 @@ func AddEvent(aeve string) int {
 	eve := C.aEvent(cs)
 	// Println("event@@", eve)
 	geve := int(eve)
+	defer C.free(unsafe.Pointer(cs))
 	return geve
 }
 
@@ -681,6 +682,7 @@ func LEvent(aeve string) int {
 	eve := C.aEvent(cs)
 	// Println("event@@", eve)
 	geve := int(eve)
+	defer C.free(unsafe.Pointer(cs))
 	return geve
 }
 
