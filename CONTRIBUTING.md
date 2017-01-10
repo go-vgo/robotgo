@@ -24,7 +24,7 @@ This process gives everyone a chance to validate the design, helps prevent dupli
 
 ## Testing redux
 
-Before sending code out for review, run all the tests for the whole tree to make sure the changes don't break other usage and keep the compatibility on upgrade. You must be test on Mac, Windows, Linux and other.
+Before sending code out for review, run all the tests for the whole tree to make sure the changes don't break other usage and keep the compatibility on upgrade. You must be test on Mac, Windows, Linux and other.You should install the CLI for Circle CI, as we are using the server for continous testing.
 
 ## Code review
 
