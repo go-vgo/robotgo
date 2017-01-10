@@ -90,6 +90,7 @@ func SetXDisplayName(name string) string {
 	cname := C.CString(name)
 	str := C.aSetXDisplayName(cname)
 	gstr := C.GoString(str)
+	defer C.free(unsafe.Pointer(cname))
 	return gstr
 }
 
@@ -340,6 +341,7 @@ func MouseToggle(args ...interface{}) {
 	})
 	down := C.CString(args[0].(string))
 	C.aMouseToggle(down, button)
+	defer C.free(unsafe.Pointer(down))
 }
 
 //SetMouseDelay Set Mouse Delay
@@ -426,10 +428,10 @@ func KeyTap(args ...interface{}) {
 
 		C.aKeyTap(zkey, amod, amodt)
 
-		defer C.free(unsafe.Pointer(zkey))
 		defer C.free(unsafe.Pointer(amod))
 		defer C.free(unsafe.Pointer(amodt))
 	}
+	defer C.free(unsafe.Pointer(zkey))
 
 }
 
@@ -551,6 +553,7 @@ func OpenBitmap(args ...interface{}) C.MMBitmapRef {
 		mtype = 1
 	})
 	bit := C.aOpenBitmap(path, mtype)
+	defer C.free(unsafe.Pointer(path))
 	// Println("opening...", bit)
 	return bit
 	// defer C.free(unsafe.Pointer(path))
@@ -570,7 +573,7 @@ func SaveBitmap(args ...interface{}) string {
 	savebit := C.aSaveBitmap(args[0].(C.MMBitmapRef), path, mtype)
 	// fmt.Println("saved...", savebit)
 	// return bit
-	// defer C.free(unsafe.Pointer(path))
+	defer C.free(unsafe.Pointer(path))
 
 	return C.GoString(savebit)
 }
@@ -721,6 +724,10 @@ func ShowAlert(title, msg string, args ...string) int {
 
 	cbool := C.aShowAlert(atitle, amsg, adefaultButton, acancelButton)
 	ibool := int(cbool)
+	defer C.free(unsafe.Pointer(atitle))
+	defer C.free(unsafe.Pointer(amsg))
+	defer C.free(unsafe.Pointer(adefaultButton))
+	defer C.free(unsafe.Pointer(acancelButton))
 	return ibool
 }
 
