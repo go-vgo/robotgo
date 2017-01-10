@@ -39,7 +39,7 @@ import (
 )
 
 const (
-	version string = "v0.41.1.195,fate!"
+	version string = "v0.41.1.201,fate!"
 )
 
 //GetVersion get version
