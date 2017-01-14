@@ -39,7 +39,7 @@ import (
 )
 
 const (
-	version string = "v0.41.1.204,fate!"
+	version string = "v0.41.1.205,fate!"
 )
 
 //GetVersion get version
@@ -394,7 +394,7 @@ func KeyTap(args ...interface{}) {
 
 			num = len(keyarr)
 
-			for i, _ := range keyarr {
+			for i := 0; i < num; i++ {
 				ckeyarr = append(ckeyarr, (*C.char)(unsafe.Pointer(C.CString(keyarr[i]))))
 			}
 
