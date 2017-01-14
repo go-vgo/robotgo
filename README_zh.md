@@ -20,54 +20,64 @@ RobotGo 支持 Mac, Windows, and Linux(X11).
 
 
 ##安装:
-    go get github.com/go-vgo/robotgo
-
+```
+go get github.com/go-vgo/robotgo
+```
   It's that easy!
 
 ##更新:
-    go get -u github.com/go-vgo/robotgo   
-
+```
+go get -u github.com/go-vgo/robotgo   
+```
 ###环境要求:
 
 ####ALL:  
-    Golang
-    //Gcc
-    zlib & libpng (bitmap)
-
+```
+Golang
+//Gcc
+zlib & libpng (bitmap)
+```
 ####For Mac OS X:
     Xcode Command Line Tools
-
-    brew install libpng
-    brew install homebrew/dupes/zlib
+```
+brew install libpng
+brew install homebrew/dupes/zlib
+```    
 ####For Windows:
-    MinGW or other GCC
-
+```
+MinGW or other GCC
+```
 #####[zlib&libpng Windows32 GCC教程](https://github.com/go-vgo/Mingw32)
 #####[下载包含zlib和libpng的64位MinGW](https://github.com/go-vgo/Mingw)
 
 ####For everything else(Linux等其他系统):
-    GCC
+```
+GCC
     
-    X11 with the XTest extension (also known as the Xtst library)
+X11 with the XTest extension (also known as the Xtst library)
 
-    事件:
+事件:
     
-    xcb,xkb,libxkbcommon
-
+xcb,xkb,libxkbcommon
+```
 #####Ubuntu:
 
-      sudo apt-get install libx11-dev
-      sudo apt-get install libgtkglextmm-x11-dev
-      sudo apt-get install libghc6-x11-dev
-      sudo apt-get install libgl1-mesa-swx11-dev
-      sudo apt-get install xorg-dev
+```yml
 
-      sudo apt-get install libxtst-dev libpng++-dev
+sudo apt-get install libx11-dev
+#sudo apt-get install libgtkglextmm-x11-dev
+#sudo apt-get install libghc6-x11-dev
+#sudo apt-get install libgl1-mesa-swx11-dev
+sudo apt-get install xorg-dev
 
-      事件:
+sudo apt-get install libxtst-dev libpng++-dev   
 
-      sudo apt-get install xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev
-      sudo apt-get install libxkbcommon-dev
+#事件:
+
+sudo apt-get install xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev
+sudo apt-get install libxkbcommon-dev
+
+```
 
 ##[例子:](https://github.com/go-vgo/robotgo/blob/master/example/main.go)
 

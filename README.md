@@ -24,59 +24,65 @@ This is a work in progress.
 
 
 ##Installation:
-    go get github.com/go-vgo/robotgo
-
+```
+go get github.com/go-vgo/robotgo
+```
   It's that easy!
 
 ##Update:
-    go get -u github.com/go-vgo/robotgo  
-
+```
+go get -u github.com/go-vgo/robotgo  
+```
 ###Requirements:
 
-####ALL:  
-    Golang
-    //Gcc
-    zlib & libpng (bitmap)
-
+####ALL: 
+``` 
+Golang
+//Gcc
+zlib & libpng (bitmap)
+```
 ####For Mac OS X:
     Xcode Command Line Tools
-
-    brew install libpng
-    brew install homebrew/dupes/zlib
+```
+brew install libpng
+brew install homebrew/dupes/zlib
+```    
 ####For Windows:
-    MinGW or other GCC
-
+```
+MinGW or other GCC
+```
 #####[zlib&libpng Windows32 GCC's Course](https://github.com/go-vgo/Mingw32)
 
 #####[Download include zlib&libpng Windows64 GCC](https://github.com/go-vgo/Mingw)
 
 ####For everything else:
-    GCC
+```
+GCC
     
-    X11 with the XTest extension (also known as the Xtst library)
+X11 with the XTest extension (also known as the Xtst library)
 
-    Event:
+Event:
     
-    xcb,xkb,libxkbcommon
-
-    
+xcb,xkb,libxkbcommon
+``` 
 
 #####Ubuntu:
+```yml
 
-      sudo apt-get install libx11-dev
-      sudo apt-get install libgtkglextmm-x11-dev
-      sudo apt-get install libghc6-x11-dev
-      sudo apt-get install libgl1-mesa-swx11-dev
-      sudo apt-get install xorg-dev
+sudo apt-get install libx11-dev
+#sudo apt-get install libgtkglextmm-x11-dev
+#sudo apt-get install libghc6-x11-dev
+#sudo apt-get install libgl1-mesa-swx11-dev
+sudo apt-get install xorg-dev
 
-      sudo apt-get install libxtst-dev libpng++-dev   
+sudo apt-get install libxtst-dev libpng++-dev   
 
-      Event:
+#Event:
 
-      sudo apt-get install xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev
-      sudo apt-get install libxkbcommon-dev
+sudo apt-get install xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev
+sudo apt-get install libxkbcommon-dev
 
-
+```
 ##[Examples:](https://github.com/go-vgo/robotgo/blob/master/example/main.go)
 
 ###Mouse
