@@ -56,7 +56,7 @@
 ##[Window](#Window)
     This is a work in progress.
 
-#####[ShowAlert(support linux as soon as possible)](#ShowAlert)
+#####[ShowAlert](#ShowAlert)
 #####[CloseWindow](#CloseWindow)
 #####[IsValid](#IsValid)
 #####[SetActive](#SetActive)

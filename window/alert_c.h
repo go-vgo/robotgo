@@ -123,8 +123,9 @@ static int runTask(const char *taskname, char * const argv[], int *exit_status);
 
 static int xmessage(char *argv[], int *exit_status)
 {
-	static const char * const MSG_PROGS[] = {"gmessage", "gxmessage",
-	                                         "kmessage", "xmessage"};
+	// static const char * const MSG_PROGS[] = {"gmessage", "gxmessage",
+	//                                          "kmessage", "xmessage"};
+	static const char * const MSG_PROGS[] = {"xmessage"};
 	static int PREV_MSG_INDEX = -1;
 	#define MSG_PROGS_LEN (sizeof(MSG_PROGS) / sizeof(MSG_PROGS[0]))
 
@@ -155,15 +156,18 @@ static int xmessage(char *argv[], int *exit_status)
 
 static int runTask(const char *taskname, char * const argv[], int *exit_status)
 {
-	pid_t pid;
+	pid_t pid = fork();
 	int status;
 
-	switch (pid = fork()) {
+	switch (pid) {
 		case -1: /* Failed to fork */
 			perror("fork");
 			return FORK_FAILED; /* Failed to fork. */
 		case 0: /* Child process */
-			execvp(taskname, argv);
+			if (strcmp(argv[0],"xmessage") == 0){
+				execvp(taskname, argv);
+				perror("execvp failed");
+			}
 			exit(42); /* Failed to run task. */
 		default: /* Parent process */
 			wait(&status); /* Block execution until finished. */
