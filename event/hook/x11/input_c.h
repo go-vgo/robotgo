@@ -14,17 +14,17 @@
 
 #ifdef USE_XKB
 #ifdef USE_EVDEV
-#include <linux/input.h>
-static bool is_evdev = false;
+	#include <linux/input.h>
+	static bool is_evdev = false;
 #endif
 
 #include <X11/XKBlib.h>
 static XkbDescPtr keyboard_map;
 #else
-#include <X11/Xutil.h>
-static KeySym *keyboard_map;
-static int keysym_per_keycode;
-static bool is_caps_lock = false, is_shift_lock = false;
+	#include <X11/Xutil.h>
+	static KeySym *keyboard_map;
+	static int keysym_per_keycode;
+	static bool is_caps_lock = false, is_shift_lock = false;
 #endif
 
 #ifdef USE_XKBCOMMON

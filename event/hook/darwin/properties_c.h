@@ -1,23 +1,23 @@
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+	#include <config.h>
 #endif
 
 #ifdef USE_CARBON_LEGACY
-#include <Carbon/Carbon.h>
+	#include <Carbon/Carbon.h>
 #endif
 #ifdef USE_COREFOUNDATION
-#include <CoreFoundation/CoreFoundation.h>
+	#include <CoreFoundation/CoreFoundation.h>
 #endif
 #ifdef USE_IOKIT
-#include <IOKit/hidsystem/IOHIDLib.h>
-#include <IOKit/hidsystem/IOHIDParameter.h>
+	#include <IOKit/hidsystem/IOHIDLib.h>
+	#include <IOKit/hidsystem/IOHIDParameter.h>
 #endif
+
 #include <stdbool.h>
 #include "../iohook.h"
-
-// #include "../logger_c.h"
 #include "input.h"
+// #include "../logger_c.h"
 
 IOHOOK_API screen_data* hook_create_screen_info(unsigned char *count) {
 	CGError status = kCGErrorFailure;

@@ -1,18 +1,18 @@
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+	#include <config.h>
 #endif
 
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "../iohook.h"
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #ifdef USE_XTEST
-#include <X11/extensions/XTest.h>
+	#include <X11/extensions/XTest.h>
 #endif
 
+#include "../iohook.h"
 #include "input.h"
 // #include "../logger.h"
 

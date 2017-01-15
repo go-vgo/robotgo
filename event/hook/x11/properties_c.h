@@ -6,28 +6,28 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "../iohook.h"
 #include <X11/Xlib.h>
 #ifdef USE_XKB
-#include <X11/XKBlib.h>
+	#include <X11/XKBlib.h>
 #endif
 #ifdef USE_XF86MISC
-#include <X11/extensions/xf86misc.h>
-#include <X11/extensions/xf86mscstr.h>
+	#include <X11/extensions/xf86misc.h>
+	#include <X11/extensions/xf86mscstr.h>
 #endif
 #if defined(USE_XINERAMA) && !defined(USE_XRANDR)
-#include <X11/extensions/Xinerama.h>
+	#include <X11/extensions/Xinerama.h>
 #elif defined(USE_XRANDR)
 #include <pthread.h>
-#include <X11/extensions/Xrandr.h>
+	#include <X11/extensions/Xrandr.h>
 #endif
 #ifdef USE_XT
-#include <X11/Intrinsic.h>
+	#include <X11/Intrinsic.h>
 
-static XtAppContext xt_context;
-static Display *xt_disp;
+	static XtAppContext xt_context;
+	static Display *xt_disp;
 #endif
 
+#include "../iohook.h"
 #include "input.h"
 // #include "../logger.h"
 

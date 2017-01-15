@@ -1,6 +1,6 @@
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+	#include <config.h>
 #endif
 
 #define USE_XKB 0
@@ -8,10 +8,9 @@
 #include <inttypes.h>
 #include <limits.h>
 #ifdef USE_XRECORD_ASYNC
-#include <pthread.h>
+	#include <pthread.h>
 #endif
 #include <stdint.h>
-#include "../iohook.h"
 
 #include <X11/keysym.h>
 #include <X11/Xlibint.h>
@@ -22,15 +21,16 @@
 #include <X11/XKBlib.h>
 // #endif
 #if defined(USE_XINERAMA) && !defined(USE_XRANDR)
-#include <X11/extensions/Xinerama.h>
+	#include <X11/extensions/Xinerama.h>
 #elif defined(USE_XRANDR)
-#include <X11/extensions/Xrandr.h>
+	#include <X11/extensions/Xrandr.h>
 #else
 // TODO We may need to fallback to the xf86vm extension for things like TwinView.
 // #pragma message("*** Warning: Xinerama or XRandR support is required to produce cross-platform mouse coordinates for multi-head configurations!")
 // #pragma message("... Assuming single-head display.")
 #endif
 
+#include "../iohook.h"
 // #include "../logger.h"
 #include "input.h"
 
