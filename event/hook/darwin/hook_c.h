@@ -4,20 +4,20 @@
 #endif
 
 #ifndef USE_WEAK_IMPORT
-#include <dlfcn.h>
+	#include <dlfcn.h>
 #endif
 #include <mach/mach_time.h>
 #ifdef USE_OBJC
-#include <objc/objc.h>
-#include <objc/objc-runtime.h>
+	#include <objc/objc.h>
+	#include <objc/objc-runtime.h>
 #endif
+
 #include <pthread.h>
 #include <stdbool.h>
 #include <sys/time.h>
 #include "../iohook.h"
-
-#include "input.h"
 // #include "../logger_c.h"
+#include "input.h"
 
 typedef struct _hook_info {
 	CFMachPortRef port;

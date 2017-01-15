@@ -7,8 +7,8 @@
 #include "../iohook.h"
 #include <windows.h>
 
-#include "input.h"
 // #include "logger.h"
+#include "input.h"
 
 // Some buggy versions of MinGW and MSys do not include these constants in winuser.h.
 #ifndef MAPVK_VK_TO_VSC

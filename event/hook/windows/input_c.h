@@ -1,6 +1,6 @@
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+	#include <config.h>
 #endif
 
 #include <stdbool.h>
@@ -8,9 +8,9 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include "../iohook.h"
 #include <windows.h>
 
+#include "../iohook.h"
 #include "../logger_c.h"
 #include "input.h"
 
@@ -593,7 +593,7 @@ static int refresh_locale_list() {
 
 SIZE_T keycode_to_unicode(DWORD keycode, PWCHAR buffer, SIZE_T size) {
 	// Get the thread id that currently has focus and ask for its current
-	// locale..
+	// locale.
 	DWORD focus_pid = GetWindowThreadProcessId(GetForegroundWindow(), NULL);
 	HKL locale_id = GetKeyboardLayout(focus_pid);
 

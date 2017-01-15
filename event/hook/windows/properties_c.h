@@ -1,13 +1,12 @@
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+	#include <config.h>
 #endif
 
-#include "../iohook.h"
 #include <windows.h>
-
-// #include "logger.h"
+#include "../iohook.h"
 #include "input.h"
+// #include "logger.h"
 
 // The handle to the DLL module pulled in DllMain on DLL_PROCESS_ATTACH.
 HINSTANCE hInst;
@@ -89,8 +88,7 @@ IOHOOK_API screen_data* hook_create_screen_info(unsigned char *count) {
 				};
 			}
 		}
-	}
-	else {
+	} else {
 		// Populate the count.
 		*count = screens.count;
 	}

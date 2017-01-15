@@ -8,9 +8,9 @@
 #include <X11/Xlib.h>
 
 #ifdef USE_XKBCOMMON
-#include <X11/Xlib-xcb.h>
-#include <xkbcommon/xkbcommon.h>
-#include <xkbcommon/xkbcommon-x11.h>
+    #include <X11/Xlib-xcb.h>
+    #include <xkbcommon/xkbcommon.h>
+    #include <xkbcommon/xkbcommon-x11.h>
 #endif
 
 

@@ -4,16 +4,15 @@
 #endif
 
 #ifdef USE_COREFOUNDATION
-#include <CoreFoundation/CoreFoundation.h>
+	#include <CoreFoundation/CoreFoundation.h>
 #endif
 #ifndef USE_WEAK_IMPORT
-#include <dlfcn.h>
+	#include <dlfcn.h>
 #endif
+
 #include <stdbool.h>
-
-#include "../iohook.h"
-
 #include "input.h"
+#include "../iohook.h"
 #include "../logger_c.h"
 
 // Current dead key state.

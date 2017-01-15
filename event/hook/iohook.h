@@ -3,7 +3,6 @@
 #define __IOHOOK_H
 
 // #include "../../base/os.h"
-
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdint.h>

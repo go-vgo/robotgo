@@ -1,12 +1,12 @@
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+	#include <config.h>
 #endif
 
 #include <inttypes.h>
-#include "../iohook.h"
 #include <windows.h>
 
+#include "../iohook.h"
 #include "input.h"
 // #include "logger.h"
 

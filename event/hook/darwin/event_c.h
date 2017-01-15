@@ -1,6 +1,6 @@
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+	#include <config.h>
 #endif
 
 #include <ApplicationServices/ApplicationServices.h>
@@ -9,8 +9,8 @@
 #include <stdlib.h>
 #include "../iohook.h"
 
-#include "input.h"
 // #include "../logger_c.h"
+#include "input.h"
 
 // TODO Possibly relocate to input helper.
 static inline CGEventFlags get_key_event_mask(iohook_event * const event) {

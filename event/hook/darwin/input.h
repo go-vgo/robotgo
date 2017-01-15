@@ -5,7 +5,7 @@
 #include <ApplicationServices/ApplicationServices.h>
 #include <Carbon/Carbon.h>	// For HIToolbox kVK_ keycodes and TIS funcitons.
 #ifdef USE_IOKIT
-#include <IOKit/hidsystem/ev_keymap.h>
+    #include <IOKit/hidsystem/ev_keymap.h>
 #endif
 #include <stdbool.h>
 
@@ -27,7 +27,7 @@
 */
 
 // #define NX_KEYTYPE_CAPS_LOCK			0x04
-//#define NX_KEYTYPE_HELP				0x05
+// #define NX_KEYTYPE_HELP				0x05
 // #define NX_POWER_KEY					0x06
 
 // #define NX_KEYTYPE_EJECT				0x0E

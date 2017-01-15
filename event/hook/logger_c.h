@@ -1,15 +1,14 @@
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+	#include <config.h>
 #endif
 
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
-// #include <iohook.h>
-#include "iohook.h"
 
+#include "iohook.h"
 #include "logger.h"
 
 static bool default_logger(unsigned int level, const char *format, ...) {
