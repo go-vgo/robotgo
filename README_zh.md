@@ -206,3 +206,8 @@ func main() {
   Println("title@@@", title)
 } 
 ```
+
+##Future
+- Update Find an image on screen, read pixels from an image
+- Update Window Handle
+- Try support Android,maybe support IOS.
