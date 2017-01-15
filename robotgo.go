@@ -39,7 +39,7 @@ import (
 )
 
 const (
-	version string = "v0.41.1.205,fate!"
+	version string = "v0.42.0.210,Mount Ngauruhoe!"
 )
 
 //GetVersion get version
@@ -465,7 +465,7 @@ func KeyToggle(args ...string) string {
 	camkeyt := C.CString(amkeyt)
 	// defer func() {
 	str := C.aKeyToggle(ckey, cadown, camkey, camkeyt)
-	// fmt.Println(str)
+	// Println(str)
 	// C.aKeyToggle(ckey, cadown, camkey, camkeyt)
 	// }()
 	defer C.free(unsafe.Pointer(ckey))
@@ -571,7 +571,7 @@ func SaveBitmap(args ...interface{}) string {
 
 	path := C.CString(args[1].(string))
 	savebit := C.aSaveBitmap(args[0].(C.MMBitmapRef), path, mtype)
-	// fmt.Println("saved...", savebit)
+	// Println("saved...", savebit)
 	// return bit
 	defer C.free(unsafe.Pointer(path))
 
@@ -613,7 +613,7 @@ func Convert(args ...interface{}) {
 	Try(func() {
 		mtype = args[2].(int)
 	}, func(e interface{}) {
-		// fmt.Println("err:::", e)
+		// Println("err:::", e)
 		mtype = 1
 	})
 	//C.CString()
