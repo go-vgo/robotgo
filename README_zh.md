@@ -87,14 +87,12 @@ sudo apt-get install libxkbcommon-dev
 package main
 
 import (
-	//. "fmt"
-
 	"github.com/go-vgo/robotgo"
 )
 
 func main() {
   robotgo.ScrollMouse(10, "up")
-  robotgo.MouseClick("left",true)
+  robotgo.MouseClick("left", true)
   robotgo.MoveMouseSmooth(100, 200, 1.0, 100.0)
 } 
 ``` 
@@ -104,9 +102,7 @@ func main() {
 ```Go
 package main
 
-import (
-	//. "fmt"
-
+import (  
 	"github.com/go-vgo/robotgo"
 )
 
@@ -196,13 +192,12 @@ import (
 )
 
 func main() {
-  //Println("test")
   abool := robotgo.ShowAlert("test", "robotgo")
   if abool == 0 {
     Println("ok@@@", "ok")
   }
 
-  title:=robotgo.GetTitle()
+  title := robotgo.GetTitle()
   Println("title@@@", title)
 } 
 ```
