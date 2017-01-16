@@ -11,7 +11,6 @@
 package main
 
 import (
-	// . "fmt"
 	"fmt"
 
 	"github.com/go-vgo/robotgo"
@@ -41,7 +40,7 @@ func main() {
 	robotgo.TypeString("en")
 
 	//Control the mouse
-	robotgo.MoveMouse(100, 200)          // Move the mouse to 100, 200
+	robotgo.MoveMouse(100, 200)          //Move the mouse to 100, 200
 	robotgo.MouseClick()                 //Click the left mouse button
 	robotgo.MouseClick("right", false)   //Click the right mouse button
 	robotgo.MouseClick("left", true)     //double click the left mouse button
@@ -66,7 +65,8 @@ func main() {
 
 	//read the screen
 	gbitMap := robotgo.BCaptureScreen()
-	fmt.Println("Capture_Screen...", gbitMap.Width)
+	fmt.Println("BCaptureScreen...", gbitMap.Width)
+	// fmt.Println("...", gbitmap.Width, gbitmap.BytesPerPixel)
 
 	sx, sy := robotgo.GetScreenSize()
 	//Gets the screen width and height
@@ -83,12 +83,10 @@ func main() {
 	// Bitmap
 	abitMap := robotgo.CaptureScreen()
 	//Gets all of the screen
-	fmt.Println("a...", abitMap)
+	fmt.Println("abitMap...", abitMap)
 
-	bitmap := robotgo.CaptureScreen(100, 200, 30, 40)
-	//Gets part of the screen
+	bitmap := robotgo.CaptureScreen(100, 200, 30, 40) //Gets part of the screen
 	fmt.Println("CaptureScreen...", bitmap)
-	// Println("...", bit_map.Width, bit_map.BytesPerPixel)
 
 	fx, fy := robotgo.FindBitmap(bitmap)
 	//Searches for needle in bitmap
@@ -100,21 +98,18 @@ func main() {
 
 	bitstr := robotgo.TostringBitmap(bitmap)
 	//Creates bitmap from string by bit_map
-	fmt.Println("bit_str...", bitstr)
+	fmt.Println("bitstr...", bitstr)
 
-	// sbitmap := robotgo.BitmapFromstring(bit_str, 2)
-	// Println("...", sbitmap)
+	// sbitmap := robotgo.BitmapFromstring(bitstr, 2)
+	// fmt.Println("...", sbitmap)
 
 	robotgo.SaveBitmap(bitmap, "test.png")
 	//Saves image to absolute filepath in the given format
 	robotgo.SaveBitmap(bitmap, "test31.tif", 1)
-	robotgo.Convert("test.png", "test.tif")
-	//Convert image
+	robotgo.Convert("test.png", "test.tif") //Convert image
 
-	// open_bit := robotgo.OpenBitmap("test.tif")
-	openbit := robotgo.OpenBitmap("test.tif")
-	// open image bitmap
-	fmt.Println("open...", openbit)
+	openbit := robotgo.OpenBitmap("test.tif") // open image bitmap
+	fmt.Println("openBitmap...", openbit)
 
 	//global event listener
 	fmt.Println("---please press v---")
@@ -142,10 +137,10 @@ func main() {
 		fmt.Println("---you press left mouse button---", "mleft")
 	}
 
-	// mright := robotgo.AddEvent("mright")
-	// if mright == 0 {
-	// 	Println("---you press right mouse button---", "mright")
-	// }
+	mright := robotgo.AddEvent("mright")
+	if mright == 0 {
+		fmt.Println("---you press right mouse button---", "mright")
+	}
 
 	//Stop AddEvent
 	// robotgo.StopEvent()
