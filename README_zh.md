@@ -35,7 +35,8 @@ go get github.com/go-vgo/robotgo
 ```
 go get -u github.com/go-vgo/robotgo   
 ```
-###Requirements (环境要求):
+###Requirements:
+(环境要求)
 
 ####ALL:  
 ```
@@ -85,7 +86,7 @@ sudo apt-get install libxkbcommon-dev
 
 ```
 
-##[Examples:(例子)](https://github.com/go-vgo/robotgo/blob/master/example/main.go)
+##[Examples:](https://github.com/go-vgo/robotgo/blob/master/example/main.go)
 
 ###鼠标
 
