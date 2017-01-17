@@ -25,17 +25,17 @@ RobotGo 支持 Mac, Windows, and Linux(X11).
 - [Contributors](#contributors)
 
 
-##安装:
+##Installation:
 ```
 go get github.com/go-vgo/robotgo
 ```
   It's that easy!
 
-##更新:
+##Update:
 ```
 go get -u github.com/go-vgo/robotgo   
 ```
-###环境要求:
+###Requirements (环境要求):
 
 ####ALL:  
 ```
@@ -85,7 +85,7 @@ sudo apt-get install libxkbcommon-dev
 
 ```
 
-##[例子:](https://github.com/go-vgo/robotgo/blob/master/example/main.go)
+##[Examples:(例子)](https://github.com/go-vgo/robotgo/blob/master/example/main.go)
 
 ###鼠标
 
