@@ -21,6 +21,12 @@ This is a work in progress.
 ##[API Document](https://github.com/go-vgo/robotgo/blob/master/doc.md) &nbsp;&nbsp;&nbsp;[中文文档](https://github.com/go-vgo/robotgo/blob/master/doc_zh.md)
   Please click API Document;This is a work in progress.
 
+- [Installation](#installation)
+- [Update](#update)
+- [Requirements](#requirements)
+- [Examples](#examples)
+- [Future](#future)
+- [Contributors](#contributors)
 
 
 ##Installation:
