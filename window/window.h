@@ -867,3 +867,39 @@ char *GetTitle(){
 #endif
 }
 
+int32 WGetPID(void){
+	// Check window validity
+	if (!IsValid()) return 0;
+
+#if defined(IS_MACOSX)
+
+	pid_t pid = 0;
+	// Attempt to retrieve the window pid
+	if (AXUIElementGetPid(mData.AxID, &pid)
+			== kAXErrorSuccess) return pid;
+
+	return 0;
+
+#elif defined(USE_X11)
+
+	// Ignore X errors
+	XDismissErrors();
+
+	// Get the window PID
+	long* result = (long*)
+		GetWindowProperty(mData, WM_PID,NULL);
+
+	// Check result and convert it
+	if (result == NULL) return 0;
+	int32 pid = (int32) *result;
+	XFree (result); return pid;
+
+#elif defined(IS_WINDOWS)
+
+	DWORD  id = 0;
+	GetWindowThreadProcessId (mData.HWnd, &id);
+	return id;
+
+#endif
+}
+

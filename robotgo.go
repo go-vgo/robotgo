@@ -777,3 +777,9 @@ func GetTitle() string {
 	// Println("title...", gtittle)
 	return gtittle
 }
+
+//GetPID Get the process id
+func GetPID() int {
+	pid := C.aGetPID()
+	return int(pid)
+}
