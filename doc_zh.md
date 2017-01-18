@@ -67,6 +67,7 @@
 #####[SetHandle](#SetHandle)
 #####[GetHandle](#GetHandle)
 #####[GetTitle](#GetTitle)
+#####[GetPID](#GetPID)
 
 
 ##<h2 id="Keyboard">键盘</h2>
@@ -540,4 +541,14 @@ func main() {
            
 
 ####返回值:
-    返回窗口标题     
+    返回窗口标题  
+
+###<h3 id="GetPID">.GetPID()</h3>
+
+   获取进程id
+
+####参数:
+           
+
+####返回值:
+    返回进程id        
