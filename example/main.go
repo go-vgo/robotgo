@@ -151,7 +151,8 @@ func main() {
 		fmt.Println("ok@@@", "ok")
 	}
 	robotgo.ShowAlert("hello", "robotgo", "Ok", "Cancel")
-	// robotgo.GetPID()
+	pid := robotgo.GetPID() //Get the current process id
+	fmt.Println("pid----", pid)
 	mdata := robotgo.GetActive() //Get current Window Active
 	hwnd := robotgo.GetHandle()  //Get current Window Handle
 	fmt.Println("hwnd---", hwnd)
