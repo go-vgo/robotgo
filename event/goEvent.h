@@ -42,7 +42,7 @@
 int aStop();
 int aEvent(char *aevent);
 
-bool logger_proc(unsigned int level, const char *format, ...) {
+bool loggerProc(unsigned int level, const char *format, ...) {
 	bool status = false;
 
 	va_list args;
@@ -101,18 +101,18 @@ void dispatch_proc(iohook_event * const event) {
 				switch (status) {
 					// System level errors.
 					case IOHOOK_ERROR_OUT_OF_MEMORY:
-						logger_proc(LOG_LEVEL_ERROR, "Failed to allocate memory. (%#X)", status);
+						loggerProc(LOG_LEVEL_ERROR, "Failed to allocate memory. (%#X)", status);
 						break;
 
 					case IOHOOK_ERROR_X_RECORD_GET_CONTEXT:
 						// NOTE This is the only platform specific error that occurs on hook_stop().
-						logger_proc(LOG_LEVEL_ERROR, "Failed to get XRecord context. (%#X)", status);
+						loggerProc(LOG_LEVEL_ERROR, "Failed to get XRecord context. (%#X)", status);
 						break;
 
 					// Default error.
 					case IOHOOK_FAILURE:
 					default:
-						logger_proc(LOG_LEVEL_ERROR, "An unknown hook error occurred. (%#X)", status);
+						loggerProc(LOG_LEVEL_ERROR, "An unknown hook error occurred. (%#X)", status);
 						break;
 				}
 			}
@@ -210,7 +210,7 @@ int aEvent(char *aevent) {
 	// (uint16_t *)
 	cevent=aevent;
 	// Set the logger callback for library output.
-	hook_set_logger_proc(&logger_proc);
+	hookSetlogger(&loggerProc);
 
 	// Set the event callback for IOhook events.
 	hook_set_dispatch_proc(&dispatch_proc);
@@ -225,63 +225,63 @@ int aEvent(char *aevent) {
 
 		// System level errors.
 		case IOHOOK_ERROR_OUT_OF_MEMORY:
-			logger_proc(LOG_LEVEL_ERROR, "Failed to allocate memory. (%#X)", status);
+			loggerProc(LOG_LEVEL_ERROR, "Failed to allocate memory. (%#X)", status);
 			break;
 
 
 		// X11 specific errors.
 		case IOHOOK_ERROR_X_OPEN_DISPLAY:
-			logger_proc(LOG_LEVEL_ERROR, "Failed to open X11 display. (%#X)", status);
+			loggerProc(LOG_LEVEL_ERROR, "Failed to open X11 display. (%#X)", status);
 			break;
 
 		case IOHOOK_ERROR_X_RECORD_NOT_FOUND:
-			logger_proc(LOG_LEVEL_ERROR, "Unable to locate XRecord extension. (%#X)", status);
+			loggerProc(LOG_LEVEL_ERROR, "Unable to locate XRecord extension. (%#X)", status);
 			break;
 
 		case IOHOOK_ERROR_X_RECORD_ALLOC_RANGE:
-			logger_proc(LOG_LEVEL_ERROR, "Unable to allocate XRecord range. (%#X)", status);
+			loggerProc(LOG_LEVEL_ERROR, "Unable to allocate XRecord range. (%#X)", status);
 			break;
 
 		case IOHOOK_ERROR_X_RECORD_CREATE_CONTEXT:
-			logger_proc(LOG_LEVEL_ERROR, "Unable to allocate XRecord context. (%#X)", status);
+			loggerProc(LOG_LEVEL_ERROR, "Unable to allocate XRecord context. (%#X)", status);
 			break;
 
 		case IOHOOK_ERROR_X_RECORD_ENABLE_CONTEXT:
-			logger_proc(LOG_LEVEL_ERROR, "Failed to enable XRecord context. (%#X)", status);
+			loggerProc(LOG_LEVEL_ERROR, "Failed to enable XRecord context. (%#X)", status);
 			break;
 
 
 		// Windows specific errors.
 		case IOHOOK_ERROR_SET_WINDOWS_HOOK_EX:
-			logger_proc(LOG_LEVEL_ERROR, "Failed to register low level windows hook. (%#X)", status);
+			loggerProc(LOG_LEVEL_ERROR, "Failed to register low level windows hook. (%#X)", status);
 			break;
 
 
 		// Darwin specific errors.
 		case IOHOOK_ERROR_AXAPI_DISABLED:
-			logger_proc(LOG_LEVEL_ERROR, "Failed to enable access for assistive devices. (%#X)", status);
+			loggerProc(LOG_LEVEL_ERROR, "Failed to enable access for assistive devices. (%#X)", status);
 			break;
 
 		case IOHOOK_ERROR_CREATE_EVENT_PORT:
-			logger_proc(LOG_LEVEL_ERROR, "Failed to create apple event port. (%#X)", status);
+			loggerProc(LOG_LEVEL_ERROR, "Failed to create apple event port. (%#X)", status);
 			break;
 
 		case IOHOOK_ERROR_CREATE_RUN_LOOP_SOURCE:
-			logger_proc(LOG_LEVEL_ERROR, "Failed to create apple run loop source. (%#X)", status);
+			loggerProc(LOG_LEVEL_ERROR, "Failed to create apple run loop source. (%#X)", status);
 			break;
 
 		case IOHOOK_ERROR_GET_RUNLOOP:
-			logger_proc(LOG_LEVEL_ERROR, "Failed to acquire apple run loop. (%#X)", status);
+			loggerProc(LOG_LEVEL_ERROR, "Failed to acquire apple run loop. (%#X)", status);
 			break;
 
 		case IOHOOK_ERROR_CREATE_OBSERVER:
-			logger_proc(LOG_LEVEL_ERROR, "Failed to create apple run loop observer. (%#X)", status);
+			loggerProc(LOG_LEVEL_ERROR, "Failed to create apple run loop observer. (%#X)", status);
 			break;
 
 		// Default error.
 		case IOHOOK_FAILURE:
 		default:
-			logger_proc(LOG_LEVEL_ERROR, "An unknown hook error occurred. (%#X)", status);
+			loggerProc(LOG_LEVEL_ERROR, "An unknown hook error occurred. (%#X)", status);
 			break;
 	}
 
@@ -295,18 +295,18 @@ int aStop(){
 	switch (status) {
 		// System level errors.
 		case IOHOOK_ERROR_OUT_OF_MEMORY:
-			logger_proc(LOG_LEVEL_ERROR, "Failed to allocate memory. (%#X)", status);
+			loggerProc(LOG_LEVEL_ERROR, "Failed to allocate memory. (%#X)", status);
 			break;
 
 		case IOHOOK_ERROR_X_RECORD_GET_CONTEXT:
 			// NOTE This is the only platform specific error that occurs on hook_stop().
-			logger_proc(LOG_LEVEL_ERROR, "Failed to get XRecord context. (%#X)", status);
+			loggerProc(LOG_LEVEL_ERROR, "Failed to get XRecord context. (%#X)", status);
 			break;
 
 				// Default error.
 		case IOHOOK_FAILURE:
 			default:
-			// logger_proc(LOG_LEVEL_ERROR, "An unknown hook error occurred. (%#X)", status);
+			// loggerProc(LOG_LEVEL_ERROR, "An unknown hook error occurred. (%#X)", status);
 			break;
 	}
 
