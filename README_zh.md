@@ -17,24 +17,13 @@ RobotGo 支持 Mac, Windows, and Linux(X11).
 ##[中文文档](https://github.com/go-vgo/robotgo/blob/master/docs/doc_zh.md)&nbsp;&nbsp;&nbsp;[API Document](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) 
  英文文档请点击API Document.
 
+- [Requirements](#requirements)
 - [Installation](#installation)
 - [Update](#update)
-- [Requirements](#requirements)
 - [Examples](#examples)
 - [Future](#future)
 - [Contributors](#contributors)
 
-
-##Installation:
-```
-go get github.com/go-vgo/robotgo
-```
-  It's that easy!
-
-##Update:
-```
-go get -u github.com/go-vgo/robotgo   
-```
 ###Requirements:
 (环境要求)
 
@@ -84,6 +73,17 @@ sudo apt-get install libxtst-dev libpng++-dev
 sudo apt-get install xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev
 sudo apt-get install libxkbcommon-dev
 
+```
+
+##Installation:
+```
+go get github.com/go-vgo/robotgo
+```
+  It's that easy!
+
+##Update:
+```
+go get -u github.com/go-vgo/robotgo   
 ```
 
 ##[Examples:](https://github.com/go-vgo/robotgo/blob/master/example/main.go)

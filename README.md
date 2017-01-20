@@ -21,24 +21,13 @@ This is a work in progress.
 ##[API Document](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) &nbsp;&nbsp;&nbsp;[中文文档](https://github.com/go-vgo/robotgo/blob/master/docs/doc_zh.md)
   Please click API Document;This is a work in progress.
 
+- [Requirements](#requirements)
 - [Installation](#installation)
 - [Update](#update)
-- [Requirements](#requirements)
 - [Examples](#examples)
 - [Future](#future)
 - [Contributors](#contributors)
 
-
-##Installation:
-```
-go get github.com/go-vgo/robotgo
-```
-  It's that easy!
-
-##Update:
-```
-go get -u github.com/go-vgo/robotgo  
-```
 ###Requirements:
 
 ####ALL: 
@@ -89,6 +78,18 @@ sudo apt-get install xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommo
 sudo apt-get install libxkbcommon-dev
 
 ```
+
+##Installation:
+```
+go get github.com/go-vgo/robotgo
+```
+  It's that easy!
+
+##Update:
+```
+go get -u github.com/go-vgo/robotgo  
+```
+
 ##[Examples:](https://github.com/go-vgo/robotgo/blob/master/example/main.go)
 
 ###Mouse
