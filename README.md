@@ -11,26 +11,18 @@
 <!--<a href="https://github.com/go-vgo/robotgo/releases"><img src="https://img.shields.io/badge/%20version%20-%206.0.0%20-blue.svg?style=flat-square" alt="Releases"></a>-->
 
   
-  >Golang Desktop Automation, it supports Mac, Windows, and Linux(X11).
+  >Golang Desktop Automation, Control the mouse, keyboard, bitmap,read the screen,Window Handle and global event listener.
   [warn]This is a work in progress.
 
-##Features
+##Supported platforms
 
-Mouse control
-
-Keyboard control
-
-Screen capture
-
-Window Handle
-
-Global event listen
+MacOS, Windows, and Linux(with X11)
 
 ##API Docs
 
 [English docs](https://github.com/go-vgo/robotgo/blob/master/doc.md) &nbsp;&nbsp;&nbsp;[中文文档](https://github.com/go-vgo/robotgo/blob/master/doc_zh.md)
 
-##Requirement install
+##Requirements install
 
 Before RobotGo installation, make sure Golang/GCC/zlib & libpng have been installed correctly.
 
