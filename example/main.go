@@ -18,14 +18,16 @@ import (
 )
 
 func main() {
-	//Control the keyboard
+	////////////////////////////////////////////////////////////////////////////////
+	// Control the keyboard
+	////////////////////////////////////////////////////////////////////////////////
 	robotgo.TypeString("Hello World") //importing "Hello World"
 	robotgo.KeyTap("enter")           //Press "enter"
 	robotgo.KeyTap("a", "control")
 	robotgo.KeyTap("h", "command") //Hide window
 
-	robotgo.KeyTap("i", "alt", "command")
 	//Press "i", "alt", "command" Key combination
+	robotgo.KeyTap("i", "alt", "command")
 	arr := []string{"alt", "command"}
 	robotgo.KeyTap("i", arr)
 
@@ -39,7 +41,9 @@ func main() {
 	robotgo.KeyToggle("enter", "down")
 	robotgo.TypeString("en")
 
-	//Control the mouse
+	////////////////////////////////////////////////////////////////////////////////
+	// Control the mouse
+	////////////////////////////////////////////////////////////////////////////////
 	robotgo.MoveMouse(100, 200)          //Move the mouse to 100, 200
 	robotgo.MouseClick()                 //Click the left mouse button
 	robotgo.MouseClick("right", false)   //Click the right mouse button
@@ -63,55 +67,62 @@ func main() {
 		robotgo.MoveMouse(800, i)
 	}
 
-	//read the screen
+	////////////////////////////////////////////////////////////////////////////////
+	// Read the screen
+	////////////////////////////////////////////////////////////////////////////////
 	gbitMap := robotgo.BCaptureScreen()
 	fmt.Println("BCaptureScreen...", gbitMap.Width)
 	// fmt.Println("...", gbitmap.Width, gbitmap.BytesPerPixel)
 
-	sx, sy := robotgo.GetScreenSize()
 	//Gets the screen width and height
+	sx, sy := robotgo.GetScreenSize()
 	fmt.Println("...", sx, sy)
 
-	color := robotgo.GetPixelColor(100, 200)
 	//Gets the pixel color at 100, 200.
+	color := robotgo.GetPixelColor(100, 200)
 	fmt.Println("color----", color, "-----------------")
 
-	color2 := robotgo.GetPixelColor(10, 20)
 	//Gets the pixel color at 10, 20.
+	color2 := robotgo.GetPixelColor(10, 20)
 	fmt.Println("color---", color2)
 
+	////////////////////////////////////////////////////////////////////////////////
 	// Bitmap
-	abitMap := robotgo.CaptureScreen()
+	////////////////////////////////////////////////////////////////////////////////
 	//Gets all of the screen
+	abitMap := robotgo.CaptureScreen()
 	fmt.Println("abitMap...", abitMap)
 
-	bitmap := robotgo.CaptureScreen(100, 200, 30, 40) //Gets part of the screen
+	//Gets part of the screen
+	bitmap := robotgo.CaptureScreen(100, 200, 30, 40)
 	fmt.Println("CaptureScreen...", bitmap)
 
-	fx, fy := robotgo.FindBitmap(bitmap)
 	//Searches for needle in bitmap
+	fx, fy := robotgo.FindBitmap(bitmap)
 	fmt.Println("FindBitmap------", fx, fy)
 
-	bitpos := robotgo.GetPortion(bitmap, 10, 10, 11, 10)
 	//Returns new bitmap object created from a portion of another
+	bitpos := robotgo.GetPortion(bitmap, 10, 10, 11, 10)
 	fmt.Println(bitpos)
 
+	//Creates bitmap from string by bitmap
 	bitstr := robotgo.TostringBitmap(bitmap)
-	//Creates bitmap from string by bit_map
 	fmt.Println("bitstr...", bitstr)
 
 	// sbitmap := robotgo.BitmapFromstring(bitstr, 2)
 	// fmt.Println("...", sbitmap)
 
-	robotgo.SaveBitmap(bitmap, "test.png")
 	//Saves image to absolute filepath in the given format
+	robotgo.SaveBitmap(bitmap, "test.png")
 	robotgo.SaveBitmap(bitmap, "test31.tif", 1)
 	robotgo.Convert("test.png", "test.tif") //Convert image
 
 	openbit := robotgo.OpenBitmap("test.tif") // open image bitmap
 	fmt.Println("openBitmap...", openbit)
 
-	//global event listener
+	////////////////////////////////////////////////////////////////////////////////
+	// Global event listener
+	////////////////////////////////////////////////////////////////////////////////
 	fmt.Println("---please press v---")
 	eve := robotgo.AddEvent("v")
 
@@ -145,7 +156,9 @@ func main() {
 	//Stop AddEvent
 	// robotgo.StopEvent()
 
-	//Window Handle
+	////////////////////////////////////////////////////////////////////////////////
+	// Window Handle
+	////////////////////////////////////////////////////////////////////////////////
 	abool := robotgo.ShowAlert("hello", "robotgo") //Show Alert Window
 	if abool == 0 {
 		fmt.Println("ok@@@", "ok")
