@@ -26,8 +26,9 @@ This is a work in progress.
 - [Contributors](#contributors)
 
 ##Docs
-
-  [API Document](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) &nbsp;&nbsp;&nbsp;[中文文档](https://github.com/go-vgo/robotgo/blob/master/docs/doc_zh.md)
+  - [API Document](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) &nbsp;&nbsp;&nbsp;
+  - [中文文档](https://github.com/go-vgo/robotgo/blob/master/docs/doc_zh.md)
+  - [GoDoc](https://godoc.org/github.com/go-vgo/robotgo)
 
 ##Requirements:
 
