@@ -31,7 +31,7 @@ RobotGo 支持 Mac, Windows, and Linux(X11).
 
 请在安装RobotGo之前,确保Golang、GCC、zlib和libpng被正确安装
 
-####ALL:  
+###ALL:  
 ```
 Golang
 GCC

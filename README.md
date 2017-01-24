@@ -39,21 +39,21 @@ Golang
 GCC
 zlib & libpng (bitmap)
 ```
-###For Mac OS X:
+####For Mac OS X:
     Xcode Command Line Tools
 ```
 brew install libpng
 brew install homebrew/dupes/zlib
 ```    
-###For Windows:
+####For Windows:
 ```
 MinGW or other GCC
 ```
-####[zlib&libpng Windows32 GCC's Course](https://github.com/go-vgo/Mingw32)
+#####[zlib&libpng Windows32 GCC's Course](https://github.com/go-vgo/Mingw32)
 
-####[Download include zlib&libpng Windows64 GCC](https://github.com/go-vgo/Mingw)
+#####[Download include zlib&libpng Windows64 GCC](https://github.com/go-vgo/Mingw)
 
-###For everything else:
+####For everything else:
 ```
 GCC
     
@@ -64,7 +64,7 @@ Event:
 xcb,xkb,libxkbcommon
 ``` 
 
-####Ubuntu:
+#####Ubuntu:
 ```yml
 
 sudo apt-get install libx11-dev
