@@ -12,11 +12,11 @@
 
   
   >Golang Desktop Automation, Control the mouse, keyboard, bitmap,read the screen,Window Handle and global event listener.
-  [warn]This is a work in progress.
+This is a work in progress.
 
 ##Supported platforms
 
-MacOS, Windows, and Linux(with X11)
+MacOS, Windows, Linux(with X11)
 
 ##API Docs
 
@@ -24,7 +24,7 @@ MacOS, Windows, and Linux(with X11)
 
 ##Requirements install
 
-Before RobotGo installation, make sure Golang/GCC/zlib & libpng have been installed correctly.
+Before RobotGo installation, make sure Golang/GCC/zlib/libpng have been installed correctly.
 
 ####Under MacOS
 ```

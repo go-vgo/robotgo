@@ -57,3 +57,8 @@ char* aGetTitle(){
 	// printf("title::::%s\n",title );
 	return title;
 }
+
+int32 aGetPID(void){
+	int pid=WGetPID();
+	return pid;
+}

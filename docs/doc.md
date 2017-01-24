@@ -64,6 +64,7 @@
 #####[SetHandle](#SetHandle)
 #####[GetHandle](#GetHandle)
 #####[GetTitle](#GetTitle)
+#####[GetPID](#GetPID)
 
 ###<h3 id="GetVersion">.GetVersion()</h3>
     get robotgo version
@@ -525,5 +526,15 @@ func main() {
            
 
 ####Return:
-    Returns Window Title           
+    Returns Window Title      
+
+###<h3 id="GetPID">.GetPID()</h3>
+
+   Get the process id
+
+####Arguments:
+           
+
+####Return:
+    Returns the process id         
      
