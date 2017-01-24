@@ -132,7 +132,7 @@ void dispatch_proc(iohook_event * const event) {
 		case EVENT_KEY_TYPED:
 			snprintf(buffer + length, sizeof(buffer) - length,
 				",keychar=%lc,rawcode=%u",
-				(uint16_t) event->data.keyboard.keychar,//wint_t
+				(uint16_t) event->data.keyboard.keychar,
 				event->data.keyboard.rawcode);
 				
 				#ifdef  WE_REALLY_WANT_A_POINTER

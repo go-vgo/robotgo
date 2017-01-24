@@ -476,17 +476,17 @@ func main() {
     关闭窗口
 
 ####参数:
-           
+    无    
 
 ####返回值:
-
+    无
 
 ###<h3 id="IsValid">.IsValid()</h3>
 
    Valid the Window
 
 ####参数:
-           
+    无      
 
 ####返回值:
     如果窗口selected返回true 
@@ -497,7 +497,7 @@ func main() {
    设为当前窗口
 
 ####参数:
-         hwnd  
+    hwnd  
 
 ####返回值:
     void

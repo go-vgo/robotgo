@@ -461,17 +461,17 @@ func main() {
     Close the Window
 
 ####Arguments:
-           
+    None     
 
 ####Return:
-
+    None
 
 ###<h3 id="IsValid">.IsValid()</h3>
 
    Valid the Window
 
 ####Arguments:
-           
+    None     
 
 ####Return:
     Returns true if a window has been selected
@@ -482,7 +482,7 @@ func main() {
    Set the Active Window
 
 ####Arguments:
-         hwnd  
+    hwnd  
 
 ####Return:
     void
@@ -493,7 +493,7 @@ func main() {
    Get the Active Window
 
 ####Arguments:
-           
+    None   
 
 ####Return:
     Returns hwnd
@@ -513,7 +513,7 @@ func main() {
    Get the Window Handle
 
 ####Arguments:
-           
+    None    
 
 ####Return:
     Returns hwnd  
@@ -523,7 +523,7 @@ func main() {
    Get the Window Title
 
 ####Arguments:
-           
+    None   
 
 ####Return:
     Returns Window Title      
@@ -533,7 +533,7 @@ func main() {
    Get the process id
 
 ####Arguments:
-           
+    None       
 
 ####Return:
     Returns the process id         
