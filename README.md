@@ -10,13 +10,9 @@
 [![Join the chat at https://gitter.im/go-vgo/robotgo](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/go-vgo/robotgo?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 <!--<a href="https://github.com/go-vgo/robotgo/releases"><img src="https://img.shields.io/badge/%20version%20-%206.0.0%20-blue.svg?style=flat-square" alt="Releases"></a>-->
 
-This is a work in progress.
   
-  >Golang Desktop Automation.
-  
-RobotGo supports Mac, Windows, and Linux(X11).
-
-This is a work in progress.
+  >Golang Desktop Automation, it supports Mac, Windows, and Linux(X11).
+  [warn]This is a work in progress.
 
 ##Features
 
@@ -30,17 +26,9 @@ Window Handle
 
 Global event listen
 
+##API Docs
 
-
-##[API Docs](https://github.com/go-vgo/robotgo/blob/master/doc.md) &nbsp;&nbsp;&nbsp;[中文文档](https://github.com/go-vgo/robotgo/blob/master/doc_zh.md)
-
-
-- [Installation](#installation)
-- [Update](#update)
-- [Requirements](#requirements)
-- [Examples](#examples)
-- [Future](#future)
-- [Contributors](#contributors)
+[English docs](https://github.com/go-vgo/robotgo/blob/master/doc.md) &nbsp;&nbsp;&nbsp;[中文文档](https://github.com/go-vgo/robotgo/blob/master/doc_zh.md)
 
 ##Requirement install
 
