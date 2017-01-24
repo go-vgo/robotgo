@@ -1,4 +1,4 @@
-#Robotgo
+#RobotGo
 <!--<img align="right" src="https://raw.githubusercontent.com/go-vgo/robotgo/master/logo.jpg">-->
 <!--[![Build Status](https://travis-ci.org/go-vgo/robotgo.svg)](https://travis-ci.org/go-vgo/robotgo)
 [![codecov](https://codecov.io/gh/go-vgo/robotgo/branch/master/graph/badge.svg)](https://codecov.io/gh/go-vgo/robotgo)-->
@@ -9,48 +9,37 @@
 [![Release](https://github-release-version.herokuapp.com/github/go-vgo/robotgo/release.svg?style=flat)](https://github.com/go-vgo/robotgo/releases/latest)
 [![Join the chat at https://gitter.im/go-vgo/robotgo](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/go-vgo/robotgo?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 <!--<a href="https://github.com/go-vgo/robotgo/releases"><img src="https://img.shields.io/badge/%20version%20-%206.0.0%20-blue.svg?style=flat-square" alt="Releases"></a>-->
-  
-  >Golang Desktop Automation. Control the mouse, keyboard, bitmap,read the screen,Window Handle and global event listener.
-  
-RobotGo supports Mac, Windows, and Linux(X11).
 
+  
+  >Golang Desktop Automation, Control the mouse, keyboard, bitmap,read the screen,Window Handle and global event listener.
 This is a work in progress.
 
+##Supported platforms
 
+MacOS, Windows, Linux(with X11)
 
-##[API Document](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) &nbsp;&nbsp;&nbsp;[中文文档](https://github.com/go-vgo/robotgo/blob/master/docs/doc_zh.md)
-  Please click API Document;This is a work in progress.
+##API Docs
 
-- [Requirements](#requirements)
-- [Installation](#installation)
-- [Update](#update)
-- [Examples](#examples)
-- [Future](#future)
-- [Contributors](#contributors)
+[English docs](https://github.com/go-vgo/robotgo/blob/master/doc.md) &nbsp;&nbsp;&nbsp;[中文文档](https://github.com/go-vgo/robotgo/blob/master/doc_zh.md)
 
-###Requirements:
+##Requirements install
 
-####ALL: 
-``` 
-Golang
-//Gcc
-zlib & libpng (bitmap)
-```
-####For Mac OS X:
-    Xcode Command Line Tools
+Before RobotGo installation, make sure Golang/GCC/zlib/libpng have been installed correctly.
+
+####Under MacOS
 ```
 brew install libpng
 brew install homebrew/dupes/zlib
 ```    
-####For Windows:
+####Under Windows
 ```
-MinGW or other GCC
+MinGW
 ```
 #####[zlib&libpng Windows32 GCC's Course](https://github.com/go-vgo/Mingw32)
 
 #####[Download include zlib&libpng Windows64 GCC](https://github.com/go-vgo/Mingw)
 
-####For everything else:
+####For everything else
 ```
 GCC
     
@@ -61,7 +50,7 @@ Event:
 xcb,xkb,libxkbcommon
 ``` 
 
-#####Ubuntu:
+#####Under Ubuntu
 ```yml
 
 sudo apt-get install libx11-dev
@@ -69,28 +58,19 @@ sudo apt-get install libx11-dev
 #sudo apt-get install libghc6-x11-dev
 #sudo apt-get install libgl1-mesa-swx11-dev
 sudo apt-get install xorg-dev
-
 sudo apt-get install libxtst-dev libpng++-dev   
-
-#Event:
-
 sudo apt-get install xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev
 sudo apt-get install libxkbcommon-dev
 
 ```
 
-##Installation:
-```
-go get github.com/go-vgo/robotgo
-```
-  It's that easy!
+## RobotGo install or Update
 
-##Update:
 ```
-go get -u github.com/go-vgo/robotgo  
+go get -u github.com/go-vgo/robotgo
 ```
 
-##[Examples:](https://github.com/go-vgo/robotgo/blob/master/example/main.go)
+##Examples
 
 ###Mouse
 
@@ -214,10 +194,12 @@ func main() {
 } 
 ```
 
-##Future
+###[More Examples](https://github.com/go-vgo/robotgo/blob/master/example/main.go)
+
+##TODO
 - Update Find an image on screen, read pixels from an image
 - Update Window Handle
-- Try support Android,maybe support IOS.
+- Try support Android, maybe iOS too
 
 ##Contributors
 
