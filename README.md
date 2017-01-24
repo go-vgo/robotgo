@@ -17,7 +17,7 @@ RobotGo supports Mac, Windows, and Linux(X11).
 This is a work in progress.
 
 ##Contents
-- [API Docs](#API-Docs)
+- [Docs](#docs)
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Update](#update)
@@ -25,11 +25,9 @@ This is a work in progress.
 - [Future](#future)
 - [Contributors](#contributors)
 
-##API-Docs
+##Docs
 
   [API Document](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) &nbsp;&nbsp;&nbsp;[中文文档](https://github.com/go-vgo/robotgo/blob/master/docs/doc_zh.md)
-  
-  This is a work in progress.
 
 ##Requirements:
 
@@ -38,7 +36,7 @@ Now,Please make sure Golang,GCC,zlib and libpng is installed correctly before in
 ###ALL: 
 ``` 
 Golang
-Gcc
+GCC
 zlib & libpng (bitmap)
 ```
 ###For Mac OS X:
@@ -163,13 +161,13 @@ import (
 )
 
 func main() {
-  bit_map := robotgo.CaptureScreen(10, 20, 30, 40)
-  fmt.Println("...", bit_map)
+  bitmap := robotgo.CaptureScreen(10, 20, 30, 40)
+  fmt.Println("...", bitmap)
 
-  fx, fy := robotgo.FindBitmap(bit_map)
+  fx, fy := robotgo.FindBitmap(bitmap)
   fmt.Println("FindBitmap------", fx, fy)
 
-  robotgo.SaveBitmap(bit_map, "test.png")
+  robotgo.SaveBitmap(bitmap, "test.png")
 } 
 ```
 

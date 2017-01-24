@@ -13,10 +13,8 @@ RobotGo 支持 Mac, Windows, and Linux(X11).
 
 提Issues请到[Github](https://github.com/go-vgo/robotgo),便于统一管理和即时更新
 
-
-##[中文文档](https://github.com/go-vgo/robotgo/blob/master/docs/doc_zh.md)&nbsp;&nbsp;&nbsp;[API Document](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) 
- 英文文档请点击API Document.
-
+##Contents
+- [Docs](#docs)
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Update](#update)
@@ -24,13 +22,19 @@ RobotGo 支持 Mac, Windows, and Linux(X11).
 - [Future](#future)
 - [Contributors](#contributors)
 
-###Requirements:
+##Docs
+[中文文档](https://github.com/go-vgo/robotgo/blob/master/docs/doc_zh.md)&nbsp;&nbsp;&nbsp;[API Document](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) 
+ 英文文档请点击API Document.
+
+##Requirements:
 (环境要求)
+
+请在安装RobotGo之前,确保Golang、GCC、zlib和libpng被正确安装
 
 ####ALL:  
 ```
 Golang
-//Gcc
+GCC
 zlib & libpng (bitmap)
 ```
 ####For Mac OS X:
@@ -129,16 +133,16 @@ func main() {
 package main
 
 import (
-	. "fmt"
+	"fmt"
 
 	"github.com/go-vgo/robotgo"
 )
 
 func main() {
   x, y := robotgo.GetMousePos()
-  Println("pos:", x, y)
+  fmt.Println("pos:", x, y)
   color := robotgo.GetPixelColor(100, 200)
-  Println("color----", color)
+  fmt.Println("color----", color)
 } 
 ```
 
@@ -148,19 +152,19 @@ func main() {
 package main
 
 import (
-	. "fmt"
+	"fmt"
 
 	"github.com/go-vgo/robotgo"
 )
 
 func main() {
-  bit_map := robotgo.CaptureScreen(10, 20, 30, 40)
-  Println("...", bit_map)
+  bitmap := robotgo.CaptureScreen(10, 20, 30, 40)
+  fmt.Println("...", bitmap)
 
-  fx, fy := robotgo.FindBitmap(bit_map)
-  Println("FindBitmap------", fx, fy)
+  fx, fy := robotgo.FindBitmap(bitmap)
+  fmt.Println("FindBitmap------", fx, fy)
 
-  robotgo.SaveBitmap(bit_map, "test.png")
+  robotgo.SaveBitmap(bitmap, "test.png")
 } 
 ```
 
@@ -170,7 +174,7 @@ func main() {
 package main
 
 import (
-	. "fmt"
+	"fmt"
 
 	"github.com/go-vgo/robotgo"
 )
@@ -178,12 +182,12 @@ import (
 func main() {
   keve := robotgo.AddEvent("k")
   if keve == 0 {
-    Println("you press...", "k")
+    fmt.Println("you press...", "k")
   }
 
   mleft := robotgo.AddEvent("mleft")
   if mleft == 0 {
-    Println("you press...", "mouse left button")
+    fmt.Println("you press...", "mouse left button")
   }
 } 
 ```
@@ -193,7 +197,7 @@ func main() {
 package main
 
 import (
-	. "fmt"
+	"fmt"
 
 	"github.com/go-vgo/robotgo"
 )
@@ -201,11 +205,11 @@ import (
 func main() {
   abool := robotgo.ShowAlert("test", "robotgo")
   if abool == 0 {
-    Println("ok@@@", "ok")
+    fmt.Println("ok@@@", "ok")
   }
 
   title := robotgo.GetTitle()
-  Println("title@@@", title)
+  fmt.Println("title@@@", title)
 } 
 ```
 

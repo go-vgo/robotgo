@@ -508,7 +508,7 @@ func main() {
    获取当前窗口
 
 ####参数:
-           
+    无       
 
 ####返回值:
     Returns hwnd
@@ -528,7 +528,7 @@ func main() {
    获取窗口 Handle
 
 ####参数:
-           
+    无    
 
 ####返回值:
     Returns hwnd  
@@ -548,7 +548,7 @@ func main() {
    获取进程id
 
 ####参数:
-           
+    无   
 
 ####返回值:
     返回进程id        
