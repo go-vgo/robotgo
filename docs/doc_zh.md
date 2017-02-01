@@ -5,12 +5,12 @@
 ##[键盘](#Keyboard)
 
 #####[Keys](#keys)
-#####[SetKeyboardDelay](#SetKeyDelay)(相当于SetKeyDelay,Wno-deprecated)
+#####[SetKeyboardDelay](#SetKeyDelay)(相当于SetKeyDelay,废弃API)
 #####[SetKeyDelay](#SetKeyDelay)
 #####[KeyTap](#KeyTap)
 #####[KeyToggle](#KeyToggle)
 #####[TypeString](#TypeString)
-#####[TypeStringDelayed](#TypeStrDelay)(相当于TypeStrDelay,Wno-deprecated)
+#####[TypeStringDelayed](#TypeStrDelay)(相当于TypeStrDelay,废弃API)
 #####[TypeStrDelay](#TypeStrDelay)
 
 ##[鼠标](#Mouse)
@@ -52,7 +52,7 @@
 
 ##[事件](#Event)
 
-#####[LEvent](#AddEvent)(相当于AddEvent,Wno-deprecated)
+#####[LEvent](#AddEvent)(相当于AddEvent,废弃API)
 #####[AddEvent](#AddEvent)
 #####[StopEvent](#StopEvent)
 
