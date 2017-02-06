@@ -7,6 +7,10 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
+// The hook directory link from the https://github.com/robotn/gohook/
+// event/hook,You need to follow the relevant agreement and LICENSE.
+// See the LICENSE file at the top-level directory of this distribution and at
+// https://github.com/robotn/gohook/blob/master/LICENSE
 
 #ifdef HAVE_CONFIG_H
 	#include <config.h>
