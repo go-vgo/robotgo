@@ -63,6 +63,7 @@
 #####[GetActive](#GetActive)
 #####[SetHandle](#SetHandle)
 #####[GetHandle](#GetHandle)
+#####[GetBHandle](#GetHandle)
 #####[GetTitle](#GetTitle)
 #####[GetPID](#GetPID)
 
