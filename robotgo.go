@@ -32,6 +32,7 @@ import "C"
 
 import (
 	// . "fmt"
+
 	"reflect"
 	"unsafe"
 	// "runtime"
@@ -760,6 +761,14 @@ func GetHandle() int {
 	hwnd := C.aGetHandle()
 	ghwnd := int(hwnd)
 	// Println("gethwnd---", ghwnd)
+	return ghwnd
+}
+
+//GetBHandle Get the window handle
+func GetBHandle() int {
+	hwnd := C.bGetHandle()
+	ghwnd := int(hwnd)
+	//Println("gethwnd---", ghwnd)
 	return ghwnd
 }
 

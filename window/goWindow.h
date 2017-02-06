@@ -42,6 +42,17 @@ uintptr aGetHandle(){
 	return hwnd;
 }
 
+uintptr bGetHandle(){
+	MData mData=GetActive();
+	#if defined(IS_MACOSX)
+		return (uintptr)mData.CgID;
+	#elif defined(USE_X11)
+		return (uintptr)mData.XWin;
+	#elif defined(IS_WINDOWS)
+		return (uintptr)mData.HWnd;
+	#endif
+}
+
 void aSetActive(const MData win){
 	SetActive(win);
 }
