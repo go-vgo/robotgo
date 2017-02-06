@@ -39,7 +39,7 @@ import (
 )
 
 const (
-	version string = "v0.42.0.235,Mount Ngauruhoe!"
+	version string = "v0.42.0.237,Mount Ngauruhoe!"
 )
 
 //GetVersion get version
@@ -58,7 +58,6 @@ func GetVersion() string {
 
 //Bitmap is Bitmap struct
 type Bitmap struct {
-	// type Bit_map struct {
 	ImageBuffer   *uint8
 	Width         int
 	Height        int
@@ -131,7 +130,6 @@ func CaptureScreen(args ...int) C.MMBitmapRef {
 
 //BCaptureScreen Capture the screen and return bitmap(go struct)
 func BCaptureScreen(args ...int) Bitmap {
-	// func Capture_Screen(args ...int) Bitmap {
 	var x C.size_t
 	var y C.size_t
 	var w C.size_t
@@ -154,7 +152,6 @@ func BCaptureScreen(args ...int) Bitmap {
 
 	bit := C.aCaptureScreen(x, y, w, h)
 	// Println("...", bit)
-	// bit_map := Bit_map{
 	bitmap := Bitmap{
 		ImageBuffer:   (*uint8)(bit.imageBuffer),
 		Width:         int(bit.width),
@@ -164,7 +161,6 @@ func BCaptureScreen(args ...int) Bitmap {
 		BytesPerPixel: uint8(bit.bytesPerPixel),
 	}
 
-	// return bit_map
 	return bitmap
 }
 
