@@ -27,10 +27,8 @@ RobotGo 支持 Mac, Windows, and Linux(X11).
 - [API Document](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) 
 - [GoDoc](https://godoc.org/github.com/go-vgo/robotgo)
 
- 英文文档请点击API Document
-
 ##Requirements:
-(环境要求)
+(环境要求:)
 
 在安装RobotGo之前,请确保Golang、GCC、zlib和libpng被正确安装
 
