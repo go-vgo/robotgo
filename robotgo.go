@@ -1,4 +1,4 @@
-// Copyright 2016 The go-vgo Project Developers. See the COPYRIGHT
+// Copyright 2016-2017 The go-vgo Project Developers. See the COPYRIGHT
 // file at the top-level directory of this distribution and at
 // https://github.com/go-vgo/robotgo/blob/master/LICENSE
 //
@@ -40,7 +40,7 @@ import (
 )
 
 const (
-	version string = "v0.42.0.241,Mount Ngauruhoe!"
+	version string = "v0.42.0.242,Mount Ngauruhoe!"
 )
 
 //GetVersion get version
