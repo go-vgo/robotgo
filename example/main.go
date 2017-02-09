@@ -169,6 +169,8 @@ func main() {
 	mdata := robotgo.GetActive() //Get current Window Active
 	hwnd := robotgo.GetHandle()  //Get current Window Handle
 	fmt.Println("hwnd---", hwnd)
+	bhwnd := robotgo.GetBHandle() //Get current Window Handle
+	fmt.Println("bhwnd---", bhwnd)
 	title := robotgo.GetTitle() //Get current Window title
 	fmt.Println("title-----", title)
 	robotgo.CloseWindow()    //close current Window
