@@ -8,6 +8,11 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+/*
+Package robotgo Go native cross-platform system automation.
+
+Please make sure Golang,GCC,zlib and libpng is installed correctly before installing RobotGo
+*/
 package robotgo
 
 /*
@@ -40,7 +45,7 @@ import (
 )
 
 const (
-	version string = "v0.42.0.242,Mount Ngauruhoe!"
+	version string = "v0.42.0.244,Mount Ngauruhoe!"
 )
 
 //GetVersion get version
