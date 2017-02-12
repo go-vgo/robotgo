@@ -10,10 +10,12 @@
 
 /*
 
+
 Package robotgo Go native cross-platform system automation.
 
-Please make sure Golang,GCC,zlib and libpng is installed correctly before installing RobotGo
-See Requirements: https://github.com/go-vgo/robotgo#requirements
+Please make sure Golang,GCC,zlib and libpng is installed correctly before installing RobotGo;
+See Requirements:
+	https://github.com/go-vgo/robotgo#requirements
 
 Installation:
 	go get -u github.com/go-vgo/robotgo
