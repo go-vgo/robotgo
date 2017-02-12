@@ -14,6 +14,7 @@
 Package robotgo Go native cross-platform system automation.
 
 Please make sure Golang,GCC,zlib and libpng is installed correctly before installing RobotGo;
+
 See Requirements:
 	https://github.com/go-vgo/robotgo#requirements
 
@@ -52,7 +53,7 @@ import (
 )
 
 const (
-	version string = "v0.42.0.244,Mount Ngauruhoe!"
+	version string = "v0.42.0.247,Mount Ngauruhoe!"
 )
 
 //GetVersion get version
