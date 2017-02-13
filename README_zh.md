@@ -216,9 +216,9 @@ func main() {
 
 ##Future
 - Update Find an image on screen, read pixels from an image
-- Update Window Handle
-- Try support Android,maybe support IOS
-- Remove zlib/libpng dependencies
+- 更新 Window Handle
+- 尝试支持 Android,也许支持 IOS
+- 移除 zlib/libpng 依赖
 
 ##Contributors
 
