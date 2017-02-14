@@ -49,6 +49,8 @@ brew install homebrew/dupes/zlib
 ####For Windows:
 ```
 MinGW or other GCC
+
+zlib & libpng (bitmap need it.)
 ```
 #####[zlib&libpng Windows32 GCC's Course](https://github.com/go-vgo/Mingw32)
 
