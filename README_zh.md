@@ -66,6 +66,7 @@ xcb,xkb,libxkbcommon
 #####Ubuntu:
 
 ```yml
+sudo apt-get install gcc libc6-dev
 
 sudo apt-get install libx11-dev
 #sudo apt-get install libgtkglextmm-x11-dev
@@ -81,6 +82,8 @@ sudo apt-get install xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommo
 sudo apt-get install libxkbcommon-dev
 
 ```
+
+png.h: No such file or directory?Please see [issues/47](https://github.com/go-vgo/robotgo/issues/47).
 
 ##Installation:
 ```
