@@ -116,8 +116,8 @@
 	"shift"
 	"right_shift"
 	"space"
-	"printscreen"
-	"insert"
+	"printscreen"       No Mac support
+	"insert"            No Mac support
 	"menu"
 
 	"audio_mute"
@@ -128,10 +128,10 @@
 	"audio_pause"
 	"audio_prev"
 	"audio_next"
-	"audio_rewind"
-	"audio_forward"
-	"audio_repeat"
-	"audio_random"
+	"audio_rewind"      Linux only
+	"audio_forward"     Linux only
+	"audio_repeat"      Linux only
+	"audio_random"      Linux only
 
 	"numpad_0"
 	"numpad_1"
