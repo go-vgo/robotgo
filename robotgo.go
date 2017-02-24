@@ -387,9 +387,9 @@ func Try(fun func(), handler func(interface{})) {
 	fun()
 }
 
-// KeyTap Tap the keyboard
+// KeyTap Tap the keyboard;
 // See keys:
-//	https://github.com/go-vgo/robotgo/blob/master/docs/doc.md#Keys
+//	https://github.com/go-vgo/robotgo/blob/master/docs/keys.md
 func KeyTap(args ...interface{}) {
 	var akey string
 	var akeyt string

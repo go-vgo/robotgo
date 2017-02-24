@@ -4,7 +4,7 @@
 
 ##[Keyboard](#Keyboard)
 
-#####[Keys](#Keys)
+#####[Keys](https://github.com/go-vgo/robotgo/blob/master/docs/keys.md)
 #####[SetKeyboardDelay](#SetKeyDelay)(Equivalent to SetKeyDelay,Wno-deprecated)
 #####[SetKeyDelay](#SetKeyDelay)
 #####[KeyTap](#KeyTap)
@@ -71,84 +71,6 @@
     get robotgo version
 
 ##<h2 id="Keyboard">Keyboard</h2>
-
-###<h3 id="Keys">Keys</h3>
-    "backspace"
-	"delete"        
-	"enter"        
-	"tab"
-	"escape"
-	"up"           
-	"down"
-	"right"
-	"left"
-	"home"
-	"end"
-	"pageup"
-	"pagedown"
-	"f1"
-	"f2"
-	"f3"
-	"f4"
-	"f5"
-	"f6"
-	"f7"
-	"f8"
-	"f9"
-	"f10"
-	"f11"
-	"f12"
-	"f13"
-	"f14"
-	"f15"
-	"f16"
-	"f17"
-	"f18"
-	"f19"
-	"f20"
-	"f21"
-	"f22"
-	"f23"
-	"f24"
-	"command"
-	"alt"
-	"control"
-	"shift"
-	"right_shift"
-	"space"
-	"printscreen"       No Mac support
-	"insert"            No Mac support
-	"menu"
-
-	"audio_mute"
-	"audio_vol_down"
-	"audio_vol_up"
-	"audio_play"
-	"audio_stop"
-	"audio_pause"
-	"audio_prev"
-	"audio_next"
-	"audio_rewind"      Linux only
-	"audio_forward"     Linux only
-	"audio_repeat"      Linux only
-	"audio_random"      Linux only
-
-	"numpad_0"
-	"numpad_1"
-	"numpad_2"
-	"numpad_3"
-	"numpad_4"
-	"numpad_5"
-	"numpad_6"
-	"numpad_7"
-	"numpad_8"
-	"numpad_9"
-
-	"lights_mon_up"
-	"lights_mon_down"
-	"lights_kbd_toggle"
-	"lights_kbd_up"
-	"lights_kbd_down"
 
 ###<h3 id="SetKeyDelay">.SetKeyDelay(ms)</h3>
 
