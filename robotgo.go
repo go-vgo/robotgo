@@ -55,7 +55,7 @@ const (
 	version string = "v0.42.0.256,Mount Ngauruhoe!"
 )
 
-//GetVersion get version
+// GetVersion get version
 func GetVersion() string {
 	return version
 }
@@ -69,7 +69,7 @@ func GetVersion() string {
 |_______/     \______|| _| `._____||_______||_______||__| \__|
 */
 
-//Bitmap is Bitmap struct
+// Bitmap is Bitmap struct
 type Bitmap struct {
 	ImageBuffer   *uint8
 	Width         int
@@ -79,7 +79,7 @@ type Bitmap struct {
 	BytesPerPixel uint8
 }
 
-//GetPixelColor Get pixel color
+// GetPixelColor Get pixel color
 func GetPixelColor(x, y int) string {
 	cx := C.size_t(x)
 	cy := C.size_t(y)
@@ -90,14 +90,14 @@ func GetPixelColor(x, y int) string {
 	return gcolor
 }
 
-//GetScreenSize Get screen size
+// GetScreenSize Get screen size
 func GetScreenSize() (int, int) {
 	size := C.aGetScreenSize()
 	// Println("...", size, size.width)
 	return int(size.width), int(size.height)
 }
 
-//SetXDisplayName Set XDisplay name
+// SetXDisplayName Set XDisplay name
 func SetXDisplayName(name string) string {
 	cname := C.CString(name)
 	str := C.aSetXDisplayName(cname)
@@ -106,7 +106,7 @@ func SetXDisplayName(name string) string {
 	return gstr
 }
 
-//GetXDisplayName Get XDisplay name
+// GetXDisplayName Get XDisplay name
 func GetXDisplayName() string {
 	name := C.aGetXDisplayName()
 	gname := C.GoString(name)
@@ -114,7 +114,7 @@ func GetXDisplayName() string {
 	return gname
 }
 
-//CaptureScreen Capture the screen return bitmap(c struct)
+// CaptureScreen Capture the screen return bitmap(c struct)
 func CaptureScreen(args ...int) C.MMBitmapRef {
 	var x C.size_t
 	var y C.size_t
@@ -141,7 +141,7 @@ func CaptureScreen(args ...int) C.MMBitmapRef {
 	return bit
 }
 
-//BCaptureScreen Capture the screen and return bitmap(go struct)
+// BCaptureScreen Capture the screen and return bitmap(go struct)
 func BCaptureScreen(args ...int) Bitmap {
 	var x C.size_t
 	var y C.size_t
@@ -187,13 +187,13 @@ func BCaptureScreen(args ...int) Bitmap {
 
 */
 
-//MPoint is MPoint struct
+// MPoint is MPoint struct
 type MPoint struct {
 	x int
 	y int
 }
 
-//MoveMouse Move the mouse
+// MoveMouse Move the mouse
 func MoveMouse(x, y int) {
 	//C.size_t  int
 	cx := C.size_t(x)
@@ -201,28 +201,28 @@ func MoveMouse(x, y int) {
 	C.aMoveMouse(cx, cy)
 }
 
-//Move Move the mouse
+// Move Move the mouse
 func Move(x, y int) {
 	cx := C.size_t(x)
 	cy := C.size_t(y)
 	C.aMoveMouse(cx, cy)
 }
 
-//DragMouse Drag the mouse
+// DragMouse Drag the mouse
 func DragMouse(x, y int) {
 	cx := C.size_t(x)
 	cy := C.size_t(y)
 	C.aDragMouse(cx, cy)
 }
 
-//Drag Drag the mouse
+// Drag Drag the mouse
 func Drag(x, y int) {
 	cx := C.size_t(x)
 	cy := C.size_t(y)
 	C.aDragMouse(cx, cy)
 }
 
-//MoveMouseSmooth Move the mouse smooth
+// MoveMouseSmooth Move the mouse smooth
 func MoveMouseSmooth(x, y int, args ...float64) {
 	cx := C.size_t(x)
 	cy := C.size_t(y)
@@ -244,7 +244,7 @@ func MoveMouseSmooth(x, y int, args ...float64) {
 	C.aMoveMouseSmooth(cx, cy, low, high)
 }
 
-//MoveSmooth Move the mouse smooth
+// MoveSmooth Move the mouse smooth
 func MoveSmooth(x, y int, args ...float64) {
 	cx := C.size_t(x)
 	cy := C.size_t(y)
@@ -266,7 +266,7 @@ func MoveSmooth(x, y int, args ...float64) {
 	C.aMoveMouseSmooth(cx, cy, low, high)
 }
 
-//GetMousePos Get mouse portion
+// GetMousePos Get mouse portion
 func GetMousePos() (int, int) {
 	pos := C.aGetMousePos()
 	// Println("pos:###", pos, pos.x, pos.y)
@@ -276,7 +276,7 @@ func GetMousePos() (int, int) {
 	return x, y
 }
 
-//MouseClick Click the mouse
+// MouseClick Click the mouse
 func MouseClick(args ...interface{}) {
 	var button C.MMMouseButton
 	var double C.bool
@@ -300,7 +300,7 @@ func MouseClick(args ...interface{}) {
 	C.aMouseClick(button, double)
 }
 
-//Click Click the mouse
+// Click Click the mouse
 func Click(args ...interface{}) {
 	var button C.MMMouseButton
 	var double C.bool
@@ -324,13 +324,13 @@ func Click(args ...interface{}) {
 	C.aMouseClick(button, double)
 }
 
-//MoveClick move and click the mouse
+// MoveClick move and click the mouse
 func MoveClick(x, y int, args ...interface{}) {
 	MoveMouse(x, y)
 	MouseClick(args)
 }
 
-//MouseToggle Toggle the mouse
+// MouseToggle Toggle the mouse
 func MouseToggle(args ...interface{}) {
 	var button C.MMMouseButton
 	Try(func() {
@@ -353,13 +353,13 @@ func MouseToggle(args ...interface{}) {
 	defer C.free(unsafe.Pointer(down))
 }
 
-//SetMouseDelay Set mouse delay
+// SetMouseDelay Set mouse delay
 func SetMouseDelay(x int) {
 	cx := C.size_t(x)
 	C.aSetMouseDelay(cx)
 }
 
-//ScrollMouse Scroll the mouse
+// ScrollMouse Scroll the mouse
 func ScrollMouse(x int, y string) {
 	cx := C.size_t(x)
 	z := C.CString(y)
@@ -377,7 +377,7 @@ func ScrollMouse(x int, y string) {
 
 */
 
-//Try handler(err)
+// Try handler(err)
 func Try(fun func(), handler func(interface{})) {
 	defer func() {
 		if err := recover(); err != nil {
@@ -387,8 +387,8 @@ func Try(fun func(), handler func(interface{})) {
 	fun()
 }
 
-//KeyTap Tap the keyboard
-//See keys:
+// KeyTap Tap the keyboard
+// See keys:
 //	https://github.com/go-vgo/robotgo/blob/master/docs/doc.md#Keys
 func KeyTap(args ...interface{}) {
 	var akey string
@@ -446,7 +446,7 @@ func KeyTap(args ...interface{}) {
 
 }
 
-//KeyToggle Toggle the keyboard
+// KeyToggle Toggle the keyboard
 func KeyToggle(args ...string) string {
 	var adown string
 	var amkey string
@@ -487,14 +487,14 @@ func KeyToggle(args ...string) string {
 	return C.GoString(str)
 }
 
-//TypeString Type string
+// TypeString Type string
 func TypeString(x string) {
 	cx := C.CString(x)
 	C.aTypeString(cx)
 	defer C.free(unsafe.Pointer(cx))
 }
 
-//TypeStrDelay Type string delayed
+// TypeStrDelay Type string delayed
 func TypeStrDelay(x string, y int) {
 	cx := C.CString(x)
 	cy := C.size_t(y)
@@ -502,7 +502,7 @@ func TypeStrDelay(x string, y int) {
 	defer C.free(unsafe.Pointer(cx))
 }
 
-//TypeStringDelayed Type string delayed
+// TypeStringDelayed Type string delayed
 func TypeStringDelayed(x string, y int) {
 	cx := C.CString(x)
 	cy := C.size_t(y)
@@ -510,12 +510,12 @@ func TypeStringDelayed(x string, y int) {
 	defer C.free(unsafe.Pointer(cx))
 }
 
-//SetKeyDelay Set keyboard delay
+// SetKeyDelay Set keyboard delay
 func SetKeyDelay(x int) {
 	C.aSetKeyboardDelay(C.size_t(x))
 }
 
-//SetKeyboardDelay Set keyboard delay,Wno-deprecated
+// SetKeyboardDelay Set keyboard delay,Wno-deprecated
 func SetKeyboardDelay(x int) {
 	C.aSetKeyboardDelay(C.size_t(x))
 }
@@ -529,7 +529,7 @@ func SetKeyboardDelay(x int) {
 |______/  |__|     |__|     |__|  |__| /__/     \__\ | _|
 */
 
-//FindBitmap Find the bitmap
+// FindBitmap Find the bitmap
 func FindBitmap(args ...interface{}) (int, int) {
 	var bit C.MMBitmapRef
 	bit = args[0].(C.MMBitmapRef)
@@ -553,7 +553,7 @@ func FindBitmap(args ...interface{}) (int, int) {
 	return int(pos.x), int(pos.y)
 }
 
-//OpenBitmap Open the bitmap
+// OpenBitmap Open the bitmap
 func OpenBitmap(args ...interface{}) C.MMBitmapRef {
 	path := C.CString(args[0].(string))
 	var mtype C.uint16_t
@@ -570,7 +570,7 @@ func OpenBitmap(args ...interface{}) C.MMBitmapRef {
 	// defer C.free(unsafe.Pointer(path))
 }
 
-//SaveBitmap Save the bitmap
+// SaveBitmap Save the bitmap
 func SaveBitmap(args ...interface{}) string {
 	var mtype C.uint16_t
 	Try(func() {
@@ -597,7 +597,7 @@ func SaveBitmap(args ...interface{}) string {
 // 	// defer C.free(unsafe.Pointer(path))
 // }
 
-//TostringBitmap Tostring bitmap
+// TostringBitmap Tostring bitmap
 func TostringBitmap(bit C.MMBitmapRef) *C.char {
 	// str_bit := C.aTostringBitmap(bit)
 	strBit := C.aTostringBitmap(bit)
@@ -606,7 +606,7 @@ func TostringBitmap(bit C.MMBitmapRef) *C.char {
 	return strBit
 }
 
-//GetPortion Get portion
+// GetPortion Get portion
 func GetPortion(bit C.MMBitmapRef, x, y, w, h C.size_t) C.MMBitmapRef {
 	var rect C.MMRect
 	rect.origin.x = x
@@ -618,7 +618,7 @@ func GetPortion(bit C.MMBitmapRef, x, y, w, h C.size_t) C.MMBitmapRef {
 	return pos
 }
 
-//Convert Convert bitmap
+// Convert Convert bitmap
 func Convert(args ...interface{}) {
 	var mtype int
 	Try(func() {
@@ -644,10 +644,10 @@ func Convert(args ...interface{}) {
 |_______|   \__/     |_______||__| \__|     |__|
 */
 
-//Map a map
+// Map a map
 type Map map[string]interface{}
 
-//AddEvent Add event listener
+// AddEvent Add event listener
 func AddEvent(aeve string) int {
 	keycode := Map{
 		"f1":  "59",
@@ -682,12 +682,12 @@ func AddEvent(aeve string) int {
 	return geve
 }
 
-//StopEvent Stop event listener
+// StopEvent Stop event listener
 func StopEvent() {
 	C.aStop()
 }
 
-//LEvent Add event listener,Wno-deprecated
+// LEvent Add event listener,Wno-deprecated
 func LEvent(aeve string) int {
 	cs := C.CString(aeve)
 	eve := C.aEvent(cs)
@@ -707,7 +707,7 @@ ____    __    ____  __  .__   __.  _______   ______   ____    __    ____
 
 */
 
-//ShowAlert Show a alert window
+// ShowAlert Show a alert window
 func ShowAlert(title, msg string, args ...string) int {
 	var (
 		// title         string
@@ -739,7 +739,7 @@ func ShowAlert(title, msg string, args ...string) int {
 	return ibool
 }
 
-//IsValid Valid the window
+// IsValid Valid the window
 func IsValid() bool {
 	abool := C.aIsValid()
 	gbool := bool(abool)
@@ -747,30 +747,30 @@ func IsValid() bool {
 	return gbool
 }
 
-//SetActive Set the window active
+// SetActive Set the window active
 func SetActive(win C.MData) {
 	C.aSetActive(win)
 }
 
-//GetActive Get the active window
+// GetActive Get the active window
 func GetActive() C.MData {
 	mdata := C.aGetActive()
 	// Println("active----", mdata)
 	return mdata
 }
 
-//CloseWindow Close the window
+// CloseWindow Close the window
 func CloseWindow() {
 	C.aCloseWindow()
 }
 
-//SetHandle Set the window handle
+// SetHandle Set the window handle
 func SetHandle(hwnd int) {
 	chwnd := C.uintptr(hwnd)
 	C.aSetHandle(chwnd)
 }
 
-//GetHandle Get the window handle
+// GetHandle Get the window handle
 func GetHandle() int {
 	hwnd := C.aGetHandle()
 	ghwnd := int(hwnd)
@@ -778,7 +778,7 @@ func GetHandle() int {
 	return ghwnd
 }
 
-//GetBHandle Get the window handle
+// GetBHandle Get the window handle
 func GetBHandle() int {
 	hwnd := C.bGetHandle()
 	ghwnd := int(hwnd)
@@ -786,7 +786,7 @@ func GetBHandle() int {
 	return ghwnd
 }
 
-//GetTitle Get the window title
+// GetTitle Get the window title
 func GetTitle() string {
 	title := C.aGetTitle()
 	gtittle := C.GoString(title)
@@ -794,7 +794,7 @@ func GetTitle() string {
 	return gtittle
 }
 
-//GetPID Get the process id
+// GetPID Get the process id
 func GetPID() int {
 	pid := C.aGetPID()
 	return int(pid)
