@@ -1,5 +1,5 @@
+##<h2 id="Keys">Keys</h2>
 
-###<h3 id="Keys">Keys</h3>
     "backspace"
 	"delete"        
 	"enter"        
@@ -45,7 +45,7 @@
 	"space"
 	"printscreen"       No Mac support
 	"insert"            No Mac support
-	"menu"
+	"menu"				Windows only
 
 	"audio_mute"
 	"audio_vol_down"
@@ -60,19 +60,19 @@
 	"audio_repeat"      Linux only
 	"audio_random"      Linux only
 
-	"numpad_0"
-	"numpad_1"
-	"numpad_2"
-	"numpad_3"
-	"numpad_4"
-	"numpad_5"
-	"numpad_6"
-	"numpad_7"
-	"numpad_8"
-	"numpad_9"
+	"numpad_0"		No Linux support
+	"numpad_1"		No Linux support
+	"numpad_2"		No Linux support
+	"numpad_3"		No Linux support
+	"numpad_4"		No Linux support
+	"numpad_5"		No Linux support
+	"numpad_6"		No Linux support
+	"numpad_7"		No Linux support
+	"numpad_8"		No Linux support
+	"numpad_9"		No Linux support
 
-	"lights_mon_up"
-	"lights_mon_down"
-	"lights_kbd_toggle"
-	"lights_kbd_up"
-	"lights_kbd_down"
+	"lights_mon_up"			No Windows support
+	"lights_mon_down"		No Windows support
+	"lights_kbd_toggle"		No Windows support
+	"lights_kbd_up"			No Windows support
+	"lights_kbd_down"		No Windows support
