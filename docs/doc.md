@@ -4,7 +4,7 @@
 
 ##[Keyboard](#Keyboard)
 
-#####[Keys](#keys)
+#####[Keys](#Keys)
 #####[SetKeyboardDelay](#SetKeyDelay)(Equivalent to SetKeyDelay,Wno-deprecated)
 #####[SetKeyDelay](#SetKeyDelay)
 #####[KeyTap](#KeyTap)
@@ -72,7 +72,7 @@
 
 ##<h2 id="Keyboard">Keyboard</h2>
 
-###<h3 id="keys">Keys</h3>
+###<h3 id="Keys">Keys</h3>
     "backspace"
 	"delete"        
 	"enter"        

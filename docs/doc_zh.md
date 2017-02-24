@@ -4,7 +4,7 @@
 
 ##[键盘](#Keyboard)
 
-#####[Keys](#keys)
+#####[Keys](#Keys)
 #####[SetKeyboardDelay](#SetKeyDelay)(相当于SetKeyDelay,废弃API)
 #####[SetKeyDelay](#SetKeyDelay)
 #####[KeyTap](#KeyTap)
@@ -73,7 +73,7 @@
 
 ##<h2 id="Keyboard">键盘</h2>
 
-###<h3 id="keys">Keys</h3>
+###<h3 id="Keys">Keys</h3>
     "backspace"
 	"delete"        
 	"enter"        
