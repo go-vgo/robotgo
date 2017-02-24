@@ -52,7 +52,7 @@ import (
 )
 
 const (
-	version string = "v0.42.0.251,Mount Ngauruhoe!"
+	version string = "v0.42.0.256,Mount Ngauruhoe!"
 )
 
 //GetVersion get version
@@ -387,7 +387,9 @@ func Try(fun func(), handler func(interface{})) {
 	fun()
 }
 
-//KeyTap Tap the Keyboard
+//KeyTap Tap the keyboard
+//See keys:
+//	https://github.com/go-vgo/robotgo/blob/master/docs/doc.md#Keys
 func KeyTap(args ...interface{}) {
 	var akey string
 	var akeyt string
