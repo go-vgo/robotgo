@@ -86,7 +86,7 @@
 
 ####Arguments:
 
-    key - See keys.
+    key - See [keys](https://github.com/go-vgo/robotgo/blob/master/docs/keys.md).
     modifier (optional, string or array) - Accepts alt, command (win), control, and shift.
 
 ####Examples:
@@ -104,7 +104,7 @@
 
 ####Arguments:
 
-    key - See keys.
+    key - See [keys](https://github.com/go-vgo/robotgo/blob/master/docs/keys.md).
     down - Accepts 'down' or 'up'.
     modifier (optional, string or array) - Accepts alt, command (mac), control, and shift.
 
