@@ -52,7 +52,7 @@ import (
 )
 
 const (
-	version string = "v0.42.0.262,Mount Ngauruhoe!"
+	version string = "v0.43.0.264,Matterhorn Alps!"
 )
 
 // GetVersion get version
