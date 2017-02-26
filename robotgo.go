@@ -388,6 +388,7 @@ func Try(fun func(), handler func(interface{})) {
 }
 
 // KeyTap Tap the keyboard;
+//
 // See keys:
 //	https://github.com/go-vgo/robotgo/blob/master/docs/keys.md
 func KeyTap(args ...interface{}) {
@@ -447,6 +448,9 @@ func KeyTap(args ...interface{}) {
 }
 
 // KeyToggle Toggle the keyboard
+//
+// See keys:
+//	https://github.com/go-vgo/robotgo/blob/master/docs/keys.md
 func KeyToggle(args ...string) string {
 	var adown string
 	var amkey string
