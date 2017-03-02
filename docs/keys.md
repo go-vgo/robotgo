@@ -5,10 +5,10 @@
 	"enter"        
 	"tab"
 	"escape"
-	"up"           
-	"down"
-	"right"
-	"left"
+	"up"		Up arrow key           
+	"down"		Down arrow key
+	"right"		Right arrow key
+	"left"		Left arrow key
 	"home"
 	"end"
 	"pageup"
@@ -47,14 +47,14 @@
 	"insert"            No Mac support
 	"menu"				Windows only
 
-	"audio_mute"
-	"audio_vol_down"
-	"audio_vol_up"
+	"audio_mute"		Mute the volume
+	"audio_vol_down"	Lower the volume
+	"audio_vol_up"		Increase the volume
 	"audio_play"
 	"audio_stop"
-	"audio_pause"
-	"audio_prev"
-	"audio_next"
+	"audio_pause"		
+	"audio_prev"		Previous Track
+	"audio_next"		Next Track
 	"audio_rewind"      Linux only
 	"audio_forward"     Linux only
 	"audio_repeat"      Linux only
@@ -71,8 +71,8 @@
 	"numpad_8"		No Linux support
 	"numpad_9"		No Linux support
 
-	"lights_mon_up"			No Windows support
-	"lights_mon_down"		No Windows support
-	"lights_kbd_toggle"		No Windows support
-	"lights_kbd_up"			No Windows support
-	"lights_kbd_down"		No Windows support
+	"lights_mon_up"		 Turn up monitor brightness					No Windows support
+	"lights_mon_down"	 Turn down monitor brightness				No Windows support
+	"lights_kbd_toggle"	 Toggle keyboard backlight on/off			No Windows support
+	"lights_kbd_up"		 Turn up keyboard backlight brightness		No Windows support
+	"lights_kbd_down"	 Turn down keyboard backlight brightness	No Windows support
