@@ -21,18 +21,18 @@ func main() {
 	////////////////////////////////////////////////////////////////////////////////
 	// Control the keyboard
 	////////////////////////////////////////////////////////////////////////////////
-	robotgo.TypeString("Hello World") //importing "Hello World"
-	robotgo.KeyTap("enter")           //Press "enter"
+	robotgo.TypeString("Hello World") // importing "Hello World"
+	robotgo.KeyTap("enter")           // Press "enter"
 	robotgo.KeyTap("a", "control")
-	robotgo.KeyTap("h", "command") //Hide window
+	robotgo.KeyTap("h", "command") // Hide window
 
-	//Press "i", "alt", "command" Key combination
+	// Press "i", "alt", "command" Key combination
 	robotgo.KeyTap("i", "alt", "command")
 	arr := []string{"alt", "command"}
 	robotgo.KeyTap("i", arr)
 
-	robotgo.KeyTap("w", "command") //close window
-	robotgo.KeyTap("m", "command") //minimize window
+	robotgo.KeyTap("w", "command") // close window
+	robotgo.KeyTap("m", "command") // minimize window
 	robotgo.KeyTap("f1", "control")
 	robotgo.KeyTap("a", "control")
 	robotgo.KeyToggle("a", "down")
@@ -44,15 +44,15 @@ func main() {
 	////////////////////////////////////////////////////////////////////////////////
 	// Control the mouse
 	////////////////////////////////////////////////////////////////////////////////
-	robotgo.MoveMouse(100, 200)          //Move the mouse to 100, 200
-	robotgo.MouseClick()                 //Click the left mouse button
-	robotgo.MouseClick("right", false)   //Click the right mouse button
-	robotgo.MouseClick("left", true)     //double click the left mouse button
-	robotgo.ScrollMouse(10, "up")        //Scrolls the mouse either up
-	robotgo.MouseToggle("down", "right") //Toggles right mouse button
-	robotgo.MoveMouseSmooth(100, 200)    //Smooth move the mouse to 100, 200
+	robotgo.MoveMouse(100, 200)          // Move the mouse to 100, 200
+	robotgo.MouseClick()                 // Click the left mouse button
+	robotgo.MouseClick("right", false)   // Click the right mouse button
+	robotgo.MouseClick("left", true)     // double click the left mouse button
+	robotgo.ScrollMouse(10, "up")        // Scrolls the mouse either up
+	robotgo.MouseToggle("down", "right") // Toggles right mouse button
+	robotgo.MoveMouseSmooth(100, 200)    // Smooth move the mouse to 100, 200
 	robotgo.MoveMouseSmooth(100, 200, 1.0, 100.0)
-	x, y := robotgo.GetMousePos() //Gets the mouse coordinates
+	x, y := robotgo.GetMousePos() // Gets the mouse coordinates
 	fmt.Println("pos:", x, y)
 	if x == 456 && y == 586 {
 		fmt.Println("mouse...", "586")
@@ -74,48 +74,48 @@ func main() {
 	fmt.Println("BCaptureScreen...", gbitMap.Width)
 	// fmt.Println("...", gbitmap.Width, gbitmap.BytesPerPixel)
 
-	//Gets the screen width and height
+	// Gets the screen width and height
 	sx, sy := robotgo.GetScreenSize()
 	fmt.Println("...", sx, sy)
 
-	//Gets the pixel color at 100, 200.
+	// Gets the pixel color at 100, 200.
 	color := robotgo.GetPixelColor(100, 200)
 	fmt.Println("color----", color, "-----------------")
 
-	//Gets the pixel color at 10, 20.
+	// Gets the pixel color at 10, 20.
 	color2 := robotgo.GetPixelColor(10, 20)
 	fmt.Println("color---", color2)
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Bitmap
 	////////////////////////////////////////////////////////////////////////////////
-	//Gets all of the screen
+	// Gets all of the screen
 	abitMap := robotgo.CaptureScreen()
 	fmt.Println("abitMap...", abitMap)
 
-	//Gets part of the screen
+	// Gets part of the screen
 	bitmap := robotgo.CaptureScreen(100, 200, 30, 40)
 	fmt.Println("CaptureScreen...", bitmap)
 
-	//Searches for needle in bitmap
+	// Searches for needle in bitmap
 	fx, fy := robotgo.FindBitmap(bitmap)
 	fmt.Println("FindBitmap------", fx, fy)
 
-	//Returns new bitmap object created from a portion of another
+	// Returns new bitmap object created from a portion of another
 	bitpos := robotgo.GetPortion(bitmap, 10, 10, 11, 10)
 	fmt.Println(bitpos)
 
-	//Creates bitmap from string by bitmap
+	// Creates bitmap from string by bitmap
 	bitstr := robotgo.TostringBitmap(bitmap)
 	fmt.Println("bitstr...", bitstr)
 
 	// sbitmap := robotgo.BitmapFromstring(bitstr, 2)
 	// fmt.Println("...", sbitmap)
 
-	//Saves image to absolute filepath in the given format
+	// Saves image to absolute filepath in the given format
 	robotgo.SaveBitmap(bitmap, "test.png")
 	robotgo.SaveBitmap(bitmap, "test31.tif", 1)
-	robotgo.Convert("test.png", "test.tif") //Convert image
+	robotgo.Convert("test.png", "test.tif") // Convert image
 
 	openbit := robotgo.OpenBitmap("test.tif") // open image bitmap
 	fmt.Println("openBitmap...", openbit)
@@ -153,26 +153,26 @@ func main() {
 		fmt.Println("---you press right mouse button---", "mright")
 	}
 
-	//Stop AddEvent
+	// Stop AddEvent
 	// robotgo.StopEvent()
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Window Handle
 	////////////////////////////////////////////////////////////////////////////////
-	abool := robotgo.ShowAlert("hello", "robotgo") //Show Alert Window
+	abool := robotgo.ShowAlert("hello", "robotgo") // Show Alert Window
 	if abool == 0 {
 		fmt.Println("ok@@@", "ok")
 	}
 	robotgo.ShowAlert("hello", "robotgo", "Ok", "Cancel")
-	pid := robotgo.GetPID() //Get the current process id
+	pid := robotgo.GetPID() // Get the current process id
 	fmt.Println("pid----", pid)
-	mdata := robotgo.GetActive() //Get current Window Active
-	hwnd := robotgo.GetHandle()  //Get current Window Handle
+	mdata := robotgo.GetActive() // Get current Window Active
+	hwnd := robotgo.GetHandle()  // Get current Window Handle
 	fmt.Println("hwnd---", hwnd)
-	bhwnd := robotgo.GetBHandle() //Get current Window Handle
+	bhwnd := robotgo.GetBHandle() // Get current Window Handle
 	fmt.Println("bhwnd---", bhwnd)
-	title := robotgo.GetTitle() //Get current Window title
+	title := robotgo.GetTitle() // Get current Window title
 	fmt.Println("title-----", title)
-	robotgo.CloseWindow()    //close current Window
-	robotgo.SetActive(mdata) //set Window Active
+	robotgo.CloseWindow()    // close current Window
+	robotgo.SetActive(mdata) // set Window Active
 }
