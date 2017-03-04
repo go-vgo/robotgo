@@ -89,7 +89,7 @@ go get github.com/go-vgo/robotgo
 ```
   It's that easy!
 
-png.h: No such file or directory?Please see [issues/47](https://github.com/go-vgo/robotgo/issues/47).  
+png.h: No such file or directory? Please see [issues/47](https://github.com/go-vgo/robotgo/issues/47).  
 
 ##Update:
 ```

@@ -10,7 +10,7 @@
 [![Join the chat at https://gitter.im/go-vgo/robotgo](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/go-vgo/robotgo?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 <!--<a href="https://github.com/go-vgo/robotgo/releases"><img src="https://img.shields.io/badge/%20version%20-%206.0.0%20-blue.svg?style=flat-square" alt="Releases"></a>-->
   
-  >Golang Desktop Automation. Control the mouse, keyboard, bitmap,read the screen,Window Handle and global event listener.
+  >Golang Desktop Automation. Control the mouse, keyboard, bitmap, read the screen,   Window Handle and global event listener.
   
 RobotGo supports Mac, Windows, and Linux(X11).
 
@@ -34,7 +34,7 @@ This is a work in progress.
 
 ##Requirements:
 
-Now,Please make sure Golang,GCC,zlib and libpng is installed correctly before installing RobotGo.
+Now, Please make sure Golang, GCC, zlib and libpng is installed correctly before installing RobotGo.
 
 ###ALL: 
 ``` 
@@ -94,7 +94,7 @@ go get github.com/go-vgo/robotgo
 ```
   It's that easy!
 
-png.h: No such file or directory?Please see [issues/47](https://github.com/go-vgo/robotgo/issues/47).
+png.h: No such file or directory? Please see [issues/47](https://github.com/go-vgo/robotgo/issues/47).
 
 ##Update:
 ```
