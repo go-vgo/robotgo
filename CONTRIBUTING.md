@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This document explains how to contribute changes to the Robotgo project. It assumes you have followed the README.md and [API Document](https://github.com/go-vgo/robotgo/blob/master/doc.md). <!--Sensitive security-related issues should be reported to [security@Robotgo.io](mailto:security@Robotgo.io.)-->
+This document explains how to contribute changes to the Robotgo project. It assumes you have followed the README.md and [API Document](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md). <!--Sensitive security-related issues should be reported to [security@Robotgo.io](mailto:security@Robotgo.io.)-->
 
 ## Bug reports
 
