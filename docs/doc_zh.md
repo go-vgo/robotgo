@@ -434,7 +434,7 @@ robotgo.ScrollMouse(50, "down")
 package main
 
 import (
-    . "fmt"
+    "fmt"
 
     "github.com/go-vgo/robotgo"
 )
@@ -442,12 +442,12 @@ import (
 func main() {
   keve := robotgo.AddEvent("k")
   if keve == 0 {
-    Println("you press...", "k")
+    fmt.Println("you press...", "k")
   }
 
   mleft := robotgo.AddEvent("mleft")
   if mleft == 0 {
-    Println("you press...", "mouse left button")
+    fmt.Println("you press...", "mouse left button")
   }
 } 
 ```
