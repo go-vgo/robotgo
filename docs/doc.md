@@ -228,7 +228,7 @@ robotgo.MouseToggle("down", "right")
 ####Examples:
 
 ```Go
-//Mouse down at 0, 0 and then drag to 100, 100 and release. 
+// Mouse down at 0, 0 and then drag to 100, 100 and release. 
 robotgo.MoveMouse(0, 0)
 robotgo.MouseToggle("down")
 robotgo.DragMouse(100, 100)
@@ -291,7 +291,7 @@ robotgo.ScrollMouse(50, "down")
     Returns an object with .width and .height.
 
 ###<h3 id="CaptureScreen">.CaptureScreen</h3>
-    //ScreenCapture
+    // CaptureScreen
 
     Gets part or all of the screen.
 
@@ -330,7 +330,7 @@ robotgo.ScrollMouse(50, "down")
 
 ###<h3 id="OpenBitmap">.OpenBitmap</h3>
 
-    open bitmap .
+    open bitmap.
 
 ####Arguments:
 
