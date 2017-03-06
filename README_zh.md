@@ -98,7 +98,7 @@ go get -u github.com/go-vgo/robotgo
 
 ##[Examples:](https://github.com/go-vgo/robotgo/blob/master/example/main.go)
 
-###鼠标
+###[鼠标](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L45)
 
 ```Go
 package main
@@ -114,7 +114,7 @@ func main() {
 } 
 ``` 
 
-###键盘
+###[键盘](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L22)
 
 ```Go
 package main
@@ -133,7 +133,7 @@ func main() {
 } 
 ```
 
-###屏幕
+###[屏幕](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L71)
 
 ```Go
 package main
@@ -152,7 +152,7 @@ func main() {
 } 
 ```
 
-###位图
+###[位图](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L90)
 
 ```Go
 package main
@@ -174,7 +174,7 @@ func main() {
 } 
 ```
 
-###事件
+###[事件](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L124)
 
 ```Go
 package main
@@ -197,7 +197,7 @@ func main() {
   }
 } 
 ```
-###Window
+###[Window](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L160)
 
 ```Go
 package main
