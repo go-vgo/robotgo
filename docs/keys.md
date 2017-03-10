@@ -1,5 +1,6 @@
 # Keys
 
+```Go
     "backspace"
 	"delete"        
 	"enter"        
@@ -76,3 +77,4 @@
 	"lights_kbd_toggle"	 Toggle keyboard backlight on/off			No Windows support
 	"lights_kbd_up"		 Turn up keyboard backlight brightness		No Windows support
 	"lights_kbd_down"	 Turn down keyboard backlight brightness	No Windows support
+```	
