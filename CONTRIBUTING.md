@@ -24,11 +24,11 @@ This process gives everyone a chance to validate the design, helps prevent dupli
 
 ## Testing redux
 
-Before sending code out for review, run all the tests for the whole tree to make sure the changes don't break other usage and keep the compatibility on upgrade. You must be test on Mac, Windows, Linux and other.You should install the CLI for Circle CI, as we are using the server for continous testing.
+Before sending code out for review, run all the tests for the whole tree to make sure the changes don't break other usage and keep the compatibility on upgrade. You must be test on Mac, Windows, Linux and other. You should install the CLI for Circle CI, as we are using the server for continous testing.
 
 ## Code review
 
-In addition to the owner,Changes to Robotgo must be reviewed before they are accepted, no matter who makes the change even if it is a maintainer. We use GitHub's pull request workflow to do that and we also use [LGTM](http://lgtm.co) to ensure every PR is reviewed by vz or least 2 maintainers.
+In addition to the owner, Changes to Robotgo must be reviewed before they are accepted, no matter who makes the change even if it is a maintainer. We use GitHub's pull request workflow to do that and we also use [LGTM](http://lgtm.co) to ensure every PR is reviewed by vz or least 2 maintainers.
 
 
 ## Sign your work
@@ -37,11 +37,11 @@ The sign-off is a simple line at the end of the explanation for the patch. Your 
 
 ## Maintainers
 
-To make sure every PR is checked, we got team maintainers.A maintainer should be a contributor of Robotgo and contributed at least 4 accepted PRs. 
+To make sure every PR is checked, we got team maintainers. A maintainer should be a contributor of Robotgo and contributed at least 4 accepted PRs. 
 
 ## Owners
 
-Since Robotgo is a pure community organization without any company support,Copyright 2016-2017 The go-vgo Project Developers.
+Since Robotgo is a pure community organization without any company support, Copyright 2016-2017 The go-vgo Project Developers.
 
 
 ## Versions
