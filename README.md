@@ -101,9 +101,9 @@ png.h: No such file or directory? Please see [issues/47](https://github.com/go-v
 go get -u github.com/go-vgo/robotgo  
 ```
 
-##[Examples:](https://github.com/go-vgo/robotgo/blob/master/example/main.go)
+## [Examples:](https://github.com/go-vgo/robotgo/blob/master/example/main.go)
 
-####[Mouse](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L45)
+#### [Mouse](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L45)
 
 ```Go
 package main
