@@ -228,6 +228,7 @@ func main() {
 ##Future
 - Update Find an image on screen, read pixels from an image
 - Update Window Handle
+- Support UTF-8
 - Try support Android, maybe support IOS
 - Remove zlib/libpng dependencies
 

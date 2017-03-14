@@ -222,6 +222,7 @@ func main() {
 ##Future
 - 更新 Find an image on screen, read pixels from an image
 - 更新 Window Handle
+- 支持 UTF-8
 - 尝试支持 Android,也许支持 IOS
 - 移除 zlib/libpng 依赖
 
