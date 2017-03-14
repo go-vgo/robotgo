@@ -1,4 +1,4 @@
-#Robotgo
+# Robotgo
 <!--<img align="right" src="https://raw.githubusercontent.com/go-vgo/robotgo/master/logo.jpg">-->
 <!--[![Build Status](https://travis-ci.org/go-vgo/robotgo.svg)](https://travis-ci.org/go-vgo/robotgo)
 [![codecov](https://codecov.io/gh/go-vgo/robotgo/branch/master/graph/badge.svg)](https://codecov.io/gh/go-vgo/robotgo)-->
@@ -18,7 +18,7 @@ This is a work in progress.
 
 [简体中文](https://github.com/go-vgo/robotgo/blob/master/README_zh.md)
 
-##Contents
+## Contents
 - [Docs](#docs)
 - [Requirements](#requirements)
 - [Installation](#installation)
@@ -27,38 +27,38 @@ This is a work in progress.
 - [Future](#future)
 - [Contributors](#contributors)
 
-##Docs
+## Docs
   - [API Document](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) &nbsp;&nbsp;&nbsp;
   - [中文文档](https://github.com/go-vgo/robotgo/blob/master/docs/doc_zh.md)
   - [GoDoc](https://godoc.org/github.com/go-vgo/robotgo)
 
-##Requirements:
+## Requirements:
 
 Now, Please make sure Golang, GCC, zlib and libpng is installed correctly before installing RobotGo.
 
-###ALL: 
+### ALL: 
 ``` 
 Golang
 GCC
 zlib & libpng (bitmap)
 ```
-####For Mac OS X:
+#### For Mac OS X:
     Xcode Command Line Tools
 ```
 brew install libpng
 brew install homebrew/dupes/zlib
 ```    
-####For Windows:
+#### For Windows:
 ```
 MinGW or other GCC
 
 zlib & libpng (bitmap need it.)
 ```
-#####[zlib&libpng Windows32 GCC's Course](https://github.com/go-vgo/Mingw32)
+##### [zlib&libpng Windows32 GCC's Course](https://github.com/go-vgo/Mingw32)
 
-#####[Download include zlib&libpng Windows64 GCC](https://github.com/go-vgo/Mingw)
+##### [Download include zlib&libpng Windows64 GCC](https://github.com/go-vgo/Mingw)
 
-####For everything else:
+#### For everything else:
 ```
 GCC
     
@@ -69,7 +69,7 @@ Event:
 xcb,xkb,libxkbcommon
 ``` 
 
-#####Ubuntu:
+##### Ubuntu:
 ```yml
 sudo apt-get install gcc libc6-dev
 
@@ -88,7 +88,7 @@ sudo apt-get install libxkbcommon-dev
 
 ```
 
-##Installation:
+## Installation:
 ```
 go get github.com/go-vgo/robotgo
 ```
@@ -96,7 +96,7 @@ go get github.com/go-vgo/robotgo
 
 png.h: No such file or directory? Please see [issues/47](https://github.com/go-vgo/robotgo/issues/47).
 
-##Update:
+## Update:
 ```
 go get -u github.com/go-vgo/robotgo  
 ```
@@ -119,7 +119,7 @@ func main() {
 } 
 ``` 
 
-####[Keyboard](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L22)
+#### [Keyboard](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L22)
 
 ```Go
 package main
@@ -138,7 +138,7 @@ func main() {
 } 
 ```
 
-####[Screen](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L71)
+#### [Screen](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L71)
 
 ```Go
 package main
@@ -157,7 +157,7 @@ func main() {
 } 
 ```
 
-####[Bitmap](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L90)
+#### [Bitmap](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L90)
 
 ```Go
 package main
@@ -179,7 +179,7 @@ func main() {
 } 
 ```
 
-####[Event](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L124)
+#### [Event](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L124)
 
 ```Go
 package main
@@ -203,7 +203,7 @@ func main() {
 } 
 ```
 
-####[Window](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L160)
+#### [Window](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L160)
 
 ```Go
 package main
@@ -225,14 +225,14 @@ func main() {
 } 
 ```
 
-##Future
+## Future
 - Update Find an image on screen, read pixels from an image
 - Update Window Handle
 - Support UTF-8
 - Try support Android, maybe support IOS
 - Remove zlib/libpng dependencies
 
-##Contributors
+## Contributors
 
 - See [contributors page](https://github.com/go-vgo/robotgo/graphs/contributors) for full list of contributors.
 - See [Contribution Guidelines](https://github.com/go-vgo/robotgo/blob/master/CONTRIBUTING.md).

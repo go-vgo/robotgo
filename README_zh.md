@@ -1,4 +1,4 @@
-#Robotgo
+# Robotgo
 [![CircleCI Status](https://circleci.com/gh/go-vgo/robotgo.svg?style=shield)](https://circleci.com/gh/go-vgo/robotgo)
 [![Go Report Card](https://goreportcard.com/badge/github.com/go-vgo/robotgo)](https://goreportcard.com/report/github.com/go-vgo/robotgo)
 [![GoDoc](https://godoc.org/github.com/go-vgo/robotgo?status.svg)](https://godoc.org/github.com/go-vgo/robotgo)
@@ -13,7 +13,7 @@ RobotGo 支持 Mac, Windows, and Linux(X11).
 
 提Issues请到[Github](https://github.com/go-vgo/robotgo),便于统一管理和即时更新
 
-##Contents
+## Contents
 - [Docs](#docs)
 - [Requirements](#requirements)
 - [Installation](#installation)
@@ -22,7 +22,7 @@ RobotGo 支持 Mac, Windows, and Linux(X11).
 - [Future](#future)
 - [Contributors](#contributors)
 
-##Docs
+## Docs
 - [中文文档](https://github.com/go-vgo/robotgo/blob/master/docs/doc_zh.md)&nbsp;&nbsp;&nbsp;
 - [API Document](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) 
 - [GoDoc](https://godoc.org/github.com/go-vgo/robotgo)
@@ -32,28 +32,28 @@ RobotGo 支持 Mac, Windows, and Linux(X11).
 
 在安装RobotGo之前,请确保Golang、GCC、zlib和libpng被正确安装
 
-###ALL:  
+### ALL:  
 ```
 Golang
 GCC
 zlib & libpng (bitmap)
 ```
-####For Mac OS X:
+#### For Mac OS X:
     Xcode Command Line Tools
 ```
 brew install libpng
 brew install homebrew/dupes/zlib
 ```    
-####For Windows:
+#### For Windows:
 ```
 MinGW or other GCC
 
 zlib & libpng (bitmap依赖)
 ```
-#####[zlib&libpng Windows32 GCC教程](https://github.com/go-vgo/Mingw32)
-#####[下载包含zlib和libpng的64位MinGW](https://github.com/go-vgo/Mingw)
+##### [zlib&libpng Windows32 GCC教程](https://github.com/go-vgo/Mingw32)
+##### [下载包含zlib和libpng的64位MinGW](https://github.com/go-vgo/Mingw)
 
-####For everything else(Linux等其他系统):
+#### For everything else(Linux等其他系统):
 ```
 GCC
     
@@ -63,7 +63,7 @@ X11 with the XTest extension (also known as the Xtst library)
     
 xcb,xkb,libxkbcommon
 ```
-#####Ubuntu:
+##### Ubuntu:
 
 ```yml
 sudo apt-get install gcc libc6-dev
@@ -83,7 +83,7 @@ sudo apt-get install libxkbcommon-dev
 
 ```
 
-##Installation:
+## Installation:
 ```
 go get github.com/go-vgo/robotgo
 ```
@@ -91,14 +91,14 @@ go get github.com/go-vgo/robotgo
 
 png.h: No such file or directory? Please see [issues/47](https://github.com/go-vgo/robotgo/issues/47).  
 
-##Update:
+## Update:
 ```
 go get -u github.com/go-vgo/robotgo   
 ```
 
-##[Examples:](https://github.com/go-vgo/robotgo/blob/master/example/main.go)
+## [Examples:](https://github.com/go-vgo/robotgo/blob/master/example/main.go)
 
-####[鼠标](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L45)
+#### [鼠标](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L45)
 
 ```Go
 package main
@@ -114,7 +114,7 @@ func main() {
 } 
 ``` 
 
-####[键盘](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L22)
+#### [键盘](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L22)
 
 ```Go
 package main
@@ -133,7 +133,7 @@ func main() {
 } 
 ```
 
-####[屏幕](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L71)
+#### [屏幕](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L71)
 
 ```Go
 package main
@@ -152,7 +152,7 @@ func main() {
 } 
 ```
 
-####[位图](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L90)
+#### [位图](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L90)
 
 ```Go
 package main
@@ -174,7 +174,7 @@ func main() {
 } 
 ```
 
-####[事件](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L124)
+#### [事件](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L124)
 
 ```Go
 package main
@@ -197,7 +197,7 @@ func main() {
   }
 } 
 ```
-####[Window](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L160)
+#### [Window](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L160)
 
 ```Go
 package main
@@ -219,14 +219,14 @@ func main() {
 } 
 ```
 
-##Future
+## Future
 - 更新 Find an image on screen, read pixels from an image
 - 更新 Window Handle
 - 支持 UTF-8
 - 尝试支持 Android,也许支持 IOS
 - 移除 zlib/libpng 依赖
 
-##Contributors
+## Contributors
 
 - See [contributors page](https://github.com/go-vgo/robotgo/graphs/contributors) for full list of contributors.
 - See [Contribution Guidelines](https://github.com/go-vgo/robotgo/blob/master/CONTRIBUTING.md).
