@@ -1,7 +1,7 @@
 # Keys
 
 ```Go
-    "backspace"
+	"backspace"
 	"delete"        
 	"enter"        
 	"tab"

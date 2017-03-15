@@ -394,7 +394,7 @@ robotgo.ScrollMouse(50, "down")
 #### Examples:
 
 ```Go
-    robotgo.Convert("test.png", "test.tif")
+robotgo.Convert("test.png", "test.tif")
 ```             
 
 ## <h2 id="Event">Event</h2> 
