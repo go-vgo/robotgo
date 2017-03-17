@@ -26,7 +26,7 @@ This is a work in progress.
 - [Examples](#examples)
 - [Future](#future)
 - [Contributors](#contributors)
-- [License](license)
+- [License](#license)
 
 ## Docs
   - [API Document](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) &nbsp;&nbsp;&nbsp;
