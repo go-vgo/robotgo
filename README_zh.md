@@ -20,7 +20,7 @@ RobotGo 支持 Mac, Windows, and Linux(X11).
 - [Update](#update)
 - [Examples](#examples)
 - [Donate](#donate)
-- [Future](#future)
+- [Plans](#plans)
 - [Contributors](#contributors)
 - [License](#license)
 
@@ -224,7 +224,7 @@ func main() {
 
 - 支持 robotgo, [buy me a coffee](https://github.com/go-vgo/buy-me-a-coffee).
 
-## Future
+## Plans
 - 更新 Find an image on screen, read pixels from an image
 - 更新 Window Handle
 - 支持 UTF-8

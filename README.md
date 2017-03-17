@@ -25,7 +25,7 @@ This is a work in progress.
 - [Update](#update)
 - [Examples](#examples)
 - [Donate](#donate)
-- [Future](#future)
+- [Plans](#plans)
 - [Contributors](#contributors)
 - [License](#license)
 
@@ -229,7 +229,7 @@ func main() {
 ## Donate
 
 - Supporting robotgo, [buy me a coffee](https://github.com/go-vgo/buy-me-a-coffee).
-## Future
+## Plans
 - Update Find an image on screen, read pixels from an image
 - Update Window Handle
 - Support UTF-8
