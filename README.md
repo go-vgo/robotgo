@@ -26,6 +26,7 @@ This is a work in progress.
 - [Examples](#examples)
 - [Future](#future)
 - [Contributors](#contributors)
+- [License](license)
 
 ## Docs
   - [API Document](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) &nbsp;&nbsp;&nbsp;
@@ -236,3 +237,9 @@ func main() {
 
 - See [contributors page](https://github.com/go-vgo/robotgo/graphs/contributors) for full list of contributors.
 - See [Contribution Guidelines](https://github.com/go-vgo/robotgo/blob/master/CONTRIBUTING.md).
+
+## License
+
+Robotgo is primarily distributed under the terms of both the MIT license and the Apache License (Version 2.0).
+
+See [LICENSE-APACHE](http://www.apache.org/licenses/LICENSE-2.0), [LICENSE-MIT](https://github.com/go-vgo/robotgo/blob/master/LICENSE).

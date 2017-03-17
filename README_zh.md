@@ -21,6 +21,7 @@ RobotGo 支持 Mac, Windows, and Linux(X11).
 - [Examples](#examples)
 - [Future](#future)
 - [Contributors](#contributors)
+- [License](license)
 
 ## Docs
 - [中文文档](https://github.com/go-vgo/robotgo/blob/master/docs/doc_zh.md)&nbsp;&nbsp;&nbsp;
@@ -230,3 +231,9 @@ func main() {
 
 - See [contributors page](https://github.com/go-vgo/robotgo/graphs/contributors) for full list of contributors.
 - See [Contribution Guidelines](https://github.com/go-vgo/robotgo/blob/master/CONTRIBUTING.md).
+
+## License
+
+Robotgo is primarily distributed under the terms of both the MIT license and the Apache License (Version 2.0).
+
+See [LICENSE-APACHE](http://www.apache.org/licenses/LICENSE-2.0), [LICENSE-MIT](https://github.com/go-vgo/robotgo/blob/master/LICENSE).
