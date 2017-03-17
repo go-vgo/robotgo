@@ -19,14 +19,14 @@ RobotGo 支持 Mac, Windows, and Linux(X11).
 - [Installation](#installation)
 - [Update](#update)
 - [Examples](#examples)
-- [Donate](#donate)
 - [Plans](#plans)
+- [Donate](#donate)
 - [Contributors](#contributors)
 - [License](#license)
 
 ## Docs
 - [中文文档](https://github.com/go-vgo/robotgo/blob/master/docs/doc_zh.md)&nbsp;&nbsp;&nbsp;
-- [API Document](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) 
+- [English Docs](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) 
 - [GoDoc](https://godoc.org/github.com/go-vgo/robotgo)
 
 ## Requirements:
@@ -220,9 +220,6 @@ func main() {
   fmt.Println("title@@@", title)
 } 
 ```
-## Donate
-
-- 支持 robotgo, [buy me a coffee](https://github.com/go-vgo/buy-me-a-coffee).
 
 ## Plans
 - 更新 Find an image on screen, read pixels from an image
@@ -230,6 +227,11 @@ func main() {
 - 支持 UTF-8
 - 尝试支持 Android,也许支持 IOS
 - 移除 zlib/libpng 依赖
+
+## Donate
+
+- 支持 robotgo, [buy me a coffee](https://github.com/go-vgo/buy-me-a-coffee).
+
 
 ## Contributors
 

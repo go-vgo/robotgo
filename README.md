@@ -24,13 +24,13 @@ This is a work in progress.
 - [Installation](#installation)
 - [Update](#update)
 - [Examples](#examples)
-- [Donate](#donate)
 - [Plans](#plans)
+- [Donate](#donate)
 - [Contributors](#contributors)
 - [License](#license)
 
 ## Docs
-  - [API Document](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) &nbsp;&nbsp;&nbsp;
+  - [API Docs](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) &nbsp;&nbsp;&nbsp;
   - [中文文档](https://github.com/go-vgo/robotgo/blob/master/docs/doc_zh.md)
   - [GoDoc](https://godoc.org/github.com/go-vgo/robotgo)
 
@@ -226,15 +226,17 @@ func main() {
   fmt.Println("title@@@", title)
 } 
 ```
-## Donate
 
-- Supporting robotgo, [buy me a coffee](https://github.com/go-vgo/buy-me-a-coffee).
 ## Plans
 - Update Find an image on screen, read pixels from an image
 - Update Window Handle
 - Support UTF-8
 - Try support Android, maybe support IOS
 - Remove zlib/libpng dependencies
+
+## Donate
+
+- Supporting robotgo, [buy me a coffee](https://github.com/go-vgo/buy-me-a-coffee).
 
 ## Contributors
 
