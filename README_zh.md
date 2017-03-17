@@ -19,6 +19,7 @@ RobotGo 支持 Mac, Windows, and Linux(X11).
 - [Installation](#installation)
 - [Update](#update)
 - [Examples](#examples)
+- [Donate](#donate)
 - [Future](#future)
 - [Contributors](#contributors)
 - [License](#license)
@@ -219,6 +220,9 @@ func main() {
   fmt.Println("title@@@", title)
 } 
 ```
+## Donate
+
+- 支持 robotgo, [buy me a coffee](https://github.com/go-vgo/buy-me-a-coffee).
 
 ## Future
 - 更新 Find an image on screen, read pixels from an image
