@@ -5,12 +5,12 @@
 ## [Keyboard](#Keyboard)
 
 ##### [Keys](https://github.com/go-vgo/robotgo/blob/master/docs/keys.md)
-##### [SetKeyboardDelay](#SetKeyDelay)(Equivalent to SetKeyDelay,Wno-deprecated)
+##### [SetKeyboardDelay](#SetKeyDelay)(Equivalent to SetKeyDelay, Wno-deprecated)
 ##### [SetKeyDelay](#SetKeyDelay)
 ##### [KeyTap](#KeyTap)
 ##### [KeyToggle](#KeyToggle)
 ##### [TypeString](#TypeString)
-##### [TypeStringDelayed](#TypeStrDelay)(Equivalent to TypeStrDelay,Wno-deprecated)
+##### [TypeStringDelayed](#TypeStrDelay)(Equivalent to TypeStrDelay, Wno-deprecated)
 ##### [TypeStrDelay](#TypeStrDelay)
 
 ## [Mouse](#Mouse)
@@ -49,7 +49,7 @@
 
 ## [Event](#Event)
 
-##### [LEvent](#LEvent)(Equivalent to AddEvent,Wno-deprecated)
+##### [LEvent](#LEvent)(Equivalent to AddEvent, Wno-deprecated)
 ##### [AddEvent](#AddEvent)
 ##### [StopEvent](#StopEvent)
 
@@ -68,7 +68,7 @@
 ##### [GetPID](#GetPID)
 
 ### <h3 id="GetVersion">.GetVersion()</h3>
-    get robotgo version
+    Get robotgo version
 
 ## <h2 id="Keyboard">Keyboard</h2>
 
@@ -142,7 +142,7 @@ modifier (optional, string or array) - Accepts alt, command (mac), control, and 
 
 #### Arguments:
 
-    x,y
+    x, y
 
 #### Examples:
 
@@ -157,8 +157,8 @@ robotgo.MoveMouse(100, 100)
 
 #### Arguments:
 
-    x,y
-    lowspeed,highspeed
+    x, y
+    lowspeed, highspeed
 
 #### Examples:
 
@@ -223,7 +223,7 @@ robotgo.MouseToggle("down", "right")
 
 #### Arguments:
 
-    x,y
+    x, y
 
 #### Examples:
 
@@ -276,7 +276,7 @@ robotgo.ScrollMouse(50, "down")
 
 #### Arguments:
 
-    x,y
+    x, y
 
 #### Return:
 
@@ -296,7 +296,7 @@ robotgo.ScrollMouse(50, "down")
     Gets part or all of the screen.
 
     BCaptureScreen Returns a go struct
-    Capture_Screen(Drop support)
+    Capture_Screen (Drop support)
 
 #### Arguments:
 
@@ -335,7 +335,7 @@ robotgo.ScrollMouse(50, "down")
 #### Arguments:
 
     bitmap image path,
-    MMImageType(optional) 
+    MMImageType (optional) 
 
 #### Return:
 
@@ -343,13 +343,13 @@ robotgo.ScrollMouse(50, "down")
 
 ### <h3 id="SaveBitmap">.SaveBitmap</h3>
 
-    save a image with bitmap.
+    Save a image with bitmap.
 
 #### Arguments:
 
     bitmap,
     path,
-    imagetype(int) 
+    imagetype (int) 
 
 #### Return:
 
@@ -389,7 +389,7 @@ robotgo.ScrollMouse(50, "down")
 
     openpath,
     savepath,
-    MMImageType(optional)
+    MMImageType (optional)
 
 #### Examples:
 
@@ -407,7 +407,7 @@ robotgo.Convert("test.png", "test.tif")
 
     string
 
-    (mosue arguments:mleft mright wheelDown wheelUp wheelLeft wheelRight)
+    (mosue arguments: mleft, mright, wheelDown, wheelUp, wheelLeft, wheelRight)
 
 #### Return:
 
@@ -447,10 +447,10 @@ func main() {
 
 #### Arguments:
 
-    title(string),
-    msg(string),
-    defaultButton(optional string),
-    cancelButton(optional string)
+    title (string),
+    msg (string),
+    defaultButton (optional string),
+    cancelButton (optional string)
            
 
 #### Return:

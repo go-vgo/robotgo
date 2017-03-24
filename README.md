@@ -56,9 +56,9 @@ MinGW or other GCC
 
 zlib & libpng (bitmap need it.)
 ```
-##### [zlib&libpng Windows32 GCC's Course](https://github.com/go-vgo/Mingw32)
+##### [zlib & libpng Windows32 GCC's Course](https://github.com/go-vgo/Mingw32)
 
-##### [Download include zlib&libpng Windows64 GCC](https://github.com/go-vgo/Mingw)
+##### [Download include zlib & libpng Windows64 GCC](https://github.com/go-vgo/Mingw)
 
 #### For everything else:
 ```

@@ -5,32 +5,32 @@
 ## [键盘](#Keyboard)
 
 ##### [Keys](https://github.com/go-vgo/robotgo/blob/master/docs/keys.md)
-##### [SetKeyboardDelay](#SetKeyDelay)(相当于SetKeyDelay,废弃API)
+##### [SetKeyboardDelay](#SetKeyDelay)(相当于 SetKeyDelay, 废弃 API)
 ##### [SetKeyDelay](#SetKeyDelay)
 ##### [KeyTap](#KeyTap)
 ##### [KeyToggle](#KeyToggle)
 ##### [TypeString](#TypeString)
-##### [TypeStringDelayed](#TypeStrDelay)(相当于TypeStrDelay,废弃API)
+##### [TypeStringDelayed](#TypeStrDelay)(相当于 TypeStrDelay, 废弃 API)
 ##### [TypeStrDelay](#TypeStrDelay)
 
 ## [鼠标](#Mouse)
 
 ##### [SetMouseDelay](#SetMouseDelay)
 ##### [MoveMouse](#MoveMouse)
-##### [Move](#MoveMouse)(相当于MoveMouse)
+##### [Move](#MoveMouse)(相当于 MoveMouse)
 ##### [MoveMouseSmooth](#MoveMouseSmooth)
-##### [MoveSmooth](#MoveMouseSmooth)(相当与MoveMouseSmooth)
+##### [MoveSmooth](#MoveMouseSmooth)(相当与 MoveMouseSmooth)
 ##### [MouseClick](#MouseClick)
-##### [Click](#MouseClick)(相当于MouseClick)
+##### [Click](#MouseClick)(相当于 MouseClick)
 ##### [MoveClick](#MoveClick)
 ##### [MouseToggle](#MouseToggle)
 ##### [DragMouse](#DragMouse)
-##### [Drag](#DragMouse)(相当于DragMouse)
+##### [Drag](#DragMouse)(相当于 DragMouse)
 ##### [GetMousePos](#GetMousePos)
 ##### [ScrollMouse](#ScrollMouse)
 
 ### <h3 id="GetVersion">.GetVersion()</h3>
-    获取robotgo版本
+    获取 robotgo 版本
 
 ## [屏幕](#Screen)
 
@@ -41,7 +41,7 @@
 ##### [SetXDisplayName(Linux)](#SetXDisplayName)
 
 ## [位图](#Bitmap)
-    This is a work in progress.(工作正在进行中)
+    This is a work in progress. (工作正在进行中)
 
 ##### [FindBitmap](#FindBitmap)
 ##### [OpenBitmap](#OpenBitmap)
@@ -52,7 +52,7 @@
 
 ## [事件](#Event)
 
-##### [LEvent](#AddEvent)(相当于AddEvent,废弃API)
+##### [LEvent](#AddEvent)(相当于 AddEvent, 废弃 API)
 ##### [AddEvent](#AddEvent)
 ##### [StopEvent](#StopEvent)
 
@@ -74,12 +74,12 @@
 ## <h2 id="Keyboard">键盘</h2>
 
 ### <h3 id="SetKeyDelay">.SetKeyDelay(ms)</h3>
-    设置键盘延迟(在键盘一个事件后),单位ms,默认值10ms
+    设置键盘延迟 (在键盘一个事件后), 单位 ms, 默认值 10ms
 
     Sets the delay in milliseconds to sleep after a keyboard event. This is 10ms by default.
 
 #### 参数:
-    延迟时间,单位ms
+    延迟时间,单位 ms
 
     ms - Time to sleep in milliseconds.
 
@@ -90,7 +90,7 @@
 
 #### 参数:
     键盘值
-    修饰值(可选类型, 字符串或者数组) - 可选值: alt, command (win), control, and shift.
+    修饰值 (可选类型, 字符串或者数组) - 可选值: alt, command (win), control, and shift.
 
 key - See [keys](https://github.com/go-vgo/robotgo/blob/master/docs/keys.md).  
 modifier (optional, string or array) - Accepts alt, command (win), control, and shift.
@@ -104,7 +104,7 @@ robotgo.KeyTap("i", arr)
 ```
 
 ### <h3 id="KeyToggle">.KeyToggle(key, down, modifier)</h3>
-    键盘切换,按住或释放一个键位
+    键盘切换, 按住或释放一个键位
 
     Hold down or release a key.
 
@@ -115,7 +115,7 @@ down - Accepts 'down' or 'up'.
 modifier (optional, string or array) - Accepts alt, command (mac), control, and shift.
 ### 返回值:
 
-    返回KeyToggle状态
+    返回 KeyToggle 状态
 
 ### <h3 id="TypeString">.TypeString(string)</h3>
 
@@ -134,7 +134,7 @@ modifier (optional, string or array) - Accepts alt, command (mac), control, and 
 
 ## <h2 id="Mouse">鼠标</h2>
 ### <h3 id="SetMouseDelay">.SetMouseDelay(ms)</h3>
-    设置鼠标延迟(在一个鼠标事件后),单位ms,默认值10ms
+    设置鼠标延迟 (在一个鼠标事件后),单位 ms, 默认值 10 ms
 
     Sets the delay in milliseconds to sleep after a mouse event. This is 10ms by default.
 
@@ -149,7 +149,7 @@ modifier (optional, string or array) - Accepts alt, command (mac), control, and 
 
 #### 参数:
 
-    x,y
+    x, y
 
 #### 示例:
 
@@ -159,14 +159,14 @@ robotgo.MoveMouse(100, 100)
 ```
 
 ### <h3 id="MoveMouseSmooth">.MoveMouseSmooth(x, y)</h3>
-    模拟鼠标向X，Y平滑移动(像人类一样)，用鼠标按钮向上
+    模拟鼠标向 X，Y 平滑移动(像人类一样)，用鼠标按钮向上
 
     Moves mouse to x, y human like, with the mouse button up.
 
 #### 参数:
 
-    x,y
-    lowspeed,highspeed
+    x, y
+    lowspeed, highspeed
 
 #### 示例:
 
@@ -234,7 +234,7 @@ robotgo.MouseToggle("down", "right")
 
 #### 参数:
 
-    x,y
+    x, y
 
 #### 示例:
 
@@ -258,7 +258,7 @@ robotgo.MouseToggle("up")
 #### 示例:
 
 ```Go
-x,y := robotgo.GetMousePos()
+x, y := robotgo.GetMousePos()
 fmt.Println("pos:", x, y)
 ```
 
@@ -269,7 +269,7 @@ fmt.Println("pos:", x, y)
 
 #### 参数:
     滚动位置的大小
-    滚动方向:up(向上滚动)  down(向下滚动)
+    滚动方向: up (向上滚动)  down (向下滚动)
 
     magnitude - The amount to scroll.
     direction - Accepts down or up.
@@ -285,13 +285,13 @@ robotgo.ScrollMouse(50, "down")
 
 ## <h2 id="Screen">屏幕</h2>
 ### <h3 id="GetPixelColor">.GetPixelColor(x, y)
-    获取坐标为x,y位置处的颜色
+    获取坐标为 x, y 位置处的颜色
 
     Gets the pixel color at x, y. This function is perfect for getting a pixel or two, but if you'll be reading large portions of the screen use screen.capture.
 
 #### 参数:
 
-    x,y
+    x, y
 
 #### 返回值:
 
@@ -312,7 +312,7 @@ robotgo.ScrollMouse(50, "down")
     Gets part or all of the screen.
 
     BCaptureScreen Returns a go struct
-    Capture_Screen(Drop support)
+    Capture_Screen (Drop support)
 
 #### 参数:
 
@@ -324,7 +324,7 @@ robotgo.ScrollMouse(50, "down")
 
 #### 返回值:
 
-    返回一个bitmap object.
+    返回一个 bitmap object.
 
 ## <h2 id="Bitmap">位图</h2>
 
@@ -332,57 +332,57 @@ robotgo.ScrollMouse(50, "down")
 
 ### <h3 id="FindBitmap">.FindBitmap</h3>
 
-    查找bitmap.
+    查找 bitmap.
 
 #### 参数:
 
     bitmap;
-    rect(可选参数): x, y, w, h
+    rect (可选参数): x, y, w, h
 
 #### Return:
 
-    查找到,返回bitmap的x和y坐标;没有返回nil
+    查找到, 返回 bitmap 的 x 和y 坐标; 没有返回 nil
 
 
 ### <h3 id="OpenBitmap">.OpenBitmap</h3>
 
-    打开bitmap图片.
+    打开 bitmap 图片.
 
 #### 参数:
 
-    bitmap图片路径,
-    MMImageType(可选)
+    bitmap 图片路径,
+    MMImageType (可选)
 
 #### 返回值:
 
-     返回一个bitmap对象
+     返回一个 bitmap 对象
 
 ### <h3 id="SaveBitmap">.SaveBitmap</h3>
 
-    保存一个bitmap图片.
+    保存一个 bitmap 图片.
 
 #### 参数:
 
-    bitmap对象,
+    bitmap 对象,
     保存路径,
-    imagetype(int) 
+    imagetype (int) 
 
 #### 返回值:
 
-    保存图片,返回保存状态
+    保存图片, 返回保存状态
 
 
 ### <h3 id="TostringBitmap">.TostringBitmap</h3>
 
-     将一个bitmap对象转换为字符串对象.
+     将一个 bitmap 对象转换为字符串对象.
 
 #### 参数:
 
-    bitmap对象 
+    bitmap 对象 
 
 #### Return:
 
-    返回一个bitmap字符串 
+    返回一个 bitmap 字符串 
 
 ### <h3 id="GetPortion">.GetPortion</h3>
 
@@ -399,13 +399,13 @@ robotgo.ScrollMouse(50, "down")
 
 ### <h3 id="Convert">.Convert(openpath, savepath,MMImageType)</h3>
 
-    转换bitmap图片格式
+    转换 bitmap 图片格式
 
 #### 参数:
 
     openpath,
     savepath,
-    MMImageType(可选)
+    MMImageType (可选)
 
 #### 示例:
 
@@ -422,11 +422,11 @@ robotgo.Convert("test.png", "test.tif")
 
     string
 
-    (鼠标参数:mleft mright wheelDown wheelUp wheelLeft wheelRight)
+    (鼠标参数: mleft, mright, wheelDown, wheelUp, wheelLeft, wheelRight)
  
 #### 返回值:
 
-    监听成功返回0
+    监听成功返回 0
 
 #### 示例:
 
@@ -463,15 +463,15 @@ func main() {
 
 #### 参数:
 
-    title(string),
-    msg(string),
-    defaultButton(optional string),
-    cancelButton(optional string)
+    title (string),
+    msg (string),
+    defaultButton (optional string),
+    cancelButton (optional string)
            
 
 #### 返回值:
 
-   Returns 0(True) if the default button was pressed, or 1(False) if cancelled.
+   Returns 0 (True) if the default button was pressed, or 1 (False) if cancelled.
    
 ### <h3 id="CloseWindow">.CloseWindow()</h3>
 
@@ -491,7 +491,7 @@ func main() {
     无      
 
 #### 返回值:
-    如果窗口selected返回true 
+    如果窗口 selected 返回 true 
 
 
 ### <h3 id="SetActive">.SetActive()</h3>
@@ -547,10 +547,10 @@ func main() {
 
 ### <h3 id="GetPID">.GetPID()</h3>
 
-   获取进程id
+   获取进程 id
 
 #### 参数:
     无   
 
 #### 返回值:
-    返回进程id        
+    返回进程 id        
