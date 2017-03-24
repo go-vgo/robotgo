@@ -68,7 +68,7 @@ X11 with the XTest extension (also known as the Xtst library)
 
 Event:
     
-xcb,xkb,libxkbcommon
+xcb, xkb, libxkbcommon
 ``` 
 
 ##### Ubuntu:

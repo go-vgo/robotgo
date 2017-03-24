@@ -11,7 +11,7 @@ RobotGo 支持 Mac, Windows, and Linux(X11).
 
 这是一项正在完善中的工作.
 
-提Issues请到[Github](https://github.com/go-vgo/robotgo),便于统一管理和即时更新
+提 Issues 请到 [Github](https://github.com/go-vgo/robotgo), 便于统一管理和即时更新
 
 ## Contents
 - [Docs](#docs)
@@ -32,7 +32,7 @@ RobotGo 支持 Mac, Windows, and Linux(X11).
 ## Requirements:
 (环境要求:)
 
-在安装RobotGo之前,请确保Golang、GCC、zlib和libpng被正确安装
+在安装 RobotGo 之前, 请确保 Golang、GCC、zlib 和 libpng 被正确安装
 
 ### ALL:  
 ```
@@ -50,12 +50,12 @@ brew install homebrew/dupes/zlib
 ```
 MinGW or other GCC
 
-zlib & libpng (bitmap依赖)
+zlib & libpng (bitmap 依赖)
 ```
-##### [zlib&libpng Windows32 GCC教程](https://github.com/go-vgo/Mingw32)
-##### [下载包含zlib和libpng的64位MinGW](https://github.com/go-vgo/Mingw)
+##### [zlib & libpng Windows32 GCC 教程](https://github.com/go-vgo/Mingw32)
+##### [下载包含 zlib 和 libpng 的 64位 MinGW](https://github.com/go-vgo/Mingw)
 
-#### For everything else(Linux等其他系统):
+#### For everything else(Linux 等其他系统):
 ```
 GCC
     
@@ -63,7 +63,7 @@ X11 with the XTest extension (also known as the Xtst library)
 
 事件:
     
-xcb,xkb,libxkbcommon
+xcb, xkb, libxkbcommon
 ```
 ##### Ubuntu:
 
@@ -225,7 +225,7 @@ func main() {
 - 更新 Find an image on screen, read pixels from an image
 - 更新 Window Handle
 - 支持 UTF-8
-- 尝试支持 Android,也许支持 IOS
+- 尝试支持 Android, 也许支持 IOS
 - 移除 zlib/libpng 依赖
 
 ## Donate
