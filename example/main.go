@@ -21,8 +21,9 @@ func main() {
 	////////////////////////////////////////////////////////////////////////////////
 	// Control the keyboard
 	////////////////////////////////////////////////////////////////////////////////
-	robotgo.TypeString("Hello World") // importing "Hello World"
-	robotgo.KeyTap("enter")           // Press "enter"
+	robotgo.TypeString("Hello World") // Importing "Hello World"
+
+	robotgo.KeyTap("enter") // Press "enter"
 	robotgo.KeyTap("a", "control")
 	robotgo.KeyTap("h", "command") // Hide window
 
@@ -35,23 +36,29 @@ func main() {
 	robotgo.KeyTap("m", "command") // minimize window
 	robotgo.KeyTap("f1", "control")
 	robotgo.KeyTap("a", "control")
+
 	robotgo.KeyToggle("a", "down")
 	robotgo.KeyToggle("a", "down", "alt")
 	robotgo.KeyToggle("a", "down", "alt", "command")
 	robotgo.KeyToggle("enter", "down")
+
 	robotgo.TypeString("en")
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Control the mouse
 	////////////////////////////////////////////////////////////////////////////////
-	robotgo.MoveMouse(100, 200)          // Move the mouse to 100, 200
-	robotgo.MouseClick()                 // Click the left mouse button
-	robotgo.MouseClick("right", false)   // Click the right mouse button
-	robotgo.MouseClick("left", true)     // double click the left mouse button
+	robotgo.MoveMouse(100, 200) // Move the mouse to 100, 200
+
+	robotgo.MouseClick()               // Click the left mouse button
+	robotgo.MouseClick("right", false) // Click the right mouse button
+	robotgo.MouseClick("left", true)   // double click the left mouse button
+
 	robotgo.ScrollMouse(10, "up")        // Scrolls the mouse either up
 	robotgo.MouseToggle("down", "right") // Toggles right mouse button
-	robotgo.MoveMouseSmooth(100, 200)    // Smooth move the mouse to 100, 200
+
+	robotgo.MoveMouseSmooth(100, 200) // Smooth move the mouse to 100, 200
 	robotgo.MoveMouseSmooth(100, 200, 1.0, 100.0)
+
 	x, y := robotgo.GetMousePos() // Gets the mouse coordinates
 	fmt.Println("pos:", x, y)
 	if x == 456 && y == 586 {
@@ -89,6 +96,7 @@ func main() {
 	////////////////////////////////////////////////////////////////////////////////
 	// Bitmap
 	////////////////////////////////////////////////////////////////////////////////
+
 	// Gets all of the screen
 	abitMap := robotgo.CaptureScreen()
 	fmt.Println("abitMap...", abitMap)
@@ -123,34 +131,34 @@ func main() {
 	////////////////////////////////////////////////////////////////////////////////
 	// Global event listener
 	////////////////////////////////////////////////////////////////////////////////
-	fmt.Println("---please press v---")
+	fmt.Println("--- Please press v---")
 	eve := robotgo.AddEvent("v")
 
 	if eve == 0 {
-		fmt.Println("---you press v---", "v")
+		fmt.Println("--- You press v---", "v")
 	}
 
-	fmt.Println("---please press k---")
+	fmt.Println("--- Please press k---")
 	keve := robotgo.AddEvent("k")
 	if keve == 0 {
-		fmt.Println("---you press k---", "k")
+		fmt.Println("--- You press k---", "k")
 	}
 
-	fmt.Println("---please press f1---")
+	fmt.Println("--- Please press f1---")
 	feve := robotgo.AddEvent("f1")
 	if feve == 0 {
-		fmt.Println("you press...", "f1")
+		fmt.Println("You press...", "f1")
 	}
 
-	fmt.Println("---please press left mouse button---")
+	fmt.Println("--- Please press left mouse button---")
 	mleft := robotgo.AddEvent("mleft")
 	if mleft == 0 {
-		fmt.Println("---you press left mouse button---", "mleft")
+		fmt.Println("--- You press left mouse button---", "mleft")
 	}
 
 	mright := robotgo.AddEvent("mright")
 	if mright == 0 {
-		fmt.Println("---you press right mouse button---", "mright")
+		fmt.Println("--- You press right mouse button---", "mright")
 	}
 
 	// Stop AddEvent
@@ -164,15 +172,21 @@ func main() {
 		fmt.Println("ok@@@", "ok")
 	}
 	robotgo.ShowAlert("hello", "robotgo", "Ok", "Cancel")
+
 	pid := robotgo.GetPID() // Get the current process id
 	fmt.Println("pid----", pid)
+
 	mdata := robotgo.GetActive() // Get current Window Active
-	hwnd := robotgo.GetHandle()  // Get current Window Handle
+
+	hwnd := robotgo.GetHandle() // Get current Window Handle
 	fmt.Println("hwnd---", hwnd)
+
 	bhwnd := robotgo.GetBHandle() // Get current Window Handle
 	fmt.Println("bhwnd---", bhwnd)
+
 	title := robotgo.GetTitle() // Get current Window title
 	fmt.Println("title-----", title)
+
 	robotgo.CloseWindow()    // close current Window
 	robotgo.SetActive(mdata) // set Window Active
 }
