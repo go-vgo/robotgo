@@ -199,7 +199,7 @@ func main() {
   }
 } 
 ```
-#### [Window](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L160)
+#### [窗口句柄](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L160)
 
 ```Go
 package main
