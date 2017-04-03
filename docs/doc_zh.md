@@ -5,27 +5,27 @@
 ## [键盘](#Keyboard)
 
 ##### [Keys](https://github.com/go-vgo/robotgo/blob/master/docs/keys.md)
-##### [SetKeyboardDelay](#SetKeyDelay)(相当于 SetKeyDelay, 废弃 API)
+##### [SetKeyboardDelay](#SetKeyDelay) (相当于 SetKeyDelay, 废弃 API)
 ##### [SetKeyDelay](#SetKeyDelay)
 ##### [KeyTap](#KeyTap)
 ##### [KeyToggle](#KeyToggle)
 ##### [TypeString](#TypeString)
-##### [TypeStringDelayed](#TypeStrDelay)(相当于 TypeStrDelay, 废弃 API)
+##### [TypeStringDelayed](#TypeStrDelay) (相当于 TypeStrDelay, 废弃 API)
 ##### [TypeStrDelay](#TypeStrDelay)
 
 ## [鼠标](#Mouse)
 
 ##### [SetMouseDelay](#SetMouseDelay)
 ##### [MoveMouse](#MoveMouse)
-##### [Move](#MoveMouse)(相当于 MoveMouse)
+##### [Move](#MoveMouse) (相当于 MoveMouse)
 ##### [MoveMouseSmooth](#MoveMouseSmooth)
-##### [MoveSmooth](#MoveMouseSmooth)(相当与 MoveMouseSmooth)
+##### [MoveSmooth](#MoveMouseSmooth) (相当与 MoveMouseSmooth)
 ##### [MouseClick](#MouseClick)
-##### [Click](#MouseClick)(相当于 MouseClick)
+##### [Click](#MouseClick) (相当于 MouseClick)
 ##### [MoveClick](#MoveClick)
 ##### [MouseToggle](#MouseToggle)
 ##### [DragMouse](#DragMouse)
-##### [Drag](#DragMouse)(相当于 DragMouse)
+##### [Drag](#DragMouse) (相当于 DragMouse)
 ##### [GetMousePos](#GetMousePos)
 ##### [ScrollMouse](#ScrollMouse)
 
@@ -52,7 +52,7 @@
 
 ## [事件](#Event)
 
-##### [LEvent](#AddEvent)(相当于 AddEvent, 废弃 API)
+##### [LEvent](#AddEvent) (相当于 AddEvent, 废弃 API)
 ##### [AddEvent](#AddEvent)
 ##### [StopEvent](#StopEvent)
 

@@ -5,27 +5,27 @@
 ## [Keyboard](#Keyboard)
 
 ##### [Keys](https://github.com/go-vgo/robotgo/blob/master/docs/keys.md)
-##### [SetKeyboardDelay](#SetKeyDelay)(Equivalent to SetKeyDelay, Wno-deprecated)
+##### [SetKeyboardDelay](#SetKeyDelay) (Equivalent to SetKeyDelay, Wno-deprecated)
 ##### [SetKeyDelay](#SetKeyDelay)
 ##### [KeyTap](#KeyTap)
 ##### [KeyToggle](#KeyToggle)
 ##### [TypeString](#TypeString)
-##### [TypeStringDelayed](#TypeStrDelay)(Equivalent to TypeStrDelay, Wno-deprecated)
+##### [TypeStringDelayed](#TypeStrDelay) (Equivalent to TypeStrDelay, Wno-deprecated)
 ##### [TypeStrDelay](#TypeStrDelay)
 
 ## [Mouse](#Mouse)
 
 ##### [SetMouseDelay](#SetMouseDelay)
 ##### [MoveMouse](#MoveMouse)
-##### [Move](#MoveMouse)(Equivalent to MoveMouse)
+##### [Move](#MoveMouse) (Equivalent to MoveMouse)
 ##### [MoveMouseSmooth](#MoveMouseSmooth)
-##### [MoveSmooth](#MoveMouseSmooth)(Equivalent to MoveMouseSmooth)
+##### [MoveSmooth](#MoveMouseSmooth) (Equivalent to MoveMouseSmooth)
 ##### [MouseClick](#MouseClick)
-##### [Click](#MouseClick)(Equivalent to MouseClick)
+##### [Click](#MouseClick) (Equivalent to MouseClick)
 ##### [MoveClick](#MoveClick)
 ##### [MouseToggle](#MouseToggle)
 ##### [DragMouse](#DragMouse)
-##### [Drag](#DragMouse)(Equivalent to DragMouse)
+##### [Drag](#DragMouse) (Equivalent to DragMouse)
 ##### [GetMousePos](#GetMousePos)
 ##### [ScrollMouse](#ScrollMouse)
 
@@ -49,7 +49,7 @@
 
 ## [Event](#Event)
 
-##### [LEvent](#LEvent)(Equivalent to AddEvent, Wno-deprecated)
+##### [LEvent](#LEvent) (Equivalent to AddEvent, Wno-deprecated)
 ##### [AddEvent](#AddEvent)
 ##### [StopEvent](#StopEvent)
 
