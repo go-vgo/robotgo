@@ -63,7 +63,6 @@ MData aGetActive(){
 }
 
 char* aGetTitle(){
-	////3
 	char* title=GetTitle();
 	// printf("title::::%s\n",title );
 	return title;
