@@ -87,6 +87,13 @@ sudo apt-get install libxkbcommon-dev
 
 ```
 
+#### Fedora:
+
+```yml
+sudo dnf install libxkbcommon-devel libXtst-devel libxkbcommon-x11-devel xorg-x11-xkb-utils-devel
+
+sudo dnf install libpng-devel
+```
 ## Installation:
 ```
 go get github.com/go-vgo/robotgo
