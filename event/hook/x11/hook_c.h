@@ -1019,7 +1019,7 @@ static int xrecord_start() {
 		}
 
 		if (hook->input.connection != NULL) {
-			xcb_disconnect(hook->input.connection);
+			// xcb_disconnect(hook->input.connection);
 			hook->input.connection = NULL;
 		}
 		#endif
