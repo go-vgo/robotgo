@@ -171,8 +171,8 @@ robotgo.MoveMouse(100, 100)
 #### 示例:
 
 ```Go
-    robotgo.MoveMouseSmooth(100, 200)
-	robotgo.MoveMouseSmooth(100, 200, 1.0, 100.0)
+robotgo.MoveMouseSmooth(100, 200)
+robotgo.MoveMouseSmooth(100, 200, 1.0, 100.0)
 ```       
 
 ### <h3 id="MouseClick">.MouseClick(button, double)</h3>
@@ -188,8 +188,8 @@ robotgo.MoveMouse(100, 100)
 #### 示例:
 
 ```Go
-    robogo.MouseClick()
-    robogo.MouseClick("left", true)
+robogo.MouseClick()
+robogo.MouseClick("left", true)
 ```
 
 ### <h3 id="MoveClick">.MoveClick(x, y, button, double)</h3>
@@ -313,7 +313,7 @@ robotgo.ScrollMouse(50, "down")
     Gets part or all of the screen.
 
     BCaptureScreen Returns a go struct
-    Capture_Screen (Drop support)
+    Capture_Screen (废弃)
 
 #### 参数:
 
@@ -486,7 +486,7 @@ func main() {
 
 ### <h3 id="IsValid">.IsValid()</h3>
 
-   Valid the Window
+    Valid the Window
 
 #### 参数:
     无      
@@ -497,7 +497,7 @@ func main() {
 
 ### <h3 id="SetActive">.SetActive()</h3>
 
-   设为当前窗口
+    设为当前窗口
 
 #### 参数:
     hwnd  

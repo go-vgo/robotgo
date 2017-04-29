@@ -470,7 +470,7 @@ func main() {
 
 ### <h3 id="IsValid">.IsValid()</h3>
 
-   Valid the Window
+    Valid the Window
 
 #### Arguments:
     None     
