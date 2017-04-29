@@ -287,7 +287,8 @@ robotgo.ScrollMouse(50, "down")
 ### <h3 id="GetPixelColor">.GetPixelColor(x, y)
     获取坐标为 x, y 位置处的颜色
 
-    Gets the pixel color at x, y. This function is perfect for getting a pixel or two, but if you'll be reading large portions of the screen use screen.capture.
+    Gets the pixel color at x, y. This function is perfect for getting a pixel or two,  
+    but if you'll be reading large portions of the screen use screen.capture.
 
 #### 参数:
 
@@ -471,7 +472,7 @@ func main() {
 
 #### 返回值:
 
-   Returns 0 (True) if the default button was pressed, or 1 (False) if cancelled.
+    Returns 0 (True) if the default button was pressed, or 1 (False) if cancelled.
    
 ### <h3 id="CloseWindow">.CloseWindow()</h3>
 
@@ -507,7 +508,7 @@ func main() {
 
 ### <h3 id="GetActive">.GetActive()</h3>
 
-   获取当前窗口
+    获取当前窗口
 
 #### 参数:
     无       
@@ -517,7 +518,7 @@ func main() {
 
 ### <h3 id="SetHandle">.SetHandle()</h3>
 
-   Set the Window Handle
+    Set the Window Handle
 
 #### 参数:
     int 
@@ -527,7 +528,7 @@ func main() {
 
 ### <h3 id="GetHandle">.GetHandle()</h3>
 
-   获取窗口 Handle
+    获取窗口 Handle
 
 #### 参数:
     无    
@@ -537,7 +538,7 @@ func main() {
 
 ### <h3 id="GetTitle">.GetTitle()</h3>
 
-   获取窗口标题
+    获取窗口标题
 
 #### 参数:
            
@@ -547,7 +548,7 @@ func main() {
 
 ### <h3 id="GetPID">.GetPID()</h3>
 
-   获取进程 id
+    获取进程 id
 
 #### 参数:
     无   

@@ -272,7 +272,8 @@ robotgo.ScrollMouse(50, "down")
 
 ### <h3 id="GetPixelColor">.GetPixelColor(x, y)
 
-    Gets the pixel color at x, y. This function is perfect for getting a pixel or two, but if you'll be reading large portions of the screen use screen.capture.
+    Gets the pixel color at x, y. This function is perfect for getting a pixel or two, 
+    but if you'll be reading large portions of the screen use screen.capture.
 
 #### Arguments:
 
@@ -455,7 +456,7 @@ func main() {
 
 #### Return:
 
-   Returns 0(True) if the default button was pressed, or 1(False) if cancelled. 
+    Returns 0(True) if the default button was pressed, or 1(False) if cancelled. 
 
 ### <h3 id="CloseWindow">.CloseWindow()</h3>
 
@@ -491,7 +492,7 @@ func main() {
 
 ### <h3 id="GetActive">.GetActive()</h3>
 
-   Get the Active Window
+    Get the Active Window
 
 #### Arguments:
     None   
@@ -501,7 +502,7 @@ func main() {
 
 ### <h3 id="SetHandle">.SetHandle()</h3>
 
-   Set the Window Handle
+    Set the Window Handle
 
 #### Arguments:
     int 
@@ -511,7 +512,7 @@ func main() {
 
 ### <h3 id="GetHandle">.GetHandle()</h3>
 
-   Get the Window Handle
+    Get the Window Handle
 
 #### Arguments:
     None    
@@ -521,7 +522,7 @@ func main() {
 
 ### <h3 id="GetTitle">.GetTitle()</h3>
 
-   Get the Window Title
+    Get the Window Title
 
 #### Arguments:
     None   
@@ -531,7 +532,7 @@ func main() {
 
 ### <h3 id="GetPID">.GetPID()</h3>
 
-   Get the process id
+    Get the process id
 
 #### Arguments:
     None       
