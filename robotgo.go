@@ -52,7 +52,7 @@ import (
 )
 
 const (
-	version string = "v0.43.0.303, Matterhorn Alps!"
+	version string = "v0.43.0.306, Matterhorn Alps!"
 )
 
 // GetVersion get version
@@ -506,7 +506,7 @@ func TypeStrDelay(x string, y int) {
 	defer C.free(unsafe.Pointer(cx))
 }
 
-// TypeStringDelayed Type string delayed
+// TypeStringDelayed Type string delayed, Wno-deprecated
 func TypeStringDelayed(x string, y int) {
 	cx := C.CString(x)
 	cy := C.size_t(y)
@@ -519,7 +519,7 @@ func SetKeyDelay(x int) {
 	C.aSetKeyboardDelay(C.size_t(x))
 }
 
-// SetKeyboardDelay Set keyboard delay,Wno-deprecated
+// SetKeyboardDelay Set keyboard delay, Wno-deprecated
 func SetKeyboardDelay(x int) {
 	C.aSetKeyboardDelay(C.size_t(x))
 }
@@ -691,7 +691,7 @@ func StopEvent() {
 	C.aStop()
 }
 
-// LEvent Add event listener,Wno-deprecated
+// LEvent Add event listener, Wno-deprecated
 func LEvent(aeve string) int {
 	cs := C.CString(aeve)
 	eve := C.aEvent(cs)
