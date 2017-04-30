@@ -80,7 +80,7 @@
 
     ms - Time to sleep in milliseconds.
 
-###<h3 id="KeyTap">.KeyTap(key, modifier)</h3>
+### <h3 id="KeyTap">.KeyTap(key, modifier)</h3>
 
     Press a single key.
 
@@ -382,7 +382,7 @@ robotgo.ScrollMouse(50, "down")
 
     Returns new bitmap object created from a portion of another 
 
-### <h3 id="Convert">.Convert(openpath, savepath,MMImageType)</h3>
+### <h3 id="Convert">.Convert(openpath, savepath, MMImageType)</h3>
 
     Convert the image format
 
@@ -442,7 +442,7 @@ func main() {
 
 ## <h2 id="Window">Window</h2> 
 
-### <h3 id="ShowAlert">.ShowAlert(title, msg,defaultButton,cancelButton string)</h3>
+### <h3 id="ShowAlert">.ShowAlert(title, msg, defaultButton, cancelButton string)</h3>
 
     Displays alert with the given attributes. If cancelButton is not given, only the defaultButton is displayed
 
