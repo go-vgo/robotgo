@@ -134,7 +134,7 @@ modifier (optional, string or array) - Accepts alt, command (mac), control, and 
 
 ## <h2 id="Mouse">鼠标</h2>
 ### <h3 id="SetMouseDelay">.SetMouseDelay(ms)</h3>
-    设置鼠标延迟 (在一个鼠标事件后),单位 ms, 默认值 10 ms
+    设置鼠标延迟 (在一个鼠标事件后), 单位 ms, 默认值 10 ms
 
     Sets the delay in milliseconds to sleep after a mouse event. This is 10ms by default.
 
@@ -321,7 +321,7 @@ robotgo.ScrollMouse(50, "down")
     y (optional)
     height (optional)
     width (optional)
-    If no arguments are provided, screen.capture will get the full screen.
+    If no arguments are provided, capturescreen(screencapture) will get the full screen.
 
 #### 返回值:
 

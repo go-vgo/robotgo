@@ -305,7 +305,7 @@ robotgo.ScrollMouse(50, "down")
     y (optional)
     height (optional)
     width (optional)
-    If no arguments are provided, screencapture will get the full screen.
+    If no arguments are provided, capturescreen(screencapture) will get the full screen.
 
 #### Return:
 
