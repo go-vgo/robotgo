@@ -398,7 +398,7 @@ robotgo.ScrollMouse(50, "down")
 
     Returns new bitmap object created from a portion of another    
 
-### <h3 id="Convert">.Convert(openpath, savepath,MMImageType)</h3>
+### <h3 id="Convert">.Convert(openpath, savepath, MMImageType)</h3>
 
     转换 bitmap 图片格式
 
@@ -458,7 +458,7 @@ func main() {
 
 ## <h2 id="Window">窗口</h2> 
 
-### <h3 id="ShowAlert">.ShowAlert(title, msg,defaultButton,cancelButton string)</h3>
+### <h3 id="ShowAlert">.ShowAlert(title, msg, defaultButton, cancelButton string)</h3>
 
     Displays alert with the given attributes. If cancelButton is not given, only the defaultButton is displayed
 
