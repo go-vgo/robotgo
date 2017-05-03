@@ -12,7 +12,8 @@ dependencies:
     # - sudo apt-get install libghc6-x11-dev
     # - sudo apt-get install libgl1-mesa-swx11-dev
     - sudo apt-get install xorg-dev
-    - sudo apt-get install libxtst-dev libpng++-dev  
+    - sudo apt-get install libxtst-dev libpng++-dev 
+    # Event: 
     - sudo apt-get install xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev
     - sudo apt-get install libxkbcommon-dev
 
