@@ -13,18 +13,18 @@
 
 int aShowAlert(const char *title, const char *msg, const char *defaultButton,
               const char *cancelButton){
-	int alert=showAlert(title,msg,defaultButton,cancelButton);
+	int alert = showAlert(title,msg,defaultButton,cancelButton);
 
 	return alert;
 }
 
 bool aIsValid(){
-	bool abool=IsValid();
+	bool abool = IsValid();
 	return abool;
 }
 
 // int aFindwindow(char* name){
-// 	int z=findwindow(name);
+// 	int z = findwindow(name);
 // 	return z;
 // }
 
@@ -33,17 +33,17 @@ void aCloseWindow(void){
 }
 
 bool aSetHandle (uintptr handle){
-	bool hwnd=setHandle(handle);
+	bool hwnd = setHandle(handle);
 	return hwnd;
 }
 
 uintptr aGetHandle(){
-	uintptr hwnd=getHandle();
+	uintptr hwnd = getHandle();
 	return hwnd;
 }
 
 uintptr bGetHandle(){
-	MData mData=GetActive();
+	MData mData = GetActive();
 	#if defined(IS_MACOSX)
 		return (uintptr)mData.CgID;
 	#elif defined(USE_X11)
@@ -58,17 +58,17 @@ void aSetActive(const MData win){
 }
 
 MData aGetActive(){
-	MData mdata=GetActive();
+	MData mdata = GetActive();
 	return mdata;
 }
 
 char* aGetTitle(){
-	char* title=GetTitle();
+	char* title = GetTitle();
 	// printf("title::::%s\n",title );
 	return title;
 }
 
 int32 aGetPID(void){
-	int pid=WGetPID();
+	int pid = WGetPID();
 	return pid;
 }

@@ -318,10 +318,9 @@ void aTypeString(char *str){
 }
 
 void aTypeStringDelayed(char *str,size_t cpm){
-
 	typeStringDelayed(str, cpm);
 }
 
 void aSetKeyboardDelay(size_t val){
-	keyboardDelay =val;
+	keyboardDelay = val;
 }

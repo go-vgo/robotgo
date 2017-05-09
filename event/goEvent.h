@@ -89,7 +89,7 @@ typedef struct _MEvent MEvent;
 // typedef MMBitmap *MMBitmapRef;
 char *cevent;
 // uint16_t *cevent;
-int cstatus=1;
+int cstatus = 1;
 
 MEvent mEvent;
 void dispatch_proc(iohook_event * const event) {
@@ -125,12 +125,12 @@ void dispatch_proc(iohook_event * const event) {
 			snprintf(buffer + length, sizeof(buffer) - length,
 				",keycode=%u,rawcode=0x%X",
 				event->data.keyboard.keycode, event->data.keyboard.rawcode);
-				int akeycode=(uint16_t) event->data.keyboard.keycode;
+				int akeycode = (uint16_t) event->data.keyboard.keycode;
 				// printf("atoi(str)---%d\n", atoi(cevent));
-				if (akeycode==atoi(cevent)){
-					int astop=aStop();
+				if (akeycode == atoi(cevent)){
+					int astop = aStop();
 					// printf("%d\n",astop);
-					cstatus=0;
+					cstatus = 0;
 				}
 			break;
 
@@ -153,9 +153,9 @@ void dispatch_proc(iohook_event * const event) {
 				#endif
 
 				if (strcmp(buf, cevent) == 0){
-					int astop=aStop();
+					int astop = aStop();
 					// printf("%d\n",astop);
-					cstatus=0;
+					cstatus = 0;
 				}
 				// return (char*) event->data.keyboard.keychar;
 			break;
@@ -169,30 +169,32 @@ void dispatch_proc(iohook_event * const event) {
 				",x=%i,y=%i,button=%i,clicks=%i",
 				event->data.mouse.x, event->data.mouse.y,
 				event->data.mouse.button, event->data.mouse.clicks);
-				int abutton=event->data.mouse.button;
-				int aclicks=event->data.mouse.clicks;
-				int amouse=-1;
+
+				int abutton = event->data.mouse.button;
+				int aclicks = event->data.mouse.clicks;
+				int amouse = -1;
+
 				if (strcmp(cevent,"mleft") == 0){
-					amouse=1;
+					amouse = 1;
 				}
 				if (strcmp(cevent,"mright") == 0){
-					amouse=2;
+					amouse = 2;
 				}
 				if (strcmp(cevent,"wheelDown") == 0){
-					amouse=4;
+					amouse = 4;
 				}
 				if (strcmp(cevent,"wheelUp") == 0){
-					amouse=5;
+					amouse = 5;
 				}
 				if (strcmp(cevent,"wheelLeft") == 0){
-					amouse=6;
+					amouse = 6;
 				}
 				if (strcmp(cevent,"wheelRight") == 0){
-					amouse=7;
+					amouse = 7;
 				}
-				if (abutton==amouse && aclicks==1){
-					int astop=aStop();
-					cstatus=0;
+				if (abutton == amouse && aclicks == 1){
+					int astop = aStop();
+					cstatus = 0;
 				}
 
 			break;
@@ -213,7 +215,7 @@ void dispatch_proc(iohook_event * const event) {
 
 int aEvent(char *aevent) {
 	// (uint16_t *)
-	cevent=aevent;
+	cevent = aevent;
 	// Set the logger callback for library output.
 	hookSetlogger(&loggerProc);
 

@@ -41,8 +41,8 @@ int mouseDelay = 10;
 
 int aMoveMouse(size_t x, size_t y){
 	MMPoint point;
-	//int x =103;
-	//int y =104;
+	//int x = 103;
+	//int y = 104;
 	point = MMPointMake(x, y);
 	moveMouse(point);
 
@@ -50,8 +50,8 @@ int aMoveMouse(size_t x, size_t y){
 }
 
 int aDragMouse(size_t x, size_t y){
-	// const size_t x=10;
-	// const size_t y=20;
+	// const size_t x = 10;
+	// const size_t y = 20;
 	MMMouseButton button = LEFT_BUTTON;
 
 	MMPoint point;

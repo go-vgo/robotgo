@@ -44,7 +44,7 @@ char* aGetPixelColor(size_t x, size_t y){
 
 	// return 0;
 
-	char* s=(char*)calloc(100,sizeof(char*));
+	char* s = (char*)calloc(100,sizeof(char*));
     if(s)strcpy(s,hex);
 
 	return s;
@@ -68,7 +68,7 @@ char* aSetXDisplayName(char* name){
 char* aGetXDisplayName(){
 	#if defined(USE_X11)
 	const char* display = getXDisplay();
-	char* sd=(char*)calloc(100,sizeof(char*));
+	char* sd = (char*)calloc(100,sizeof(char*));
     if(sd)strcpy(sd,display);
 
 	return sd;
