@@ -174,22 +174,22 @@ void dispatch_proc(iohook_event * const event) {
 				int aclicks = event->data.mouse.clicks;
 				int amouse = -1;
 
-				if (strcmp(cevent,"mleft") == 0){
+				if (strcmp(cevent, "mleft") == 0){
 					amouse = 1;
 				}
-				if (strcmp(cevent,"mright") == 0){
+				if (strcmp(cevent, "mright") == 0){
 					amouse = 2;
 				}
-				if (strcmp(cevent,"wheelDown") == 0){
+				if (strcmp(cevent, "wheelDown") == 0){
 					amouse = 4;
 				}
-				if (strcmp(cevent,"wheelUp") == 0){
+				if (strcmp(cevent, "wheelUp") == 0){
 					amouse = 5;
 				}
-				if (strcmp(cevent,"wheelLeft") == 0){
+				if (strcmp(cevent, "wheelLeft") == 0){
 					amouse = 6;
 				}
-				if (strcmp(cevent,"wheelRight") == 0){
+				if (strcmp(cevent, "wheelRight") == 0){
 					amouse = 7;
 				}
 				if (abutton == amouse && aclicks == 1){

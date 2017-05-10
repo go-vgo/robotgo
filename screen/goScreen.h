@@ -44,8 +44,8 @@ char* aGetPixelColor(size_t x, size_t y){
 
 	// return 0;
 
-	char* s = (char*)calloc(100,sizeof(char*));
-    if(s)strcpy(s,hex);
+	char* s = (char*)calloc(100, sizeof(char*));
+    if(s)strcpy(s, hex);
 
 	return s;
 }
@@ -68,8 +68,8 @@ char* aSetXDisplayName(char* name){
 char* aGetXDisplayName(){
 	#if defined(USE_X11)
 	const char* display = getXDisplay();
-	char* sd = (char*)calloc(100,sizeof(char*));
-    if(sd)strcpy(sd,display);
+	char* sd = (char*)calloc(100, sizeof(char*));
+    if(sd)strcpy(sd, display);
 
 	return sd;
 	#else
@@ -77,7 +77,7 @@ char* aGetXDisplayName(){
 	#endif
 }
 
-MMBitmapRef aCaptureScreen(size_t x,size_t y,size_t w,size_t h){
+MMBitmapRef aCaptureScreen(size_t x, size_t y, size_t w, size_t h){
 	// if (){
 	// 	x = 0;
 	// 	y = 0;

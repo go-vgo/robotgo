@@ -28,7 +28,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-MMPoint aFindBitmap(MMBitmapRef bit_map,MMRect rect){
+MMPoint aFindBitmap(MMBitmapRef bit_map, MMRect rect){
 	// MMRect rect;
 	// rect.size.width = 10;
 	// rect.size.height = 20;
@@ -47,7 +47,7 @@ MMPoint aFindBitmap(MMBitmapRef bit_map,MMRect rect){
 	return point;
 }
 
-MMBitmapRef aOpenBitmap(char *path ,uint16_t ttype){
+MMBitmapRef aOpenBitmap(char *path, uint16_t ttype){
 	// MMImageType type;
 
 	MMBitmapRef bitmap;
@@ -59,7 +59,7 @@ MMBitmapRef aOpenBitmap(char *path ,uint16_t ttype){
 
 }
 
-char *aSaveBitmap(MMBitmapRef bitmap,char *path, uint16_t type){
+char *aSaveBitmap(MMBitmapRef bitmap, char *path, uint16_t type){
 	if (saveMMBitmapToFile(bitmap, path,(MMImageType) type) != 0) {
 		return "Could not save image to file.";
 	}else{

@@ -63,7 +63,7 @@ int aDragMouse(size_t x, size_t y){
 	return 0;
 }
 
-int aMoveMouseSmooth(size_t x, size_t y,double lowSpeed,double highSpeed){
+int aMoveMouseSmooth(size_t x, size_t y, double lowSpeed, double highSpeed){
 	MMPoint point;
 	point = MMPointMake(x, y);
 	smoothlyMoveMouse(point, lowSpeed, highSpeed);
@@ -81,7 +81,7 @@ MMPoint aGetMousePos(){
 	return pos;
 }
 
-int aMouseClick(MMMouseButton button,bool doubleC){
+int aMouseClick(MMMouseButton button, bool doubleC){
 	// MMMouseButton button = LEFT_BUTTON;
 	// bool doubleC = false;
 
@@ -96,7 +96,7 @@ int aMouseClick(MMMouseButton button,bool doubleC){
 	return 0;
 }
 
-int aMouseToggle(char* d,MMMouseButton button){
+int aMouseToggle(char* d, MMMouseButton button){
 	// MMMouseButton button = LEFT_BUTTON;
 	bool down = false;
 	if (strcmp(d, "down") == 0){
@@ -119,7 +119,7 @@ int aSetMouseDelay(size_t val){
 	return 0;
 }
 
-int aScrollMouse(size_t scrollMagnitude,char *s){
+int aScrollMouse(size_t scrollMagnitude, char *s){
 	// int scrollMagnitude = 20;
 
 	MMMouseWheelDirection scrollDirection;
