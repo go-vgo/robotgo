@@ -13,7 +13,7 @@
 
 int aShowAlert(const char *title, const char *msg, const char *defaultButton,
               const char *cancelButton){
-	int alert = showAlert(title,msg,defaultButton,cancelButton);
+	int alert = showAlert(title, msg, defaultButton, cancelButton);
 
 	return alert;
 }
@@ -64,7 +64,7 @@ MData aGetActive(){
 
 char* aGetTitle(){
 	char* title = GetTitle();
-	// printf("title::::%s\n",title );
+	// printf("title::::%s\n", title );
 	return title;
 }
 

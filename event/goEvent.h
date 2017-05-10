@@ -146,7 +146,7 @@ void dispatch_proc(iohook_event * const event) {
 					char buf[6];
 				#endif
 
-					sprintf(buf, "%lc",(uint16_t) event->data.keyboard.keychar);
+					sprintf(buf, "%lc", (uint16_t) event->data.keyboard.keychar);
 
 				#ifdef WE_REALLY_WANT_A_POINTER
 					free (buf);

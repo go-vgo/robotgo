@@ -54,13 +54,13 @@ MMBitmapRef aOpenBitmap(char *path, uint16_t ttype){
 	MMIOError err;
 
 	bitmap = newMMBitmapFromFile(path, ttype, &err);
-	// printf("....%zd\n",bitmap->width);
+	// printf("....%zd\n", bitmap->width);
 	return bitmap;
 
 }
 
 char *aSaveBitmap(MMBitmapRef bitmap, char *path, uint16_t type){
-	if (saveMMBitmapToFile(bitmap, path,(MMImageType) type) != 0) {
+	if (saveMMBitmapToFile(bitmap, path, (MMImageType) type) != 0) {
 		return "Could not save image to file.";
 	}else{
 		saveMMBitmapToFile(bitmap, path, (MMImageType) type);
@@ -78,7 +78,7 @@ char *aTostringBitmap(MMBitmapRef bitmap){
 	return buf;
 }
 
-MMBitmapRef aGetPortion(MMBitmapRef bit_map,MMRect rect){
+MMBitmapRef aGetPortion(MMBitmapRef bit_map, MMRect rect){
 	// MMRect rect;
 	MMBitmapRef portion = NULL;
 
