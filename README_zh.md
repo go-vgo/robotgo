@@ -54,7 +54,7 @@ MinGW or other GCC
 
 zlib & libpng (bitmap 依赖)
 ```
-##### [zlib & libpng Windows32 GCC 教程](https://github.com/go-vgo/Mingw32)
+##### [Zlib & libpng Windows32 GCC 教程](https://github.com/go-vgo/Mingw32)
 ##### [下载包含 zlib 和 libpng 的 64位 MinGW](https://github.com/go-vgo/Mingw)
 
 #### For everything else (Linux 等其他系统):
