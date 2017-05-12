@@ -32,7 +32,7 @@ void aCloseWindow(void){
 	CloseWin();
 }
 
-bool aSetHandle (uintptr handle){
+bool aSetHandle(uintptr handle){
 	bool hwnd = setHandle(handle);
 	return hwnd;
 }
