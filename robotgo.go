@@ -43,7 +43,7 @@ package robotgo
 import "C"
 
 import (
-	// . "fmt"
+	// "fmt"
 
 	"reflect"
 	"unsafe"
@@ -52,7 +52,7 @@ import (
 )
 
 const (
-	version string = "v0.43.0.314, Matterhorn Alps!"
+	version string = "v0.43.0.316, Matterhorn Alps!"
 )
 
 // GetVersion get version
@@ -93,7 +93,7 @@ func GetPixelColor(x, y int) string {
 // GetScreenSize Get screen size
 func GetScreenSize() (int, int) {
 	size := C.aGetScreenSize()
-	// Println("...", size, size.width)
+	// fmt.Println("...", size, size.width)
 	return int(size.width), int(size.height)
 }
 
@@ -126,7 +126,7 @@ func CaptureScreen(args ...int) C.MMBitmapRef {
 		w = C.size_t(args[2])
 		h = C.size_t(args[3])
 	}, func(e interface{}) {
-		// Println("err:::", e)
+		// fmt.Println("err:::", e)
 		x = 0
 		y = 0
 		//Get screen size.
@@ -137,7 +137,7 @@ func CaptureScreen(args ...int) C.MMBitmapRef {
 	})
 
 	bit := C.aCaptureScreen(x, y, w, h)
-	// Println("...", bit.width)
+	// fmt.Println("...", bit.width)
 	return bit
 }
 
@@ -153,7 +153,7 @@ func BCaptureScreen(args ...int) Bitmap {
 		w = C.size_t(args[2])
 		h = C.size_t(args[3])
 	}, func(e interface{}) {
-		// Println("err:::", e)
+		// fmt.Println("err:::", e)
 		x = 0
 		y = 0
 		//Get screen size.
@@ -164,7 +164,7 @@ func BCaptureScreen(args ...int) Bitmap {
 	})
 
 	bit := C.aCaptureScreen(x, y, w, h)
-	// Println("...", bit)
+	// fmt.Println("...", bit)
 	bitmap := Bitmap{
 		ImageBuffer:   (*uint8)(bit.imageBuffer),
 		Width:         int(bit.width),
@@ -236,7 +236,7 @@ func MoveMouseSmooth(x, y int, args ...float64) {
 		low = C.double(args[2])
 		high = C.double(args[3])
 	}, func(e interface{}) {
-		// Println("err:::", e)
+		// fmt.Println("err:::", e)
 		low = 5.0
 		high = 500.0
 	})
@@ -258,7 +258,7 @@ func MoveSmooth(x, y int, args ...float64) {
 		low = C.double(args[2])
 		high = C.double(args[3])
 	}, func(e interface{}) {
-		// Println("err:::", e)
+		// fmt.Println("err:::", e)
 		low = 5.0
 		high = 500.0
 	})
@@ -269,7 +269,7 @@ func MoveSmooth(x, y int, args ...float64) {
 // GetMousePos Get mouse portion
 func GetMousePos() (int, int) {
 	pos := C.aGetMousePos()
-	// Println("pos:###", pos, pos.x, pos.y)
+	// fmt.Println("pos:###", pos, pos.x, pos.y)
 	x := int(pos.x)
 	y := int(pos.y)
 	// return pos.x, pos.y
@@ -293,7 +293,7 @@ func MouseClick(args ...interface{}) {
 		}
 		double = C.bool(args[1].(bool))
 	}, func(e interface{}) {
-		// Println("err:::", e)
+		// fmt.Println("err:::", e)
 		button = C.LEFT_BUTTON
 		double = false
 	})
@@ -317,7 +317,7 @@ func Click(args ...interface{}) {
 		}
 		double = C.bool(args[1].(bool))
 	}, func(e interface{}) {
-		// Println("err:::", e)
+		// fmt.Println("err:::", e)
 		button = C.LEFT_BUTTON
 		double = false
 	})
@@ -345,7 +345,7 @@ func MouseToggle(args ...interface{}) {
 			button = C.RIGHT_BUTTON
 		}
 	}, func(e interface{}) {
-		// Println("err:::", e)
+		// fmt.Println("err:::", e)
 		button = C.LEFT_BUTTON
 	})
 	down := C.CString(args[0].(string))
@@ -417,13 +417,13 @@ func KeyTap(args ...interface{}) {
 				akeyt = args[2].(string)
 
 			}, func(e interface{}) {
-				// Println("err:::", e)
+				// fmt.Println("err:::", e)
 				akeyt = "null"
 			})
 		}
 
 	}, func(e interface{}) {
-		// Println("err:::", e)
+		// fmt.Println("err:::", e)
 		akey = "null"
 		keyarr = []string{"null"}
 	})
@@ -462,15 +462,15 @@ func KeyToggle(args ...string) string {
 			Try(func() {
 				amkeyt = args[3]
 			}, func(e interface{}) {
-				// Println("err:::", e)
+				// fmt.Println("err:::", e)
 				amkeyt = "null"
 			})
 		}, func(e interface{}) {
-			// Println("err:::", e)
+			// fmt.Println("err:::", e)
 			amkey = "null"
 		})
 	}, func(e interface{}) {
-		// Println("err:::", e)
+		// fmt.Println("err:::", e)
 		adown = "null"
 	})
 
@@ -480,7 +480,7 @@ func KeyToggle(args ...string) string {
 	camkeyt := C.CString(amkeyt)
 	// defer func() {
 	str := C.aKeyToggle(ckey, cadown, camkey, camkeyt)
-	// Println(str)
+	// fmt.Println(str)
 	// C.aKeyToggle(ckey, cadown, camkey, camkeyt)
 	// }()
 	defer C.free(unsafe.Pointer(ckey))
@@ -545,7 +545,7 @@ func FindBitmap(args ...interface{}) (int, int) {
 		rect.size.width = C.size_t(args[3].(int))
 		rect.size.height = C.size_t(args[4].(int))
 	}, func(e interface{}) {
-		// Println("err:::", e)
+		// fmt.Println("err:::", e)
 		// rect.origin.x = x
 		// rect.origin.y = y
 		// rect.size.width = w
@@ -553,7 +553,7 @@ func FindBitmap(args ...interface{}) (int, int) {
 	})
 
 	pos := C.aFindBitmap(bit, rect)
-	// Println("pos----", pos)
+	// fmt.Println("pos----", pos)
 	return int(pos.x), int(pos.y)
 }
 
@@ -564,12 +564,12 @@ func OpenBitmap(args ...interface{}) C.MMBitmapRef {
 	Try(func() {
 		mtype = C.uint16_t(args[1].(int))
 	}, func(e interface{}) {
-		// Println("err:::", e)
+		// fmt.Println("err:::", e)
 		mtype = 1
 	})
 	bit := C.aOpenBitmap(path, mtype)
 	defer C.free(unsafe.Pointer(path))
-	// Println("opening...", bit)
+	// fmt.Println("opening...", bit)
 	return bit
 	// defer C.free(unsafe.Pointer(path))
 }
@@ -580,13 +580,13 @@ func SaveBitmap(args ...interface{}) string {
 	Try(func() {
 		mtype = C.uint16_t(args[2].(int))
 	}, func(e interface{}) {
-		// Println("err:::", e)
+		// fmt.Println("err:::", e)
 		mtype = 1
 	})
 
 	path := C.CString(args[1].(string))
 	savebit := C.aSaveBitmap(args[0].(C.MMBitmapRef), path, mtype)
-	// Println("saved...", savebit)
+	// fmt.Println("saved...", savebit)
 	// return bit
 	defer C.free(unsafe.Pointer(path))
 
@@ -596,7 +596,7 @@ func SaveBitmap(args ...interface{}) string {
 // func SaveBitmap(bit C.MMBitmapRef, gpath string, mtype C.MMImageType) {
 // 	path := C.CString(gpath)
 // 	savebit := C.aSaveBitmap(bit, path, mtype)
-// 	Println("saving...", savebit)
+// 	fmt.Println("saving...", savebit)
 // 	// return bit
 // 	// defer C.free(unsafe.Pointer(path))
 // }
@@ -605,7 +605,7 @@ func SaveBitmap(args ...interface{}) string {
 func TostringBitmap(bit C.MMBitmapRef) *C.char {
 	// str_bit := C.aTostringBitmap(bit)
 	strBit := C.aTostringBitmap(bit)
-	// Println("...", str_bit)
+	// fmt.Println("...", str_bit)
 	// return str_bit
 	return strBit
 }
@@ -628,14 +628,14 @@ func Convert(args ...interface{}) {
 	Try(func() {
 		mtype = args[2].(int)
 	}, func(e interface{}) {
-		// Println("err:::", e)
+		// fmt.Println("err:::", e)
 		mtype = 1
 	})
 	//C.CString()
 	opath := args[0].(string)
 	spath := args[1].(string)
 	bitmap := OpenBitmap(opath)
-	// Println("a----", bit_map)
+	// fmt.Println("a----", bit_map)
 	SaveBitmap(bitmap, spath, mtype)
 }
 
@@ -680,7 +680,7 @@ func AddEvent(aeve string) int {
 
 	// cs := C.CString(aeve)
 	eve := C.aEvent(cs)
-	// Println("event@@", eve)
+	// fmt.Println("event@@", eve)
 	geve := int(eve)
 	defer C.free(unsafe.Pointer(cs))
 	return geve
@@ -695,7 +695,7 @@ func StopEvent() {
 func LEvent(aeve string) int {
 	cs := C.CString(aeve)
 	eve := C.aEvent(cs)
-	// Println("event@@", eve)
+	// fmt.Println("event@@", eve)
 	geve := int(eve)
 	defer C.free(unsafe.Pointer(cs))
 	return geve
@@ -747,7 +747,7 @@ func ShowAlert(title, msg string, args ...string) int {
 func IsValid() bool {
 	abool := C.aIsValid()
 	gbool := bool(abool)
-	// Println("bool---------", gbool)
+	// fmt.Println("bool---------", gbool)
 	return gbool
 }
 
@@ -759,7 +759,7 @@ func SetActive(win C.MData) {
 // GetActive Get the active window
 func GetActive() C.MData {
 	mdata := C.aGetActive()
-	// Println("active----", mdata)
+	// fmt.Println("active----", mdata)
 	return mdata
 }
 
@@ -778,7 +778,7 @@ func SetHandle(hwnd int) {
 func GetHandle() int {
 	hwnd := C.aGetHandle()
 	ghwnd := int(hwnd)
-	// Println("gethwnd---", ghwnd)
+	// fmt.Println("gethwnd---", ghwnd)
 	return ghwnd
 }
 
@@ -786,7 +786,7 @@ func GetHandle() int {
 func GetBHandle() int {
 	hwnd := C.bGetHandle()
 	ghwnd := int(hwnd)
-	//Println("gethwnd---", ghwnd)
+	//fmt.Println("gethwnd---", ghwnd)
 	return ghwnd
 }
 
@@ -794,7 +794,7 @@ func GetBHandle() int {
 func GetTitle() string {
 	title := C.aGetTitle()
 	gtittle := C.GoString(title)
-	// Println("title...", gtittle)
+	// fmt.Println("title...", gtittle)
 	return gtittle
 }
 
