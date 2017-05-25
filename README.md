@@ -105,9 +105,9 @@ png.h: No such file or directory? Please see [issues/47](https://github.com/go-v
 go get -u github.com/go-vgo/robotgo  
 ```
 
-## [Examples:](https://github.com/go-vgo/robotgo/blob/master/example/main.go)
+## [Examples:](https://github.com/go-vgo/robotgo/blob/master/examples)
 
-#### [Mouse](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L45)
+#### [Mouse](https://github.com/go-vgo/robotgo/blob/master/examples/main.go#L45)
 
 ```Go
 package main
@@ -123,7 +123,7 @@ func main() {
 } 
 ``` 
 
-#### [Keyboard](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L22)
+#### [Keyboard](https://github.com/go-vgo/robotgo/blob/master/examples/main.go#L22)
 
 ```Go
 package main
@@ -142,7 +142,7 @@ func main() {
 } 
 ```
 
-#### [Screen](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L71)
+#### [Screen](https://github.com/go-vgo/robotgo/blob/master/examples/main.go#L71)
 
 ```Go
 package main
@@ -161,7 +161,7 @@ func main() {
 } 
 ```
 
-#### [Bitmap](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L90)
+#### [Bitmap](https://github.com/go-vgo/robotgo/blob/master/examples/main.go#L90)
 
 ```Go
 package main
@@ -183,7 +183,7 @@ func main() {
 } 
 ```
 
-#### [Event](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L124)
+#### [Event](https://github.com/go-vgo/robotgo/blob/master/examples/main.go#L124)
 
 ```Go
 package main
@@ -207,7 +207,7 @@ func main() {
 } 
 ```
 
-#### [Window](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L160)
+#### [Window](https://github.com/go-vgo/robotgo/blob/master/examples/main.go#L160)
 
 ```Go
 package main

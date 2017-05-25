@@ -102,9 +102,9 @@ png.h: No such file or directory? Please see [issues/47](https://github.com/go-v
 go get -u github.com/go-vgo/robotgo   
 ```
 
-## [Examples:](https://github.com/go-vgo/robotgo/blob/master/example/main.go)
+## [Examples:](https://github.com/go-vgo/robotgo/blob/master/examples)
 
-#### [鼠标](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L45)
+#### [鼠标](https://github.com/go-vgo/robotgo/blob/master/examples/main.go#L45)
 
 ```Go
 package main
@@ -120,7 +120,7 @@ func main() {
 } 
 ``` 
 
-#### [键盘](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L22)
+#### [键盘](https://github.com/go-vgo/robotgo/blob/master/examples/main.go#L22)
 
 ```Go
 package main
@@ -139,7 +139,7 @@ func main() {
 } 
 ```
 
-#### [屏幕](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L71)
+#### [屏幕](https://github.com/go-vgo/robotgo/blob/master/examples/main.go#L71)
 
 ```Go
 package main
@@ -158,7 +158,7 @@ func main() {
 } 
 ```
 
-#### [位图](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L90)
+#### [位图](https://github.com/go-vgo/robotgo/blob/master/examples/main.go#L90)
 
 ```Go
 package main
@@ -180,7 +180,7 @@ func main() {
 } 
 ```
 
-#### [事件](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L124)
+#### [事件](https://github.com/go-vgo/robotgo/blob/master/examples/main.go#L124)
 
 ```Go
 package main
@@ -203,7 +203,7 @@ func main() {
   }
 } 
 ```
-#### [窗口句柄](https://github.com/go-vgo/robotgo/blob/master/example/main.go#L160)
+#### [窗口句柄](https://github.com/go-vgo/robotgo/blob/master/examples/main.go#L160)
 
 ```Go
 package main
