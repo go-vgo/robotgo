@@ -2,15 +2,15 @@
 
 <!--### RobotGo-->
 
-# RobotGo v0.44.0, Mount Kailash
+## RobotGo v0.44.0, Mount Kailash
 
-## Add
+### Add
 
 - Add CHANGELOG.md
 - Format some code	
 - Add fedora dependencies
 
-## Update
+### Update
 
 - Update test
 - Update keys.md
@@ -19,7 +19,7 @@
 - Update and Cleanup README.md
 - Update CONTRIBUTING.md and issue_template.md
 
-## Fix
+### Fix
 
 - Fix typesetting and MD error
 - Fix fedora dependencies #55 
