@@ -156,7 +156,7 @@ import (
 func main() {
   x, y := robotgo.GetMousePos()
   fmt.Println("pos:", x, y)
-  color := robotgo.GetPixelColor(100, 200)
+  color := robotgo.GetPixelColor(x, y)
   fmt.Println("color----", color)
 } 
 ```
