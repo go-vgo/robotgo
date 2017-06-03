@@ -46,6 +46,7 @@
 ##### [TostringBitmap](#TostringBitmap)
 ##### [GetPortion](#GetPortion)
 ##### [Convert](#Convert)
+#### [FreeBitmap](#FreeBitmap)
 
 ## [Event](#Event)
 
@@ -397,6 +398,20 @@ robotgo.ScrollMouse(50, "down")
 ```Go
 robotgo.Convert("test.png", "test.tif")
 ```             
+
+### <h3 id="FreeBitmap">.FreeBitmap(MMImageType)</h3>
+
+    FreeBitmap free and dealloc bitmap
+
+#### Arguments:
+
+    MMImageType
+
+#### Examples:
+
+```Go
+robotgo.FreeBitmap(bitmap)
+```    
 
 ## <h2 id="Event">Event</h2> 
 

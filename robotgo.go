@@ -639,6 +639,11 @@ func Convert(args ...interface{}) {
 	SaveBitmap(bitmap, spath, mtype)
 }
 
+// FreeBitmap free and dealloc bitmap
+func FreeBitmap(ref C.MMBitmapRef) {
+	C.destroyMMBitmap(ref)
+}
+
 /*
  ___________    ____  _______ .__   __. .___________.
 |   ____\   \  /   / |   ____||  \ |  | |           |
