@@ -104,7 +104,7 @@ go get -u github.com/go-vgo/robotgo
 
 ## [Examples:](https://github.com/go-vgo/robotgo/blob/master/examples)
 
-#### [鼠标](https://github.com/go-vgo/robotgo/blob/master/examples/main.go#L45)
+#### [鼠标](https://github.com/go-vgo/robotgo/blob/master/examples/mouse/main.go)
 
 ```Go
 package main
@@ -120,7 +120,7 @@ func main() {
 } 
 ``` 
 
-#### [键盘](https://github.com/go-vgo/robotgo/blob/master/examples/main.go#L22)
+#### [键盘](https://github.com/go-vgo/robotgo/blob/master/examples/key/main.go)
 
 ```Go
 package main
@@ -139,7 +139,7 @@ func main() {
 } 
 ```
 
-#### [屏幕](https://github.com/go-vgo/robotgo/blob/master/examples/main.go#L71)
+#### [屏幕](https://github.com/go-vgo/robotgo/blob/master/examples/screen/main.go)
 
 ```Go
 package main
@@ -158,7 +158,7 @@ func main() {
 } 
 ```
 
-#### [位图](https://github.com/go-vgo/robotgo/blob/master/examples/main.go#L90)
+#### [位图](https://github.com/go-vgo/robotgo/blob/master/examples/bitmap/mian.go)
 
 ```Go
 package main
@@ -180,7 +180,7 @@ func main() {
 } 
 ```
 
-#### [事件](https://github.com/go-vgo/robotgo/blob/master/examples/main.go#L124)
+#### [事件](https://github.com/go-vgo/robotgo/blob/master/examples/event/main.go)
 
 ```Go
 package main
@@ -203,7 +203,7 @@ func main() {
   }
 } 
 ```
-#### [窗口句柄](https://github.com/go-vgo/robotgo/blob/master/examples/main.go#L160)
+#### [窗口句柄](https://github.com/go-vgo/robotgo/blob/master/examples/window/main.go)
 
 ```Go
 package main
