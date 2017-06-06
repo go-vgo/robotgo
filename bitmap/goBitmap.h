@@ -28,6 +28,32 @@
 #include <assert.h>
 #include <stdio.h>
 
+/* Returns false and sets error if |bitmap| is NULL. */
+bool bitmap_ready(MMBitmapRef bitmap){
+	if (bitmap == NULL || bitmap->imageBuffer == NULL) {
+		return false;
+	}
+	return true;
+}
+
+void bitmap_dealloc(MMBitmapRef bitmap){
+	if (bitmap != NULL) {
+		destroyMMBitmap(bitmap);
+		bitmap = NULL;
+	}
+}
+
+bool bitmap_copy_to_pboard(MMBitmapRef bitmap){
+	MMPasteError err;
+
+	if (!bitmap_ready(bitmap)) return false;
+	if ((err = copyMMBitmapToPasteboard(bitmap)) != kMMPasteNoError) {
+		return false;
+	}
+
+	return true;
+}
+
 MMPoint aFindBitmap(MMBitmapRef bit_map, MMRect rect){
 	// MMRect rect;
 	// rect.size.width = 10;

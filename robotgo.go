@@ -644,6 +644,20 @@ func FreeBitmap(ref C.MMBitmapRef) {
 	C.destroyMMBitmap(ref)
 }
 
+// ReadBitmap returns false and sets error if |bitmap| is NULL
+func ReadBitmap(bitmap C.MMBitmapRef) bool {
+	abool := C.bitmap_ready(bitmap)
+	gbool := bool(abool)
+	return gbool
+}
+
+// CopyBitpb copy bitmap to pasteboard
+func CopyBitpb(bitmap C.MMBitmapRef) bool {
+	abool := C.bitmap_copy_to_pboard(bitmap)
+	gbool := bool(abool)
+	return gbool
+}
+
 /*
  ___________    ____  _______ .__   __. .___________.
 |   ____\   \  /   / |   ____||  \ |  | |           |
