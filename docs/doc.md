@@ -47,6 +47,8 @@
 ##### [GetPortion](#GetPortion)
 ##### [Convert](#Convert)
 #### [FreeBitmap](#FreeBitmap)
+#### [ReadBitmap](#ReadBitmap)
+#### [CopyBitpb](#CopyBitpb)
 
 ## [Event](#Event)
 
@@ -399,18 +401,56 @@ robotgo.ScrollMouse(50, "down")
 robotgo.Convert("test.png", "test.tif")
 ```             
 
-### <h3 id="FreeBitmap">.FreeBitmap(MMImageType)</h3>
+### <h3 id="FreeBitmap">.FreeBitmap(MMBitmapRef)</h3>
 
     FreeBitmap free and dealloc bitmap
 
 #### Arguments:
 
-    MMImageType
+    MMBitmapRef
 
 #### Examples:
 
 ```Go
 robotgo.FreeBitmap(bitmap)
+```    
+
+
+### <h3 id="ReadBitmap">.ReadBitmap(MMBitmapRef)</h3>
+
+    ReadBitmap returns false and sets error if |bitmap| is NULL
+
+#### Arguments:
+
+    MMBitmapRef
+
+#### Return:
+
+    bool
+
+#### Examples:
+
+```Go
+robotgo.ReadBitmap(bitmap)
+```    
+
+
+### <h3 id="CopyBitpb">.CopyBitpb(MMBitmapRef)</h3>
+
+   CopyBitpb copy bitmap to pasteboard
+
+#### Arguments:
+
+    MMBitmapRef
+
+#### Return:
+
+    bool
+
+#### Examples:
+
+```Go
+robotgo.CopyBitpb(bitmap)
 ```    
 
 ## <h2 id="Event">Event</h2> 

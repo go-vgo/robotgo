@@ -50,6 +50,8 @@
 ##### [GetPortion](#GetPortion)
 ##### [Convert](#Convert)
 #### [FreeBitmap](#FreeBitmap)
+#### [ReadBitmap](#ReadBitmap)
+#### [CopyBitpb](#CopyBitpb)
 
 ## [事件](#Event)
 
@@ -415,19 +417,58 @@ robotgo.ScrollMouse(50, "down")
 robotgo.Convert("test.png", "test.tif")
 ```  
 
-### <h3 id="FreeBitmap">.FreeBitmap(MMImageType)</h3>
+### <h3 id="FreeBitmap">.FreeBitmap(MMBitmapRef)</h3>
 
     FreeBitmap free and dealloc bitmap
 
 #### 参数:
 
-    MMImageType
+    MMBitmapRef
 
 #### 示例:
 
 ```Go
 robotgo.FreeBitmap(bitmap)
 ```    
+
+
+### <h3 id="ReadBitmap">.ReadBitmap(MMBitmapRef)</h3>
+
+    ReadBitmap returns false and sets error if |bitmap| is NULL
+
+#### 参数:
+
+    MMBitmapRef
+
+#### 返回值:
+
+    bool
+    
+#### 示例:
+
+```Go
+robotgo.ReadBitmap(bitmap)
+```    
+
+
+### <h3 id="CopyBitpb">.CopyBitpb(MMBitmapRef)</h3>
+
+   CopyBitpb copy bitmap to pasteboard
+
+#### 参数:
+
+    MMBitmapRef
+
+#### 返回值:
+
+    bool
+
+#### 示例:
+
+```Go
+robotgo.CopyBitpb(bitmap)
+```    
+
 ## <h2 id="Event">事件</h2> 
 
 ### <h3 id="AddEvent">.AddEvent(string)</h3>
