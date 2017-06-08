@@ -245,19 +245,6 @@ Supporting robotgo, [buy me a coffee](https://github.com/go-vgo/buy-me-a-coffee)
 Donate money by [paypal](https://www.paypal.me/veni0/25) to my account [vzvway@gmail.com](vzvway@gmail.com)
 
 
-#### AliPay(支付宝)
-
-<p align="center">
-    <img src="https://github.com/go-vgo/buy-me-a-coffee/blob/master/img/alipay.png" width="300" hight="300">
-</p>
-
-
-#### Wechat(微信)
-
-<p align="center">
-    <img src="https://github.com/go-vgo/buy-me-a-coffee/blob/master/img/wechat_pay.png" width="300" hight="300">
-</p>
-
 ## Contributors
 
 - See [contributors page](https://github.com/go-vgo/robotgo/graphs/contributors) for full list of contributors.
