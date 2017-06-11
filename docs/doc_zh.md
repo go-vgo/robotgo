@@ -12,6 +12,9 @@
 ##### [TypeString](#TypeString)
 ##### [TypeStringDelayed](#TypeStrDelay) (相当于 TypeStrDelay, 废弃 API)
 ##### [TypeStrDelay](#TypeStrDelay)
+##### [TypeStr](#TypeStr)
+##### [WriteAll](#WriteAll)
+##### [ReadAll](#ReadAll)
 
 ## [鼠标](#Mouse)
 
@@ -133,7 +136,25 @@ modifier (optional, string or array) - Accepts alt, command (mac), control, and 
     string - The string to send.
     cpm - Characters per minute.
 
+### <h3 id="TypeStr">.TypeStr(string)</h3>
 
+#### 参数:
+
+    string - The string to send.
+
+### <h3 id="WriteAll">.WriteAll(text string)</h3>
+
+#### 参数:
+    text string
+#### 返回值:      
+
+### <h3 id="ReadAll">.ReadAll()</h3>
+
+#### 参数:
+
+#### 返回值: 
+    text,
+    error 
 
 ## <h2 id="Mouse">鼠标</h2>
 ### <h3 id="SetMouseDelay">.SetMouseDelay(ms)</h3>

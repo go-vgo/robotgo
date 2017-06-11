@@ -12,6 +12,10 @@
 ##### [TypeString](#TypeString)
 ##### [TypeStringDelayed](#TypeStrDelay) (Equivalent to TypeStrDelay, Wno-deprecated)
 ##### [TypeStrDelay](#TypeStrDelay)
+##### [TypeStr](#TypeStr)
+##### [WriteAll](#WriteAll)
+##### [ReadAll](#ReadAll)
+
 
 ## [Mouse](#Mouse)
 
@@ -127,6 +131,25 @@ modifier (optional, string or array) - Accepts alt, command (mac), control, and 
     string - The string to send.
     cpm - Characters per minute.
 
+### <h3 id="TypeStr">.TypeStr(string)</h3>
+
+#### Arguments:
+
+    string - The string to send.
+
+### <h3 id="WriteAll">.WriteAll(text string)</h3>
+
+#### Arguments:
+    text string
+#### Return:      
+
+### <h3 id="ReadAll">.ReadAll()</h3>
+
+#### Arguments:
+
+#### Return: 
+    text,
+    error 
 
 
 ## <h2 id="Mouse">Mouse</h2>
