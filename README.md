@@ -134,6 +134,7 @@ func main() {
 package main
 
 import (
+  "fmt"
 	"github.com/go-vgo/robotgo"
 )
 
@@ -144,6 +145,12 @@ func main() {
   robotgo.KeyTap("i", "alt", "command")
   arr := []string{"alt", "command"}
   robotgo.KeyTap("i", arr)
+
+  robotgo.WriteAll("测试")
+	text, err := robotgo.ReadAll()
+	if err == nil {
+		fmt.Println(text)
+	}
 } 
 ```
 
