@@ -46,8 +46,8 @@ import (
 	// "fmt"
 
 	"reflect"
+	"runtime"
 	"unsafe"
-	// "runtime"
 	// "syscall"
 
 	"github.com/go-vgo/robotgo/clipboard"
@@ -503,7 +503,11 @@ func TypeString(x string) {
 // TypeStr type string, support UTF-8
 func TypeStr(str string) {
 	clipboard.WriteAll(str)
-	KeyTap("v", "command")
+	if runtime.GOOS == "darwin" {
+		KeyTap("v", "command")
+	} else {
+		KeyTap("v", "control")
+	}
 }
 
 // ReadAll read string from clipboard
