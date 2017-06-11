@@ -147,10 +147,10 @@ func main() {
   robotgo.KeyTap("i", arr)
 
   robotgo.WriteAll("测试")
-	text, err := robotgo.ReadAll()
-	if err == nil {
-		fmt.Println(text)
-	}
+  text, err := robotgo.ReadAll()
+  if err == nil {
+    fmt.Println(text)
+  }
 } 
 ```
 
@@ -244,7 +244,7 @@ func main() {
 ## Plans
 - Update Find an image on screen, read pixels from an image
 - Update Window Handle
-- Support UTF-8
+- Support UTF-8, transitional plan: TypeStr
 - Try support Android, maybe support IOS
 - Remove zlib/libpng dependencies
 

@@ -10,23 +10,23 @@ import (
 	. "github.com/go-vgo/robotgo/clipboard"
 )
 
-func TestCopyAndPaste(t *testing.T) {
-	expected := "日本語"
+// func TestCopyAndPaste(t *testing.T) {
+// 	expected := "日本語"
 
-	err := WriteAll(expected)
-	if err != nil {
-		t.Fatal(err)
-	}
+// 	err := WriteAll(expected)
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
 
-	actual, err := ReadAll()
-	if err != nil {
-		t.Fatal(err)
-	}
+// 	actual, err := ReadAll()
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
 
-	if actual != expected {
-		t.Errorf("want %s, got %s", expected, actual)
-	}
-}
+// 	if actual != expected {
+// 		t.Errorf("want %s, got %s", expected, actual)
+// 	}
+// }
 
 // func TestMultiCopyAndPaste(t *testing.T) {
 // 	expected1 := "French: éèêëàùœç"
