@@ -47,6 +47,8 @@ import (
 
 	"reflect"
 	"unsafe"
+
+	"github.com/go-vgo/robotgo/clipboard"
 	// "runtime"
 	// "syscall"
 )
@@ -496,6 +498,22 @@ func TypeString(x string) {
 	cx := C.CString(x)
 	C.aTypeString(cx)
 	defer C.free(unsafe.Pointer(cx))
+}
+
+// TypeStr type string, support UTF-8
+func TypeStr(str string) {
+	clipboard.WriteAll(str)
+	KeyTap("v", "command")
+}
+
+// ReadAll read string from clipboard
+func ReadAll() (string, error) {
+	return clipboard.ReadAll()
+}
+
+// WriteAll write string to clipboard
+func WriteAll(text string) {
+	clipboard.WriteAll(text)
 }
 
 // TypeStrDelay type string delayed
