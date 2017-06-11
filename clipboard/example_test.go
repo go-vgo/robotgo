@@ -3,7 +3,8 @@ package clipboard_test
 import (
 	"fmt"
 
-	"github.com/atotto/clipboard"
+	"github.com/go-vgo/robotgo/clipboard"
+	// "github.com/atotto/clipboard"
 )
 
 func Example() {

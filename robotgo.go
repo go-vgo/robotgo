@@ -47,10 +47,10 @@ import (
 
 	"reflect"
 	"unsafe"
-
-	"github.com/go-vgo/robotgo/clipboard"
 	// "runtime"
 	// "syscall"
+
+	"github.com/go-vgo/robotgo/clipboard"
 )
 
 const (
