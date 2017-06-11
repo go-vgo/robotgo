@@ -82,6 +82,8 @@ sudo apt-get install libxtst-dev libpng++-dev
 sudo apt-get install xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev
 sudo apt-get install libxkbcommon-dev
 
+sudo apt-get install xsel
+sudo apt-get install xclip
 ```
 
 #### Fedora:
@@ -90,6 +92,9 @@ sudo apt-get install libxkbcommon-dev
 sudo dnf install libxkbcommon-devel libXtst-devel libxkbcommon-x11-devel xorg-x11-xkb-utils-devel
 
 sudo dnf install libpng-devel
+
+sudo dnf install xsel
+sudo dnf install xclip
 ```
 
 ## Installation:
@@ -252,6 +257,6 @@ Donate money by [paypal](https://www.paypal.me/veni0/25) to my account [vzvway@g
 
 ## License
 
-Robotgo is primarily distributed under the terms of both the MIT license and the Apache License (Version 2.0).
+Robotgo is primarily distributed under the terms of both the MIT license and the Apache License (Version 2.0), with portions covered by various BSD-like licenses.
 
 See [LICENSE-APACHE](http://www.apache.org/licenses/LICENSE-2.0), [LICENSE-MIT](https://github.com/go-vgo/robotgo/blob/master/LICENSE).
