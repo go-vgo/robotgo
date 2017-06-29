@@ -680,6 +680,12 @@ func CopyBitpb(bitmap C.MMBitmapRef) bool {
 	return gbool
 }
 
+// DeepCopyBit deep copy bitmap
+func DeepCopyBit(bitmap C.MMBitmapRef) C.MMBitmapRef {
+	bit := C.bitmap_deepcopy(bitmap)
+	return bit
+}
+
 /*
  ___________    ____  _______ .__   __. .___________.
 |   ____\   \  /   / |   ____||  \ |  | |           |

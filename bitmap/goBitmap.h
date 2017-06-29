@@ -54,6 +54,10 @@ bool bitmap_copy_to_pboard(MMBitmapRef bitmap){
 	return true;
 }
 
+MMBitmapRef bitmap_deepcopy(MMBitmapRef bitmap){
+	return bitmap == NULL ? NULL : copyMMBitmap(bitmap);
+}
+
 MMPoint aFindBitmap(MMBitmapRef bit_map, MMRect rect){
 	// MMRect rect;
 	// rect.size.width = 10;
