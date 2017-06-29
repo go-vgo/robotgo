@@ -589,7 +589,7 @@ func OpenBitmap(args ...interface{}) C.MMBitmapRef {
 		// fmt.Println("err:::", e)
 		mtype = 1
 	})
-	bit := C.aOpenBitmap(path, mtype)
+	bit := C.bitmap_open(path, mtype)
 	defer C.free(unsafe.Pointer(path))
 	// fmt.Println("opening...", bit)
 	return bit
@@ -607,7 +607,7 @@ func SaveBitmap(args ...interface{}) string {
 	})
 
 	path := C.CString(args[1].(string))
-	savebit := C.aSaveBitmap(args[0].(C.MMBitmapRef), path, mtype)
+	savebit := C.bitmap_save(args[0].(C.MMBitmapRef), path, mtype)
 	// fmt.Println("saved...", savebit)
 	// return bit
 	defer C.free(unsafe.Pointer(path))
@@ -662,8 +662,9 @@ func Convert(args ...interface{}) {
 }
 
 // FreeBitmap free and dealloc bitmap
-func FreeBitmap(ref C.MMBitmapRef) {
-	C.destroyMMBitmap(ref)
+func FreeBitmap(bitmap C.MMBitmapRef) {
+	// C.destroyMMBitmap(bitmap)
+	C.bitmap_dealloc(bitmap)
 }
 
 // ReadBitmap returns false and sets error if |bitmap| is NULL
