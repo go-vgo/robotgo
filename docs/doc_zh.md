@@ -55,6 +55,7 @@
 #### [FreeBitmap](#FreeBitmap)
 #### [ReadBitmap](#ReadBitmap)
 #### [CopyBitpb](#CopyBitpb)
+#### [DeepCopyBit](#DeepCopyBit)
 
 ## [事件](#Event)
 
@@ -489,6 +490,24 @@ robotgo.ReadBitmap(bitmap)
 ```Go
 robotgo.CopyBitpb(bitmap)
 ```    
+
+### <h3 id="DeepCopyBit">.DeepCopyBit(MMBitmapRef)</h3>
+
+   DeepCopyBit deep copy bitmap
+
+#### 参数:
+
+    MMBitmapRef
+
+#### 返回值:
+
+    MMBitmapRef
+
+#### 示例:
+
+```Go
+robotgo.DeepCopyBit(bitmap)
+```  
 
 ## <h2 id="Event">事件</h2> 
 

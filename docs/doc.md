@@ -53,6 +53,7 @@
 #### [FreeBitmap](#FreeBitmap)
 #### [ReadBitmap](#ReadBitmap)
 #### [CopyBitpb](#CopyBitpb)
+#### [DeepCopyBit](#DeepCopyBit)
 
 ## [Event](#Event)
 
@@ -475,6 +476,24 @@ robotgo.ReadBitmap(bitmap)
 ```Go
 robotgo.CopyBitpb(bitmap)
 ```    
+
+### <h3 id="DeepCopyBit">.DeepCopyBit(MMBitmapRef)</h3>
+
+   DeepCopyBit deep copy bitmap
+
+#### Arguments:
+
+    MMBitmapRef
+
+#### Return:
+
+    MMBitmapRef
+
+#### Examples:
+
+```Go
+robotgo.DeepCopyBit(bitmap)
+```  
 
 ## <h2 id="Event">Event</h2> 
 
