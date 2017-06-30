@@ -1,6 +1,7 @@
 # Object files
 .DS_Store
 .vscode
+.idea
 
 # Debug files
 *.dSYM/
@@ -47,4 +48,7 @@ _testmain.go
 *.i*86
 *.x86_64
 *.hex
+
+# Project-local glide cache, RE: https://github.com/Masterminds/glide/issues/736
+ .glide/
 
