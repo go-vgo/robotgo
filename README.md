@@ -231,6 +231,16 @@ import (
 )
 
 func main() {
+  fpid, err := robotgo.FindIds("Google")
+  if err == nil {
+    fmt.Println("pids...", fpid)
+  }
+
+  isExist, err := robotgo.PidExists(100)
+  if err == nil {
+    fmt.Println("pid exists is", isExist)
+  }
+
   abool := robotgo.ShowAlert("test", "robotgo")
   if abool == 0 {
  	  fmt.Println("ok@@@", "ok")
