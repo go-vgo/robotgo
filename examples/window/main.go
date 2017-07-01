@@ -43,4 +43,34 @@ func main() {
 
 	robotgo.CloseWindow()    // close current Window
 	robotgo.SetActive(mdata) // set Window Active
+
+	fpid, err := robotgo.FindIds("Google")
+	if err == nil {
+		fmt.Println("pids...", fpid)
+	}
+
+	isExist, err := robotgo.PidExists(100)
+	if err == nil {
+		fmt.Println("pid exists is", isExist)
+	}
+
+	pids, err := robotgo.Pids()
+	if err == nil {
+		fmt.Println("pids: ", pids)
+	}
+
+	name, err := robotgo.FindName(100)
+	if err == nil {
+		fmt.Println("name: ", name)
+	}
+
+	names, err := robotgo.FindNames()
+	if err == nil {
+		fmt.Println("name: ", names)
+	}
+
+	ps, err := robotgo.Process()
+	if err == nil {
+		fmt.Println("process: ", ps)
+	}
 }
