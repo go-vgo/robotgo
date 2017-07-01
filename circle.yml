@@ -19,6 +19,10 @@ dependencies:
     # Clipboard:
     - sudo apt-get install xsel
     - sudo apt-get install xclip
+  override:
+    # './...' is a relative pattern which means all subdirectories
+    - go get -u github.com/shirou/gopsutil
+    - go get -t -d -v ./...
 
 test:
   post:

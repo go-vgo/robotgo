@@ -44,13 +44,14 @@ import "C"
 
 import (
 	// "fmt"
-
 	"reflect"
 	"runtime"
+	"strings"
 	"unsafe"
 	// "syscall"
 
 	"github.com/go-vgo/robotgo/clipboard"
+	"github.com/shirou/gopsutil/process"
 )
 
 const (
@@ -850,4 +851,117 @@ func GetTitle() string {
 func GetPID() int {
 	pid := C.aGetPID()
 	return int(pid)
+}
+
+// Pids get the all process id
+func Pids() ([]int32, error) {
+	var ret []int32
+	pid, err := process.Pids()
+	if err != nil {
+		return ret, err
+	}
+
+	return pid, err
+}
+
+// PidExists determine whether the process exists
+func PidExists(pid int32) (bool, error) {
+	abool, err := process.PidExists(pid)
+
+	return abool, err
+}
+
+// Nps process struct
+type Nps struct {
+	Pid  int32
+	Name string
+}
+
+// Process get the all process struct
+func Process() ([]Nps, error) {
+	var npsArr []Nps
+
+	pid, err := process.Pids()
+
+	if err != nil {
+		return npsArr, err
+	}
+
+	for i := 0; i < len(pid); i++ {
+		nps, err := process.NewProcess(pid[i])
+		if err != nil {
+			return npsArr, err
+		}
+		names, err := nps.Name()
+		if err != nil {
+			return npsArr, err
+		}
+
+		np := Nps{
+			pid[i],
+			names,
+		}
+
+		npsArr = append(npsArr, np)
+	}
+
+	return npsArr, err
+}
+
+// FindName find the process id by the process name
+func FindName(pid int32) (string, error) {
+	nps, err := process.NewProcess(pid)
+	if err != nil {
+		return "", err
+	}
+	names, err := nps.Name()
+	if err != nil {
+		return "", err
+	}
+
+	return names, err
+}
+
+// FindNames find the all process name
+func FindNames() ([]string, error) {
+	var strArr []string
+	pid, err := process.Pids()
+
+	if err != nil {
+		return strArr, err
+	}
+
+	for i := 0; i < len(pid); i++ {
+		nps, err := process.NewProcess(pid[i])
+		if err != nil {
+			return strArr, err
+		}
+		names, err := nps.Name()
+		if err != nil {
+			return strArr, err
+		}
+
+		strArr = append(strArr, names)
+		return strArr, err
+
+	}
+	return strArr, err
+}
+
+// FindIds find the process id by the process name
+func FindIds(name string) ([]int32, error) {
+	var pids []int32
+	nps, err := Process()
+	if err != nil {
+		return pids, err
+	}
+
+	for i := 0; i < len(nps); i++ {
+		abool := strings.Contains(nps[i].Name, name)
+		if abool {
+			pids = append(pids, nps[i].Pid)
+		}
+	}
+
+	return pids, err
 }

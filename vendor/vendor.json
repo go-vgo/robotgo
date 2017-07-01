@@ -1,0 +1,114 @@
+{
+    "comment": "v0.45.0",
+    "ignore": "test",
+    "package": [{
+            "checksumSHA1": "p2mM/ftQaL67OodAmnp1d3nz/Zo=",
+            "path": "github.com/StackExchange/wmi",
+            "revision": "ea383cf3ba6ec950874b8486cd72356d007c768f",
+            "revisionTime": "2017-04-10T19:29:09Z"
+        },
+        {
+            "checksumSHA1": "tpXnHomqUV7x2IeYq4ubB/fCW/w=",
+            "path": "github.com/davecgh/go-spew/spew",
+            "revision": "782f4967f2dc4564575ca782fe2d04090b5faca8",
+            "revisionTime": "2017-06-26T23:16:45Z"
+        },
+        {
+            "checksumSHA1": "a2yC46a1qsJomgY6rb+FkTFiqmE=",
+            "path": "github.com/davecgh/go-spew/spew/testdata",
+            "revision": "782f4967f2dc4564575ca782fe2d04090b5faca8",
+            "revisionTime": "2017-06-26T23:16:45Z"
+        },
+        {
+            "checksumSHA1": "N2xOu2ahO544aOiQlgdYSSgXsyI=",
+            "path": "github.com/go-ole/go-ole",
+            "revision": "02d3668a0cf01f58411cc85cd37c174c257ec7c2",
+            "revisionTime": "2017-06-01T13:56:11Z"
+        },
+        {
+            "checksumSHA1": "Q0ZOcJW0fqOefDzEdn+PJHOeSgI=",
+            "path": "github.com/go-ole/go-ole/oleutil",
+            "revision": "02d3668a0cf01f58411cc85cd37c174c257ec7c2",
+            "revisionTime": "2017-06-01T13:56:11Z"
+        },
+        {
+            "checksumSHA1": "RZOdTSZN/PgcTqko5LzIAzw+UT4=",
+            "path": "github.com/pmezard/go-difflib/difflib",
+            "revision": "792786c7400a136282c1664665ae0a8db921c6c2",
+            "revisionTime": "2016-01-10T10:55:54Z"
+        },
+        {
+            "checksumSHA1": "BkNqcAh64gp36lSe81ws3zKSWEE=",
+            "path": "github.com/shirou/gopsutil",
+            "revision": "3dd8bd46d9a1ccbd37b3ba6e3dc1dc7d37ba8dc5",
+            "revisionTime": "2017-06-05T13:30:45Z"
+        },
+        {
+            "checksumSHA1": "lqfqe5WUb1Rpmej2iPUj0VNdXNY=",
+            "path": "github.com/shirou/gopsutil/cpu",
+            "revision": "3dd8bd46d9a1ccbd37b3ba6e3dc1dc7d37ba8dc5",
+            "revisionTime": "2017-06-05T13:30:45Z"
+        },
+        {
+            "checksumSHA1": "I+BzZu1WilCwpKvggQ3/W1iDF9E=",
+            "path": "github.com/shirou/gopsutil/host",
+            "revision": "3dd8bd46d9a1ccbd37b3ba6e3dc1dc7d37ba8dc5",
+            "revisionTime": "2017-06-05T13:30:45Z"
+        },
+        {
+            "checksumSHA1": "52t0M8azVqHaJLfsxllCYEO4WtI=",
+            "path": "github.com/shirou/gopsutil/internal/common",
+            "revision": "3dd8bd46d9a1ccbd37b3ba6e3dc1dc7d37ba8dc5",
+            "revisionTime": "2017-06-05T13:30:45Z"
+        },
+        {
+            "checksumSHA1": "aboRCUNrbATO/0DJgaAyj5oeVhI=",
+            "path": "github.com/shirou/gopsutil/mem",
+            "revision": "3dd8bd46d9a1ccbd37b3ba6e3dc1dc7d37ba8dc5",
+            "revisionTime": "2017-06-05T13:30:45Z"
+        },
+        {
+            "checksumSHA1": "UplqSMTSns4gm4+iF3BHejRczSk=",
+            "path": "github.com/shirou/gopsutil/net",
+            "revision": "3dd8bd46d9a1ccbd37b3ba6e3dc1dc7d37ba8dc5",
+            "revisionTime": "2017-06-05T13:30:45Z"
+        },
+        {
+            "checksumSHA1": "EGK8MiV6q5FYm3b5upQcePcsxQ0=",
+            "path": "github.com/shirou/gopsutil/process",
+            "revision": "3dd8bd46d9a1ccbd37b3ba6e3dc1dc7d37ba8dc5",
+            "revisionTime": "2017-06-05T13:30:45Z"
+        },
+        {
+            "checksumSHA1": "Nve7SpDmjsv6+rhkXAkfg/UQx94=",
+            "path": "github.com/shirou/w32",
+            "revision": "bb4de0191aa41b5507caa14b0650cdbddcd9280b",
+            "revisionTime": "2016-09-30T03:27:40Z"
+        },
+        {
+            "checksumSHA1": "L8WNMYHKGlN21LnrVhG05OWxwAA=",
+            "path": "github.com/stretchr/testify/assert",
+            "revision": "f6abca593680b2315d2075e0f5e2a9751e3f431a",
+            "revisionTime": "2017-06-01T20:57:54Z"
+        },
+        {
+            "checksumSHA1": "ScqHWd1gW9LrFxlYaGOE9RUm3Dg=",
+            "path": "github.com/stretchr/testify/require",
+            "revision": "f6abca593680b2315d2075e0f5e2a9751e3f431a",
+            "revisionTime": "2017-06-01T20:57:54Z"
+        },
+        {
+            "checksumSHA1": "EL5tiYbzPcSM0nhJpvMSDnDNvxI=",
+            "path": "golang.org/x/sys/unix",
+            "revision": "4ed4d404df456f81e878683a0363ed3013a59003",
+            "revisionTime": "2017-06-30T13:23:30Z"
+        },
+        {
+            "checksumSHA1": "Byvh27nYGFOw5KPbFPEd/j1zGhQ=",
+            "path": "golang.org/x/sys/windows",
+            "revision": "4ed4d404df456f81e878683a0363ed3013a59003",
+            "revisionTime": "2017-06-30T13:23:30Z"
+        }
+    ],
+    "rootPath": "github.com/go-vgo/robotgo"
+}
