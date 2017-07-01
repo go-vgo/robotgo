@@ -55,7 +55,7 @@ import (
 )
 
 const (
-	version string = "v0.44.0.327, Mount Kailash!"
+	version string = "v0.45.0.346, Mount Kailash!"
 )
 
 // GetVersion get version
@@ -119,10 +119,13 @@ func GetXDisplayName() string {
 
 // CaptureScreen capture the screen return bitmap(c struct)
 func CaptureScreen(args ...int) C.MMBitmapRef {
-	var x C.size_t
-	var y C.size_t
-	var w C.size_t
-	var h C.size_t
+	var (
+		x C.size_t
+		y C.size_t
+		w C.size_t
+		h C.size_t
+	)
+
 	Try(func() {
 		x = C.size_t(args[0])
 		y = C.size_t(args[1])
@@ -146,10 +149,13 @@ func CaptureScreen(args ...int) C.MMBitmapRef {
 
 // BCaptureScreen capture the screen and return bitmap(go struct)
 func BCaptureScreen(args ...int) Bitmap {
-	var x C.size_t
-	var y C.size_t
-	var w C.size_t
-	var h C.size_t
+	var (
+		x C.size_t
+		y C.size_t
+		w C.size_t
+		h C.size_t
+	)
+
 	Try(func() {
 		x = C.size_t(args[0])
 		y = C.size_t(args[1])
@@ -281,8 +287,11 @@ func GetMousePos() (int, int) {
 
 // MouseClick click the mouse
 func MouseClick(args ...interface{}) {
-	var button C.MMMouseButton
-	var double C.bool
+	var (
+		button C.MMMouseButton
+		double C.bool
+	)
+
 	Try(func() {
 		// button = args[0].(C.MMMouseButton)
 		if args[0].(string) == "left" {
@@ -305,8 +314,11 @@ func MouseClick(args ...interface{}) {
 
 // Click click the mouse
 func Click(args ...interface{}) {
-	var button C.MMMouseButton
-	var double C.bool
+	var (
+		button C.MMMouseButton
+		double C.bool
+	)
+
 	Try(func() {
 		// button = args[0].(C.MMMouseButton)
 		if args[0].(string) == "left" {
@@ -395,12 +407,14 @@ func Try(fun func(), handler func(interface{})) {
 // See keys:
 //	https://github.com/go-vgo/robotgo/blob/master/docs/keys.md
 func KeyTap(args ...interface{}) {
-	var akey string
-	var akeyt string
+	var (
+		akey   string
+		akeyt  string
+		keyarr []string
+		num    int
+	)
 	// var ckeyarr []*C.char
 	ckeyarr := make([](*_Ctype_char), 0)
-	var keyarr []string
-	var num int
 
 	Try(func() {
 		if reflect.TypeOf(args[1]) == reflect.TypeOf(keyarr) {
@@ -455,9 +469,12 @@ func KeyTap(args ...interface{}) {
 // See keys:
 //	https://github.com/go-vgo/robotgo/blob/master/docs/keys.md
 func KeyToggle(args ...string) string {
-	var adown string
-	var amkey string
-	var amkeyt string
+	var (
+		adown  string
+		amkey  string
+		amkeyt string
+	)
+
 	Try(func() {
 		adown = args[1]
 		Try(func() {
