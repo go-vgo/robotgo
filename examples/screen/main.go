@@ -21,19 +21,20 @@ func main() {
 	////////////////////////////////////////////////////////////////////////////////
 	// Read the screen
 	////////////////////////////////////////////////////////////////////////////////
+
 	gbitMap := robotgo.BCaptureScreen()
 	fmt.Println("BCaptureScreen...", gbitMap.Width)
 	// fmt.Println("...", gbitmap.Width, gbitmap.BytesPerPixel)
 
-	// Gets the screen width and height
+	// gets the screen width and height
 	sx, sy := robotgo.GetScreenSize()
 	fmt.Println("...", sx, sy)
 
-	// Gets the pixel color at 100, 200.
+	// gets the pixel color at 100, 200.
 	color := robotgo.GetPixelColor(100, 200)
 	fmt.Println("color----", color, "-----------------")
 
-	// Gets the pixel color at 10, 20.
+	// gets the pixel color at 10, 20.
 	color2 := robotgo.GetPixelColor(10, 20)
 	fmt.Println("color---", color2)
 }

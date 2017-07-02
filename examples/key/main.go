@@ -21,19 +21,25 @@ func main() {
 	////////////////////////////////////////////////////////////////////////////////
 	// Control the keyboard
 	////////////////////////////////////////////////////////////////////////////////
-	robotgo.TypeString("Hello World") // Importing "Hello World"
 
-	robotgo.KeyTap("enter") // Press "enter"
+	// importing "Hello World"
+	robotgo.TypeString("Hello World")
+
+	// press "enter"
+	robotgo.KeyTap("enter")
 	robotgo.KeyTap("a", "control")
-	robotgo.KeyTap("h", "command") // Hide window
+	// hide window
+	robotgo.KeyTap("h", "command")
 
-	// Press "i", "alt", "command" Key combination
+	// press "i", "alt", "command" Key combination
 	robotgo.KeyTap("i", "alt", "command")
 	arr := []string{"alt", "command"}
 	robotgo.KeyTap("i", arr)
 
-	robotgo.KeyTap("w", "command") // close window
-	robotgo.KeyTap("m", "command") // minimize window
+	// close window
+	robotgo.KeyTap("w", "command")
+	// minimize window
+	robotgo.KeyTap("m", "command")
 	robotgo.KeyTap("f1", "control")
 	robotgo.KeyTap("a", "control")
 
@@ -44,7 +50,9 @@ func main() {
 
 	robotgo.TypeString("en")
 
+	// write string to clipboard
 	robotgo.WriteAll("测试")
+	// read string from clipboard
 	text, err := robotgo.ReadAll()
 	if err == nil {
 		fmt.Println(text)

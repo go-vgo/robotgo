@@ -22,34 +22,37 @@ func main() {
 	// Bitmap
 	////////////////////////////////////////////////////////////////////////////////
 
-	// Gets all of the screen
+	// gets all of the screen
 	abitMap := robotgo.CaptureScreen()
 	fmt.Println("abitMap...", abitMap)
 
-	// Gets part of the screen
+	// gets part of the screen
 	bitmap := robotgo.CaptureScreen(100, 200, 30, 40)
 	fmt.Println("CaptureScreen...", bitmap)
 
-	// Searches for needle in bitmap
+	// searches for needle in bitmap
 	fx, fy := robotgo.FindBitmap(bitmap)
 	fmt.Println("FindBitmap------", fx, fy)
 
-	// Returns new bitmap object created from a portion of another
+	// returns new bitmap object created from a portion of another
 	bitpos := robotgo.GetPortion(bitmap, 10, 10, 11, 10)
 	fmt.Println(bitpos)
 
-	// Creates bitmap from string by bitmap
+	// creates bitmap from string by bitmap
 	bitstr := robotgo.TostringBitmap(bitmap)
 	fmt.Println("bitstr...", bitstr)
 
 	// sbitmap := robotgo.BitmapFromstring(bitstr, 2)
 	// fmt.Println("...", sbitmap)
 
-	// Saves image to absolute filepath in the given format
+	// saves image to absolute filepath in the given format
 	robotgo.SaveBitmap(bitmap, "test.png")
 	robotgo.SaveBitmap(bitmap, "test31.tif", 1)
-	robotgo.Convert("test.png", "test.tif") // Convert image
 
-	openbit := robotgo.OpenBitmap("test.tif") // open image bitmap
+	// convert image
+	robotgo.Convert("test.png", "test.tif")
+
+	// open image bitmap
+	openbit := robotgo.OpenBitmap("test.tif")
 	fmt.Println("openBitmap...", openbit)
 }

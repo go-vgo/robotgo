@@ -21,6 +21,7 @@ func main() {
 	////////////////////////////////////////////////////////////////////////////////
 	// Global event listener
 	////////////////////////////////////////////////////////////////////////////////
+
 	fmt.Println("--- Please press v---")
 	eve := robotgo.AddEvent("v")
 
@@ -51,6 +52,6 @@ func main() {
 		fmt.Println("--- You press right mouse button---", "mright")
 	}
 
-	// Stop AddEvent
+	// stop AddEvent
 	// robotgo.StopEvent()
 }

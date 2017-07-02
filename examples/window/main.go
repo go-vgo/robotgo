@@ -21,54 +21,69 @@ func main() {
 	////////////////////////////////////////////////////////////////////////////////
 	// Window Handle
 	////////////////////////////////////////////////////////////////////////////////
-	abool := robotgo.ShowAlert("hello", "robotgo") // Show Alert Window
+
+	// show Alert Window
+	abool := robotgo.ShowAlert("hello", "robotgo")
 	if abool == 0 {
 		fmt.Println("ok@@@", "ok")
 	}
 	robotgo.ShowAlert("hello", "robotgo", "Ok", "Cancel")
 
-	pid := robotgo.GetPID() // Get the current process id
+	// get the current process id
+	pid := robotgo.GetPID()
 	fmt.Println("pid----", pid)
 
-	mdata := robotgo.GetActive() // Get current Window Active
+	// get current Window Active
+	mdata := robotgo.GetActive()
 
-	hwnd := robotgo.GetHandle() // Get current Window Handle
+	// get current Window Handle
+	hwnd := robotgo.GetHandle()
 	fmt.Println("hwnd---", hwnd)
 
-	bhwnd := robotgo.GetBHandle() // Get current Window Handle
+	// get current Window Handle
+	bhwnd := robotgo.GetBHandle()
 	fmt.Println("bhwnd---", bhwnd)
 
-	title := robotgo.GetTitle() // Get current Window title
+	// get current Window title
+	title := robotgo.GetTitle()
 	fmt.Println("title-----", title)
 
-	robotgo.CloseWindow()    // close current Window
-	robotgo.SetActive(mdata) // set Window Active
+	// close current Window
+	robotgo.CloseWindow()
+	// set Window Active
+	robotgo.SetActive(mdata)
 
+	// find the process id by the process name
 	fpid, err := robotgo.FindIds("Google")
 	if err == nil {
 		fmt.Println("pids...", fpid)
 	}
 
+	// determine whether the process exists
 	isExist, err := robotgo.PidExists(100)
 	if err == nil {
 		fmt.Println("pid exists is", isExist)
 	}
 
+	// get the all process id
 	pids, err := robotgo.Pids()
 	if err == nil {
 		fmt.Println("pids: ", pids)
 	}
 
+	// find the process name by the process id
 	name, err := robotgo.FindName(100)
 	if err == nil {
 		fmt.Println("name: ", name)
 	}
 
+	// find the all process name
 	names, err := robotgo.FindNames()
 	if err == nil {
 		fmt.Println("name: ", names)
 	}
 
+	// get the all process struct
 	ps, err := robotgo.Process()
 	if err == nil {
 		fmt.Println("process: ", ps)
