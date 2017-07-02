@@ -925,7 +925,7 @@ func Process() ([]Nps, error) {
 	return npsArr, err
 }
 
-// FindName find the process id by the process name
+// FindName find the process name by the process id
 func FindName(pid int32) (string, error) {
 	nps, err := process.NewProcess(pid)
 	if err != nil {
