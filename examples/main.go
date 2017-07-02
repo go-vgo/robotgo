@@ -234,8 +234,6 @@ func window() {
 	title := robotgo.GetTitle()
 	fmt.Println("title-----", title)
 
-	// close current Window
-	robotgo.CloseWindow()
 	// set Window Active
 	robotgo.SetActive(mdata)
 
@@ -274,6 +272,9 @@ func window() {
 	if err == nil {
 		fmt.Println("process: ", ps)
 	}
+
+	// close current Window
+	robotgo.CloseWindow()
 }
 
 func main() {
