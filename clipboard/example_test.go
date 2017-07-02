@@ -9,7 +9,9 @@ import (
 func Example() {
 	clipboard.WriteAll("日本語")
 	text, err := clipboard.ReadAll()
-	if err == nil {
+	if err != nil {
+		fmt.Println(err)
+	} else {
 		fmt.Println(text)
 	}
 
