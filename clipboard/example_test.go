@@ -13,8 +13,7 @@ func Example() {
 		fmt.Println(err)
 	} else {
 		fmt.Println(text)
+		// Output:
+		// 日本語
 	}
-
-	// Output:
-	// 日本語
 }
