@@ -974,7 +974,9 @@ func FindIds(name string) ([]int32, error) {
 	}
 
 	for i := 0; i < len(nps); i++ {
-		abool := strings.Contains(nps[i].Name, name)
+		psname := strings.ToLower(nps[i].Name)
+		name = strings.ToLower(name)
+		abool := strings.Contains(psname, name)
 		if abool {
 			pids = append(pids, nps[i].Pid)
 		}

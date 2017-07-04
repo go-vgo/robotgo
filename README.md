@@ -146,7 +146,7 @@ func main() {
   arr := []string{"alt", "command"}
   robotgo.KeyTap("i", arr)
 
-  robotgo.WriteAll("测试")
+  robotgo.WriteAll("Test")
   text, err := robotgo.ReadAll()
   if err == nil {
     fmt.Println(text)
