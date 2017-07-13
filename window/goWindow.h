@@ -63,7 +63,7 @@ void active_PID(int32 pid){
 		// Handle to a AXUIElementRef
 		win.AxID = AXUIElementCreateApplication(pid);
 	#elif defined(USE_X11)
-		win.XWin = Window(pid);		// Handle to an X11 window
+		win.XWin = pid;		// Handle to an X11 window
 	#elif defined(IS_WINDOWS)
 		win.HWnd = HWND(pid);		// Handle to a window HWND
 	#endif
