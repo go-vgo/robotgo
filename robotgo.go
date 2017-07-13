@@ -984,3 +984,8 @@ func FindIds(name string) ([]int32, error) {
 
 	return pids, err
 }
+
+// ActivePID window active by PID
+func ActivePID(pid int32) {
+	C.active_PID(C.int32(pid))
+}
