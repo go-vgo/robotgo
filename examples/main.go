@@ -278,10 +278,16 @@ func window() {
 }
 
 func main() {
+	// Control the keyboard
 	key()
+	// Control the mouse
 	mouse()
+	// Read the screen
 	screen()
+	// Bitmap and image processing
 	bitmap()
+	// Global event listener
 	event()
+	// Window Handle and progress
 	window()
 }
