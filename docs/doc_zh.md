@@ -76,6 +76,8 @@
 ##### [GetBHandle](#GetHandle)
 ##### [GetTitle](#GetTitle)
 ##### [GetPID](#GetPID)
+##### [Pids](#Pids)
+##### [PidExists](#PidExists)
 
 
 ## <h2 id="Keyboard">键盘</h2>
@@ -650,4 +652,24 @@ func main() {
     无   
 
 #### 返回值:
-    返回进程 id        
+    返回进程 id    
+
+### <h3 id="Pids">.Pids()</h3>
+
+    获取所有进程 id
+
+#### 参数:
+    无   
+
+#### 返回值:
+    返回进程 id   
+
+### <h3 id="PidExists">.PidExists()</h3>
+
+    判断进程 id 是否存在
+
+#### 参数:
+    pid  
+
+#### 返回值:
+    返回 bool             

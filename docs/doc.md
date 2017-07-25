@@ -74,6 +74,8 @@
 ##### [GetBHandle](#GetHandle)
 ##### [GetTitle](#GetTitle)
 ##### [GetPID](#GetPID)
+##### [Pids](#Pids)
+##### [PidExists](#PidExists)
 
 ### <h3 id="GetVersion">.GetVersion()</h3>
     Get robotgo version
@@ -637,3 +639,22 @@ func main() {
 #### Return:
     Returns the process id         
      
+### <h3 id="Pids">.Pids()</h3>
+
+    Pids get the all process id
+
+#### Arguments:
+    None   
+
+#### Return:
+    Returns all process id   
+
+### <h3 id="PidExists">.PidExists()</h3>
+
+    PidExists determine whether the process exists
+
+#### Arguments:
+    pid  
+
+#### Return:
+    Returns bool 
