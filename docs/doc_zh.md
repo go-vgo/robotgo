@@ -78,6 +78,8 @@
 ##### [GetPID](#GetPID)
 ##### [Pids](#Pids)
 ##### [PidExists](#PidExists)
+##### [Process](#Process)
+##### [FindName](#FindName)
 
 
 ## <h2 id="Keyboard">键盘</h2>
@@ -672,4 +674,24 @@ func main() {
     pid  
 
 #### 返回值:
-    返回 bool             
+    返回 bool 
+
+### <h3 id="Process">.Process()</h3>
+
+  Process get the all process struct
+
+#### 参数:
+    无  
+
+#### 返回值:
+    Returns []Nps, error
+
+### <h3 id="FindName">.FindName()</h3>
+
+    FindName find the process name by the process id
+
+#### 参数:
+    pid  
+
+#### 返回值:
+    Returns string, error                  

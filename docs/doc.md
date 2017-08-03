@@ -76,6 +76,8 @@
 ##### [GetPID](#GetPID)
 ##### [Pids](#Pids)
 ##### [PidExists](#PidExists)
+##### [Process](#Process)
+##### [FindName](#FindName)
 
 ### <h3 id="GetVersion">.GetVersion()</h3>
     Get robotgo version
@@ -658,3 +660,23 @@ func main() {
 
 #### Return:
     Returns bool 
+
+### <h3 id="Process">.Process()</h3>
+
+  Process get the all process struct
+
+#### Arguments:
+    none  
+
+#### Return:
+    Returns []Nps, error
+
+### <h3 id="FindName">.FindName()</h3>
+
+    FindName find the process name by the process id
+
+#### Arguments:
+    pid  
+
+#### Return:
+    Returns string, error         
