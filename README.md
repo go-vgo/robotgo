@@ -36,29 +36,22 @@ This is a work in progress.
 
 ## Requirements:
 
-Now, Please make sure Golang, GCC, zlib and libpng is installed correctly before installing RobotGo.
+Now, Please make sure Golang, GCC is installed correctly before installing RobotGo.
 
 ### ALL: 
 ``` 
 Golang
 GCC
-zlib & libpng (bitmap)
 ```
 #### For Mac OS X:
-    Xcode Command Line Tools
 ```
-brew install libpng
-brew install homebrew/dupes/zlib
+    Xcode Command Line Tools
 ```    
 #### For Windows:
 ```
 MinGW or other GCC
 
-zlib & libpng (bitmap need it.)
 ```
-##### [Zlib & libpng Windows32 GCC's Course](https://github.com/go-vgo/Mingw32)
-
-##### [Download include zlib & libpng Windows64 GCC](https://github.com/go-vgo/Mingw)
 
 #### For everything else:
 ```
@@ -76,8 +69,7 @@ xcb, xkb, libxkbcommon
 sudo apt-get install gcc libc6-dev
 
 sudo apt-get install libx11-dev
-sudo apt-get install xorg-dev
-sudo apt-get install libxtst-dev libpng++-dev   
+sudo apt-get install xorg-dev  
 
 sudo apt-get install xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev
 sudo apt-get install libxkbcommon-dev
@@ -91,8 +83,6 @@ sudo apt-get install xclip
 ```yml
 sudo dnf install libxkbcommon-devel libXtst-devel libxkbcommon-x11-devel xorg-x11-xkb-utils-devel
 
-sudo dnf install libpng-devel
-
 sudo dnf install xsel
 sudo dnf install xclip
 ```
@@ -102,8 +92,6 @@ sudo dnf install xclip
 go get github.com/go-vgo/robotgo
 ```
   It's that easy!
-
-png.h: No such file or directory? Please see [issues/47](https://github.com/go-vgo/robotgo/issues/47).
 
 ## Update:
 ```
@@ -174,7 +162,7 @@ func main() {
 } 
 ```
 
-#### [Bitmap](https://github.com/go-vgo/robotgo/blob/master/examples/bitmap/mian.go)
+<!-- #### [Bitmap](https://github.com/go-vgo/robotgo/blob/master/examples/bitmap/mian.go)
 
 ```Go
 package main
@@ -194,7 +182,7 @@ func main() {
 
   robotgo.SaveBitmap(bitmap, "test.png")
 } 
-```
+``` -->
 
 #### [Event](https://github.com/go-vgo/robotgo/blob/master/examples/event/main.go)
 

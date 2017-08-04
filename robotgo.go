@@ -25,18 +25,21 @@ package robotgo
 /*
 //#if defined(IS_MACOSX)
 	#cgo darwin CFLAGS: -x objective-c  -Wno-deprecated-declarations -I/usr/local/opt/libpng/include -I/usr/local/opt/zlib/include
-	#cgo darwin LDFLAGS: -framework Cocoa -framework OpenGL -framework IOKit -framework Carbon -framework CoreFoundation -L/usr/local/opt/libpng/lib -lpng -L/usr/local/opt/zlib/lib -lz
+	#cgo darwin LDFLAGS: -framework Cocoa -framework OpenGL -framework IOKit -framework Carbon -framework CoreFoundation
+	// -L/usr/local/opt/libpng/lib -lpng -L/usr/local/opt/zlib/lib -lz
 //#elif defined(USE_X11)
 	// drop -std=c11
 	#cgo linux CFLAGS:-I/usr/src
-	#cgo linux LDFLAGS:-L/usr/src -lpng -lz -lX11 -lXtst -lX11-xcb -lxcb -lxcb-xkb -lxkbcommon -lxkbcommon-x11 -lm
+	#cgo linux LDFLAGS:-L/usr/src -lX11 -lXtst -lX11-xcb -lxcb -lxcb-xkb -lxkbcommon -lxkbcommon-x11 -lm
+	// -lpng -lz
 //#endif
-	#cgo windows LDFLAGS: -lgdi32 -luser32 -lpng -lz
+	#cgo windows LDFLAGS: -lgdi32 -luser32
+	// -lpng -lz
 //#include <AppKit/NSEvent.h>
 #include "screen/goScreen.h"
 #include "mouse/goMouse.h"
 #include "key/goKey.h"
-#include "bitmap/goBitmap.h"
+// #include "bitmap/goBitmap.h"
 #include "event/goEvent.h"
 #include "window/goWindow.h"
 */
@@ -573,137 +576,137 @@ func SetKeyboardDelay(x int) {
 |______/  |__|     |__|     |__|  |__| /__/     \__\ | _|
 */
 
-// FindBitmap find the bitmap
-func FindBitmap(args ...interface{}) (int, int) {
-	var bit C.MMBitmapRef
-	bit = args[0].(C.MMBitmapRef)
+// // FindBitmap find the bitmap
+// func FindBitmap(args ...interface{}) (int, int) {
+// 	var bit C.MMBitmapRef
+// 	bit = args[0].(C.MMBitmapRef)
 
-	var rect C.MMRect
-	Try(func() {
-		rect.origin.x = C.size_t(args[1].(int))
-		rect.origin.y = C.size_t(args[2].(int))
-		rect.size.width = C.size_t(args[3].(int))
-		rect.size.height = C.size_t(args[4].(int))
-	}, func(e interface{}) {
-		// fmt.Println("err:::", e)
-		// rect.origin.x = x
-		// rect.origin.y = y
-		// rect.size.width = w
-		// rect.size.height = h
-	})
+// 	var rect C.MMRect
+// 	Try(func() {
+// 		rect.origin.x = C.size_t(args[1].(int))
+// 		rect.origin.y = C.size_t(args[2].(int))
+// 		rect.size.width = C.size_t(args[3].(int))
+// 		rect.size.height = C.size_t(args[4].(int))
+// 	}, func(e interface{}) {
+// 		// fmt.Println("err:::", e)
+// 		// rect.origin.x = x
+// 		// rect.origin.y = y
+// 		// rect.size.width = w
+// 		// rect.size.height = h
+// 	})
 
-	pos := C.aFindBitmap(bit, rect)
-	// fmt.Println("pos----", pos)
-	return int(pos.x), int(pos.y)
-}
+// 	pos := C.aFindBitmap(bit, rect)
+// 	// fmt.Println("pos----", pos)
+// 	return int(pos.x), int(pos.y)
+// }
 
-// OpenBitmap open the bitmap
-func OpenBitmap(args ...interface{}) C.MMBitmapRef {
-	path := C.CString(args[0].(string))
-	var mtype C.uint16_t
-	Try(func() {
-		mtype = C.uint16_t(args[1].(int))
-	}, func(e interface{}) {
-		// fmt.Println("err:::", e)
-		mtype = 1
-	})
-	bit := C.bitmap_open(path, mtype)
-	defer C.free(unsafe.Pointer(path))
-	// fmt.Println("opening...", bit)
-	return bit
-	// defer C.free(unsafe.Pointer(path))
-}
-
-// SaveBitmap save the bitmap
-func SaveBitmap(args ...interface{}) string {
-	var mtype C.uint16_t
-	Try(func() {
-		mtype = C.uint16_t(args[2].(int))
-	}, func(e interface{}) {
-		// fmt.Println("err:::", e)
-		mtype = 1
-	})
-
-	path := C.CString(args[1].(string))
-	savebit := C.bitmap_save(args[0].(C.MMBitmapRef), path, mtype)
-	// fmt.Println("saved...", savebit)
-	// return bit
-	defer C.free(unsafe.Pointer(path))
-
-	return C.GoString(savebit)
-}
-
-// func SaveBitmap(bit C.MMBitmapRef, gpath string, mtype C.MMImageType) {
-// 	path := C.CString(gpath)
-// 	savebit := C.aSaveBitmap(bit, path, mtype)
-// 	fmt.Println("saving...", savebit)
-// 	// return bit
+// // OpenBitmap open the bitmap
+// func OpenBitmap(args ...interface{}) C.MMBitmapRef {
+// 	path := C.CString(args[0].(string))
+// 	var mtype C.uint16_t
+// 	Try(func() {
+// 		mtype = C.uint16_t(args[1].(int))
+// 	}, func(e interface{}) {
+// 		// fmt.Println("err:::", e)
+// 		mtype = 1
+// 	})
+// 	bit := C.bitmap_open(path, mtype)
+// 	defer C.free(unsafe.Pointer(path))
+// 	// fmt.Println("opening...", bit)
+// 	return bit
 // 	// defer C.free(unsafe.Pointer(path))
 // }
 
-// TostringBitmap tostring bitmap
-func TostringBitmap(bit C.MMBitmapRef) *C.char {
-	// str_bit := C.aTostringBitmap(bit)
-	strBit := C.aTostringBitmap(bit)
-	// fmt.Println("...", str_bit)
-	// return str_bit
-	return strBit
-}
+// // SaveBitmap save the bitmap
+// func SaveBitmap(args ...interface{}) string {
+// 	var mtype C.uint16_t
+// 	Try(func() {
+// 		mtype = C.uint16_t(args[2].(int))
+// 	}, func(e interface{}) {
+// 		// fmt.Println("err:::", e)
+// 		mtype = 1
+// 	})
 
-// GetPortion get portion
-func GetPortion(bit C.MMBitmapRef, x, y, w, h C.size_t) C.MMBitmapRef {
-	var rect C.MMRect
-	rect.origin.x = x
-	rect.origin.y = y
-	rect.size.width = w
-	rect.size.height = h
+// 	path := C.CString(args[1].(string))
+// 	savebit := C.bitmap_save(args[0].(C.MMBitmapRef), path, mtype)
+// 	// fmt.Println("saved...", savebit)
+// 	// return bit
+// 	defer C.free(unsafe.Pointer(path))
 
-	pos := C.aGetPortion(bit, rect)
-	return pos
-}
+// 	return C.GoString(savebit)
+// }
 
-// Convert convert bitmap
-func Convert(args ...interface{}) {
-	var mtype int
-	Try(func() {
-		mtype = args[2].(int)
-	}, func(e interface{}) {
-		// fmt.Println("err:::", e)
-		mtype = 1
-	})
-	//C.CString()
-	opath := args[0].(string)
-	spath := args[1].(string)
-	bitmap := OpenBitmap(opath)
-	// fmt.Println("a----", bit_map)
-	SaveBitmap(bitmap, spath, mtype)
-}
+// // func SaveBitmap(bit C.MMBitmapRef, gpath string, mtype C.MMImageType) {
+// // 	path := C.CString(gpath)
+// // 	savebit := C.aSaveBitmap(bit, path, mtype)
+// // 	fmt.Println("saving...", savebit)
+// // 	// return bit
+// // 	// defer C.free(unsafe.Pointer(path))
+// // }
 
-// FreeBitmap free and dealloc bitmap
-func FreeBitmap(bitmap C.MMBitmapRef) {
-	// C.destroyMMBitmap(bitmap)
-	C.bitmap_dealloc(bitmap)
-}
+// // TostringBitmap tostring bitmap
+// func TostringBitmap(bit C.MMBitmapRef) *C.char {
+// 	// str_bit := C.aTostringBitmap(bit)
+// 	strBit := C.aTostringBitmap(bit)
+// 	// fmt.Println("...", str_bit)
+// 	// return str_bit
+// 	return strBit
+// }
 
-// ReadBitmap returns false and sets error if |bitmap| is NULL
-func ReadBitmap(bitmap C.MMBitmapRef) bool {
-	abool := C.bitmap_ready(bitmap)
-	gbool := bool(abool)
-	return gbool
-}
+// // GetPortion get portion
+// func GetPortion(bit C.MMBitmapRef, x, y, w, h C.size_t) C.MMBitmapRef {
+// 	var rect C.MMRect
+// 	rect.origin.x = x
+// 	rect.origin.y = y
+// 	rect.size.width = w
+// 	rect.size.height = h
 
-// CopyBitpb copy bitmap to pasteboard
-func CopyBitpb(bitmap C.MMBitmapRef) bool {
-	abool := C.bitmap_copy_to_pboard(bitmap)
-	gbool := bool(abool)
-	return gbool
-}
+// 	pos := C.aGetPortion(bit, rect)
+// 	return pos
+// }
 
-// DeepCopyBit deep copy bitmap
-func DeepCopyBit(bitmap C.MMBitmapRef) C.MMBitmapRef {
-	bit := C.bitmap_deepcopy(bitmap)
-	return bit
-}
+// // Convert convert bitmap
+// func Convert(args ...interface{}) {
+// 	var mtype int
+// 	Try(func() {
+// 		mtype = args[2].(int)
+// 	}, func(e interface{}) {
+// 		// fmt.Println("err:::", e)
+// 		mtype = 1
+// 	})
+// 	//C.CString()
+// 	opath := args[0].(string)
+// 	spath := args[1].(string)
+// 	bitmap := OpenBitmap(opath)
+// 	// fmt.Println("a----", bit_map)
+// 	SaveBitmap(bitmap, spath, mtype)
+// }
+
+// // FreeBitmap free and dealloc bitmap
+// func FreeBitmap(bitmap C.MMBitmapRef) {
+// 	// C.destroyMMBitmap(bitmap)
+// 	C.bitmap_dealloc(bitmap)
+// }
+
+// // ReadBitmap returns false and sets error if |bitmap| is NULL
+// func ReadBitmap(bitmap C.MMBitmapRef) bool {
+// 	abool := C.bitmap_ready(bitmap)
+// 	gbool := bool(abool)
+// 	return gbool
+// }
+
+// // CopyBitpb copy bitmap to pasteboard
+// func CopyBitpb(bitmap C.MMBitmapRef) bool {
+// 	abool := C.bitmap_copy_to_pboard(bitmap)
+// 	gbool := bool(abool)
+// 	return gbool
+// }
+
+// // DeepCopyBit deep copy bitmap
+// func DeepCopyBit(bitmap C.MMBitmapRef) C.MMBitmapRef {
+// 	bit := C.bitmap_deepcopy(bitmap)
+// 	return bit
+// }
 
 /*
  ___________    ____  _______ .__   __. .___________.
