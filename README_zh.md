@@ -36,6 +36,8 @@ QQ 群: 595877611
 
 在安装 RobotGo 之前, 请确保 Golang、GCC、zlib 和 libpng 被正确安装
 
+如果你不需要bitmap, 你可以切换到robot分支, 那里没有 zlib 和 libpng 依赖
+
 ### ALL:  
 ```
 Golang
