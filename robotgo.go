@@ -58,7 +58,7 @@ import (
 )
 
 const (
-	version string = "v0.45.0.368, Mount Qomolangma!"
+	version string = "v0.45.0.371, Mount Qomolangma!"
 )
 
 // GetVersion get version
@@ -244,16 +244,14 @@ func MoveMouseSmooth(x, y int, args ...float64) {
 		high C.double
 	)
 
-	Try(func() {
-		low = C.double(args[2])
-		high = C.double(args[3])
-	}, func(e interface{}) {
-		// fmt.Println("err:::", e)
+	if len(args) > 1 {
+		low = C.double(args[0])
+		high = C.double(args[1])
+	} else {
 		low = 5.0
 		high = 500.0
-	})
+	}
 
-	C.aMoveMouseSmooth(cx, cy, low, high)
 }
 
 // MoveSmooth move the mouse smooth
@@ -266,16 +264,14 @@ func MoveSmooth(x, y int, args ...float64) {
 		high C.double
 	)
 
-	Try(func() {
-		low = C.double(args[2])
-		high = C.double(args[3])
-	}, func(e interface{}) {
-		// fmt.Println("err:::", e)
+	if len(args) > 1 {
+		low = C.double(args[0])
+		high = C.double(args[1])
+	} else {
 		low = 5.0
 		high = 500.0
-	})
+	}
 
-	C.aMoveMouseSmooth(cx, cy, low, high)
 }
 
 // GetMousePos get mouse portion
