@@ -252,6 +252,7 @@ func MoveMouseSmooth(x, y int, args ...float64) {
 		high = 500.0
 	}
 
+	C.aMoveMouseSmooth(cx, cy, low, high)
 }
 
 // MoveSmooth move the mouse smooth
@@ -272,6 +273,7 @@ func MoveSmooth(x, y int, args ...float64) {
 		high = 500.0
 	}
 
+	C.aMoveMouseSmooth(cx, cy, low, high)
 }
 
 // GetMousePos get mouse portion
