@@ -80,6 +80,8 @@
 ##### [PidExists](#PidExists)
 ##### [Process](#Process)
 ##### [FindName](#FindName)
+##### [FindNames](#FindNames)
+##### [FindIds](#FindIds)
 
 
 ## <h2 id="Keyboard">键盘</h2>
@@ -694,4 +696,24 @@ func main() {
     pid  
 
 #### 返回值:
-    Returns string, error                  
+    Returns string, error 
+
+### <h3 id="FindNames">.FindNames()</h3>
+
+    FindNames find the all process name
+
+#### Arguments:
+    none  
+
+#### Return:
+    Returns []string, error  
+
+### <h3 id="FindIds">.FindIds()</h3>
+
+    FindIds find the process id by the process name
+
+#### Arguments:
+    name string  
+
+#### Return:
+    Returns []int32, error                     

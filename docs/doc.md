@@ -78,6 +78,8 @@
 ##### [PidExists](#PidExists)
 ##### [Process](#Process)
 ##### [FindName](#FindName)
+##### [FindNames](#FindNames)
+##### [FindIds](#FindIds)
 
 ### <h3 id="GetVersion">.GetVersion()</h3>
     Get robotgo version
@@ -679,4 +681,24 @@ func main() {
     pid  
 
 #### Return:
-    Returns string, error         
+    Returns string, error       
+
+### <h3 id="FindNames">.FindNames()</h3>
+
+    FindNames find the all process name
+
+#### Arguments:
+    none  
+
+#### Return:
+    Returns []string, error  
+
+### <h3 id="FindIds">.FindIds()</h3>
+
+    FindIds find the process id by the process name
+
+#### Arguments:
+    name string  
+
+#### Return:
+    Returns []int32, error            
