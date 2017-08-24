@@ -189,7 +189,7 @@ func main() {
   bitmap := robotgo.CaptureScreen(10, 20, 30, 40)
   fmt.Println("...", bitmap)
 
-  fx, fy := robotgo.FindBit(bitmap)
+  fx, fy := robotgo.FindBitmap(bitmap)
   fmt.Println("FindBitmap------", fx, fy)
 
   robotgo.SaveBitmap(bitmap, "test.png")

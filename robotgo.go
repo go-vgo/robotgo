@@ -571,8 +571,8 @@ func SetKeyboardDelay(x int) {
 |______/  |__|     |__|     |__|  |__| /__/     \__\ | _|
 */
 
-// FindBit find the bitmap
-func FindBit(args ...interface{}) (int, int) {
+// FindBitmap find the bitmap
+func FindBitmap(args ...interface{}) (int, int) {
 	var (
 		bit       C.MMBitmapRef
 		sbit      C.MMBitmapRef
@@ -597,8 +597,8 @@ func FindBit(args ...interface{}) (int, int) {
 	return int(pos.x), int(pos.y)
 }
 
-// FindBitmap find the bitmap
-func FindBitmap(args ...interface{}) (int, int) {
+// FindBit find the bitmap
+func FindBit(args ...interface{}) (int, int) {
 	var bit C.MMBitmapRef
 	bit = args[0].(C.MMBitmapRef)
 

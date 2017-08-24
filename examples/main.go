@@ -138,14 +138,14 @@ func bitmap() {
 	fmt.Println("CaptureScreen...", bitmap)
 
 	// searches for needle in bitmap
-	fx, fy := robotgo.FindBitmap(bitmap)
+	fx, fy := robotgo.FindBit(bitmap)
 	fmt.Println("FindBitmap------", fx, fy)
 
 	bit := robotgo.CaptureScreen(1, 2, 40, 40)
 	fmt.Println("CaptureScreen...", bit)
-	fx, fy = robotgo.FindBit(bit)
+	fx, fy = robotgo.FindBitmap(bit)
 	fmt.Println("FindBitmap------", fx, fy)
-	fx, fy = robotgo.FindBit(bit, bitmap)
+	fx, fy = robotgo.FindBitmap(bit, bitmap)
 	fmt.Println("FindBitmap------", fx, fy)
 
 	// returns new bitmap object created from a portion of another
