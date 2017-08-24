@@ -34,6 +34,13 @@ func main() {
 	fx, fy := robotgo.FindBitmap(bitmap)
 	fmt.Println("FindBitmap------", fx, fy)
 
+	bit := robotgo.CaptureScreen(1, 2, 40, 40)
+	fmt.Println("CaptureScreen...", bit)
+	fx, fy = robotgo.FindBit(bit)
+	fmt.Println("FindBitmap------", fx, fy)
+	fx, fy = robotgo.FindBit(bit, bitmap)
+	fmt.Println("FindBitmap------", fx, fy)
+
 	// returns new bitmap object created from a portion of another
 	bitpos := robotgo.GetPortion(bitmap, 10, 10, 11, 10)
 	fmt.Println(bitpos)
