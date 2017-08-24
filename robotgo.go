@@ -55,7 +55,7 @@ import (
 )
 
 const (
-	version string = "v0.45.0.371, Mount Qomolangma!"
+	version string = "v0.45.0.374, Mount Qomolangma!"
 )
 
 // GetVersion get version
@@ -570,6 +570,32 @@ func SetKeyboardDelay(x int) {
 |  |_)  | |  |     |  |     |  |  |  |  /  _____  \  |  |
 |______/  |__|     |__|     |__|  |__| /__/     \__\ | _|
 */
+
+// FindBit find the bitmap
+func FindBit(args ...interface{}) (int, int) {
+	var (
+		bit       C.MMBitmapRef
+		sbit      C.MMBitmapRef
+		tolerance C.float
+	)
+
+	bit = args[0].(C.MMBitmapRef)
+	if len(args) > 1 {
+		sbit = args[1].(C.MMBitmapRef)
+	} else {
+		sbit = CaptureScreen()
+	}
+
+	if len(args) > 2 {
+		tolerance = C.float(args[2].(float32))
+	} else {
+		tolerance = 0.5
+	}
+
+	pos := C.bitmap_find_bitmap(bit, sbit, tolerance)
+	// fmt.Println("pos----", pos)
+	return int(pos.x), int(pos.y)
+}
 
 // FindBitmap find the bitmap
 func FindBitmap(args ...interface{}) (int, int) {

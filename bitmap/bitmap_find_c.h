@@ -86,8 +86,8 @@ static int findBitmapInRectAt(MMBitmapRef needle,
 		while (pointOffset.x <= scanWidth) {
 			/* Check offset in |haystack| for |needle|. */
 			if (needleAtOffset(needle, haystack, pointOffset, tolerance)) {
-				++pointOffset.x;
-				++pointOffset.y;
+				// ++pointOffset.x;
+				// ++pointOffset.y;
 				*point = pointOffset;
 				return 0;
 			}

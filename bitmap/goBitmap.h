@@ -58,6 +58,25 @@ MMBitmapRef bitmap_deepcopy(MMBitmapRef bitmap){
 	return bitmap == NULL ? NULL : copyMMBitmap(bitmap);
 }
 
+MMPoint bitmap_find_bitmap(MMBitmapRef bitmap, MMBitmapRef sbitmap, float tolerance){
+	MMPoint point = {-1, -1};
+	// printf("tolenrance=%f\n", tolerance);
+	if (!bitmap_ready(sbitmap) || !bitmap_ready(bitmap)) {
+		printf("bitmap is not ready yet!\n");
+		return point;
+	}
+
+	MMRect rect = MMBitmapGetBounds(sbitmap);
+	// printf("x=%d,y=%d,width=%d,height=%d\n", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+
+	if (findBitmapInRect(bitmap, sbitmap, &point,
+	                     rect, tolerance) == 0) {
+		return point;
+	}
+
+	return point;
+}
+
 MMPoint aFindBitmap(MMBitmapRef bit_map, MMRect rect){
 	// MMRect rect;
 	// rect.size.width = 10;
@@ -92,8 +111,6 @@ MMBitmapRef bitmap_open(char *path, uint16_t ttype){
 char *bitmap_save(MMBitmapRef bitmap, char *path, uint16_t type){
 	if (saveMMBitmapToFile(bitmap, path, (MMImageType) type) != 0) {
 		return "Could not save image to file.";
-	}else{
-		saveMMBitmapToFile(bitmap, path, (MMImageType) type);
 	}
 	//destroyMMBitmap(bitmap);
 	return "ok";
