@@ -22,6 +22,9 @@ func main() {
 	// Read the screen
 	////////////////////////////////////////////////////////////////////////////////
 
+	abitMap := robotgo.CaptureScreen()
+	fmt.Println("abitMap...", abitMap)
+
 	gbitMap := robotgo.BCaptureScreen()
 	fmt.Println("BCaptureScreen...", gbitMap.Width)
 	// fmt.Println("...", gbitmap.Width, gbitmap.BytesPerPixel)

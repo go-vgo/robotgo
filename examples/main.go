@@ -106,6 +106,9 @@ func screen() {
 	// Read the screen
 	////////////////////////////////////////////////////////////////////////////////
 
+	abitMap := robotgo.CaptureScreen()
+	fmt.Println("abitMap...", abitMap)
+
 	gbitMap := robotgo.BCaptureScreen()
 	fmt.Println("BCaptureScreen...", gbitMap.Width)
 	// fmt.Println("...", gbitmap.Width, gbitmap.BytesPerPixel)
@@ -169,6 +172,7 @@ func bitmap() {
 	// open image bitmap
 	openbit := robotgo.OpenBitmap("test.tif")
 	fmt.Println("openBitmap...", openbit)
+
 	fx, fy = robotgo.FindBitmap(openbit)
 	fmt.Println("FindBitmap------", fx, fy)
 }

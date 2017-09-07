@@ -55,7 +55,7 @@ import (
 )
 
 const (
-	version string = "v0.46.0.377, Pyrenees Mountains!"
+	version string = "v0.46.0.382, Pyrenees Mountains!"
 )
 
 // GetVersion get version
