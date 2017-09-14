@@ -668,7 +668,7 @@ func SaveBitmap(args ...interface{}) string {
 // TostringBitmap tostring bitmap
 func TostringBitmap(bit C.MMBitmapRef) *C.char {
 	// str_bit := C.aTostringBitmap(bit)
-	strBit := C.aTostringBitmap(bit)
+	strBit := C.tostring_Bitmap(bit)
 	// fmt.Println("...", str_bit)
 	// return str_bit
 	return strBit
@@ -682,7 +682,7 @@ func GetPortion(bit C.MMBitmapRef, x, y, w, h C.size_t) C.MMBitmapRef {
 	rect.size.width = w
 	rect.size.height = h
 
-	pos := C.aGetPortion(bit, rect)
+	pos := C.get_Portion(bit, rect)
 	return pos
 }
 

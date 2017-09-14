@@ -116,7 +116,7 @@ char *bitmap_save(MMBitmapRef bitmap, char *path, uint16_t type){
 	return "ok";
 }
 
-char *aTostringBitmap(MMBitmapRef bitmap){
+char *tostring_Bitmap(MMBitmapRef bitmap){
 	char *buf = NULL;
 	MMBMPStringError err;
 
@@ -125,7 +125,20 @@ char *aTostringBitmap(MMBitmapRef bitmap){
 	return buf;
 }
 
-MMBitmapRef aGetPortion(MMBitmapRef bit_map, MMRect rect){
+// out with size 200 is enough
+bool bitmap_str(MMBitmapRef bitmap, char *out){
+	if (!bitmap_ready(bitmap)) return false;
+	sprintf(out, "<Bitmap with resolution %lu%lu, \
+	                    %u bits per pixel, and %u bytes per pixel>",
+	                    (unsigned long)bitmap->width,
+	                    (unsigned long)bitmap->height,
+	                    bitmap->bitsPerPixel,
+	                    bitmap->bytesPerPixel);
+
+	return true;
+}
+
+MMBitmapRef get_Portion(MMBitmapRef bit_map, MMRect rect){
 	// MMRect rect;
 	MMBitmapRef portion = NULL;
 
