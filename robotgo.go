@@ -55,7 +55,7 @@ import (
 )
 
 const (
-	version string = "v0.46.0.382, Pyrenees Mountains!"
+	version string = "v0.46.0.385, Pyrenees Mountains!"
 )
 
 // GetVersion get version
@@ -734,6 +734,23 @@ func GetColor(bitmap C.MMBitmapRef, x, y int) C.MMRGBHex {
 	color := C.bitmap_get_color(bitmap, C.size_t(x), C.size_t(y))
 
 	return color
+}
+
+// FindColor find bitmap color
+func FindColor(bitmap C.MMBitmapRef, color C.MMRGBHex, args ...float32) (int, int) {
+	var tolerance C.float
+
+	if len(args) > 2 {
+		tolerance = C.float(args[2])
+	} else {
+		tolerance = 0.5
+	}
+
+	pos := C.bitmap_find_color(bitmap, color, tolerance)
+	x := int(pos.x)
+	y := int(pos.y)
+
+	return x, y
 }
 
 /*

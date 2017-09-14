@@ -158,3 +158,14 @@ MMRGBHex bitmap_get_color(MMBitmapRef bitmap, size_t x, size_t y){
 
 	return MMRGBHexAtPoint(bitmap, point.x, point.y);
 }
+
+MMPoint bitmap_find_color(MMBitmapRef bitmap, MMRGBHex color, float tolerance){
+	MMRect rect = MMBitmapGetBounds(bitmap);
+	MMPoint point = {-1, -1};
+
+	if (findColorInRect(bitmap, color, &point, rect, tolerance) == 0) {
+		return point;
+	}
+
+	return point;
+}
