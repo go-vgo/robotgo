@@ -729,6 +729,13 @@ func DeepCopyBit(bitmap C.MMBitmapRef) C.MMBitmapRef {
 	return bit
 }
 
+// GetColor get bitmap color
+func GetColor(bitmap C.MMBitmapRef, x, y int) C.MMRGBHex {
+	color := C.bitmap_get_color(bitmap, C.size_t(x), C.size_t(y))
+
+	return color
+}
+
 /*
  ___________    ____  _______ .__   __. .___________.
 |   ____\   \  /   / |   ____||  \ |  | |           |

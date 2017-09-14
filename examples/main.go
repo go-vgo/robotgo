@@ -140,6 +140,9 @@ func bitmap() {
 	bitmap := robotgo.CaptureScreen(100, 200, 30, 40)
 	fmt.Println("CaptureScreen...", bitmap)
 
+	color := robotgo.GetColor(bitmap, 1, 2)
+	fmt.Println("color...", color)
+
 	// searches for needle in bitmap
 	fx, fy := robotgo.FindBit(bitmap)
 	fmt.Println("FindBitmap------", fx, fy)

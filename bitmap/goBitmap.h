@@ -145,3 +145,16 @@ MMBitmapRef get_Portion(MMBitmapRef bit_map, MMRect rect){
 	portion = copyMMBitmapFromPortion(bit_map, rect);
 	return portion;
 }
+
+MMRGBHex bitmap_get_color(MMBitmapRef bitmap, size_t x, size_t y){
+	if (!bitmap_ready(bitmap)) return 0;
+
+	MMPoint point;
+	point = MMPointMake(x, y);
+
+	if (!MMBitmapPointInBounds(bitmap, point)) {
+		return 0;
+	}
+
+	return MMRGBHexAtPoint(bitmap, point.x, point.y);
+}
