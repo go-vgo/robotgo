@@ -142,6 +142,8 @@ func bitmap() {
 
 	color := robotgo.GetColor(bitmap, 1, 2)
 	fmt.Println("color...", color)
+	cx, cy := robotgo.FindColor(bitmap, color, 1.0)
+	fmt.Println("pos...", cx, cy)
 
 	// searches for needle in bitmap
 	fx, fy := robotgo.FindBit(bitmap)
