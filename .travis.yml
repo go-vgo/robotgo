@@ -6,19 +6,32 @@ go:
   - 1.9.x
   - tip
 
+
+addons:
+   apt:
+      packages:
+         - libx11-dev xorg-dev
+         - libxtst-dev libpng++-dev
+         - xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev
+         - libusb-dev
+         - libxkbcommon-dev
+         - xsel
+         - xclip
+         
+# script:
+#  - sudo apt-get update
+#  - sudo apt-get install libx11-dev
+#  - sudo apt-get install xorg-dev
+#  - sudo apt-get install libxtst-dev libpng++-dev 
+#  # Event: 
+#  - sudo apt-get install xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev
+#  - sudo apt-get install libxkbcommon-dev
+#  # Clipboard:
+#  - sudo apt-get install xsel
+#  - sudo apt-get install xclip
+#  - go test -v .
+
 before_install:
   - export PATH=$PATH:$HOME/gopath/bin
   - go get -t -v ./...
 
-script:
- - sudo apt-get update
- - sudo apt-get install libx11-dev
- - sudo apt-get install xorg-dev
- - sudo apt-get install libxtst-dev libpng++-dev 
- # Event: 
- - sudo apt-get install xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev
- - sudo apt-get install libxkbcommon-dev
- # Clipboard:
- - sudo apt-get install xsel
- - sudo apt-get install xclip
- - go test -v .
