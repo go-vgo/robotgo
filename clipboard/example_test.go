@@ -14,6 +14,7 @@ func Example() {
 	} else {
 		if text != "" {
 			fmt.Println(text)
+
 			// Output:
 			// 日本語
 		}

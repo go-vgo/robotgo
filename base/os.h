@@ -14,7 +14,7 @@
 #endif /* IS_MACOSX */
 
 #if !defined(IS_WINDOWS) && (defined(WIN32) || defined(_WIN32) || \
-                             defined(__WIN32__) || defined(__WINDOWS__))
+                             defined(__WIN32__) || defined(__WINDOWS__) || defined(__CYGWIN__))
 	#define IS_WINDOWS
 #endif /* IS_WINDOWS */
 
