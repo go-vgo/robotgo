@@ -7,18 +7,18 @@ package clipboard_test
 import (
 	"testing"
 
-	. "github.com/go-vgo/robotgo/clipboard"
+	"github.com/go-vgo/robotgo/clipboard"
 )
 
 // func TestCopyAndPaste(t *testing.T) {
 // 	expected := "日本語"
 
-// 	err := WriteAll(expected)
+// 	err := clipboard.WriteAll(expected)
 // 	if err != nil {
 // 		t.Fatal(err)
 // 	}
 
-// 	actual, err := ReadAll()
+// 	actual, err := clipboard.ReadAll()
 // 	if err != nil {
 // 		t.Fatal(err)
 // 	}
@@ -32,12 +32,12 @@ import (
 // 	expected1 := "French: éèêëàùœç"
 // 	expected2 := "Weird UTF-8: 💩☃"
 
-// 	err := WriteAll(expected1)
+// 	err := clipboard.WriteAll(expected1)
 // 	if err != nil {
 // 		t.Fatal(err)
 // 	}
 
-// 	actual1, err := ReadAll()
+// 	actual1, err := clipboard.ReadAll()
 // 	if err != nil {
 // 		t.Fatal(err)
 // 	}
@@ -45,12 +45,12 @@ import (
 // 		t.Errorf("want %s, got %s", expected1, actual1)
 // 	}
 
-// 	err = WriteAll(expected2)
+// 	err = clipboard.WriteAll(expected2)
 // 	if err != nil {
 // 		t.Fatal(err)
 // 	}
 
-// 	actual2, err := ReadAll()
+// 	actual2, err := clipboard.ReadAll()
 // 	if err != nil {
 // 		t.Fatal(err)
 // 	}
@@ -59,15 +59,15 @@ import (
 // 	}
 // }
 
-func BenchmarkReadAll(b *testing.B) {
+func Benchmarkclipboard.ReadAll(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		ReadAll()
+		clipboard.ReadAll()
 	}
 }
 
-func BenchmarkWriteAll(b *testing.B) {
+func Benchmarkclipboard.WriteAll(b *testing.B) {
 	text := "いろはにほへと"
 	for i := 0; i < b.N; i++ {
-		WriteAll(text)
+		clipboard.WriteAll(text)
 	}
 }

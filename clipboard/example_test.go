@@ -12,8 +12,10 @@ func Example() {
 	if err != nil {
 		fmt.Println(err)
 	} else {
-		fmt.Println(text)
-		// Output:
-		// 日本語
+		if text != "" {
+			fmt.Println(text)
+			// Output:
+			// 日本語
+		}
 	}
 }
