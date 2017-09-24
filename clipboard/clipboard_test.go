@@ -59,13 +59,13 @@ import (
 // 	}
 // }
 
-func Benchmarkclipboard.ReadAll(b *testing.B) {
+func BenchmarkReadAll(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		clipboard.ReadAll()
 	}
 }
 
-func Benchmarkclipboard.WriteAll(b *testing.B) {
+func BenchmarkWriteAll(b *testing.B) {
 	text := "いろはにほへと"
 	for i := 0; i < b.N; i++ {
 		clipboard.WriteAll(text)
