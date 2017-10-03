@@ -80,6 +80,7 @@
 ##### [FindName](#FindName)
 ##### [FindNames](#FindNames)
 ##### [FindIds](#FindIds)
+#### [ActivePID](#ActivePID)
 
 ### <h3 id="GetVersion">.GetVersion()</h3>
     Get robotgo version
@@ -701,4 +702,15 @@ func main() {
     name string  
 
 #### Return:
-    Returns []int32, error            
+    Returns []int32, error 
+
+
+### <h3 id="ActivePID">.ActivePID()</h3>
+
+    ActivePID window active by PID
+
+#### Arguments:
+    pid int32 
+
+#### Return:
+    none                  
