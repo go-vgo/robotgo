@@ -53,11 +53,6 @@ func aRobotgo() {
 	bitmap := robotgo.CaptureScreen(10, 20, 30, 40)
 	fmt.Println("...", bitmap)
 
-	fx, fy := robotgo.FindBitmap(bitmap)
-	fmt.Println("FindBitmap------", fx, fy)
-
-	robotgo.SaveBitmap(bitmap, "test.png", 1)
-
 	// robotgo.MouseClick()
 	robotgo.ScrollMouse(10, "up")
 }

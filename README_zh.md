@@ -35,30 +35,21 @@ QQ 群: 595877611
 ## Requirements:
 环境要求:
 
-在安装 RobotGo 之前, 请确保 Golang、GCC、zlib 和 libpng 被正确安装
-
-如果你不需要bitmap, 你可以切换到robot分支, 那里没有 zlib 和 libpng 依赖
+在安装 RobotGo 之前, 请确保 Golang、GCC 被正确安装
 
 ### ALL:  
 ```
 Golang
 GCC
-zlib & libpng (bitmap)
 ```
 #### For Mac OS X:
-    Xcode Command Line Tools
 ```
-brew install libpng
-brew install homebrew/dupes/zlib
+    Xcode Command Line Tools
 ```    
 #### For Windows:
 ```
 MinGW or other GCC
-
-zlib & libpng (bitmap 依赖)
 ```
-##### [Zlib & libpng Windows32 GCC 教程](https://github.com/go-vgo/Mingw32)
-##### [下载包含 zlib 和 libpng 的 64位 MinGW](https://github.com/go-vgo/Mingw)
 
 #### For everything else (Linux 等其他系统):
 ```
@@ -76,9 +67,7 @@ xcb, xkb, libxkbcommon
 sudo apt-get install gcc libc6-dev
 
 sudo apt-get install libx11-dev
-sudo apt-get install xorg-dev
-sudo apt-get install libxtst-dev libpng++-dev   
-
+sudo apt-get install xorg-dev  
 
 sudo apt-get install xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev
 sudo apt-get install libxkbcommon-dev
@@ -93,8 +82,6 @@ sudo apt-get install xclip
 ```yml
 sudo dnf install libxkbcommon-devel libXtst-devel libxkbcommon-x11-devel xorg-x11-xkb-utils-devel
 
-sudo dnf install libpng-devel
-
 sudo dnf install xsel
 sudo dnf install xclip
 ```
@@ -102,9 +89,7 @@ sudo dnf install xclip
 ```
 go get github.com/go-vgo/robotgo
 ```
-  It's that easy!
-
-png.h: No such file or directory? Please see [issues/47](https://github.com/go-vgo/robotgo/issues/47).  
+  It's that easy! 
 
 ## Update:
 ```
@@ -175,7 +160,7 @@ func main() {
 } 
 ```
 
-#### [位图](https://github.com/go-vgo/robotgo/blob/master/examples/bitmap/mian.go)
+<!-- #### [位图](https://github.com/go-vgo/robotgo/blob/master/examples/bitmap/mian.go)
 
 ```Go
 package main
@@ -195,7 +180,7 @@ func main() {
 
   robotgo.SaveBitmap(bitmap, "test.png")
 } 
-```
+``` -->
 
 #### [事件](https://github.com/go-vgo/robotgo/blob/master/examples/event/main.go)
 
