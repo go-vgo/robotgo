@@ -108,6 +108,19 @@ MMBitmapRef bitmap_open(char *path, uint16_t ttype){
 
 }
 
+MMBitmapRef bitmap_from_string(const char *str){
+	size_t len = strlen(str);
+
+	MMBitmapRef bitmap;
+	MMBMPStringError err;
+
+	if ((bitmap = createMMBitmapFromString((unsigned char*)str, len, &err)) == NULL) {
+		return NULL;
+	}
+
+	return bitmap;
+}
+
 char *bitmap_save(MMBitmapRef bitmap, char *path, uint16_t type){
 	if (saveMMBitmapToFile(bitmap, path, (MMImageType) type) != 0) {
 		return "Could not save image to file.";

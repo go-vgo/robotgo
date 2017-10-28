@@ -55,7 +55,7 @@ import (
 )
 
 const (
-	version string = "v0.46.0.400, Pyrenees Mountains!"
+	version string = "v0.46.0.401, Pyrenees Mountains!"
 )
 
 // GetVersion get version
@@ -636,6 +636,14 @@ func OpenBitmap(args ...interface{}) C.MMBitmapRef {
 	// fmt.Println("opening...", bit)
 	return bit
 	// defer C.free(unsafe.Pointer(path))
+}
+
+// BitmapStr bitmap from string
+func BitmapStr(str string) C.MMBitmapRef {
+	cs := C.CString(str)
+	bit := C.bitmap_from_string(cs)
+	defer C.free(unsafe.Pointer(cs))
+	return bit
 }
 
 // SaveBitmap save the bitmap
