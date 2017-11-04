@@ -77,6 +77,27 @@ MMPoint bitmap_find_bitmap(MMBitmapRef bitmap, MMBitmapRef sbitmap, float tolera
 	return point;
 }
 
+MMPoint *find_every_bitmap(MMBitmapRef bitmap, MMBitmapRef sbitmap, float tolerance, MMPoint *list){
+	if (!bitmap_ready(bitmap) || !bitmap_ready(sbitmap)) return NULL;
+
+	MMPoint point;
+	MMPointArrayRef pointArray;
+	MMRect rect = MMBitmapGetBounds(bitmap);
+
+	if (findBitmapInRect(bitmap, sbitmap, &point,
+	                     rect, tolerance) == 0) {
+		return NULL;
+	}
+
+	pointArray = findAllBitmapInRect(bitmap, sbitmap, rect, tolerance);
+	if (pointArray == NULL) return NULL;
+
+	memcpy(list, pointArray->array, sizeof(MMPoint) * pointArray->count);
+	destroyMMPointArray(pointArray);
+
+	return list;
+}
+
 MMPoint aFindBitmap(MMBitmapRef bit_map, MMRect rect){
 	// MMRect rect;
 	// rect.size.width = 10;

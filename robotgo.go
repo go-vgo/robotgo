@@ -55,7 +55,7 @@ import (
 )
 
 const (
-	version string = "v0.46.0.401, Pyrenees Mountains!"
+	version string = "v0.46.0.402, Pyrenees Mountains!"
 )
 
 // GetVersion get version
@@ -593,6 +593,46 @@ func FindBitmap(args ...interface{}) (int, int) {
 	}
 
 	pos := C.bitmap_find_bitmap(bit, sbit, tolerance)
+	// fmt.Println("pos----", pos)
+	return int(pos.x), int(pos.y)
+}
+
+// FindEveryBitmap find the every bitmap
+func FindEveryBitmap(args ...interface{}) (int, int) {
+	var (
+		bit       C.MMBitmapRef
+		sbit      C.MMBitmapRef
+		tolerance C.float
+		lpos      C.MMPoint
+	)
+
+	bit = args[0].(C.MMBitmapRef)
+	if len(args) > 1 {
+		sbit = args[1].(C.MMBitmapRef)
+	} else {
+		sbit = CaptureScreen()
+	}
+
+	if len(args) > 2 {
+		tolerance = C.float(args[2].(float32))
+	} else {
+		tolerance = 0.5
+	}
+
+	if len(args) > 3 {
+		lpos.x = C.size_t(args[3].(int))
+		lpos.y = 0
+	} else {
+		lpos.x = 0
+		lpos.y = 0
+	}
+
+	if len(args) > 4 {
+		lpos.x = C.size_t(args[3].(int))
+		lpos.y = C.size_t(args[4].(int))
+	}
+
+	pos := C.find_every_bitmap(bit, sbit, tolerance, &lpos)
 	// fmt.Println("pos----", pos)
 	return int(pos.x), int(pos.y)
 }
