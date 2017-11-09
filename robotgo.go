@@ -142,12 +142,51 @@ func CaptureScreen(args ...int) C.MMBitmapRef {
 		h = displaySize.height
 	})
 
-	bit := C.aCaptureScreen(x, y, w, h)
+	bit := C.capture_screen(x, y, w, h)
 	// fmt.Println("...", bit.width)
 	return bit
 }
 
-// BCaptureScreen capture the screen and return bitmap(go struct)
+// GoCaptureScreen capture the screen and return bitmap(go struct)
+func GoCaptureScreen(args ...int) Bitmap {
+	var (
+		x C.size_t
+		y C.size_t
+		w C.size_t
+		h C.size_t
+	)
+
+	Try(func() {
+		x = C.size_t(args[0])
+		y = C.size_t(args[1])
+		w = C.size_t(args[2])
+		h = C.size_t(args[3])
+	}, func(e interface{}) {
+		// fmt.Println("err:::", e)
+		x = 0
+		y = 0
+		//Get screen size.
+		var displaySize C.MMSize
+		displaySize = C.getMainDisplaySize()
+		w = displaySize.width
+		h = displaySize.height
+	})
+
+	bit := C.capture_screen(x, y, w, h)
+	// fmt.Println("...", bit)
+	bitmap := Bitmap{
+		ImageBuffer:   (*uint8)(bit.imageBuffer),
+		Width:         int(bit.width),
+		Height:        int(bit.height),
+		Bytewidth:     int(bit.bytewidth),
+		BitsPerPixel:  uint8(bit.bitsPerPixel),
+		BytesPerPixel: uint8(bit.bytesPerPixel),
+	}
+
+	return bitmap
+}
+
+// BCaptureScreen capture the screen and return bitmap(go struct), Wno-deprecated
 func BCaptureScreen(args ...int) Bitmap {
 	var (
 		x C.size_t
@@ -172,7 +211,7 @@ func BCaptureScreen(args ...int) Bitmap {
 		h = displaySize.height
 	})
 
-	bit := C.aCaptureScreen(x, y, w, h)
+	bit := C.capture_screen(x, y, w, h)
 	// fmt.Println("...", bit)
 	bitmap := Bitmap{
 		ImageBuffer:   (*uint8)(bit.imageBuffer),
@@ -637,7 +676,7 @@ func FindEveryBitmap(args ...interface{}) (int, int) {
 	return int(pos.x), int(pos.y)
 }
 
-// FindBit find the bitmap
+// FindBit find the bitmap, Wno-deprecated
 func FindBit(args ...interface{}) (int, int) {
 	var bit C.MMBitmapRef
 	bit = args[0].(C.MMBitmapRef)
