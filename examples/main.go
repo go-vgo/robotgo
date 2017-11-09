@@ -109,8 +109,8 @@ func screen() {
 	abitMap := robotgo.CaptureScreen()
 	fmt.Println("abitMap...", abitMap)
 
-	gbitMap := robotgo.BCaptureScreen()
-	fmt.Println("BCaptureScreen...", gbitMap.Width)
+	gbitMap := robotgo.GoCaptureScreen()
+	fmt.Println("GoCaptureScreen...", gbitMap.Width)
 	// fmt.Println("...", gbitmap.Width, gbitmap.BytesPerPixel)
 
 	// gets the screen width and height
