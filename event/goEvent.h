@@ -17,81 +17,9 @@
 	#include <config.h>
 #endif
 
-#include "../base/os.h"
+#include "pub.h"
 
-#if defined(IS_MACOSX)
-	#include "hook/darwin/input_c.h"
-	#include "hook/darwin/hook_c.h"
-	#include "hook/darwin/event_c.h"
-	#include "hook/darwin/properties_c.h"
-#elif defined(USE_X11)
-	//#define USE_XKBCOMMON 0
-	#include "hook/x11/input_c.h"
-	#include "hook/x11/hook_c.h"
-	#include "hook/x11/event_c.h"
-	#include "hook/x11/properties_c.h"
-#elif defined(IS_WINDOWS)
-	#include "hook/windows/input_c.h"
-	#include "hook/windows/hook_c.h"
-	#include "hook/windows/event_c.h"
-	#include "hook/windows/properties_c.h"
-#endif
 
-#include <inttypes.h>
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <string.h>
-#include "hook/iohook.h"
-
-int aStop();
-int aEvent(char *aevent);
-
-bool loggerProc(unsigned int level, const char *format, ...) {
-	bool status = false;
-
-	va_list args;
-	switch (level) {
-		#ifdef USE_DEBUG
-		case LOG_LEVEL_DEBUG:
-		case LOG_LEVEL_INFO:
-			va_start(args, format);
-			status = vfprintf(stdout, format, args) >= 0;
-			va_end(args);
-			break;
-		#endif
-
-		case LOG_LEVEL_WARN:
-		case LOG_LEVEL_ERROR:
-			va_start(args, format);
-			status = vfprintf(stderr, format, args) >= 0;
-			va_end(args);
-			break;
-	}
-
-	return status;
-}
-
-// NOTE: The following callback executes on the same thread that hook_run() is called
-// from.
-
-struct _MEvent {
-	uint8_t id;
-	size_t mask;
-	uint16_t keychar;
-	// char *keychar;
-	size_t x;
-	uint8_t y;
-	uint8_t bytesPerPixel;
-};
-
-typedef struct _MEvent MEvent;
-// typedef MMBitmap *MMBitmapRef;
-char *cevent;
-// uint16_t *cevent;
-int cstatus = 1;
-
-MEvent mEvent;
 void dispatch_proc(iohook_event * const event) {
 	char buffer[256] = { 0 };
 	size_t length = snprintf(buffer, sizeof(buffer),
