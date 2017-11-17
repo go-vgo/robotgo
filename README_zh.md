@@ -49,7 +49,7 @@ zlib & libpng (bitmap)
     Xcode Command Line Tools
 ```
 brew install libpng
-brew install homebrew/dupes/zlib
+brew install zlib
 ```    
 #### For Windows:
 ```
