@@ -20,12 +20,14 @@ struct _MData{
 	Window		XWin;		// Handle to an X11 window
 #elif defined(IS_WINDOWS)
 	HWND			HWnd;		// Handle to a window HWND
+	TCHAR 	Title[512];
 #endif
 };
 
 typedef struct _MData MData;
 
 MData mData;
+
 
 bool setHandle(uintptr handle);
 bool IsValid();
@@ -857,9 +859,7 @@ char *GetTitle(){
 
 #elif defined(IS_WINDOWS)
 
-	TCHAR name[512];
-	return GetWindowText
-		(mData.HWnd, name, 512) > 0 ? name : "null";
+	return GetWindowText(mData.HWnd, mData.Title, 512) > 0 ? mData.Title : "null";
 	// return GetWindowText
 	// 	(mData.HWnd, name, 512) > 0 ?
 	// 	_UTF8Encode (name) : "null";
