@@ -1,7 +1,18 @@
 #include "png_io.h"
 #include "os.h"
 // #include "libpng/png.c"
-#include <png.h>
+#if defined(IS_MACOSX)
+	#include <png.h>
+#elif defined(USE_X11)
+	#include <png.h>
+#elif defined(IS_WINDOWS)
+	#if defined (__x86_64__)
+		#include "../cdeps/win64/png.h"
+	#else
+		#include "../cdeps/win32/png.h"
+	#endif
+#endif
+
 #include <stdio.h> /* fopen() */
 #include <stdlib.h> /* malloc/realloc */
 #include <assert.h>
