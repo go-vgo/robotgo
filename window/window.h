@@ -45,7 +45,7 @@ void aWindow();
 
 	static AXUIElementRef GetUIElement (CGWindowID win){
 		intptr pid = 0;
-		// double_t pid=0;
+		// double_t pid = 0;
 
 		// Create array storing window
 		CGWindowID window[1] = { win };
@@ -301,12 +301,12 @@ void aWindow(uintptr handle){
 bool IsValid (){
 	aWindow(ahandle);
 	if(!IsAxEnabled(true))printf("%s\n", "Window:Accessibility API is disabled!\nFailed to enable access for assistive devices.");
-	MData actdata=GetActive();
+	MData actdata = GetActive();
 
 #if defined(IS_MACOSX)
 
-	mData.CgID=actdata.CgID;
-	mData.AxID=actdata.AxID;
+	mData.CgID = actdata.CgID;
+	mData.AxID = actdata.AxID;
 
 	if (mData.CgID == 0 || mData.AxID == 0)return false;
 
@@ -340,7 +340,7 @@ bool IsValid (){
 	XFree (result); return true;
 
 #elif defined(IS_WINDOWS)
-	mData.HWnd=actdata.HWnd;
+	mData.HWnd = actdata.HWnd;
 
 	if (mData.HWnd == 0)
 		return false;
@@ -825,7 +825,7 @@ char *GetTitle(){
 		return s;
 	}
 
-	return "null";
+	return "";
 
 #elif defined(USE_X11)
 
@@ -851,15 +851,16 @@ char *GetTitle(){
 	// Check result value
 	if (result != NULL){
 		// Convert result to a string
-		char *name =(char*) result;
+		char *name = (char*) result;
 		XFree (result); return name;
 	}
 
-	return "null";
+	return "";
 
 #elif defined(IS_WINDOWS)
 
-	return GetWindowText(mData.HWnd, mData.Title, 512) > 0 ? mData.Title : "null";
+	return GetWindowText
+		(mData.HWnd, mData.Title, 512) > 0 ? mData.Title : "";
 	// return GetWindowText
 	// 	(mData.HWnd, name, 512) > 0 ?
 	// 	_UTF8Encode (name) : "null";
