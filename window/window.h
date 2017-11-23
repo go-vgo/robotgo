@@ -322,8 +322,8 @@ bool IsValid (){
 	return false;
 
 #elif defined(USE_X11)
-	mData.XWin=actdata.XWin;
-	if (mData.XWin == 0)return false;
+	mData.XWin = actdata.XWin;
+	if (mData.XWin == 0) return false;
 
 	Display *rDisplay = XOpenDisplay(NULL);
 	// Check for a valid X-Window display
@@ -732,8 +732,8 @@ MData GetActive (void){
 		HWND handle;
 		handle = GetForegroundWindow();
 		if (handle != NULL){
-			// mData.HWnd=(uintptr) handle;
-			result.HWnd= (HWND)handle;
+			// mData.HWnd = (uintptr) handle;
+			result.HWnd = (HWND)handle;
 			return result;
 		}
 		Sleep (20);
@@ -767,7 +767,7 @@ void SetTopMost (bool state){
 #endif
 }
 
-//CloseWindow
+// CloseWindow
 void CloseWin(void){
 	// Check window validity
 	if (!IsValid()) return;
@@ -819,7 +819,7 @@ char *GetTitle(){
 		CFStringGetCString (data, conv,
 			512, kCFStringEncodingUTF8);
 		CFRelease (data);
-		char* s=(char*)calloc(100,sizeof(char*));
+		char* s = (char*)calloc(100,sizeof(char*));
     	if(s)strcpy(s,conv);
 		// return (char *)&conv;
 		return s;
@@ -839,10 +839,10 @@ char *GetTitle(){
 	// Check result value
 	if (result != NULL){
 		// Convert result to a string
-		char *name=(char*) result;
+		char *name = (char*) result;
 		XFree (result);
 
-		if (name!=NULL)return name;
+		if (name != NULL) return name;
 	}
 
 	// Get window title (ASCII)

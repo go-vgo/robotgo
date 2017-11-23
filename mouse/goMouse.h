@@ -11,7 +11,7 @@
 #include "../base/types.h"
 #include "mouse_c.h"
 
-//Global delays.
+// Global delays.
 int mouseDelay = 10;
 // int keyboardDelay = 10;
 
@@ -59,7 +59,7 @@ int aDragMouse(size_t x, size_t y){
 	dragMouse(point, button);
 	microsleep(mouseDelay);
 
-	// printf("%s\n","gyp-----");
+	// printf("%s\n", "gyp-----");
 	return 0;
 }
 
@@ -76,7 +76,7 @@ int aMoveMouseSmooth(size_t x, size_t y, double lowSpeed, double highSpeed){
 MMPoint aGetMousePos(){
 	MMPoint pos = getMousePos();
 
-	//Return object with .x and .y.
+	// Return object with .x and .y.
 	// printf("%zu\n%zu\n", pos.x, pos.y );
 	return pos;
 }
@@ -113,7 +113,7 @@ int aMouseToggle(char* d, MMMouseButton button){
 }
 
 int aSetMouseDelay(size_t val){
-	// int val=10;
+	// int val = 10;
 	mouseDelay = val;
 
 	return 0;

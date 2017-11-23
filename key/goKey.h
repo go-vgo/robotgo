@@ -164,7 +164,7 @@ int CheckKeyFlags(char* f, MMKeyFlags* flags)
 	return 0;
 }
 
-int GetFlagsFromValue(char* value[], MMKeyFlags* flags,int num){
+int GetFlagsFromValue(char* value[], MMKeyFlags* flags, int num){
 	if (!flags) {return -1;}
 		int i;
 		for ( i= 0; i <num; i++){
@@ -185,7 +185,7 @@ char* aKey_Tap(char *k, char* keyarr[], int num){
 	MMKeyCode key;
 
 			switch(GetFlagsFromValue(keyarr, &flags, num)){
-			// switch (CheckKeyFlags(akey,&flags)){
+			// switch (CheckKeyFlags(akey, &flags)){
 				case -1:
 					return "Null pointer in key flag.";
 					break;
