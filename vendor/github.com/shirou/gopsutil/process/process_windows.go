@@ -3,6 +3,7 @@
 package process
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"syscall"
@@ -94,7 +95,7 @@ func init() {
 
 func Pids() ([]int32, error) {
 	// inspired by https://gist.github.com/henkman/3083408
-    // and https://github.com/giampaolo/psutil/blob/1c3a15f637521ba5c0031283da39c733fda53e4c/psutil/arch/windows/process_info.c#L315-L329
+	// and https://github.com/giampaolo/psutil/blob/1c3a15f637521ba5c0031283da39c733fda53e4c/psutil/arch/windows/process_info.c#L315-L329
 	var ret []int32
 	var read uint32 = 0
 	var psSize uint32 = 1024
@@ -119,20 +120,21 @@ func Pids() ([]int32, error) {
 }
 
 func (p *Process) Ppid() (int32, error) {
-	dst, err := GetWin32Proc(p.Pid)
+	ppid, _, _, err := getFromSnapProcess(p.Pid)
 	if err != nil {
 		return 0, err
 	}
-
-	return int32(dst[0].ParentProcessID), nil
+	return ppid, nil
 }
 
 func GetWin32Proc(pid int32) ([]Win32_Process, error) {
 	var dst []Win32_Process
 	query := fmt.Sprintf("WHERE ProcessId = %d", pid)
 	q := wmi.CreateQuery(&dst, query)
-
-	if err := wmi.Query(q, &dst); err != nil {
+	ctx, cancel := context.WithTimeout(context.Background(), common.Timeout)
+	defer cancel()
+	err := common.WMIQueryWithContext(ctx, q, &dst)
+	if err != nil {
 		return []Win32_Process{}, fmt.Errorf("could not get win32Proc: %s", err)
 	}
 
@@ -144,11 +146,11 @@ func GetWin32Proc(pid int32) ([]Win32_Process, error) {
 }
 
 func (p *Process) Name() (string, error) {
-	dst, err := GetWin32Proc(p.Pid)
+	_, _, name, err := getFromSnapProcess(p.Pid)
 	if err != nil {
 		return "", fmt.Errorf("could not get Name: %s", err)
 	}
-	return dst[0].Name, nil
+	return name, nil
 }
 
 func (p *Process) Exe() (string, error) {
@@ -334,7 +336,9 @@ func (p *Process) MemoryInfoEx() (*MemoryInfoExStat, error) {
 func (p *Process) Children() ([]*Process, error) {
 	var dst []Win32_Process
 	query := wmi.CreateQuery(&dst, fmt.Sprintf("Where ParentProcessId = %d", p.Pid))
-	err := wmi.Query(query, &dst)
+	ctx, cancel := context.WithTimeout(context.Background(), common.Timeout)
+	defer cancel()
+	err := common.WMIQueryWithContext(ctx, query, &dst)
 	if err != nil {
 		return nil, err
 	}
@@ -406,7 +410,7 @@ func (p *Process) Kill() error {
 	return common.ErrNotImplementedError
 }
 
-func (p *Process) getFromSnapProcess(pid int32) (int32, int32, string, error) {
+func getFromSnapProcess(pid int32) (int32, int32, string, error) {
 	snap := w32.CreateToolhelp32Snapshot(w32.TH32CS_SNAPPROCESS, uint32(pid))
 	if snap == 0 {
 		return 0, 0, "", windows.GetLastError()
@@ -434,19 +438,14 @@ func (p *Process) getFromSnapProcess(pid int32) (int32, int32, string, error) {
 
 // Get processes
 func Processes() ([]*Process, error) {
-	var dst []Win32_Process
-	q := wmi.CreateQuery(&dst, "")
-	err := wmi.Query(q, &dst)
+	pids, err := Pids()
 	if err != nil {
-		return []*Process{}, err
-	}
-	if len(dst) == 0 {
-		return []*Process{}, fmt.Errorf("could not get Process")
+		return []*Process{}, fmt.Errorf("could not get Processes %s", err)
 	}
 
 	results := []*Process{}
-	for _, proc := range dst {
-		p, err := NewProcess(int32(proc.ProcessID))
+	for _, pid := range pids {
+		p, err := NewProcess(int32(pid))
 		if err != nil {
 			continue
 		}
