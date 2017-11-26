@@ -57,10 +57,10 @@
 			"revisionTime": "2017-11-12T16:40:41Z"
 		},
 		{
-			"checksumSHA1": "p9EXxuL/vV13YRPfgTBA3B/68Vo=",
+			"checksumSHA1": "jWpwWWcywJPNhKTYxi4RXds+amQ=",
 			"path": "github.com/shirou/gopsutil/internal/common",
-			"revision": "a8bc26299477e53c4ca89f7ec60160a74d4c0890",
-			"revisionTime": "2017-11-12T16:40:41Z"
+			"revision": "bfe3c2e8f406bf352bc8df81f98c752224867349",
+			"revisionTime": "2017-11-21T12:01:14Z"
 		},
 		{
 			"checksumSHA1": "UuwHornIODuEq7fYnsZwdVgERLk=",
