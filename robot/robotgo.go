@@ -48,6 +48,7 @@ import "C"
 
 import (
 	// "fmt"
+	"os"
 	"reflect"
 	"runtime"
 	"strings"
@@ -59,7 +60,7 @@ import (
 )
 
 const (
-	version string = "v0.46.6.407, Pyrenees Mountains!"
+	version string = "v0.46.6.428, Pyrenees Mountains!"
 )
 
 // GetVersion get version
@@ -899,4 +900,10 @@ func FindIds(name string) ([]int32, error) {
 // ActivePID window active by PID
 func ActivePID(pid int32) {
 	C.active_PID(C.uintptr(pid))
+}
+
+// Kill kill the process by PID
+func Kill(pid int) error {
+	ps := os.Process{Pid: pid}
+	return ps.Kill()
 }
