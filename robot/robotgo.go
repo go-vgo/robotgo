@@ -60,22 +60,11 @@ import (
 )
 
 const (
-	version string = "v0.46.6.428, Pyrenees Mountains!"
+	version string = "v0.46.6.429, Pyrenees Mountains!"
 )
 
-// GetVersion get version
-func GetVersion() string {
-	return version
-}
-
-/*
-      _______.  ______ .______       _______  _______ .__   __.
-    /       | /      ||   _  \     |   ____||   ____||  \ |  |
-   |   (----`|  ,----'|  |_)  |    |  |__   |  |__   |   \|  |
-    \   \    |  |     |      /     |   __|  |   __|  |  . `  |
-.----)   |   |  `----.|  |\  \----.|  |____ |  |____ |  |\   |
-|_______/     \______|| _| `._____||_______||_______||__| \__|
-*/
+// Map a map
+type Map map[string]interface{}
 
 // Bitmap is Bitmap struct
 type Bitmap struct {
@@ -86,6 +75,36 @@ type Bitmap struct {
 	BitsPerPixel  uint8
 	BytesPerPixel uint8
 }
+
+// MPoint is MPoint struct
+type MPoint struct {
+	x int
+	y int
+}
+
+// GetVersion get version
+func GetVersion() string {
+	return version
+}
+
+// Try handler(err)
+func Try(fun func(), handler func(interface{})) {
+	defer func() {
+		if err := recover(); err != nil {
+			handler(err)
+		}
+	}()
+	fun()
+}
+
+/*
+      _______.  ______ .______       _______  _______ .__   __.
+    /       | /      ||   _  \     |   ____||   ____||  \ |  |
+   |   (----`|  ,----'|  |_)  |    |  |__   |  |__   |   \|  |
+    \   \    |  |     |      /     |   __|  |   __|  |  . `  |
+.----)   |   |  `----.|  |\  \----.|  |____ |  |____ |  |\   |
+|_______/     \______|| _| `._____||_______||_______||__| \__|
+*/
 
 // GetPixelColor get pixel color
 func GetPixelColor(x, y int) string {
@@ -239,12 +258,6 @@ func BCaptureScreen(args ...int) Bitmap {
 |__|  |__|  \______/   \______/  |_______/    |_______|
 
 */
-
-// MPoint is MPoint struct
-type MPoint struct {
-	x int
-	y int
-}
 
 // MoveMouse move the mouse
 func MoveMouse(x, y int) {
@@ -434,16 +447,6 @@ func ScrollMouse(x int, y string) {
 
 */
 
-// Try handler(err)
-func Try(fun func(), handler func(interface{})) {
-	defer func() {
-		if err := recover(); err != nil {
-			handler(err)
-		}
-	}()
-	fun()
-}
-
 // KeyTap tap the keyboard;
 //
 // See keys:
@@ -625,9 +628,6 @@ func SetKeyboardDelay(x int) {
 |  |____   \    /    |  |____ |  |\   |     |  |
 |_______|   \__/     |_______||__| \__|     |__|
 */
-
-// Map a map
-type Map map[string]interface{}
 
 // AddEvent add event listener
 func AddEvent(aeve string) int {

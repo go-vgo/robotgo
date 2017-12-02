@@ -51,6 +51,7 @@ import "C"
 
 import (
 	// "fmt"
+
 	"os"
 	"reflect"
 	"runtime"
@@ -63,22 +64,15 @@ import (
 )
 
 const (
-	version string = "v0.46.6.428, Pyrenees Mountains!"
+	version string = "v0.46.6.429, Pyrenees Mountains!"
 )
 
-// GetVersion get version
-func GetVersion() string {
-	return version
-}
-
-/*
-      _______.  ______ .______       _______  _______ .__   __.
-    /       | /      ||   _  \     |   ____||   ____||  \ |  |
-   |   (----`|  ,----'|  |_)  |    |  |__   |  |__   |   \|  |
-    \   \    |  |     |      /     |   __|  |   __|  |  . `  |
-.----)   |   |  `----.|  |\  \----.|  |____ |  |____ |  |\   |
-|_______/     \______|| _| `._____||_______||_______||__| \__|
-*/
+type (
+	// Map a map
+	Map map[string]interface{}
+	// CHex c rgb Hex type
+	CHex C.MMRGBHex
+)
 
 // Bitmap is Bitmap struct
 type Bitmap struct {
@@ -89,6 +83,36 @@ type Bitmap struct {
 	BitsPerPixel  uint8
 	BytesPerPixel uint8
 }
+
+// MPoint is MPoint struct
+type MPoint struct {
+	x int
+	y int
+}
+
+// GetVersion get version
+func GetVersion() string {
+	return version
+}
+
+// Try handler(err)
+func Try(fun func(), handler func(interface{})) {
+	defer func() {
+		if err := recover(); err != nil {
+			handler(err)
+		}
+	}()
+	fun()
+}
+
+/*
+      _______.  ______ .______       _______  _______ .__   __.
+    /       | /      ||   _  \     |   ____||   ____||  \ |  |
+   |   (----`|  ,----'|  |_)  |    |  |__   |  |__   |   \|  |
+    \   \    |  |     |      /     |   __|  |   __|  |  . `  |
+.----)   |   |  `----.|  |\  \----.|  |____ |  |____ |  |\   |
+|_______/     \______|| _| `._____||_______||_______||__| \__|
+*/
 
 // GetPixelColor get pixel color
 func GetPixelColor(x, y int) string {
@@ -242,12 +266,6 @@ func BCaptureScreen(args ...int) Bitmap {
 |__|  |__|  \______/   \______/  |_______/    |_______|
 
 */
-
-// MPoint is MPoint struct
-type MPoint struct {
-	x int
-	y int
-}
 
 // MoveMouse move the mouse
 func MoveMouse(x, y int) {
@@ -436,16 +454,6 @@ func ScrollMouse(x int, y string) {
 |__|\__\ |_______|   |__|     |______/   \______/  /__/     \__\ | _| `._____||_______/
 
 */
-
-// Try handler(err)
-func Try(fun func(), handler func(interface{})) {
-	defer func() {
-		if err := recover(); err != nil {
-			handler(err)
-		}
-	}()
-	fun()
-}
 
 // KeyTap tap the keyboard;
 //
@@ -832,7 +840,7 @@ func GetColor(bitmap C.MMBitmapRef, x, y int) C.MMRGBHex {
 }
 
 // FindColor find bitmap color
-func FindColor(bitmap C.MMBitmapRef, color C.MMRGBHex, args ...float32) (int, int) {
+func FindColor(bitmap C.MMBitmapRef, color CHex, args ...float32) (int, int) {
 	var tolerance C.float
 
 	if len(args) > 2 {
@@ -841,11 +849,18 @@ func FindColor(bitmap C.MMBitmapRef, color C.MMRGBHex, args ...float32) (int, in
 		tolerance = 0.5
 	}
 
-	pos := C.bitmap_find_color(bitmap, color, tolerance)
+	pos := C.bitmap_find_color(bitmap, C.MMRGBHex(color), tolerance)
 	x := int(pos.x)
 	y := int(pos.y)
 
 	return x, y
+}
+
+// FindColorCS findcolor by CaptureScreen
+func FindColorCS(x, y, w, h int, color CHex) (int, int) {
+	bitmap := CaptureScreen(x, y, w, h)
+	rx, ry := FindColor(bitmap, color)
+	return rx, ry
 }
 
 /*
@@ -856,9 +871,6 @@ func FindColor(bitmap C.MMBitmapRef, color C.MMRGBHex, args ...float32) (int, in
 |  |____   \    /    |  |____ |  |\   |     |  |
 |_______|   \__/     |_______||__| \__|     |__|
 */
-
-// Map a map
-type Map map[string]interface{}
 
 // AddEvent add event listener
 func AddEvent(aeve string) int {
