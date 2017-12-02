@@ -146,7 +146,11 @@ func bitmap() {
 
 	color := robotgo.GetColor(bitmap, 1, 2)
 	fmt.Println("color...", color)
-	cx, cy := robotgo.FindColor(bitmap, color, 1.0)
+	cx, cy := robotgo.FindColor(bitmap, robotgo.CHex(color), 1.0)
+	fmt.Println("pos...", cx, cy)
+	cx, cy = robotgo.FindColor(bitmap, 0xAADCDC)
+	fmt.Println("pos...", cx, cy)
+	cx, cy = robotgo.FindColorCS(388, 179, 300, 300, 0xAADCDC)
 	fmt.Println("pos...", cx, cy)
 
 	bit := robotgo.CaptureScreen(1, 2, 40, 40)

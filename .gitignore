@@ -2,6 +2,10 @@
 .DS_Store
 .vscode
 .idea
+
+examples/bitmap/test.png
+examples/bitmap/test.tif
+examples/bitmap/test31.tif
 test/test.png
 
 # Debug files
