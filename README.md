@@ -42,8 +42,8 @@ Now, Please make sure Golang, GCC is installed correctly before installing Robot
 ### ALL: 
 ``` 
 Golang
+
 GCC
-zlib & libpng (bitmap)
 ```
 #### For Mac OS X:
 ```
