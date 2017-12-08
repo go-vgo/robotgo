@@ -54,12 +54,7 @@ brew install zlib
 #### For Windows:
 ```
 MinGW or other GCC
-
-zlib & libpng (bitmap 依赖)
 ```
-##### [Windows GCC 安装 Zlib & libpng 教程](https://github.com/go-vgo/Mingw32)
-##### [下载包含 zlib 和 libpng 的 64位 MinGW](https://github.com/go-vgo/Mingw)
-
 #### For everything else (Linux 等其他系统):
 ```
 GCC

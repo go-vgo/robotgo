@@ -56,13 +56,7 @@ brew install zlib
 #### For Windows:
 ```
 MinGW or other GCC
-
-zlib & libpng (bitmap need it.)
 ```
-##### [Windows GCC installation Zlib & libpng tutorial](https://github.com/go-vgo/Mingw32)
-
-##### [Download include zlib & libpng Windows64 GCC](https://github.com/go-vgo/Mingw)
-
 #### For everything else:
 ```
 GCC
