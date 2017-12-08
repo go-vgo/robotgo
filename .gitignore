@@ -36,11 +36,13 @@ _testmain.go
 
 # Libraries
 *.lib
-!cdeps/win32/libpng.lib
-!cdeps/win32/zlib.lib
-!cdeps/win64/libpng.lib
-!cdeps/win64/zlib.lib
+# !cdeps/win32/libpng.lib
+# !cdeps/win32/zlib.lib
+# !cdeps/win64/libpng.lib
+# !cdeps/win64/zlib.lib
 *.a
+!cdeps/win32/libpng.a
+!cdeps/win64/libpng.a
 *.la
 *.lo
 

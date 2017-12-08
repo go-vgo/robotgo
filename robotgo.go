@@ -37,8 +37,8 @@ package robotgo
 //#endif
 	// #cgo windows LDFLAGS: -lgdi32 -luser32 -lpng -lz
 	#cgo windows LDFLAGS: -lgdi32 -luser32
-	#cgo windows,amd64 LDFLAGS: -L/cdeps/win64 -lpng -L/cdeps/win64 -lz
-	#cgo windows,386 LDFLAGS: -L/cdeps/win32 -lpng -L/cdeps/win32 -lz
+	#cgo windows,amd64 LDFLAGS: -L${SRCDIR}/cdeps/win64 -lpng -L${SRCDIR}/cdeps/win64 -lz
+	#cgo windows,386 LDFLAGS: -L${SRCDIR}/cdeps/win32 -lpng -L${SRCDIR}/cdeps/win32 -lz
 // #include <AppKit/NSEvent.h>
 #include "screen/goScreen.h"
 #include "mouse/goMouse.h"
@@ -64,7 +64,7 @@ import (
 )
 
 const (
-	version string = "v0.46.6.429, Pyrenees Mountains!"
+	version string = "v0.46.6.431, Pyrenees Mountains!"
 )
 
 type (
