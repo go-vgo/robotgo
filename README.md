@@ -37,7 +37,7 @@ This is a work in progress.
 
 ## Requirements:
 
-Now, Please make sure Golang, GCC, zlib and libpng is installed correctly before installing RobotGo.
+Now, Please make sure Golang, GCC is installed correctly before installing RobotGo.
 
 ### ALL: 
 ``` 
@@ -47,7 +47,7 @@ zlib & libpng (bitmap)
 ```
 #### For Mac OS X:
 ```
-    Xcode Command Line Tools
+Xcode Command Line Tools
 ```    
 #### For Windows:
 ```

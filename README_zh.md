@@ -35,7 +35,7 @@ QQ 群: 595877611
 ## Requirements:
 环境要求:
 
-在安装 RobotGo 之前, 请确保 Golang、GCC、zlib 和 libpng 被正确安装
+在安装 RobotGo 之前, 请确保 Golang、GCC 被正确安装
 
 ### ALL:  
 ```
@@ -44,7 +44,7 @@ GCC
 ```
 #### For Mac OS X:
 ```
-    Xcode Command Line Tools
+Xcode Command Line Tools
 ```    
 #### For Windows:
 ```
