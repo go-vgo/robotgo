@@ -41,6 +41,7 @@ _testmain.go
 # !cdeps/win64/libpng.lib
 # !cdeps/win64/zlib.lib
 *.a
+!cdeps/mac/libpng.a
 !cdeps/win32/libpng.a
 !cdeps/win64/libpng.a
 *.la

@@ -25,20 +25,19 @@ package robotgo
 /*
 //#if defined(IS_MACOSX)
 	#cgo darwin CFLAGS: -x objective-c  -Wno-deprecated-declarations
-	#cgo darwin CFLAGS: -I/usr/local/opt/libpng/include -I/usr/local/opt/zlib/include
 	#cgo darwin LDFLAGS: -framework Cocoa -framework OpenGL -framework IOKit
 	#cgo darwin LDFLAGS: -framework Carbon -framework CoreFoundation
-	#cgo darwin LDFLAGS: -L/usr/local/opt/libpng/lib -lpng -L/usr/local/opt/zlib/lib -lz
+	#cgo darwin LDFLAGS:-L${SRCDIR}/cdeps/mac -lpng -lz
 //#elif defined(USE_X11)
-	// drop -std=c11
+	// Drop -std=c11
 	#cgo linux CFLAGS: -I/usr/src
 	#cgo linux LDFLAGS: -L/usr/src -lpng -lz -lX11 -lXtst -lX11-xcb -lxcb
 	#cgo linux LDFLAGS: -lxcb-xkb -lxkbcommon -lxkbcommon-x11 -lm
 //#endif
 	// #cgo windows LDFLAGS: -lgdi32 -luser32 -lpng -lz
 	#cgo windows LDFLAGS: -lgdi32 -luser32
-	#cgo windows,amd64 LDFLAGS: -L${SRCDIR}/cdeps/win64 -lpng -L${SRCDIR}/cdeps/win64 -lz
-	#cgo windows,386 LDFLAGS: -L${SRCDIR}/cdeps/win32 -lpng -L${SRCDIR}/cdeps/win32 -lz
+	#cgo windows,amd64 LDFLAGS: -L${SRCDIR}/cdeps/win64 -lpng -lz
+	#cgo windows,386 LDFLAGS: -L${SRCDIR}/cdeps/win32 -lpng -lz
 // #include <AppKit/NSEvent.h>
 #include "screen/goScreen.h"
 #include "mouse/goMouse.h"
@@ -64,7 +63,7 @@ import (
 )
 
 const (
-	version string = "v0.46.6.432, Pyrenees Mountains!"
+	version string = "v0.46.6.433, Pyrenees Mountains!"
 )
 
 type (

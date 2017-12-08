@@ -37,19 +37,14 @@ QQ 群: 595877611
 
 在安装 RobotGo 之前, 请确保 Golang、GCC、zlib 和 libpng 被正确安装
 
-如果你不需要bitmap, 你可以使用 `"github.com/go-vgo/robotgo/robot"` 或者切换到 robot 分支, 那里没有 zlib 和 libpng 依赖
-
 ### ALL:  
 ```
 Golang
 GCC
-zlib & libpng (bitmap)
 ```
 #### For Mac OS X:
-    Xcode Command Line Tools
 ```
-brew install libpng
-brew install zlib
+    Xcode Command Line Tools
 ```    
 #### For Windows:
 ```
@@ -252,7 +247,6 @@ func main() {
 - 更新 Window Handle
 - 支持 UTF-8, 过渡方案: TypeStr
 - 尝试支持 Android, 也许支持 IOS
-- 移除 zlib/libpng 依赖
 
 ## Donate
 
