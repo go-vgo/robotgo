@@ -1,6 +1,42 @@
 # CHANGELOG
 
 <!--### RobotGo-->
+## RobotGo v0.47.0, Mount Cook
+
+### Add  
+
+- [NEW] Add windows 32bit and 64bit dependency
+- [NEW] Add macOs dependency
+- [NEW] Add pkg to vendor
+
+Solve the problem of dependence, remove zlib/libpng dependencies
+
+- [NEW] Add FindColorCS(x, y, w, h int, color CHex), CHex type and examples #84
+- [NEW] Add kill the process
+- [NEW] Add public event and update code
+- [NEW] Add  Windows 32bit and 64bit Appveyor CI
+ 
+
+### Update
+- [NEW] Update png io
+- [NEW] Update cgo link
+- [NEW] Update .gitignore
+- [NEW] Update README.md and godoc
+- [NEW] Update CHANGELOG.md
+- [NEW] Update circle to 2.0, add robotgo Dockerfile custom image
+- [NEW] Update and fmt C code
+- [NEW] Update GetTitle default value "null" to ""
+
+
+### Fix
+
+- [FIX] Fix FindColor inconvenient parameters
+- [FIX] Fix installation requirements #72
+- [FIX] Fix GetTitle `return address of local variable` in the higher gcc version. #81
+
+See Commits for more details, after Nov 10.
+
+
 ## RobotGo v0.46.6, Pyrenees Mountains: Aneto Peak
 
 ## RobotGo v0.46.0, Pyrenees Mountains
