@@ -300,6 +300,9 @@ func window() {
 }
 
 func main() {
+	ver := robotgo.GetVersion()
+	fmt.Println("robotgo version", ver)
+
 	// Control the keyboard
 	key()
 	// Control the mouse

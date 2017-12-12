@@ -50,7 +50,6 @@ import "C"
 
 import (
 	// "fmt"
-
 	"os"
 	"reflect"
 	"runtime"
@@ -63,7 +62,7 @@ import (
 )
 
 const (
-	version string = "v0.47.0.438, Pyrenees Mountains!"
+	version string = "v0.47.0.439, Mount Cook!"
 )
 
 type (
