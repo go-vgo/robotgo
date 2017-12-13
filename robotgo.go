@@ -62,7 +62,7 @@ import (
 )
 
 const (
-	version string = "v0.47.0.439, Mount Cook!"
+	version string = "v0.47.0.441, Mount Cook!"
 )
 
 type (
@@ -253,6 +253,25 @@ func BCaptureScreen(args ...int) Bitmap {
 	}
 
 	return bitmap
+}
+
+// SaveCapture capture screen and save
+func SaveCapture(spath string, args ...int) {
+	var bit C.MMBitmapRef
+	if len(args) > 3 {
+		var (
+			x = args[0]
+			y = args[1]
+			w = args[2]
+			h = args[3]
+		)
+
+		bit = CaptureScreen(x, y, w, h)
+	} else {
+		bit = CaptureScreen()
+	}
+
+	SaveBitmap(bit, spath)
 }
 
 /*

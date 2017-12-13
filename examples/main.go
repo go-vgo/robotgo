@@ -113,6 +113,8 @@ func screen() {
 	fmt.Println("GoCaptureScreen...", gbitMap.Width)
 	// fmt.Println("...", gbitmap.Width, gbitmap.BytesPerPixel)
 
+	robotgo.SaveCapture("saveCapture.png", 10, 20, 100, 100)
+
 	// gets the screen width and height
 	sx, sy := robotgo.GetScreenSize()
 	fmt.Println("...", sx, sy)
