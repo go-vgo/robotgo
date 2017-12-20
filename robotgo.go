@@ -62,7 +62,7 @@ import (
 )
 
 const (
-	version string = "v0.47.0.442, Mount Cook!"
+	version string = "v0.47.0.445, Mount Cook!"
 )
 
 type (
@@ -165,7 +165,7 @@ func CaptureScreen(args ...int) C.MMBitmapRef {
 		// fmt.Println("err:::", e)
 		x = 0
 		y = 0
-		//Get screen size.
+		// Get screen size.
 		var displaySize C.MMSize
 		displaySize = C.getMainDisplaySize()
 		w = displaySize.width
@@ -286,7 +286,7 @@ func SaveCapture(spath string, args ...int) {
 
 // MoveMouse move the mouse
 func MoveMouse(x, y int) {
-	//C.size_t  int
+	// C.size_t  int
 	cx := C.size_t(x)
 	cy := C.size_t(y)
 	C.aMoveMouse(cx, cy)
@@ -483,8 +483,8 @@ func KeyTap(args ...interface{}) {
 		keyarr []string
 		num    int
 	)
-	// var ckeyarr []*C.char
-	ckeyarr := make([](*_Ctype_char), 0)
+	// var ckeyArr []*C.char
+	ckeyArr := make([](*_Ctype_char), 0)
 
 	Try(func() {
 		if reflect.TypeOf(args[1]) == reflect.TypeOf(keyarr) {
@@ -494,7 +494,7 @@ func KeyTap(args ...interface{}) {
 			num = len(keyarr)
 
 			for i := 0; i < num; i++ {
-				ckeyarr = append(ckeyarr, (*C.char)(unsafe.Pointer(C.CString(keyarr[i]))))
+				ckeyArr = append(ckeyArr, (*C.char)(unsafe.Pointer(C.CString(keyarr[i]))))
 			}
 
 		} else {
@@ -519,7 +519,7 @@ func KeyTap(args ...interface{}) {
 	zkey := C.CString(args[0].(string))
 
 	if akey == "" && len(keyarr) != 0 {
-		C.aKey_Tap(zkey, (**_Ctype_char)(unsafe.Pointer(&ckeyarr[0])), C.int(num))
+		C.aKey_Tap(zkey, (**_Ctype_char)(unsafe.Pointer(&ckeyArr[0])), C.int(num))
 	} else {
 		// zkey := C.CString(args[0])
 		amod := C.CString(akey)
@@ -547,18 +547,18 @@ func KeyToggle(args ...string) string {
 
 	Try(func() {
 		adown = args[1]
-		Try(func() {
+		if len(args) > 2 {
 			amkey = args[2]
+
 			Try(func() {
 				amkeyt = args[3]
 			}, func(e interface{}) {
 				// fmt.Println("err:::", e)
 				amkeyt = "null"
 			})
-		}, func(e interface{}) {
-			// fmt.Println("err:::", e)
+		} else {
 			amkey = "null"
-		})
+		}
 	}, func(e interface{}) {
 		// fmt.Println("err:::", e)
 		adown = "null"
@@ -731,6 +731,16 @@ func FindBit(args ...interface{}) (int, int) {
 	pos := C.aFindBitmap(bit, rect)
 	// fmt.Println("pos----", pos)
 	return int(pos.x), int(pos.y)
+}
+
+// PointInBounds bitmap point in bounds
+func PointInBounds(bitmap C.MMBitmapRef, x, y int) bool {
+	var point C.MMPoint
+	point.x = C.size_t(x)
+	point.y = C.size_t(y)
+	cbool := C.point_in_bounds(bitmap, point)
+
+	return bool(cbool)
 }
 
 // OpenBitmap open the bitmap

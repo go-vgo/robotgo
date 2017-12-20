@@ -117,6 +117,18 @@ MMPoint aFindBitmap(MMBitmapRef bit_map, MMRect rect){
 	return point;
 }
 
+bool point_in_bounds(MMBitmapRef bitmap, MMPoint point){
+	if (!bitmap_ready(bitmap)) {
+		return NULL;
+	}
+
+	if (MMBitmapPointInBounds(bitmap, point)) {
+		return true;
+	}
+
+	return false;
+}
+
 MMBitmapRef bitmap_open(char *path, uint16_t ttype){
 	// MMImageType type;
 
@@ -146,7 +158,7 @@ char *bitmap_save(MMBitmapRef bitmap, char *path, uint16_t type){
 	if (saveMMBitmapToFile(bitmap, path, (MMImageType) type) != 0) {
 		return "Could not save image to file.";
 	}
-	//destroyMMBitmap(bitmap);
+	// destroyMMBitmap(bitmap);
 	return "ok";
 }
 
