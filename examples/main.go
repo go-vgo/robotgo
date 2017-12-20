@@ -162,6 +162,10 @@ func bitmap() {
 	fx, fy = robotgo.FindBitmap(bit, bitmap)
 	fmt.Println("FindBitmap------", fx, fy)
 
+	// bitmap := robotgo.CaptureScreen(10, 20, 30, 40)
+	abool := robotgo.PointInBounds(bitmap, 1, 2)
+	fmt.Println("point in bounds...", abool)
+
 	// returns new bitmap object created from a portion of another
 	bitpos := robotgo.GetPortion(bitmap, 10, 10, 11, 10)
 	fmt.Println(bitpos)
