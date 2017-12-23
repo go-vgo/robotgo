@@ -62,7 +62,7 @@ import (
 )
 
 const (
-	version string = "v0.47.0.448, Mount Cook!"
+	version string = "v0.47.0.449, Mount Cook!"
 )
 
 type (
@@ -125,7 +125,7 @@ func GetPxColor(x, y int) C.MMRGBHex {
 func GetPixelColor(x, y int) string {
 	cx := C.size_t(x)
 	cy := C.size_t(y)
-	
+
 	color := C.aGetPixelColor(cx, cy)
 	// color := C.aGetPixelColor(x, y)
 	gcolor := C.GoString(color)
@@ -488,10 +488,10 @@ func ScrollMouse(x int, y string) {
 //	https://github.com/go-vgo/robotgo/blob/master/docs/keys.md
 func KeyTap(args ...interface{}) {
 	var (
-		akey   string
-		keyT = "null"
-		keyArr []string
-		num    int
+		akey     string
+		keyT     = "null"
+		keyArr   []string
+		num      int
 		keyDelay = 10
 	)
 	// var ckeyArr []*C.char
@@ -508,16 +508,18 @@ func KeyTap(args ...interface{}) {
 				ckeyArr = append(ckeyArr, (*C.char)(unsafe.Pointer(C.CString(keyArr[i]))))
 			}
 
-			if len(args) > 3 {
+			if len(args) > 2 {
 				keyDelay = args[2].(int)
 			}
 		} else {
 			akey = args[1].(string)
 
-			if reflect.TypeOf(args[2]) == reflect.TypeOf(akey) {
-				keyT = args[2].(string)
-			} else {
-				keyDelay = args[2].(int)
+			if len(args) > 2 {
+				if reflect.TypeOf(args[2]) == reflect.TypeOf(akey) {
+					keyT = args[2].(string)
+				} else {
+					keyDelay = args[2].(int)
+				}
 			}
 		}
 
@@ -531,8 +533,8 @@ func KeyTap(args ...interface{}) {
 	zkey := C.CString(args[0].(string))
 
 	if akey == "" && len(keyArr) != 0 {
-		C.key_Tap(zkey, (**_Ctype_char)(unsafe.Pointer(&ckeyArr[0])), 
-		C.int(num),C.int(keyDelay))
+		C.key_Tap(zkey, (**_Ctype_char)(unsafe.Pointer(&ckeyArr[0])),
+			C.int(num), C.int(keyDelay))
 	} else {
 		// zkey := C.CString(args[0])
 		amod := C.CString(akey)
@@ -553,9 +555,9 @@ func KeyTap(args ...interface{}) {
 //	https://github.com/go-vgo/robotgo/blob/master/docs/keys.md
 func KeyToggle(args ...string) string {
 	var (
-		adown  string
-		amkey  string
-		mKeyT string
+		adown    string
+		amkey    string
+		mKeyT    string
 		keyDelay = 10
 	)
 
