@@ -62,7 +62,7 @@ import (
 )
 
 const (
-	version string = "v0.47.0.447, Mount Cook!"
+	version string = "v0.47.0.448, Mount Cook!"
 )
 
 type (
@@ -489,53 +489,56 @@ func ScrollMouse(x int, y string) {
 func KeyTap(args ...interface{}) {
 	var (
 		akey   string
-		akeyt  string
-		keyarr []string
+		keyT = "null"
+		keyArr []string
 		num    int
+		keyDelay = 10
 	)
 	// var ckeyArr []*C.char
 	ckeyArr := make([](*_Ctype_char), 0)
 
 	Try(func() {
-		if reflect.TypeOf(args[1]) == reflect.TypeOf(keyarr) {
+		if reflect.TypeOf(args[1]) == reflect.TypeOf(keyArr) {
 
-			keyarr = args[1].([]string)
+			keyArr = args[1].([]string)
 
-			num = len(keyarr)
+			num = len(keyArr)
 
 			for i := 0; i < num; i++ {
-				ckeyArr = append(ckeyArr, (*C.char)(unsafe.Pointer(C.CString(keyarr[i]))))
+				ckeyArr = append(ckeyArr, (*C.char)(unsafe.Pointer(C.CString(keyArr[i]))))
 			}
 
+			if len(args) > 3 {
+				keyDelay = args[2].(int)
+			}
 		} else {
 			akey = args[1].(string)
 
-			Try(func() {
-				akeyt = args[2].(string)
-
-			}, func(e interface{}) {
-				// fmt.Println("err:::", e)
-				akeyt = "null"
-			})
+			if reflect.TypeOf(args[2]) == reflect.TypeOf(akey) {
+				keyT = args[2].(string)
+			} else {
+				keyDelay = args[2].(int)
+			}
 		}
 
 	}, func(e interface{}) {
 		// fmt.Println("err:::", e)
 		akey = "null"
-		keyarr = []string{"null"}
+		keyArr = []string{"null"}
 	})
 	// }()
 
 	zkey := C.CString(args[0].(string))
 
-	if akey == "" && len(keyarr) != 0 {
-		C.aKey_Tap(zkey, (**_Ctype_char)(unsafe.Pointer(&ckeyArr[0])), C.int(num))
+	if akey == "" && len(keyArr) != 0 {
+		C.key_Tap(zkey, (**_Ctype_char)(unsafe.Pointer(&ckeyArr[0])), 
+		C.int(num),C.int(keyDelay))
 	} else {
 		// zkey := C.CString(args[0])
 		amod := C.CString(akey)
-		amodt := C.CString(akeyt)
+		amodt := C.CString(keyT)
 
-		C.aKeyTap(zkey, amod, amodt)
+		C.aKeyTap(zkey, amod, amodt, C.int(keyDelay))
 
 		defer C.free(unsafe.Pointer(amod))
 		defer C.free(unsafe.Pointer(amodt))
@@ -552,7 +555,8 @@ func KeyToggle(args ...string) string {
 	var (
 		adown  string
 		amkey  string
-		amkeyt string
+		mKeyT string
+		keyDelay = 10
 	)
 
 	Try(func() {
@@ -561,10 +565,10 @@ func KeyToggle(args ...string) string {
 			amkey = args[2]
 
 			Try(func() {
-				amkeyt = args[3]
+				mKeyT = args[3]
 			}, func(e interface{}) {
 				// fmt.Println("err:::", e)
-				amkeyt = "null"
+				mKeyT = "null"
 			})
 		} else {
 			amkey = "null"
@@ -577,16 +581,16 @@ func KeyToggle(args ...string) string {
 	ckey := C.CString(args[0])
 	cadown := C.CString(adown)
 	camkey := C.CString(amkey)
-	camkeyt := C.CString(amkeyt)
+	cmKeyT := C.CString(mKeyT)
 	// defer func() {
-	str := C.aKeyToggle(ckey, cadown, camkey, camkeyt)
+	str := C.key_Toggle(ckey, cadown, camkey, cmKeyT, C.int(keyDelay))
 	// fmt.Println(str)
-	// C.aKeyToggle(ckey, cadown, camkey, camkeyt)
+	// C.aKeyToggle(ckey, cadown, camkey, cmKeyT)
 	// }()
 	defer C.free(unsafe.Pointer(ckey))
 	defer C.free(unsafe.Pointer(cadown))
 	defer C.free(unsafe.Pointer(camkey))
-	defer C.free(unsafe.Pointer(camkeyt))
+	defer C.free(unsafe.Pointer(cmKeyT))
 
 	return C.GoString(str)
 }

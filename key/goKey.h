@@ -179,12 +179,12 @@ int GetFlagsFromValue(char* value[], MMKeyFlags* flags, int num){
 }
 
 // If it's not an array, it should be a single string value.
-char* aKey_Tap(char *k, char* keyarr[], int num){
+char* key_Tap(char *k, char* keyArr[], int num, int keyDelay){
 	MMKeyFlags flags = MOD_NONE;
 	// MMKeyFlags flags = 0;
 	MMKeyCode key;
 
-			switch(GetFlagsFromValue(keyarr, &flags, num)){
+			switch(GetFlagsFromValue(keyArr, &flags, num)){
 			// switch (CheckKeyFlags(akey, &flags)){
 				case -1:
 					return "Null pointer in key flag.";
@@ -203,13 +203,13 @@ char* aKey_Tap(char *k, char* keyarr[], int num){
 				break;
 			default:
 				tapKeyCode(key, flags);
-				microsleep(keyboardDelay);
+				microsleep(keyDelay);
 		}
 
 	return "0";
 }
 
-char* aKeyTap(char *k, char *akey, char *akeyt){
+char* aKeyTap(char *k, char *akey, char *keyT, int keyDelay){
 	MMKeyFlags flags = (MMKeyFlags) MOD_NONE;
 	// MMKeyFlags flags = 0;
 	MMKeyCode key;
@@ -217,7 +217,7 @@ char* aKeyTap(char *k, char *akey, char *akeyt){
 	// char *k;
 	// k = *kstr;
 	if (strcmp(akey, "null") != 0){
-		if (strcmp(akeyt, "null") == 0){
+		if (strcmp(keyT, "null") == 0){
 			switch (CheckKeyFlags(akey, &flags)){
 				case -1:
 					return "Null pointer in key flag.";
@@ -227,8 +227,8 @@ char* aKeyTap(char *k, char *akey, char *akeyt){
 					break;
 			}
 		}else{
-			char* akeyarr[2] = {akey, akeyt};
-			switch(GetFlagsFromValue(akeyarr, &flags, 2)){
+			char* akeyArr[2] = {akey, keyT};
+			switch(GetFlagsFromValue(akeyArr, &flags, 2)){
 				case -1:
 					return "Null pointer in key flag.";
 					break;
@@ -248,13 +248,13 @@ char* aKeyTap(char *k, char *akey, char *akeyt){
 			break;
 		default:
 			tapKeyCode(key, flags);
-			microsleep(keyboardDelay);
+			microsleep(keyDelay);
 	}
 
 	return "0";
 }
 
-char* aKeyToggle(char *k, char *d, char *akey, char *akeyt){
+char* key_Toggle(char *k, char *d, char *akey, char *keyT, int keyDelay){
 	MMKeyFlags flags = (MMKeyFlags) MOD_NONE;
 	MMKeyCode key;
 
@@ -275,7 +275,7 @@ char* aKeyToggle(char *k, char *d, char *akey, char *akeyt){
 	}
 
 	if (strcmp(akey, "null") != 0){
-		if (strcmp(akeyt, "null") == 0){
+		if (strcmp(keyT, "null") == 0){
 			switch (CheckKeyFlags(akey, &flags)){
 				case -1:
 					return "Null pointer in key flag.";
@@ -285,8 +285,8 @@ char* aKeyToggle(char *k, char *d, char *akey, char *akeyt){
 					break;
 			}
 		}else{
-			char* akeyarr[2] = {akey, akeyt};
-			switch (GetFlagsFromValue(akeyarr, &flags, 2))
+			char* akeyArr[2] = {akey, keyT};
+			switch (GetFlagsFromValue(akeyArr, &flags, 2))
 				{
 					case -1:
 						return "Null pointer in key flag.";
@@ -307,7 +307,7 @@ char* aKeyToggle(char *k, char *d, char *akey, char *akeyt){
 			break;
 		default:
 			toggleKeyCode(key, down, flags);
-			microsleep(keyboardDelay);
+			microsleep(keyDelay);
 	}
 
 	return "0";
