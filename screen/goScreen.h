@@ -19,6 +19,21 @@ void padHex(MMRGBHex color, char* hex){
 	snprintf(hex, 7, "%06x", color);
 }
 
+MMRGBHex get_Pixel_Color(size_t x, size_t y){
+	MMBitmapRef bitmap;
+	MMRGBHex color;
+
+	if (!pointVisibleOnMainDisplay(MMPointMake(x, y))){
+		return color;
+	}
+
+	bitmap = copyMMBitmapFromDisplayInRect(MMRectMake(x, y, 1, 1));
+	// bitmap = MMRectMake(x, y, 1, 1);
+
+	color = MMRGBHexAtPoint(bitmap, 0, 0);
+
+	return color;
+}
 
 char* aGetPixelColor(size_t x, size_t y){
 	MMBitmapRef bitmap;

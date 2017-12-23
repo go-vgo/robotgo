@@ -62,7 +62,7 @@ import (
 )
 
 const (
-	version string = "v0.47.0.445, Mount Cook!"
+	version string = "v0.47.0.447, Mount Cook!"
 )
 
 type (
@@ -112,10 +112,20 @@ func Try(fun func(), handler func(interface{})) {
 |_______/     \______|| _| `._____||_______||_______||__| \__|
 */
 
-// GetPixelColor get pixel color
+// GetPxColor get pixel color return C.MMRGBHex
+func GetPxColor(x, y int) C.MMRGBHex {
+	cx := C.size_t(x)
+	cy := C.size_t(y)
+
+	color := C.get_Pixel_Color(cx, cy)
+	return color
+}
+
+// GetPixelColor get pixel color return string
 func GetPixelColor(x, y int) string {
 	cx := C.size_t(x)
 	cy := C.size_t(y)
+	
 	color := C.aGetPixelColor(cx, cy)
 	// color := C.aGetPixelColor(x, y)
 	gcolor := C.GoString(color)
