@@ -62,7 +62,7 @@ import (
 )
 
 const (
-	version string = "v0.47.0.458, Mount Cook!"
+	version string = "v0.47.0.460, Mount Cook!"
 )
 
 type (
@@ -121,6 +121,11 @@ func GetPxColor(x, y int) C.MMRGBHex {
 
 	color := C.get_Pixel_Color(cx, cy)
 	return color
+}
+
+// ToMMRGBHex trans CHex to C.MMRGBhex
+func ToMMRGBHex(hex CHex) C.MMRGBHex {
+	return C.MMRGBHex(hex)
 }
 
 // GetPixelColor get pixel color return string
