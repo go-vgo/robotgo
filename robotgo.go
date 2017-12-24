@@ -62,7 +62,7 @@ import (
 )
 
 const (
-	version string = "v0.47.0.455, Mount Cook!"
+	version string = "v0.47.0.458, Mount Cook!"
 )
 
 type (
@@ -835,7 +835,7 @@ func ToBitmap(bit C.MMBitmapRef) Bitmap {
 	return bitmap
 }
 
-// ToBitmap trans C.MMBitmapRef to Bitmap
+// ToMMBitmapRef trans CBitmap to C.MMBitmapRef 
 func ToMMBitmapRef(bit CBitmap) C.MMBitmapRef {
 	return C.MMBitmapRef(bit)
 }
