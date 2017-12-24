@@ -62,7 +62,7 @@ import (
 )
 
 const (
-	version string = "v0.47.0.449, Mount Cook!"
+	version string = "v0.47.0.455, Mount Cook!"
 )
 
 type (
@@ -70,6 +70,8 @@ type (
 	Map map[string]interface{}
 	// CHex c rgb Hex type
 	CHex C.MMRGBHex
+	// CBitmap c bitmap type C.MMBitmapRef
+	CBitmap C.MMBitmapRef
 )
 
 // Bitmap is Bitmap struct

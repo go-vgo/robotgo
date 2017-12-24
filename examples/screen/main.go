@@ -38,6 +38,8 @@ func main() {
 	// gets the pixel color at 100, 200.
 	color := robotgo.GetPixelColor(100, 200)
 	fmt.Println("color----", color, "-----------------")
+	clo := robotgo.GetPxColor(100, 200)
+	fmt.Println("color...", clo)
 
 	// gets the pixel color at 10, 20.
 	color2 := robotgo.GetPixelColor(10, 20)

@@ -30,11 +30,14 @@ func main() {
 	robotgo.KeyTap("a", "control")
 	// hide window
 	robotgo.KeyTap("h", "command")
+	robotgo.KeyTap("h", "command", 12)
 
 	// press "i", "alt", "command" Key combination
 	robotgo.KeyTap("i", "alt", "command")
+	robotgo.KeyTap("i", "alt", "command", 11)
 	arr := []string{"alt", "command"}
 	robotgo.KeyTap("i", arr)
+	robotgo.KeyTap("i", arr, 12)
 
 	// close window
 	robotgo.KeyTap("w", "command")

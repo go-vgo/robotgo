@@ -30,11 +30,14 @@ func key() {
 	robotgo.KeyTap("a", "control")
 	// hide window
 	robotgo.KeyTap("h", "command")
+	robotgo.KeyTap("h", "command", 12)
 
 	// press "i", "alt", "command" Key combination
 	robotgo.KeyTap("i", "alt", "command")
+	robotgo.KeyTap("i", "alt", "command", 11)
 	arr := []string{"alt", "command"}
 	robotgo.KeyTap("i", arr)
+	robotgo.KeyTap("i", arr, 12)
 
 	// close window
 	robotgo.KeyTap("w", "command")
@@ -122,6 +125,8 @@ func screen() {
 	// gets the pixel color at 100, 200.
 	color := robotgo.GetPixelColor(100, 200)
 	fmt.Println("color----", color, "-----------------")
+	clo := robotgo.GetPxColor(100, 200)
+	fmt.Println("color...", clo)
 
 	// gets the pixel color at 10, 20.
 	color2 := robotgo.GetPixelColor(10, 20)
