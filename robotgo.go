@@ -813,7 +813,7 @@ func SaveBitmap(args ...interface{}) string {
 // 	// defer C.free(unsafe.Pointer(path))
 // }
 
-// TostringBitmap tostring bitmap
+// TostringBitmap tostring bitmap to C.char
 func TostringBitmap(bit C.MMBitmapRef) *C.char {
 	// str_bit := C.aTostringBitmap(bit)
 	strBit := C.tostring_Bitmap(bit)
@@ -835,12 +835,12 @@ func ToBitmap(bit C.MMBitmapRef) Bitmap {
 	return bitmap
 }
 
-// ToMMBitmapRef trans CBitmap to C.MMBitmapRef 
+// ToMMBitmapRef trans CBitmap to C.MMBitmapRef
 func ToMMBitmapRef(bit CBitmap) C.MMBitmapRef {
 	return C.MMBitmapRef(bit)
 }
 
-// GetPortion get portion
+// GetPortion get bitmap portion
 func GetPortion(bit C.MMBitmapRef, x, y, w, h C.size_t) C.MMBitmapRef {
 	var rect C.MMRect
 	rect.origin.x = x
