@@ -820,6 +820,19 @@ func TostringBitmap(bit C.MMBitmapRef) *C.char {
 	return strBit
 }
 
+// ToBitmap trans C.MMBitmapRef to Bitmap
+func ToBitmap(bit C.MMBitmapRef) Bitmap {
+	bitmap := Bitmap{
+		ImageBuffer:   (*uint8)(bit.imageBuffer),
+		Width:         int(bit.width),
+		Height:        int(bit.height),
+		Bytewidth:     int(bit.bytewidth),
+		BitsPerPixel:  uint8(bit.bitsPerPixel),
+		BytesPerPixel: uint8(bit.bytesPerPixel),
+	}
+	return bitmap
+}
+
 // GetPortion get portion
 func GetPortion(bit C.MMBitmapRef, x, y, w, h C.size_t) C.MMBitmapRef {
 	var rect C.MMRect
