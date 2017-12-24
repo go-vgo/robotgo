@@ -886,8 +886,8 @@ func GetColor(bitmap C.MMBitmapRef, x, y int) C.MMRGBHex {
 func FindColor(bitmap C.MMBitmapRef, color CHex, args ...float32) (int, int) {
 	var tolerance C.float
 
-	if len(args) > 2 {
-		tolerance = C.float(args[2])
+	if len(args) > 0 {
+		tolerance = C.float(args[0])
 	} else {
 		tolerance = 0.5
 	}
@@ -900,9 +900,17 @@ func FindColor(bitmap C.MMBitmapRef, color CHex, args ...float32) (int, int) {
 }
 
 // FindColorCS findcolor by CaptureScreen
-func FindColorCS(x, y, w, h int, color CHex) (int, int) {
+func FindColorCS(x, y, w, h int, color CHex, args ...float32) (int, int) {
+	var tolerance float32
+
+	if len(args) > 0 {
+		tolerance = args[0]
+	} else {
+		tolerance = 0.5
+	}
+
 	bitmap := CaptureScreen(x, y, w, h)
-	rx, ry := FindColor(bitmap, color)
+	rx, ry := FindColor(bitmap, color, tolerance)
 	return rx, ry
 }
 
