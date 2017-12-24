@@ -12,6 +12,7 @@ package main
 
 import (
 	"fmt"
+	"reflect"
 
 	"github.com/go-vgo/robotgo"
 )
@@ -57,6 +58,11 @@ func aRobotgo() {
 	fmt.Println("FindBitmap------", fx, fy)
 
 	robotgo.SaveBitmap(bitmap, "test.png", 1)
+
+	var bitmapTest robotgo.Bitmap
+	bitTest := robotgo.OpenBitmap("test.png")
+	bitmapTest = robotgo.ToBitmap(bitTest)
+	fmt.Println("...type", reflect.TypeOf(bitTest), reflect.TypeOf(bitmapTest))
 
 	// robotgo.MouseClick()
 	robotgo.ScrollMouse(10, "up")
