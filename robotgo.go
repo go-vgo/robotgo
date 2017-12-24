@@ -835,6 +835,11 @@ func ToBitmap(bit C.MMBitmapRef) Bitmap {
 	return bitmap
 }
 
+// ToBitmap trans C.MMBitmapRef to Bitmap
+func ToMMBitmapRef(bit CBitmap) C.MMBitmapRef {
+	return C.MMBitmapRef(bit)
+}
+
 // GetPortion get portion
 func GetPortion(bit C.MMBitmapRef, x, y, w, h C.size_t) C.MMBitmapRef {
 	var rect C.MMRect
