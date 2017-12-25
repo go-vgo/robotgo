@@ -62,7 +62,7 @@ import (
 )
 
 const (
-	version string = "v0.47.0.460, Mount Cook!"
+	version string = "v0.47.0.461, Mount Cook!"
 )
 
 type (
@@ -114,6 +114,40 @@ func Try(fun func(), handler func(interface{})) {
 |_______/     \______|| _| `._____||_______||_______||__| \__|
 */
 
+// ToMMRGBHex trans CHex to C.MMRGBHex
+func ToMMRGBHex(hex CHex) C.MMRGBHex {
+	return C.MMRGBHex(hex)
+}
+
+// U32ToHex trans C.uint32_t to C.MMRGBHex
+func U32ToHex(hex C.uint32_t) C.MMRGBHex {
+	return C.MMRGBHex(hex)
+}
+
+// U8ToHex teans *C.uint8_t to C.MMRGBHex
+func U8ToHex(hex *C.uint8_t) C.MMRGBHex {
+	return C.MMRGBHex(*hex)
+}
+
+// PadHex trans C.MMRGBHex to string
+func PadHex(hex C.MMRGBHex) string {
+	color := C.pad_hex(hex)
+	gcolor := C.GoString(color)
+	defer C.free(unsafe.Pointer(color))
+
+	return gcolor
+}
+
+// HexToRgb trans hex to rgb
+func HexToRgb(hex uint32) *C.uint8_t {
+	return C.color_hex_to_rgb(C.uint32_t(hex))
+}
+
+// RgbToHex trans rgb to hex
+func RgbToHex(r, g, b uint8) C.uint32_t {
+	return C.color_rgb_to_hex(C.uint8_t(r), C.uint8_t(g), C.uint8_t(b))
+}
+
 // GetPxColor get pixel color return C.MMRGBHex
 func GetPxColor(x, y int) C.MMRGBHex {
 	cx := C.size_t(x)
@@ -121,11 +155,6 @@ func GetPxColor(x, y int) C.MMRGBHex {
 
 	color := C.get_Pixel_Color(cx, cy)
 	return color
-}
-
-// ToMMRGBHex trans CHex to C.MMRGBhex
-func ToMMRGBHex(hex CHex) C.MMRGBHex {
-	return C.MMRGBHex(hex)
 }
 
 // GetPixelColor get pixel color return string

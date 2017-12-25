@@ -9,6 +9,7 @@
 // except according to those terms.
 
 #include "../base/types.h"
+#include "../base/rgb.h"
 #include "screengrab_c.h"
 #include "screen_c.h"
 // #include "../MMBitmap_c.h"
@@ -17,6 +18,31 @@ void padHex(MMRGBHex color, char* hex){
 	//Length needs to be 7 because snprintf includes a terminating null.
 	//Use %06x to pad hex value with leading 0s.
 	snprintf(hex, 7, "%06x", color);
+}
+
+char* pad_hex(MMRGBHex color){
+	char hex[7];
+	padHex(color, hex);
+
+	// destroyMMBitmap(bitmap);
+
+	char* str = (char*)calloc(100, sizeof(char*));
+    if(str)strcpy(str, hex);
+
+	return str;
+}
+
+static uint8_t rgb[3];
+
+uint8_t *color_hex_to_rgb(uint32_t h){
+	rgb[0] = RED_FROM_HEX(h);
+	rgb[1] = GREEN_FROM_HEX(h);
+	rgb[2] = BLUE_FROM_HEX(h);
+	return rgb;
+}
+
+uint32_t color_rgb_to_hex(uint8_t r, uint8_t g, uint8_t b){
+	return RGB_TO_HEX(r, g, b);
 }
 
 MMRGBHex get_Pixel_Color(size_t x, size_t y){
@@ -97,8 +123,7 @@ MMBitmapRef capture_screen(size_t x, size_t y, size_t w, size_t h){
 	// if (){
 	// 	x = 0;
 	// 	y = 0;
-
-	// 	//Get screen size.
+	// 	// Get screen size.
 	// 	MMSize displaySize = getMainDisplaySize();
 	// 	w = displaySize.width;
 	// 	h = displaySize.height;
