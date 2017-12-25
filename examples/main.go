@@ -125,8 +125,20 @@ func screen() {
 	// gets the pixel color at 100, 200.
 	color := robotgo.GetPixelColor(100, 200)
 	fmt.Println("color----", color, "-----------------")
+
 	clo := robotgo.GetPxColor(100, 200)
 	fmt.Println("color...", clo)
+	clostr := robotgo.PadHex(clo)
+	fmt.Println("color...", clostr)
+
+	rgb := robotgo.RgbToHex(255, 100, 200)
+	rgbstr := robotgo.PadHex(robotgo.U32ToHex(rgb))
+	fmt.Println("rgb...", rgbstr)
+
+	hex := robotgo.HexToRgb(uint32(rgb))
+	fmt.Println("hex...", hex)
+	hexh := robotgo.PadHex(robotgo.U8ToHex(hex))
+	fmt.Println("HexToRgb...", hexh)
 
 	// gets the pixel color at 10, 20.
 	color2 := robotgo.GetPixelColor(10, 20)

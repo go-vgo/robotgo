@@ -34,7 +34,7 @@ char* pad_hex(MMRGBHex color){
 
 static uint8_t rgb[3];
 
-uint8_t *color_hex_to_rgb(uint32_t h){
+uint8_t* color_hex_to_rgb(uint32_t h){
 	rgb[0] = RED_FROM_HEX(h);
 	rgb[1] = GREEN_FROM_HEX(h);
 	rgb[2] = BLUE_FROM_HEX(h);
