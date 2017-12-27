@@ -848,12 +848,12 @@ func SaveBitmap(args ...interface{}) string {
 // }
 
 // TostringBitmap tostring bitmap to C.char
-func TostringBitmap(bit C.MMBitmapRef) *C.char {
+func TostringBitmap(bit C.MMBitmapRef) string {
 	// str_bit := C.aTostringBitmap(bit)
 	strBit := C.tostring_Bitmap(bit)
 	// fmt.Println("...", str_bit)
 	// return str_bit
-	return strBit
+	return C.GoString(strBit)
 }
 
 // ToBitmap trans C.MMBitmapRef to Bitmap
