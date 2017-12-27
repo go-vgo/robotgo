@@ -105,6 +105,11 @@ func Try(fun func(), handler func(interface{})) {
 	fun()
 }
 
+// GoString teans C.char to string
+func GoString(char *C.char) string {
+	return C.GoString(char)
+}
+
 /*
       _______.  ______ .______       _______  _______ .__   __.
     /       | /      ||   _  \     |   ____||   ____||  \ |  |
@@ -166,6 +171,7 @@ func GetPixelColor(x, y int) string {
 	// color := C.aGetPixelColor(x, y)
 	gcolor := C.GoString(color)
 	defer C.free(unsafe.Pointer(color))
+
 	return gcolor
 }
 
@@ -182,6 +188,7 @@ func SetXDisplayName(name string) string {
 	str := C.aSetXDisplayName(cname)
 	gstr := C.GoString(str)
 	defer C.free(unsafe.Pointer(cname))
+
 	return gstr
 }
 
@@ -190,6 +197,7 @@ func GetXDisplayName() string {
 	name := C.aGetXDisplayName()
 	gname := C.GoString(name)
 	defer C.free(unsafe.Pointer(name))
+
 	return gname
 }
 
@@ -435,6 +443,7 @@ func MouseClick(args ...interface{}) {
 		button = C.LEFT_BUTTON
 		double = false
 	})
+
 	C.aMouseClick(button, double)
 }
 
@@ -462,6 +471,7 @@ func Click(args ...interface{}) {
 		button = C.LEFT_BUTTON
 		double = false
 	})
+
 	C.aMouseClick(button, double)
 }
 
@@ -474,6 +484,7 @@ func MoveClick(x, y int, args ...interface{}) {
 // MouseToggle toggle the mouse
 func MouseToggle(args ...interface{}) {
 	var button C.MMMouseButton
+
 	Try(func() {
 		// button = args[1].(C.MMMouseButton)
 		if args[1].(string) == "left" {
@@ -489,6 +500,7 @@ func MouseToggle(args ...interface{}) {
 		// fmt.Println("err:::", e)
 		button = C.LEFT_BUTTON
 	})
+
 	down := C.CString(args[0].(string))
 	C.aMouseToggle(down, button)
 	defer C.free(unsafe.Pointer(down))
@@ -581,8 +593,8 @@ func KeyTap(args ...interface{}) {
 		defer C.free(unsafe.Pointer(amod))
 		defer C.free(unsafe.Pointer(amodt))
 	}
-	defer C.free(unsafe.Pointer(zkey))
 
+	defer C.free(unsafe.Pointer(zkey))
 }
 
 // KeyToggle toggle the keyboard
@@ -799,12 +811,14 @@ func PointInBounds(bitmap C.MMBitmapRef, x, y int) bool {
 func OpenBitmap(args ...interface{}) C.MMBitmapRef {
 	path := C.CString(args[0].(string))
 	var mtype C.uint16_t
+
 	Try(func() {
 		mtype = C.uint16_t(args[1].(int))
 	}, func(e interface{}) {
 		// fmt.Println("err:::", e)
 		mtype = 1
 	})
+
 	bit := C.bitmap_open(path, mtype)
 	defer C.free(unsafe.Pointer(path))
 	// fmt.Println("opening...", bit)
@@ -817,6 +831,7 @@ func BitmapStr(str string) C.MMBitmapRef {
 	cs := C.CString(str)
 	bit := C.bitmap_from_string(cs)
 	defer C.free(unsafe.Pointer(cs))
+
 	return bit
 }
 
@@ -847,13 +862,16 @@ func SaveBitmap(args ...interface{}) string {
 // 	// defer C.free(unsafe.Pointer(path))
 // }
 
-// TostringBitmap tostring bitmap to C.char
+// TostringBitmap tostring bitmap to string
 func TostringBitmap(bit C.MMBitmapRef) string {
-	// str_bit := C.aTostringBitmap(bit)
 	strBit := C.tostring_Bitmap(bit)
-	// fmt.Println("...", str_bit)
-	// return str_bit
 	return C.GoString(strBit)
+}
+
+// TocharBitmap tostring bitmap to C.char
+func TocharBitmap(bit C.MMBitmapRef) *C.char {
+	strBit := C.tostring_Bitmap(bit)
+	return strBit
 }
 
 // ToBitmap trans C.MMBitmapRef to Bitmap
@@ -866,6 +884,7 @@ func ToBitmap(bit C.MMBitmapRef) Bitmap {
 		BitsPerPixel:  uint8(bit.bitsPerPixel),
 		BytesPerPixel: uint8(bit.bytesPerPixel),
 	}
+
 	return bitmap
 }
 
@@ -895,7 +914,8 @@ func Convert(args ...interface{}) {
 		// fmt.Println("err:::", e)
 		mtype = 1
 	})
-	//C.CString()
+
+	// C.CString()
 	opath := args[0].(string)
 	spath := args[1].(string)
 	bitmap := OpenBitmap(opath)
@@ -1009,6 +1029,7 @@ func AddEvent(aeve string) int {
 	// fmt.Println("event@@", eve)
 	geve := int(eve)
 	defer C.free(unsafe.Pointer(cs))
+
 	return geve
 }
 
@@ -1024,6 +1045,7 @@ func LEvent(aeve string) int {
 	// fmt.Println("event@@", eve)
 	geve := int(eve)
 	defer C.free(unsafe.Pointer(cs))
+
 	return geve
 }
 
@@ -1055,6 +1077,7 @@ func ShowAlert(title, msg string, args ...string) int {
 		defaultButton = "Ok"
 		cancelButton = "Cancel"
 	})
+
 	atitle := C.CString(title)
 	amsg := C.CString(msg)
 	adefaultButton := C.CString(defaultButton)
@@ -1062,10 +1085,12 @@ func ShowAlert(title, msg string, args ...string) int {
 
 	cbool := C.aShowAlert(atitle, amsg, adefaultButton, acancelButton)
 	ibool := int(cbool)
+
 	defer C.free(unsafe.Pointer(atitle))
 	defer C.free(unsafe.Pointer(amsg))
 	defer C.free(unsafe.Pointer(adefaultButton))
 	defer C.free(unsafe.Pointer(acancelButton))
+
 	return ibool
 }
 
@@ -1191,6 +1216,7 @@ func FindName(pid int32) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	names, err := nps.Name()
 	if err != nil {
 		return "", err
@@ -1222,6 +1248,7 @@ func FindNames() ([]string, error) {
 		return strArr, err
 
 	}
+
 	return strArr, err
 }
 
