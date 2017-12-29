@@ -598,7 +598,7 @@ func KeyTap(args ...interface{}) {
 		amod := C.CString(akey)
 		amodt := C.CString(keyT)
 
-		C.aKeyTap(zkey, amod, amodt, C.int(keyDelay))
+		C.key_tap(zkey, amod, amodt, C.int(keyDelay))
 
 		defer C.free(unsafe.Pointer(amod))
 		defer C.free(unsafe.Pointer(amodt))
@@ -616,7 +616,7 @@ func KeyToggle(args ...string) string {
 		adown    string
 		amkey    string
 		mKeyT    string
-		keyDelay = 10
+		// keyDelay = 10
 	)
 
 	Try(func() {
@@ -643,9 +643,9 @@ func KeyToggle(args ...string) string {
 	camkey := C.CString(amkey)
 	cmKeyT := C.CString(mKeyT)
 	// defer func() {
-	str := C.key_Toggle(ckey, cadown, camkey, cmKeyT, C.int(keyDelay))
+	str:=C.key_toggle(ckey, cadown, camkey, cmKeyT)
+	// str := C.key_Toggle(ckey, cadown, camkey, cmKeyT, C.int(keyDelay))
 	// fmt.Println(str)
-	// C.aKeyToggle(ckey, cadown, camkey, cmKeyT)
 	// }()
 	defer C.free(unsafe.Pointer(ckey))
 	defer C.free(unsafe.Pointer(cadown))
@@ -658,7 +658,7 @@ func KeyToggle(args ...string) string {
 // TypeString type string
 func TypeString(x string) {
 	cx := C.CString(x)
-	C.aTypeString(cx)
+	C.type_string(cx)
 	defer C.free(unsafe.Pointer(cx))
 }
 
@@ -686,7 +686,7 @@ func WriteAll(text string) {
 func TypeStrDelay(x string, y int) {
 	cx := C.CString(x)
 	cy := C.size_t(y)
-	C.aTypeStringDelayed(cx, cy)
+	C.type_string_delayed(cx, cy)
 	defer C.free(unsafe.Pointer(cx))
 }
 
@@ -694,18 +694,18 @@ func TypeStrDelay(x string, y int) {
 func TypeStringDelayed(x string, y int) {
 	cx := C.CString(x)
 	cy := C.size_t(y)
-	C.aTypeStringDelayed(cx, cy)
+	C.type_string_delayed(cx, cy)
 	defer C.free(unsafe.Pointer(cx))
 }
 
 // SetKeyDelay set keyboard delay
 func SetKeyDelay(x int) {
-	C.aSetKeyboardDelay(C.size_t(x))
+	C.set_keyboard_delay(C.size_t(x))
 }
 
 // SetKeyboardDelay set keyboard delay, Wno-deprecated
 func SetKeyboardDelay(x int) {
-	C.aSetKeyboardDelay(C.size_t(x))
+	C.set_keyboard_delay(C.size_t(x))
 }
 
 /*

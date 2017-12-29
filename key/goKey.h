@@ -209,7 +209,7 @@ char* key_Tap(char *k, char* keyArr[], int num, int keyDelay){
 	return "0";
 }
 
-char* aKeyTap(char *k, char *akey, char *keyT, int keyDelay){
+char* key_tap(char *k, char *akey, char *keyT, int keyDelay){
 	MMKeyFlags flags = (MMKeyFlags) MOD_NONE;
 	// MMKeyFlags flags = 0;
 	MMKeyCode key;
@@ -254,7 +254,7 @@ char* aKeyTap(char *k, char *akey, char *keyT, int keyDelay){
 	return "0";
 }
 
-char* key_Toggle(char *k, char *d, char *akey, char *keyT, int keyDelay){
+char* key_toggle(char *k, char *d, char *akey, char *keyT){
 	MMKeyFlags flags = (MMKeyFlags) MOD_NONE;
 	MMKeyCode key;
 
@@ -307,20 +307,20 @@ char* key_Toggle(char *k, char *d, char *akey, char *keyT, int keyDelay){
 			break;
 		default:
 			toggleKeyCode(key, down, flags);
-			microsleep(keyDelay);
+			microsleep(keyboardDelay);
 	}
 
 	return "0";
 }
 
-void aTypeString(char *str){
+void type_string(char *str){
 	typeString(str);
 }
 
-void aTypeStringDelayed(char *str, size_t cpm){
+void type_string_delayed(char *str, size_t cpm){
 	typeStringDelayed(str, cpm);
 }
 
-void aSetKeyboardDelay(size_t val){
+void set_keyboard_delay(size_t val){
 	keyboardDelay = val;
 }
