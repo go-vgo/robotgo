@@ -62,7 +62,7 @@ import (
 )
 
 const (
-	version string = "v0.47.0.461, Mount Cook!"
+	version string = "v0.47.0.466, Mount Cook!"
 )
 
 type (
@@ -343,75 +343,85 @@ func MoveMouse(x, y int) {
 	// C.size_t  int
 	cx := C.size_t(x)
 	cy := C.size_t(y)
-	C.aMoveMouse(cx, cy)
+	C.move_mouse(cx, cy)
 }
 
 // Move move the mouse
 func Move(x, y int) {
 	cx := C.size_t(x)
 	cy := C.size_t(y)
-	C.aMoveMouse(cx, cy)
+	C.move_mouse(cx, cy)
 }
 
 // DragMouse drag the mouse
 func DragMouse(x, y int) {
 	cx := C.size_t(x)
 	cy := C.size_t(y)
-	C.aDragMouse(cx, cy)
+	C.drag_mouse(cx, cy)
 }
 
 // Drag drag the mouse
 func Drag(x, y int) {
 	cx := C.size_t(x)
 	cy := C.size_t(y)
-	C.aDragMouse(cx, cy)
+	C.drag_mouse(cx, cy)
 }
 
 // MoveMouseSmooth move the mouse smooth
-func MoveMouseSmooth(x, y int, args ...float64) {
+func MoveMouseSmooth(x, y int, args ...interface{}) {
 	cx := C.size_t(x)
 	cy := C.size_t(y)
 
 	var (
+		mouseDelay = 10
 		low  C.double
 		high C.double
 	)
 
-	if len(args) > 1 {
-		low = C.double(args[0])
-		high = C.double(args[1])
+	if len(args) > 2 {
+		mouseDelay = args[2].(int)
+	}
+
+	if len(args) > 0 {
+		low = C.double(args[0].(float64))
+		high = C.double(args[1].(float64))
 	} else {
 		low = 5.0
 		high = 500.0
 	}
 
-	C.aMoveMouseSmooth(cx, cy, low, high)
+	C.move_mouse_smooth(cx, cy, low, high, C.int(mouseDelay))
 }
 
 // MoveSmooth move the mouse smooth
-func MoveSmooth(x, y int, args ...float64) {
+func MoveSmooth(x, y int, args ...interface{}) {
 	cx := C.size_t(x)
 	cy := C.size_t(y)
 
 	var (
+		mouseDelay = 10
 		low  C.double
 		high C.double
 	)
 
-	if len(args) > 1 {
-		low = C.double(args[0])
-		high = C.double(args[1])
+	if len(args) > 2 {
+		mouseDelay = args[2].(int)
+	}
+
+	if len(args) > 0 {
+		low = C.double(args[0].(float64))
+		high = C.double(args[1].(float64))
 	} else {
 		low = 5.0
 		high = 500.0
 	}
 
-	C.aMoveMouseSmooth(cx, cy, low, high)
+	C.move_mouse_smooth(cx, cy, low, high, C.int(mouseDelay))
 }
 
 // GetMousePos get mouse portion
 func GetMousePos() (int, int) {
-	pos := C.aGetMousePos()
+	pos := C.get_mousePos()
 	// fmt.Println("pos:###", pos, pos.x, pos.y)
 	x := int(pos.x)
 	y := int(pos.y)
@@ -444,7 +454,7 @@ func MouseClick(args ...interface{}) {
 		double = false
 	})
 
-	C.aMouseClick(button, double)
+	C.mouse_click(button, double)
 }
 
 // Click click the mouse
@@ -472,7 +482,7 @@ func Click(args ...interface{}) {
 		double = false
 	})
 
-	C.aMouseClick(button, double)
+	C.mouse_click(button, double)
 }
 
 // MoveClick move and click the mouse
@@ -502,21 +512,21 @@ func MouseToggle(args ...interface{}) {
 	})
 
 	down := C.CString(args[0].(string))
-	C.aMouseToggle(down, button)
+	C.mouse_toggle(down, button)
 	defer C.free(unsafe.Pointer(down))
 }
 
 // SetMouseDelay set mouse delay
 func SetMouseDelay(x int) {
 	cx := C.size_t(x)
-	C.aSetMouseDelay(cx)
+	C.set_mouseDelay(cx)
 }
 
 // ScrollMouse scroll the mouse
 func ScrollMouse(x int, y string) {
 	cx := C.size_t(x)
 	z := C.CString(y)
-	C.aScrollMouse(cx, z)
+	C.scroll_mouse(cx, z)
 	defer C.free(unsafe.Pointer(z))
 }
 
