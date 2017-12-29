@@ -113,7 +113,7 @@ int mouse_toggle(char* d, MMMouseButton button){
 	return 0;
 }
 
-int set_mouseDelay(size_t val){
+int set_mouse_delay(size_t val){
 	// int val = 10;
 	mouseDelay = val;
 

@@ -373,8 +373,8 @@ func MoveMouseSmooth(x, y int, args ...interface{}) {
 
 	var (
 		mouseDelay = 10
-		low  C.double
-		high C.double
+		low        C.double
+		high       C.double
 	)
 
 	if len(args) > 2 {
@@ -399,8 +399,8 @@ func MoveSmooth(x, y int, args ...interface{}) {
 
 	var (
 		mouseDelay = 10
-		low  C.double
-		high C.double
+		low        C.double
+		high       C.double
 	)
 
 	if len(args) > 2 {
@@ -518,7 +518,7 @@ func MouseToggle(args ...interface{}) {
 // SetMouseDelay set mouse delay
 func SetMouseDelay(x int) {
 	cx := C.size_t(x)
-	C.set_mouseDelay(cx)
+	C.set_mouse_delay(cx)
 }
 
 // ScrollMouse scroll the mouse
@@ -612,9 +612,9 @@ func KeyTap(args ...interface{}) {
 //	https://github.com/go-vgo/robotgo/blob/master/docs/keys.md
 func KeyToggle(args ...string) string {
 	var (
-		adown    string
-		amkey    string
-		mKeyT    string
+		adown string
+		amkey string
+		mKeyT string
 		// keyDelay = 10
 	)
 
@@ -642,7 +642,7 @@ func KeyToggle(args ...string) string {
 	camkey := C.CString(amkey)
 	cmKeyT := C.CString(mKeyT)
 	// defer func() {
-	str:=C.key_toggle(ckey, cadown, camkey, cmKeyT)
+	str := C.key_toggle(ckey, cadown, camkey, cmKeyT)
 	// str := C.key_Toggle(ckey, cadown, camkey, cmKeyT, C.int(keyDelay))
 	// fmt.Println(str)
 	// }()
