@@ -45,7 +45,7 @@ uint32_t color_rgb_to_hex(uint8_t r, uint8_t g, uint8_t b){
 	return RGB_TO_HEX(r, g, b);
 }
 
-MMRGBHex get_Pixel_Color(size_t x, size_t y){
+MMRGBHex get_px_color(size_t x, size_t y){
 	MMBitmapRef bitmap;
 	MMRGBHex color;
 
@@ -61,7 +61,7 @@ MMRGBHex get_Pixel_Color(size_t x, size_t y){
 	return color;
 }
 
-char* aGetPixelColor(size_t x, size_t y){
+char* get_pixel_color(size_t x, size_t y){
 	MMBitmapRef bitmap;
 	MMRGBHex color;
 
@@ -91,13 +91,13 @@ char* aGetPixelColor(size_t x, size_t y){
 	return s;
 }
 
-MMSize aGetScreenSize(){
+MMSize get_screen_size(){
 	//Get display size.
 	MMSize displaySize = getMainDisplaySize();
 	return displaySize;
 }
 
-char* aSetXDisplayName(char* name){
+char* set_XDisplay_name(char* name){
 	#if defined(USE_X11)
 	setXDisplay(name);
 	return "success";
@@ -106,7 +106,7 @@ char* aSetXDisplayName(char* name){
 	#endif
 }
 
-char* aGetXDisplayName(){
+char* get_XDisplay_name(){
 	#if defined(USE_X11)
 	const char* display = getXDisplay();
 	char* sd = (char*)calloc(100, sizeof(char*));
@@ -118,7 +118,7 @@ char* aGetXDisplayName(){
 	#endif
 }
 
-// capture_screen aCaptureScreen
+// capture_screen capture screen
 MMBitmapRef capture_screen(size_t x, size_t y, size_t w, size_t h){
 	// if (){
 	// 	x = 0;

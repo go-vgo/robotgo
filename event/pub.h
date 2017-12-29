@@ -50,8 +50,8 @@ int rrevent;
 int cstatus = 1;
 
 
-int aStop();
-int aEvent(char *aevent);
+int stop_event();
+int add_event(char *aevent);
 // int allEvent(char *aevent);
 int allEvent(char *aevent, int vcode[], int size);
 

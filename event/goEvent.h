@@ -56,8 +56,8 @@ void dispatch_proc(iohook_event * const event) {
 				int akeycode = (uint16_t) event->data.keyboard.keycode;
 				// printf("atoi(str)---%d\n", atoi(cevent));
 				if (akeycode == atoi(cevent)){
-					int astop = aStop();
-					// printf("%d\n", astop);
+					int stopEvent = stop_event();
+					// printf("%d\n", stopEvent);
 					cstatus = 0;
 				}
 			break;
@@ -81,8 +81,8 @@ void dispatch_proc(iohook_event * const event) {
 				#endif
 
 				if (strcmp(buf, cevent) == 0){
-					int astop = aStop();
-					// printf("%d\n", astop);
+					int stopEvent = stop_event();
+					// printf("%d\n", stopEvent);
 					cstatus = 0;
 				}
 				// return (char*) event->data.keyboard.keychar;
@@ -121,7 +121,7 @@ void dispatch_proc(iohook_event * const event) {
 					amouse = 7;
 				}
 				if (abutton == amouse && aclicks == 1){
-					int astop = aStop();
+					int stopEvent = stop_event();
 					cstatus = 0;
 				}
 
@@ -141,7 +141,7 @@ void dispatch_proc(iohook_event * const event) {
 	// fprintf(stdout, "----%s\n",	 buffer);
 }
 
-int aEvent(char *aevent) {
+int add_event(char *aevent) {
 	// (uint16_t *)
 	cevent = aevent;
 	// Set the logger callback for library output.
@@ -225,7 +225,7 @@ int aEvent(char *aevent) {
 	return cstatus;
 }
 
-int aStop(){
+int stop_event(){
 	int status = hook_stop();
 	switch (status) {
 		// System level errors.

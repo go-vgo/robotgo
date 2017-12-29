@@ -158,7 +158,7 @@ func GetPxColor(x, y int) C.MMRGBHex {
 	cx := C.size_t(x)
 	cy := C.size_t(y)
 
-	color := C.get_Pixel_Color(cx, cy)
+	color := C.get_px_color(cx, cy)
 	return color
 }
 
@@ -167,8 +167,7 @@ func GetPixelColor(x, y int) string {
 	cx := C.size_t(x)
 	cy := C.size_t(y)
 
-	color := C.aGetPixelColor(cx, cy)
-	// color := C.aGetPixelColor(x, y)
+	color := C.get_pixel_color(cx, cy)
 	gcolor := C.GoString(color)
 	defer C.free(unsafe.Pointer(color))
 
@@ -177,7 +176,7 @@ func GetPixelColor(x, y int) string {
 
 // GetScreenSize get screen size
 func GetScreenSize() (int, int) {
-	size := C.aGetScreenSize()
+	size := C.get_screen_size()
 	// fmt.Println("...", size, size.width)
 	return int(size.width), int(size.height)
 }
@@ -185,7 +184,7 @@ func GetScreenSize() (int, int) {
 // SetXDisplayName set XDisplay name
 func SetXDisplayName(name string) string {
 	cname := C.CString(name)
-	str := C.aSetXDisplayName(cname)
+	str := C.set_XDisplay_name(cname)
 	gstr := C.GoString(str)
 	defer C.free(unsafe.Pointer(cname))
 
@@ -194,7 +193,7 @@ func SetXDisplayName(name string) string {
 
 // GetXDisplayName get XDisplay name
 func GetXDisplayName() string {
-	name := C.aGetXDisplayName()
+	name := C.get_XDisplay_name()
 	gname := C.GoString(name)
 	defer C.free(unsafe.Pointer(name))
 
@@ -1035,7 +1034,7 @@ func AddEvent(aeve string) int {
 	}
 
 	// cs := C.CString(aeve)
-	eve := C.aEvent(cs)
+	eve := C.add_event(cs)
 	// fmt.Println("event@@", eve)
 	geve := int(eve)
 	defer C.free(unsafe.Pointer(cs))
@@ -1045,13 +1044,13 @@ func AddEvent(aeve string) int {
 
 // StopEvent stop event listener
 func StopEvent() {
-	C.aStop()
+	C.stop_event()
 }
 
 // LEvent add event listener, Wno-deprecated
 func LEvent(aeve string) int {
 	cs := C.CString(aeve)
-	eve := C.aEvent(cs)
+	eve := C.add_event(cs)
 	// fmt.Println("event@@", eve)
 	geve := int(eve)
 	defer C.free(unsafe.Pointer(cs))
