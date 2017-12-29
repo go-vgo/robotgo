@@ -738,7 +738,7 @@ func FindBitmap(args ...interface{}) (int, int) {
 		tolerance = 0.5
 	}
 
-	pos := C.bitmap_find_bitmap(bit, sbit, tolerance)
+	pos := C.find_bitmap(bit, sbit, tolerance)
 	// fmt.Println("pos----", pos)
 	return int(pos.x), int(pos.y)
 }
@@ -911,7 +911,7 @@ func GetPortion(bit C.MMBitmapRef, x, y, w, h C.size_t) C.MMBitmapRef {
 	rect.size.width = w
 	rect.size.height = h
 
-	pos := C.get_Portion(bit, rect)
+	pos := C.get_portion(bit, rect)
 	return pos
 }
 
@@ -1093,7 +1093,7 @@ func ShowAlert(title, msg string, args ...string) int {
 	adefaultButton := C.CString(defaultButton)
 	acancelButton := C.CString(cancelButton)
 
-	cbool := C.aShowAlert(atitle, amsg, adefaultButton, acancelButton)
+	cbool := C.show_alert(atitle, amsg, adefaultButton, acancelButton)
 	ibool := int(cbool)
 
 	defer C.free(unsafe.Pointer(atitle))
@@ -1106,7 +1106,7 @@ func ShowAlert(title, msg string, args ...string) int {
 
 // IsValid valid the window
 func IsValid() bool {
-	abool := C.aIsValid()
+	abool := C.is_valid()
 	gbool := bool(abool)
 	// fmt.Println("bool---------", gbool)
 	return gbool
@@ -1114,30 +1114,30 @@ func IsValid() bool {
 
 // SetActive set the window active
 func SetActive(win C.MData) {
-	C.aSetActive(win)
+	C.set_active(win)
 }
 
 // GetActive get the active window
 func GetActive() C.MData {
-	mdata := C.aGetActive()
+	mdata := C.get_active()
 	// fmt.Println("active----", mdata)
 	return mdata
 }
 
 // CloseWindow close the window
 func CloseWindow() {
-	C.aCloseWindow()
+	C.close_window()
 }
 
 // SetHandle set the window handle
 func SetHandle(hwnd int) {
 	chwnd := C.uintptr(hwnd)
-	C.aSetHandle(chwnd)
+	C.set_handle(chwnd)
 }
 
 // GetHandle get the window handle
 func GetHandle() int {
-	hwnd := C.aGetHandle()
+	hwnd := C.get_handle()
 	ghwnd := int(hwnd)
 	// fmt.Println("gethwnd---", ghwnd)
 	return ghwnd
@@ -1145,7 +1145,7 @@ func GetHandle() int {
 
 // GetBHandle get the window handle
 func GetBHandle() int {
-	hwnd := C.bGetHandle()
+	hwnd := C.bget_handle()
 	ghwnd := int(hwnd)
 	//fmt.Println("gethwnd---", ghwnd)
 	return ghwnd
@@ -1153,7 +1153,7 @@ func GetBHandle() int {
 
 // GetTitle get the window title
 func GetTitle() string {
-	title := C.aGetTitle()
+	title := C.get_title()
 	gtittle := C.GoString(title)
 	// fmt.Println("title...", gtittle)
 	return gtittle
@@ -1161,7 +1161,7 @@ func GetTitle() string {
 
 // GetPID get the process id
 func GetPID() int {
-	pid := C.aGetPID()
+	pid := C.get_PID()
 	return int(pid)
 }
 

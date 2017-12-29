@@ -58,7 +58,7 @@ MMBitmapRef bitmap_deepcopy(MMBitmapRef bitmap){
 	return bitmap == NULL ? NULL : copyMMBitmap(bitmap);
 }
 
-MMPoint bitmap_find_bitmap(MMBitmapRef bitmap, MMBitmapRef sbitmap, float tolerance){
+MMPoint find_bitmap(MMBitmapRef bitmap, MMBitmapRef sbitmap, float tolerance){
 	MMPoint point = {-1, -1};
 	// printf("tolenrance=%f\n", tolerance);
 	if (!bitmap_ready(sbitmap) || !bitmap_ready(bitmap)) {
@@ -184,7 +184,7 @@ bool bitmap_str(MMBitmapRef bitmap, char *out){
 	return true;
 }
 
-MMBitmapRef get_Portion(MMBitmapRef bit_map, MMRect rect){
+MMBitmapRef get_portion(MMBitmapRef bit_map, MMRect rect){
 	// MMRect rect;
 	MMBitmapRef portion = NULL;
 

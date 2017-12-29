@@ -11,38 +11,38 @@
 #include "alert_c.h"
 #include "window.h"
 
-int aShowAlert(const char *title, const char *msg, const char *defaultButton,
+int show_alert(const char *title, const char *msg, const char *defaultButton,
               const char *cancelButton){
 	int alert = showAlert(title, msg, defaultButton, cancelButton);
 
 	return alert;
 }
 
-bool aIsValid(){
+bool is_valid(){
 	bool abool = IsValid();
 	return abool;
 }
 
-// int aFindwindow(char* name){
+// int find_window(char* name){
 // 	int z = findwindow(name);
 // 	return z;
 // }
 
-void aCloseWindow(void){
+void close_window(void){
 	CloseWin();
 }
 
-bool aSetHandle(uintptr handle){
+bool set_handle(uintptr handle){
 	bool hwnd = setHandle(handle);
 	return hwnd;
 }
 
-uintptr aGetHandle(){
+uintptr get_handle(){
 	uintptr hwnd = getHandle();
 	return hwnd;
 }
 
-uintptr bGetHandle(){
+uintptr bget_handle(){
 	MData mData = GetActive();
 	#if defined(IS_MACOSX)
 		return (uintptr)mData.CgID;
@@ -53,7 +53,7 @@ uintptr bGetHandle(){
 	#endif
 }
 
-void aSetActive(const MData win){
+void set_active(const MData win){
 	SetActive(win);
 }
 
@@ -70,18 +70,18 @@ void active_PID(uintptr pid){
 	SetActive(win);
 }
 
-MData aGetActive(){
+MData get_active(){
 	MData mdata = GetActive();
 	return mdata;
 }
 
-char* aGetTitle(){
+char* get_title(){
 	char* title = GetTitle();
 	// printf("title::::%s\n", title );
 	return title;
 }
 
-int32 aGetPID(void){
+int32 get_PID(void){
 	int pid = WGetPID();
 	return pid;
 }
