@@ -162,7 +162,7 @@ char *bitmap_save(MMBitmapRef bitmap, char *path, uint16_t type){
 	return "ok";
 }
 
-char *tostring_Bitmap(MMBitmapRef bitmap){
+char *tostring_bitmap(MMBitmapRef bitmap){
 	char *buf = NULL;
 	MMBMPStringError err;
 

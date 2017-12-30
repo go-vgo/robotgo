@@ -62,7 +62,7 @@ import (
 )
 
 const (
-	version string = "v0.47.0.466, Mount Cook!"
+	version string = "v0.47.0.471, Mount Cook!"
 )
 
 type (
@@ -381,7 +381,7 @@ func MoveMouseSmooth(x, y int, args ...interface{}) {
 		mouseDelay = args[2].(int)
 	}
 
-	if len(args) > 0 {
+	if len(args) > 1 {
 		low = C.double(args[0].(float64))
 		high = C.double(args[1].(float64))
 	} else {
@@ -407,7 +407,7 @@ func MoveSmooth(x, y int, args ...interface{}) {
 		mouseDelay = args[2].(int)
 	}
 
-	if len(args) > 0 {
+	if len(args) > 1 {
 		low = C.double(args[0].(float64))
 		high = C.double(args[1].(float64))
 	} else {
@@ -873,13 +873,13 @@ func SaveBitmap(args ...interface{}) string {
 
 // TostringBitmap tostring bitmap to string
 func TostringBitmap(bit C.MMBitmapRef) string {
-	strBit := C.tostring_Bitmap(bit)
+	strBit := C.tostring_bitmap(bit)
 	return C.GoString(strBit)
 }
 
 // TocharBitmap tostring bitmap to C.char
 func TocharBitmap(bit C.MMBitmapRef) *C.char {
-	strBit := C.tostring_Bitmap(bit)
+	strBit := C.tostring_bitmap(bit)
 	return strBit
 }
 
