@@ -215,3 +215,10 @@ MMPoint bitmap_find_color(MMBitmapRef bitmap, MMRGBHex color, float tolerance){
 
 	return point;
 }
+
+int bitmap_count_of_color(MMBitmapRef bitmap, MMRGBHex color, float tolerance){
+	if (!bitmap_ready(bitmap)) return 0;
+	MMRect rect = MMBitmapGetBounds(bitmap);
+
+	return countOfColorsInRect(bitmap, color, rect, tolerance);
+}

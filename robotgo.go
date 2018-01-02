@@ -62,7 +62,7 @@ import (
 )
 
 const (
-	version string = "v0.47.0.471, Mount Cook!"
+	version string = "v0.47.0.472, Mount Cook!"
 )
 
 type (
@@ -995,6 +995,37 @@ func FindColorCS(x, y, w, h int, color CHex, args ...float32) (int, int) {
 	bitmap := CaptureScreen(x, y, w, h)
 	rx, ry := FindColor(bitmap, color, tolerance)
 	return rx, ry
+}
+
+// CountColor count bitmap color
+func CountColor(bitmap C.MMBitmapRef, color CHex, args ...float32) int {
+	var tolerance C.float
+
+	if len(args) > 0 {
+		tolerance = C.float(args[0])
+	} else {
+		tolerance = 0.5
+	}
+
+	count := C.bitmap_count_of_color(bitmap, C.MMRGBHex(color), tolerance)
+
+	return int(count)
+}
+
+// CountColorCS count bitmap color by CaptureScreen
+func CountColorCS(x, y, w, h int, color CHex, args ...float32) int {
+	var tolerance float32
+
+	if len(args) > 0 {
+		tolerance = args[0]
+	} else {
+		tolerance = 0.5
+	}
+
+	bitmap := CaptureScreen(x, y, w, h)
+	rx := CountColor(bitmap, color, tolerance)
+
+	return rx
 }
 
 /*
