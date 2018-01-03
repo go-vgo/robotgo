@@ -512,7 +512,7 @@ robotgo.DeepCopyBit(bitmap)
 
     string
 
-    (mosue arguments: mleft, mright, wheelDown, wheelUp, wheelLeft, wheelRight)
+    (mouse arguments: mleft, mright, wheelDown, wheelUp, wheelLeft, wheelRight)
 
 #### Return:
 
