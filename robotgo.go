@@ -1312,9 +1312,19 @@ func FindIds(name string) ([]int32, error) {
 	return pids, err
 }
 
-// ActivePID window active by PID
+// ActivePID active window by PID
 func ActivePID(pid int32) {
 	C.active_PID(C.uintptr(pid))
+}
+
+// ActiveName active window by name
+func ActiveName(name string) error {
+	pids, err := FindIds(name)
+	if err == nil && len(pids) > 0 {
+		ActivePID(pids[0])
+	}
+
+	return err
 }
 
 // Kill kill the process by PID
