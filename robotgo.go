@@ -62,7 +62,7 @@ import (
 )
 
 const (
-	version string = "v0.47.0.472, Mount Cook!"
+	version string = "v0.47.0.476, Mount Cook!"
 )
 
 type (
@@ -1052,12 +1052,31 @@ func AddEvent(aeve string) int {
 		"f10": "68",
 		"f11": "69",
 		"f12": "70",
+		// more
+		"tab":     "15",
+		"ctrl":    "29",
+		"control": "29",
+		"alt":     "56",
+		"shift":   "42",
+		"enter":   "28",
+		"command": "3675",
 	}
 
-	var cs *C.char
-	var keve string
+	var (
+		cs   *C.char
+		keve string
+		mArr = []string{"mleft", "mright", "wheelDown",
+			"wheelUp", "wheelLeft", "wheelRight"}
+		mouseBool bool
+	)
 
-	if len(aeve) > 1 && len(aeve) < 4 {
+	for i := 0; i < len(mArr); i++ {
+		if aeve == mArr[i] {
+			mouseBool = true
+		}
+	}
+
+	if len(aeve) > 1 && !mouseBool {
 		keve = keycode[aeve].(string)
 		cs = C.CString(keve)
 	} else {
