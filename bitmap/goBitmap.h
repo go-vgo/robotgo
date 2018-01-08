@@ -58,18 +58,18 @@ MMBitmapRef bitmap_deepcopy(MMBitmapRef bitmap){
 	return bitmap == NULL ? NULL : copyMMBitmap(bitmap);
 }
 
-MMPoint find_bitmap(MMBitmapRef bitmap, MMBitmapRef sbitmap, float tolerance){
+MMPoint find_bitmap(MMBitmapRef bitmap, MMBitmapRef sbit, float tolerance){
 	MMPoint point = {-1, -1};
 	// printf("tolenrance=%f\n", tolerance);
-	if (!bitmap_ready(sbitmap) || !bitmap_ready(bitmap)) {
+	if (!bitmap_ready(sbit) || !bitmap_ready(bitmap)) {
 		printf("bitmap is not ready yet!\n");
 		return point;
 	}
 
-	MMRect rect = MMBitmapGetBounds(sbitmap);
+	MMRect rect = MMBitmapGetBounds(sbit);
 	// printf("x=%d,y=%d,width=%d,height=%d\n", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
 
-	if (findBitmapInRect(bitmap, sbitmap, &point,
+	if (findBitmapInRect(bitmap, sbit, &point,
 	                     rect, tolerance) == 0) {
 		return point;
 	}
@@ -77,25 +77,33 @@ MMPoint find_bitmap(MMBitmapRef bitmap, MMBitmapRef sbitmap, float tolerance){
 	return point;
 }
 
-MMPoint *find_every_bitmap(MMBitmapRef bitmap, MMBitmapRef sbitmap, float tolerance, MMPoint *list){
-	if (!bitmap_ready(bitmap) || !bitmap_ready(sbitmap)) return NULL;
+MMPoint *find_every_bitmap(MMBitmapRef bitmap, MMBitmapRef sbit, float tolerance, MMPoint *list){
+	if (!bitmap_ready(bitmap) || !bitmap_ready(sbit)) return NULL;
 
 	MMPoint point;
 	MMPointArrayRef pointArray;
 	MMRect rect = MMBitmapGetBounds(bitmap);
 
-	if (findBitmapInRect(bitmap, sbitmap, &point,
+	if (findBitmapInRect(bitmap, sbit, &point,
 	                     rect, tolerance) == 0) {
 		return NULL;
 	}
 
-	pointArray = findAllBitmapInRect(bitmap, sbitmap, rect, tolerance);
+	pointArray = findAllBitmapInRect(bitmap, sbit, rect, tolerance);
 	if (pointArray == NULL) return NULL;
 
 	memcpy(list, pointArray->array, sizeof(MMPoint) * pointArray->count);
 	destroyMMPointArray(pointArray);
 
 	return list;
+}
+
+int count_of_bitmap(MMBitmapRef bitmap, MMBitmapRef sbit, float tolerance){
+	if (!bitmap_ready(bitmap) || !bitmap_ready(sbit)) return 0;
+
+	MMRect rect = MMBitmapGetBounds(bitmap);
+
+	return countOfBitmapInRect(bitmap, sbit, rect, tolerance);
 }
 
 MMPoint aFindBitmap(MMBitmapRef bit_map, MMRect rect){

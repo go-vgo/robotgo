@@ -62,7 +62,7 @@ import (
 )
 
 const (
-	version string = "v0.47.0.476, Mount Cook!"
+	version string = "v0.47.0.477, Mount Cook!"
 )
 
 type (
@@ -654,6 +654,16 @@ func KeyToggle(args ...string) string {
 	return C.GoString(str)
 }
 
+// ReadAll read string from clipboard
+func ReadAll() (string, error) {
+	return clipboard.ReadAll()
+}
+
+// WriteAll write string to clipboard
+func WriteAll(text string) {
+	clipboard.WriteAll(text)
+}
+
 // TypeString type string
 func TypeString(x string) {
 	cx := C.CString(x)
@@ -669,16 +679,6 @@ func TypeStr(str string) {
 	} else {
 		KeyTap("v", "control")
 	}
-}
-
-// ReadAll read string from clipboard
-func ReadAll() (string, error) {
-	return clipboard.ReadAll()
-}
-
-// WriteAll write string to clipboard
-func WriteAll(text string) {
-	clipboard.WriteAll(text)
 }
 
 // TypeStrDelay type string delayed
@@ -780,6 +780,19 @@ func FindEveryBitmap(args ...interface{}) (int, int) {
 	pos := C.find_every_bitmap(bit, sbit, tolerance, &lpos)
 	// fmt.Println("pos----", pos)
 	return int(pos.x), int(pos.y)
+}
+
+// CountBitmap count of the bitmap
+func CountBitmap(bitmap C.MMBitmapRef, sbit C.MMBitmapRef, args ...float32) int {
+	var tolerance C.float
+	if len(args) > 0 {
+		tolerance = C.float(args[0])
+	} else {
+		tolerance = 0.5
+	}
+
+	count := C.count_of_bitmap(bitmap, sbit, tolerance)
+	return int(count)
 }
 
 // FindBit find the bitmap, Wno-deprecated
