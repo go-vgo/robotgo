@@ -732,7 +732,7 @@ func FindBitmap(args ...interface{}) (int, int) {
 	}
 
 	if len(args) > 2 {
-		tolerance = C.float(args[2].(float32))
+		tolerance = C.float(args[2].(float64))
 	} else {
 		tolerance = 0.5
 	}
@@ -759,7 +759,7 @@ func FindEveryBitmap(args ...interface{}) (int, int) {
 	}
 
 	if len(args) > 2 {
-		tolerance = C.float(args[2].(float32))
+		tolerance = C.float(args[2].(float64))
 	} else {
 		tolerance = 0.5
 	}
