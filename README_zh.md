@@ -167,7 +167,7 @@ func main() {
 } 
 ```
 
-#### [位图](https://github.com/go-vgo/robotgo/blob/master/examples/bitmap/mian.go)
+#### [位图](https://github.com/go-vgo/robotgo/blob/master/examples/bitmap/main.go)
 
 ```Go
 package main
