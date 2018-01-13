@@ -62,7 +62,7 @@ import (
 )
 
 const (
-	version string = "v0.47.0.477, Mount Cook!"
+	version string = "v0.47.0.481, Mount Cook!"
 )
 
 type (
@@ -490,6 +490,12 @@ func MoveClick(x, y int, args ...interface{}) {
 	MouseClick(args)
 }
 
+// MovesClick move smooth and click the mouse
+func MovesClick(x, y int, args ...interface{}) {
+	MoveSmooth(x, y)
+	MouseClick(args)
+}
+
 // MouseToggle toggle the mouse
 func MouseToggle(args ...interface{}) {
 	var button C.MMMouseButton
@@ -817,6 +823,12 @@ func FindBit(args ...interface{}) (int, int) {
 	pos := C.aFindBitmap(bit, rect)
 	// fmt.Println("pos----", pos)
 	return int(pos.x), int(pos.y)
+}
+
+// BitmapClick find the bitmap and click
+func BitmapClick(bitmap C.MMBitmapRef, args ...interface{}) {
+	x, y := FindBitmap(bitmap)
+	MovesClick(x, y, args)
 }
 
 // PointInBounds bitmap point in bounds
