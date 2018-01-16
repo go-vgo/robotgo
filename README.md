@@ -249,7 +249,7 @@ func main() {
 ## Plans
 - Update Find an image on screen, read pixels from an image
 - Update Window Handle
-- Support UTF-8, transitional plan: TypeStr
+- Linux support UTF-8
 - Try support Android, maybe support IOS
 
 ## Donate

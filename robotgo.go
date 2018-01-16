@@ -54,6 +54,7 @@ import (
 	"reflect"
 	"runtime"
 	"strings"
+	"time"
 	"unsafe"
 	// "syscall"
 
@@ -62,7 +63,7 @@ import (
 )
 
 const (
-	version string = "v0.47.0.481, Mount Cook!"
+	version string = "v0.47.0.485, Mount Cook!"
 )
 
 type (
@@ -103,6 +104,11 @@ func Try(fun func(), handler func(interface{})) {
 		}
 	}()
 	fun()
+}
+
+// Sleep time.Sleep
+func Sleep(tm float64) {
+	time.Sleep(time.Duration(tm) * time.Second)
 }
 
 // GoString teans C.char to string
