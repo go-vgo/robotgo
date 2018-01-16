@@ -670,6 +670,33 @@ func WriteAll(text string) {
 	clipboard.WriteAll(text)
 }
 
+// CharCodeAt char code at utf-8
+func CharCodeAt(s string, n int) rune {
+	i := 0
+	for _, r := range s {
+		if i == n {
+			return r
+		}
+		i++
+	}
+
+	return 0
+}
+
+// TypeStr type string, support UTF-8
+func TypeStr(str string) {
+	for i := 0; i < len([]rune(str)); i++ {
+		ustr := uint32(CharCodeAt(str, i))
+		UnicodeType(ustr)
+	}
+}
+
+// UnicodeType unicode tap uint32
+func UnicodeType(str uint32) {
+	cstr := C.uint(str)
+	C.unicodeType(cstr)
+}
+
 // TypeString type string
 func TypeString(x string) {
 	cx := C.CString(x)
@@ -677,8 +704,8 @@ func TypeString(x string) {
 	defer C.free(unsafe.Pointer(cx))
 }
 
-// TypeStr type string, support UTF-8
-func TypeStr(str string) {
+// TypeStrP paste string, support UTF-8
+func TypeStrP(str string) {
 	clipboard.WriteAll(str)
 	if runtime.GOOS == "darwin" {
 		KeyTap("v", "command")
@@ -688,11 +715,11 @@ func TypeStr(str string) {
 }
 
 // TypeStrDelay type string delayed
-func TypeStrDelay(x string, y int) {
-	cx := C.CString(x)
+func TypeStrDelay(str string, y int) {
+	cstr := C.CString(str)
 	cy := C.size_t(y)
-	C.type_string_delayed(cx, cy)
-	defer C.free(unsafe.Pointer(cx))
+	C.type_string_delayed(cstr, cy)
+	defer C.free(unsafe.Pointer(cstr))
 }
 
 // TypeStringDelayed type string delayed, Wno-deprecated

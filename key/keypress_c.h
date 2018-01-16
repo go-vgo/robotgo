@@ -127,9 +127,8 @@ void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags)
 		assert(keyEvent != NULL);
 
 		CGEventSetType(keyEvent, down ? kCGEventKeyDown : kCGEventKeyUp);
+		// CGEventSetFlags(keyEvent, flags);
 		CGEventSetFlags(keyEvent, (int) flags);
-		// CGEventSetFlags(keyEvent, 0);
-		// CGEventSetFlags(keyEvent, kCGEventFlagMaskShift | kCGEventFlagMaskCommand);
 		CGEventPost(kCGSessionEventTap, keyEvent);
 		CFRelease(keyEvent);
 	}
@@ -193,15 +192,13 @@ void tapKey(char c, MMKeyFlags flags)
 }
 
 #if defined(IS_MACOSX)
-void toggleUniKey(char c, const bool down)
+void toggleUnicode(UniChar ch, const bool down)
 {
 	/* This function relies on the convenient
 	 * CGEventKeyboardSetUnicodeString(), which allows us to not have to
 	 * convert characters to a keycode, but does not support adding modifier
-	 * flags. It is therefore only used in typeString() and typeStringDelayed()
+	 * flags. It is therefore only used in typeStringDelayed()
 	 * -- if you need modifier keys, use the above functions instead. */
-	UniChar ch = (UniChar)c; /* Convert to unsigned char */
-
 	CGEventRef keyEvent = CGEventCreateKeyboardEvent(NULL, 0, down);
 	if (keyEvent == NULL) {
 		fputs("Could not create keyboard event.\n", stderr);
@@ -213,33 +210,80 @@ void toggleUniKey(char c, const bool down)
 	CGEventPost(kCGSessionEventTap, keyEvent);
 	CFRelease(keyEvent);
 }
-#else
+#endif
+
+#if defined(USE_X11)
 	#define toggleUniKey(c, down) toggleKey(c, down, MOD_NONE)
 #endif
 
-static void tapUniKey(char c)
-{
-	toggleUniKey(c, true);
-	toggleUniKey(c, false);
+// unicode type
+void unicodeType(const unsigned value){
+	#if defined(IS_MACOSX)
+		UniChar ch = (UniChar)value; // Convert to unsigned char
+
+		toggleUnicode(ch, true);
+		toggleUnicode(ch, false);
+	#elif defined(IS_WINDOWS)
+		INPUT ip;
+
+		// Set up a generic keyboard event.
+		ip.type = INPUT_KEYBOARD;
+		ip.ki.wVk = 0; // Virtual-key code
+		ip.ki.wScan = value; // Hardware scan code for key
+		ip.ki.time = 0; // System will provide its own time stamp.
+		ip.ki.dwExtraInfo = 0; // No extra info. Use the GetMessageExtraInfo function to obtain this information if needed.
+		ip.ki.dwFlags = KEYEVENTF_UNICODE; // KEYEVENTF_KEYUP for key release.
+
+		SendInput(1, &ip, sizeof(INPUT));
+	#elif defined(USE_X11)
+		toggleUniKey(value, true);
+		toggleUniKey(value, false);	
+	#endif
 }
 
-void typeString(const char *str)
-{
-	while (*str != '\0') {
-		tapUniKey(*str++);
-	}
-}
-
-void typeStringDelayed(const char *str, const unsigned cpm)
-{
+void typeStringDelayed(const char *str, const unsigned cpm){
+	
 	/* Characters per second */
 	const double cps = (double)cpm / 60.0;
 
 	/* Average milli-seconds per character */
 	const double mspc = (cps == 0.0) ? 0.0 : 1000.0 / cps;
 
+	unsigned long n;
+	unsigned short c;
+	unsigned short c1;
+	unsigned short c2;
+	unsigned short c3;
+
 	while (*str != '\0') {
-		tapUniKey(*str++);
-		microsleep(mspc + (DEADBEEF_UNIFORM(0.0, 62.5)));
+		c = *str++;
+
+		// warning, the following utf8 decoder
+		// doesn't perform validation
+		if (c <= 0x7F) {
+			// 0xxxxxxx one byte
+			n = c;
+		} else if ((c & 0xE0) == 0xC0)  {
+			// 110xxxxx two bytes
+			c1 = (*str++) & 0x3F;
+			n = ((c & 0x1F) << 6) | c1;
+		} else if ((c & 0xF0) == 0xE0) {
+			// 1110xxxx three bytes
+			c1 = (*str++) & 0x3F;
+			c2 = (*str++) & 0x3F;
+			n = ((c & 0x0F) << 12) | (c1 << 6) | c2;
+		} else if ((c & 0xF8) == 0xF0) {
+			// 11110xxx four bytes
+			c1 = (*str++) & 0x3F;
+			c2 = (*str++) & 0x3F;
+			c3 = (*str++) & 0x3F;
+			n = ((c & 0x07) << 18) | (c1 << 12) | (c2 << 6) | c3;
+		}
+
+		unicodeType(n);
+
+		if (mspc > 0) {
+			microsleep(mspc + (DEADBEEF_UNIFORM(0.0, 62.5)));
+		}
 	}
 }
