@@ -212,6 +212,10 @@ void toggleUnicode(UniChar ch, const bool down)
 }
 #endif
 
+#if defined(USE_X11)
+	#define toggleUniKey(c, down) toggleKey(c, down, MOD_NONE)
+#endif
+
 // unicode type
 void unicodeType(const unsigned value){
 	#if defined(IS_MACOSX)
@@ -231,6 +235,9 @@ void unicodeType(const unsigned value){
 		ip.ki.dwFlags = KEYEVENTF_UNICODE; // KEYEVENTF_KEYUP for key release.
 
 		SendInput(1, &ip, sizeof(INPUT));
+	#elif defined(USE_X11)
+		toggleUniKey(value, true);
+		toggleUniKey(value, false);	
 	#endif
 }
 
