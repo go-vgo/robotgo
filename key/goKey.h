@@ -314,7 +314,7 @@ char* key_toggle(char *k, char *d, char *akey, char *keyT){
 }
 
 void type_string(char *str){
-	typeString(str);
+	typeStringDelayed(str, 0);
 }
 
 void type_string_delayed(char *str, size_t cpm){
