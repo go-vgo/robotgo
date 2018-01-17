@@ -697,21 +697,21 @@ func TypeStr(str string) {
 	}
 }
 
-// UnicodeType unicode tap uint32
+// UnicodeType tap uint32 unicode
 func UnicodeType(str uint32) {
 	cstr := C.uint(str)
 	C.unicodeType(cstr)
 }
 
-// TypeString type string
+// TypeString type string, support unicode
 func TypeString(x string) {
 	cx := C.CString(x)
 	C.type_string(cx)
 	defer C.free(unsafe.Pointer(cx))
 }
 
-// TypeStrP paste string, support UTF-8
-func TypeStrP(str string) {
+// PasteStr paste string, support UTF-8
+func PasteStr(str string) {
 	clipboard.WriteAll(str)
 	if runtime.GOOS == "darwin" {
 		KeyTap("v", "command")
