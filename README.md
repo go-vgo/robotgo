@@ -135,6 +135,11 @@ import (
 
 func main() {
   robotgo.TypeString("Hello World")
+  robotgo.TypeString("测试")
+  robotgo.TypeStr("测试")
+  ustr := uint32(robotgo.CharCodeAt("测试", 0))
+  robotgo.UnicodeType(ustr)
+
   robotgo.KeyTap("enter")
   robotgo.TypeString("en")
   robotgo.KeyTap("i", "alt", "command")

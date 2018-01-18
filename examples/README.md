@@ -35,6 +35,11 @@ import (
 
 func main() {
   robotgo.TypeString("Hello World")
+  robotgo.TypeString("测试")
+  robotgo.TypeStr("测试")
+  ustr := uint32(robotgo.CharCodeAt("测试", 0))
+  robotgo.UnicodeType(ustr)
+
   robotgo.KeyTap("enter")
   robotgo.TypeString("en")
   robotgo.KeyTap("i", "alt", "command")
@@ -68,7 +73,7 @@ func main() {
 } 
 ```
 
-#### [Bitmap](https://github.com/go-vgo/robotgo/blob/master/examples/bitmap/mian.go)
+#### [Bitmap](https://github.com/go-vgo/robotgo/blob/master/examples/bitmap/main.go)
 
 ```Go
 package main
