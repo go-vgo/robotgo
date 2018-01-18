@@ -55,7 +55,12 @@ func main() {
 	fpid, err := robotgo.FindIds("Google")
 	if err == nil {
 		fmt.Println("pids...", fpid)
+		if len(fpid) > 0 {
+			robotgo.ActivePID(fpid[0])
+		}
 	}
+
+	robotgo.ActiveName("chrome")
 
 	// determine whether the process exists
 	isExist, err := robotgo.PidExists(100)

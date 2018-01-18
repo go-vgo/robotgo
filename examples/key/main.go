@@ -25,6 +25,13 @@ func main() {
 	// importing "Hello World"
 	robotgo.TypeString("Hello World")
 
+	robotgo.TypeString("留给真爱你的人")
+	robotgo.TypeStr("留给真爱你的人")
+	ustr := uint32(robotgo.CharCodeAt("留给真爱你的人", 0))
+	robotgo.UnicodeType(ustr)
+
+	robotgo.PasteStr("粘贴字符串, paste")
+
 	// press "enter"
 	robotgo.KeyTap("enter")
 	robotgo.KeyTap("a", "control")

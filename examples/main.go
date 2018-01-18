@@ -25,6 +25,13 @@ func key() {
 	// importing "Hello World"
 	robotgo.TypeString("Hello World")
 
+	robotgo.TypeString("留给真爱你的人")
+	robotgo.TypeStr("留给真爱你的人")
+	ustr := uint32(robotgo.CharCodeAt("留给真爱你的人", 0))
+	robotgo.UnicodeType(ustr)
+
+	robotgo.PasteStr("粘贴字符串, paste")
+
 	// press "enter"
 	robotgo.KeyTap("enter")
 	robotgo.KeyTap("a", "control")
@@ -159,6 +166,9 @@ func bitmap() {
 	bitmap := robotgo.CaptureScreen(100, 200, 30, 40)
 	fmt.Println("CaptureScreen...", bitmap)
 
+	gbit := robotgo.ToBitmap(bitmap)
+	fmt.Println("go bitmap", gbit, gbit.Width)
+
 	// searches for needle in bitmap
 	fx, fy := robotgo.FindBit(bitmap)
 	fmt.Println("FindBitmap------", fx, fy)
@@ -286,7 +296,12 @@ func window() {
 	fpid, err := robotgo.FindIds("Google")
 	if err == nil {
 		fmt.Println("pids...", fpid)
+		if len(fpid) > 0 {
+			robotgo.ActivePID(fpid[0])
+		}
 	}
+
+	robotgo.ActiveName("chrome")
 
 	// determine whether the process exists
 	isExist, err := robotgo.PidExists(100)
