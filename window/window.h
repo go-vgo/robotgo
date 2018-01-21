@@ -41,44 +41,45 @@ void aWindow();
 
 	static CFStringRef* gkAXTrustedCheckOptionPrompt;
 
-	AXError _AXUIElementGetWindow (AXUIElementRef, CGWindowID* out);
+	AXError _AXUIElementGetWindow(AXUIElementRef, CGWindowID* out);
 
-	static AXUIElementRef GetUIElement (CGWindowID win){
+	static AXUIElementRef GetUIElement(CGWindowID win){
 		intptr pid = 0;
 		// double_t pid = 0;
 
 		// Create array storing window
 		CGWindowID window[1] = { win };
-		CFArrayRef wlist = CFArrayCreate (NULL,
+		CFArrayRef wlist = CFArrayCreate(NULL,
 				(const void**) window, 1, NULL);
 
 		// Get window info
-		CFArrayRef info =CGWindowListCreateDescriptionFromArray (wlist);
-		CFRelease (wlist);
+		CFArrayRef info = CGWindowListCreateDescriptionFromArray(wlist);
+		CFRelease(wlist);
 
 		// Check whether the resulting array is populated
 		if (info != NULL && CFArrayGetCount (info) > 0){
 			// Retrieve description from info array
-			CFDictionaryRef desc = (CFDictionaryRef) CFArrayGetValueAtIndex (info, 0);
+			CFDictionaryRef desc = (CFDictionaryRef)CFArrayGetValueAtIndex(info, 0);
 
 			// Get window PID
 			CFNumberRef data =(CFNumberRef)
-				CFDictionaryGetValue (desc, kCGWindowOwnerPID);
+				CFDictionaryGetValue(desc, kCGWindowOwnerPID);
 
-			if (data != NULL)
-				CFNumberGetValue (data, kCFNumberIntType, &pid);
+			if (data != NULL){
+				CFNumberGetValue(data, kCFNumberIntType, &pid);
+			}
 
 			// Return result
-			CFRelease (info);
+			CFRelease(info);
 		}
 
 		// Check if PID was retrieved
-		if (pid <= 0) return NULL;
+		if (pid <= 0) {return NULL;}
 
 		// Create an accessibility object using retrieved PID
-		AXUIElementRef application = AXUIElementCreateApplication (pid);
+		AXUIElementRef application = AXUIElementCreateApplication(pid);
 		
-		if (application == 0) return NULL;
+		if (application == 0) {return NULL;}
 
 		CFArrayRef windows = NULL;
 		// Get all windows associated with the app
@@ -89,16 +90,16 @@ void aWindow();
 		AXUIElementRef result = NULL;
 
 		if (windows != NULL){
-			int count = CFArrayGetCount (windows);
+			int count = CFArrayGetCount(windows);
 			// Loop all windows in the process
 			for (CFIndex i = 0; i < count; ++i){
 				// Get the element at the index
 				AXUIElementRef element = (AXUIElementRef)
-					CFArrayGetValueAtIndex (windows, i);
+					CFArrayGetValueAtIndex(windows, i);
 
 				CGWindowID temp = 0;
 				// Use undocumented API to get WindowID
-				_AXUIElementGetWindow (element, &temp);
+				_AXUIElementGetWindow(element, &temp);
 
 				// Check results
 				if (temp == win){
@@ -109,10 +110,10 @@ void aWindow();
 				}
 			}
 
-			CFRelease (windows);
+			CFRelease(windows);
 		}
 
-		CFRelease (application);
+		CFRelease(application);
 		return result;
 	}
 #elif defined(USE_X11)
@@ -121,7 +122,7 @@ void aWindow();
 
 	typedef int (*XErrorHandler) (Display*, XErrorEvent*);
 
-	static int XHandleError (Display* dp, XErrorEvent* e) { return 0; }
+	static int XHandleError(Display* dp, XErrorEvent* e) { return 0; }
 
 		XErrorHandler mOld;
 
@@ -138,8 +139,7 @@ void aWindow();
 
 	// Definitions                                                               
 
-	struct Hints
-	{
+	struct Hints{
 		unsigned long Flags;
 		unsigned long Funcs;
 		unsigned long Decorations;
@@ -165,31 +165,29 @@ void aWindow();
 
 	////////////////////////////////////////////////////////////////////////////////
 
-	static void LoadAtoms (void)
-	{
+	static void LoadAtoms (void){
 		Display *rDisplay = XOpenDisplay(NULL);
-		WM_STATE   = XInternAtom (rDisplay, "_NET_WM_STATE",                True);
-		WM_ABOVE   = XInternAtom (rDisplay, "_NET_WM_STATE_ABOVE",          True);
-		WM_HIDDEN  = XInternAtom (rDisplay, "_NET_WM_STATE_HIDDEN",         True);
-		WM_HMAX    = XInternAtom (rDisplay, "_NET_WM_STATE_MAXIMIZED_HORZ", True);
-		WM_VMAX    = XInternAtom (rDisplay, "_NET_WM_STATE_MAXIMIZED_VERT", True);
+		WM_STATE   = XInternAtom(rDisplay, "_NET_WM_STATE",                True);
+		WM_ABOVE   = XInternAtom(rDisplay, "_NET_WM_STATE_ABOVE",          True);
+		WM_HIDDEN  = XInternAtom(rDisplay, "_NET_WM_STATE_HIDDEN",         True);
+		WM_HMAX    = XInternAtom(rDisplay, "_NET_WM_STATE_MAXIMIZED_HORZ", True);
+		WM_VMAX    = XInternAtom(rDisplay, "_NET_WM_STATE_MAXIMIZED_VERT", True);
 
-		WM_DESKTOP = XInternAtom (rDisplay, "_NET_WM_DESKTOP",              True);
-		WM_CURDESK = XInternAtom (rDisplay, "_NET_CURRENT_DESKTOP",         True);
+		WM_DESKTOP = XInternAtom(rDisplay, "_NET_WM_DESKTOP",              True);
+		WM_CURDESK = XInternAtom(rDisplay, "_NET_CURRENT_DESKTOP",         True);
 
-		WM_NAME    = XInternAtom (rDisplay, "_NET_WM_NAME",                 True);
-		WM_UTF8    = XInternAtom (rDisplay, "UTF8_STRING",                  True);
-		WM_PID     = XInternAtom (rDisplay, "_NET_WM_PID",                  True);
-		WM_ACTIVE  = XInternAtom (rDisplay, "_NET_ACTIVE_WINDOW",           True);
-		WM_HINTS   = XInternAtom (rDisplay, "_MOTIF_WM_HINTS",              True);
-		WM_EXTENTS = XInternAtom (rDisplay, "_NET_FRAME_EXTENTS",           True);
+		WM_NAME    = XInternAtom(rDisplay, "_NET_WM_NAME",                 True);
+		WM_UTF8    = XInternAtom(rDisplay, "UTF8_STRING",                  True);
+		WM_PID     = XInternAtom(rDisplay, "_NET_WM_PID",                  True);
+		WM_ACTIVE  = XInternAtom(rDisplay, "_NET_ACTIVE_WINDOW",           True);
+		WM_HINTS   = XInternAtom(rDisplay, "_MOTIF_WM_HINTS",              True);
+		WM_EXTENTS = XInternAtom(rDisplay, "_NET_FRAME_EXTENTS",           True);
 	}
 
 
 
 	// Functions                                                                  
-	static void* GetWindowProperty (MData win, Atom atom, uint32* items)
-	{
+	static void* GetWindowProperty (MData win, Atom atom, uint32* items){
 		// Property variables
 		Atom type; int format;
 		unsigned long  nItems;
@@ -198,26 +196,29 @@ void aWindow();
 
 		Display *rDisplay = XOpenDisplay(NULL);
 		// Check the atom
-		if (atom != None)
-		{
+		if (atom != None){
 			// Retrieve and validate the specified property
 			if (!XGetWindowProperty (rDisplay, win.XWin, atom, 0,
 				BUFSIZ, False, AnyPropertyType, &type, &format,
-				&nItems, &bAfter, &result) && result && nItems)
-			{
+				&nItems, &bAfter, &result) && result && nItems){
+
 				// Copy items result
-				if (items != NULL)
+				if (items != NULL){
 					*items = (uint32) nItems;
+				}
 
 				return result;
 			}
 		}
 
 		// Reset the items result if valid
-		if (items != NULL) *items = 0;
+		if (items != NULL) {*items = 0;}
 
 		// Free the result if it got allocated
-		if (result != NULL) XFree (result);
+		if (result != NULL) {
+			XFree (result);
+		}
+
 		return NULL;
 	}
 
@@ -234,15 +235,14 @@ void aWindow();
 		// Validate every atom that we want to use
 		if (WM_DESKTOP != None && WM_CURDESK != None){
 			// Get desktop property
-			long* desktop = (long*)
-				GetWindowProperty (win, WM_DESKTOP,NULL);
+			long* desktop = (long*)GetWindowProperty (win, WM_DESKTOP,NULL);
 
 			// Check result value
 			if (desktop != NULL){
 				// Retrieve the screen number
 				XWindowAttributes attr = { 0 };
-				XGetWindowAttributes (rDisplay, win.XWin, &attr);
-				int s = XScreenNumberOfScreen (attr.screen);
+				XGetWindowAttributes(rDisplay, win.XWin, &attr);
+				int s = XScreenNumberOfScreen(attr.screen);
 				Window root = XRootWindow(rDisplay, s);
 
 				// Prepare an event
@@ -284,7 +284,7 @@ void aWindow(uintptr handle){
 	// If atoms loaded
 	if (WM_PID == None){
 		// Load all necessary atom properties
-		if (rDisplay != NULL) LoadAtoms();
+		if (rDisplay != NULL) {LoadAtoms();}
 	}
 
 	mData.XWin = 0;
@@ -300,7 +300,9 @@ void aWindow(uintptr handle){
 
 bool IsValid (){
 	aWindow(ahandle);
-	if(!IsAxEnabled(true))printf("%s\n", "Window:Accessibility API is disabled!\nFailed to enable access for assistive devices.");
+	if(!IsAxEnabled(true)){
+		printf("%s\n", "Window:Accessibility API is disabled!\nFailed to enable access for assistive devices.");
+	}
 	MData actdata = GetActive();
 
 #if defined(IS_MACOSX)
@@ -323,29 +325,31 @@ bool IsValid (){
 
 #elif defined(USE_X11)
 	mData.XWin = actdata.XWin;
-	if (mData.XWin == 0) return false;
+	if (mData.XWin == 0) {return false;}
 
 	Display *rDisplay = XOpenDisplay(NULL);
 	// Check for a valid X-Window display
-	if (rDisplay == NULL) return false;
+	if (rDisplay == NULL) {return false;}
 
 	// Ignore X errors
 	XDismissErrors();
 
 	// Get the window PID property
 	void* result = GetWindowProperty(mData, WM_PID,NULL);
-	if (result == NULL) return false;
+	if (result == NULL) {return false;}
 
 	// Free result and return true
-	XFree (result); return true;
+	XFree (result); 
+	return true;
 
 #elif defined(IS_WINDOWS)
 	mData.HWnd = actdata.HWnd;
 
-	if (mData.HWnd == 0)
+	if (mData.HWnd == 0){
 		return false;
+	}
 
-	return IsWindow (mData.HWnd) != 0;
+	return IsWindow(mData.HWnd) != 0;
 
 #endif
 }
@@ -357,8 +361,7 @@ bool IsAxEnabled (bool options){
 	static dispatch_once_t once; dispatch_once (&once,
 	^{
 		// Open the framework
-		void* handle = dlopen
-			("/System/Library/Frameworks/Application"
+		void* handle = dlopen("/System/Library/Frameworks/Application"
 			 "Services.framework/ApplicationServices", RTLD_LAZY);
 
 		// Validate the handle
@@ -384,10 +387,10 @@ bool IsAxEnabled (bool options){
 			(NULL, k, v, 1, NULL, NULL);
 
 		// Determine whether the process is actually trusted
-		bool result = (*gAXIsProcessTrustedWithOptions) (o);
+		bool result = (*gAXIsProcessTrustedWithOptions)(o);
 
 		// Free memory
-		CFRelease (o);
+		CFRelease(o);
 		return result;
 	}else{
 		// Ignore deprecated warnings
@@ -414,7 +417,9 @@ bool IsAxEnabled (bool options){
 bool setHandle (uintptr handle){
 #if defined(IS_MACOSX)
 	// Release the AX element
-	if (mData.AxID != NULL)CFRelease (mData.AxID);
+	if (mData.AxID != NULL){
+		CFRelease(mData.AxID);
+	}	
 
 	// Reset both values
 	mData.CgID = 0;
@@ -424,8 +429,8 @@ bool setHandle (uintptr handle){
 		// return true;
 
 	// Retrieve the window element
-	CGWindowID cgID = (CGWindowID) handle;
-	AXUIElementRef axID = GetUIElement (cgID);
+	CGWindowID cgID = (CGWindowID)handle;
+	AXUIElementRef axID = GetUIElement(cgID);
 
 	if (axID != NULL){
 		mData.CgID = cgID;
@@ -439,25 +444,29 @@ bool setHandle (uintptr handle){
 
 #elif defined(USE_X11)
 
-	mData.XWin = (Window) handle;
+	mData.XWin = (Window)handle;
 
-	if (handle == 0)
+	if (handle == 0){
 		return true;
+	}
 
-	if (IsValid())
+	if (IsValid()){
 		return true;
+	}
 
 	mData.XWin = 0;
 	return false;
 #elif defined(IS_WINDOWS)
 
-	mData.HWnd = (HWND) handle;
+	mData.HWnd = (HWND)handle;
 
-	if (handle == 0)
+	if (handle == 0){
 		return true;
+	}
 
-	if (IsValid())
+	if (IsValid()){
 		return true;
+	}
 
 	mData.HWnd = 0;
 	return false;
@@ -468,20 +477,20 @@ bool setHandle (uintptr handle){
 //uint32 uintptr
 uintptr getHandle(){
 #if defined(IS_MACOSX)
-	return (uintptr) mData.CgID;
+	return (uintptr)mData.CgID;
 
 #elif defined(USE_X11)
-	return (uintptr) mData.XWin;
+	return (uintptr)mData.XWin;
 
 #elif defined(IS_WINDOWS)
-	return (uintptr) mData.HWnd;
+	return (uintptr)mData.HWnd;
 
 #endif
 }
 
 bool IsTopMost (void){
 	// Check the window validity
-	if (!IsValid()) return false;
+	if (!IsValid()) {return false;}
 #if defined(IS_MACOSX)
 
 	return false; // WARNING: Unavailable
@@ -502,7 +511,7 @@ bool IsTopMost (void){
 
 bool IsMinimized(void){
 	// Check the window validity
-	if (!IsValid()) return false;
+	if (!IsValid()) {return false;}
 #if defined(IS_MACOSX)
 
 	CFBooleanRef data = NULL;
@@ -510,8 +519,7 @@ bool IsMinimized(void){
 	// Determine whether the window is minimized
 	if (AXUIElementCopyAttributeValue (mData.AxID,
 		kAXMinimizedAttribute, (CFTypeRef*) &data)
-		== kAXErrorSuccess && data != NULL)
-	{
+		== kAXErrorSuccess && data != NULL){
 		// Convert resulting data into a bool
 		bool result = CFBooleanGetValue(data);
 		CFRelease (data); return result;
@@ -537,7 +545,7 @@ bool IsMinimized(void){
 
 bool IsMaximized(void){
 	// Check the window validity
-	if (!IsValid()) return false;
+	if (!IsValid()) {return false;}
 #if defined(IS_MACOSX)
 
 	return false; // WARNING: Unavailable
@@ -558,17 +566,16 @@ bool IsMaximized(void){
 
 void SetActive(const MData win){
 	// Check if the window is valid
-	if (!IsValid()) return;
+	if (!IsValid()) {return;}
 #if defined(IS_MACOSX)
 
 	// Attempt to raise the specified window object
-	if (AXUIElementPerformAction (win.AxID,
-				  kAXRaiseAction) != kAXErrorSuccess)
-	{
+	if (AXUIElementPerformAction(win.AxID, kAXRaiseAction) 
+		!= kAXErrorSuccess){
 		pid_t pid = 0;
 		// Attempt to retrieve the PID of the window
 		if (AXUIElementGetPid (win.AxID, &pid)
-					!= kAXErrorSuccess || !pid) return;
+					!= kAXErrorSuccess || !pid) {return;}
 
 		// Ignore deprecated warnings
 		#pragma clang diagnostic push
@@ -582,8 +589,7 @@ void SetActive(const MData win){
 		// Attempt to retrieve the process psn
 		if (GetProcessForPID (pid, &psn) == 0){
 			// Gracefully activate process
-			SetFrontProcessWithOptions (&psn,
-			kSetFrontProcessFrontWindowOnly);
+			SetFrontProcessWithOptions(&psn, kSetFrontProcessFrontWindowOnly);
 		}
 
 		#pragma clang diagnostic pop
@@ -630,10 +636,11 @@ void SetActive(const MData win){
 
 #elif defined(IS_WINDOWS)
 
-	if (IsMinimized())
+	if (IsMinimized()){
 		ShowWindow(win.HWnd, SW_RESTORE);
+	}
 
-	SetForegroundWindow (win.HWnd);
+	SetForegroundWindow(win.HWnd);
 
 #endif
 }
@@ -649,36 +656,37 @@ MData GetActive (void){
 	ProcessSerialNumber psn; pid_t pid;
 	// Attempt to retrieve the front process
 	if (GetFrontProcess (&psn      ) != 0 ||
-		GetProcessPID   (&psn, &pid) != 0)
+		GetProcessPID   (&psn, &pid) != 0){
 		return result;
+	}
 
 	#pragma clang diagnostic pop
 
 	// Create accessibility object using focused PID
-	AXUIElementRef focused = AXUIElementCreateApplication (pid);
-	if (focused == NULL) return result; // Verify
+	AXUIElementRef focused = AXUIElementCreateApplication(pid);
+	if (focused == NULL) {return result; }// Verify
 
 	AXUIElementRef element;
 	// Retrieve the currently focused window
 	if (AXUIElementCopyAttributeValue (focused,
 		kAXFocusedWindowAttribute, (CFTypeRef*)
-		&element) == kAXErrorSuccess && element)
-	{
+		&element) == kAXErrorSuccess && element){
+
 		CGWindowID win = 0;
 		// Use undocumented API to get WID
 		if (_AXUIElementGetWindow (element,
-			&win) == kAXErrorSuccess && win)
-		{
+			&win) == kAXErrorSuccess && win){
 			// Manually set internals
 			result.CgID = win;
 			result.AxID = element;
 		}
-
 		// Something went wrong
-		else CFRelease (element);
+		else {
+			CFRelease(element);
+		}
 	}
 
-	CFRelease (focused);
+	CFRelease(focused);
 	
 	return result;
 
@@ -688,23 +696,24 @@ MData GetActive (void){
 	Display *rDisplay = XOpenDisplay(NULL);
 	// Check X-Window display
 	if (WM_ACTIVE == None ||
-		rDisplay == NULL)
+		rDisplay == NULL){
 		return result;
+	}
 
 	// Ignore X errors
 	XDismissErrors();
 
 	// Get the current active window
-	result.XWin=XDefaultRootWindow (rDisplay);
+	result.XWin = XDefaultRootWindow(rDisplay);
 	void* active = GetWindowProperty(result,WM_ACTIVE,NULL);
 
 	// Check result value
-	if (active != NULL)
-	{
+	if (active != NULL){
 		// Extract window from the result
 		long window = *((long*) active);
-		XFree (active); if (window != 0)
-		{
+		XFree (active); 
+
+		if (window != 0){
 			// Set and return the foreground window
 			result.XWin = (Window) window;
 			return result;
@@ -714,7 +723,7 @@ MData GetActive (void){
 	// Use input focus instead
 	Window window = None;
 	int revert = RevertToNone;
-	XGetInputFocus (rDisplay,
+	XGetInputFocus(rDisplay,
 			&window, &revert);
 
 	// Return foreground window
@@ -727,8 +736,7 @@ MData GetActive (void){
 	MData result;
 
 	uint8 times = 0;
-	while (++times < 20)
-	{
+	while (++times < 20){
 		HWND handle;
 		handle = GetForegroundWindow();
 		if (handle != NULL){
@@ -747,7 +755,7 @@ MData GetActive (void){
 
 void SetTopMost (bool state){
 	// Check window validity
-	if (!IsValid()) return;
+	if (!IsValid()) {return;}
 #if defined(IS_MACOSX)
 
 	// WARNING: Unavailable
@@ -770,18 +778,17 @@ void SetTopMost (bool state){
 // CloseWindow
 void CloseWin(void){
 	// Check window validity
-	if (!IsValid()) return;
+	if (!IsValid()) {return;}
 #if defined(IS_MACOSX)
 	AXUIElementRef b = NULL;
 
 	// Retrieve the close button of this window
-	if (AXUIElementCopyAttributeValue (mData.AxID,
+	if (AXUIElementCopyAttributeValue(mData.AxID,
 		kAXCloseButtonAttribute, (CFTypeRef*) &b)
-		== kAXErrorSuccess && b != NULL)
-	{
+		== kAXErrorSuccess && b != NULL){
 		// Simulate button press on the close button
-		AXUIElementPerformAction (b, kAXPressAction);
-		CFRelease (b);
+		AXUIElementPerformAction(b, kAXPressAction);
+		CFRelease(b);
 	}
 
 #elif defined(USE_X11)
@@ -792,18 +799,18 @@ void CloseWin(void){
 	XDismissErrors();
 
 	// Close the window
-	XDestroyWindow (rDisplay, mData.XWin);
+	XDestroyWindow(rDisplay, mData.XWin);
 
 #elif defined(IS_WINDOWS)
 
-	PostMessage (mData.HWnd, WM_CLOSE, 0, 0);
+	PostMessage(mData.HWnd, WM_CLOSE, 0, 0);
 
 #endif
 }
 
 char *GetTitle(){
 	// Check if the window is valid
-	if (!IsValid()) return "IsValid failed.";
+	if (!IsValid()) {return "IsValid failed.";}
 
 #if defined(IS_MACOSX)
 
@@ -812,15 +819,16 @@ char *GetTitle(){
 	// Determine the current title of the window
 	if (AXUIElementCopyAttributeValue (mData.AxID,
 		kAXTitleAttribute, (CFTypeRef*) &data)
-		== kAXErrorSuccess && data != NULL)
-	{
+		== kAXErrorSuccess && data != NULL){
 		char conv[512];
 		// Convert result to a C-String
-		CFStringGetCString (data, conv,
+		CFStringGetCString(data, conv,
 			512, kCFStringEncodingUTF8);
-		CFRelease (data);
-		char* s = (char*)calloc(100,sizeof(char*));
-    	if(s)strcpy(s,conv);
+		CFRelease(data);
+		char* s = (char*)calloc(100, sizeof(char*));
+    	if (s){
+			strcpy(s,conv);
+		}
 		// return (char *)&conv;
 		return s;
 	}
@@ -840,9 +848,9 @@ char *GetTitle(){
 	if (result != NULL){
 		// Convert result to a string
 		char *name = (char*) result;
-		XFree (result);
+		XFree(result);
 
-		if (name != NULL) return name;
+		if (name != NULL) {return name;}
 	}
 
 	// Get window title (ASCII)
@@ -852,7 +860,8 @@ char *GetTitle(){
 	if (result != NULL){
 		// Convert result to a string
 		char *name = (char*) result;
-		XFree (result); return name;
+		XFree(result); 
+		return name;
 	}
 
 	return "";
@@ -870,14 +879,16 @@ char *GetTitle(){
 
 int32 WGetPID(void){
 	// Check window validity
-	if (!IsValid()) return 0;
+	if (!IsValid()) {return 0;}
 
 #if defined(IS_MACOSX)
 
 	pid_t pid = 0;
 	// Attempt to retrieve the window pid
 	if (AXUIElementGetPid(mData.AxID, &pid)
-			== kAXErrorSuccess) return pid;
+			== kAXErrorSuccess) {
+				return pid;
+			}
 
 	return 0;
 
@@ -887,18 +898,18 @@ int32 WGetPID(void){
 	XDismissErrors();
 
 	// Get the window PID
-	long* result = (long*)
-		GetWindowProperty(mData, WM_PID,NULL);
+	long* result = (long*)GetWindowProperty(mData, WM_PID,NULL);
 
 	// Check result and convert it
-	if (result == NULL) return 0;
+	if (result == NULL) {return 0;}
 	int32 pid = (int32) *result;
-	XFree (result); return pid;
+	XFree (result); 
+	return pid;
 
 #elif defined(IS_WINDOWS)
 
 	DWORD  id = 0;
-	GetWindowThreadProcessId (mData.HWnd, &id);
+	GetWindowThreadProcessId(mData.HWnd, &id);
 	return id;
 
 #endif
