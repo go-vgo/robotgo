@@ -32,7 +32,7 @@ MData mData;
 bool setHandle(uintptr handle);
 bool IsValid();
 bool IsAxEnabled(bool options);
-MData GetActive (void);
+MData GetActive(void);
 void aWindow();
 
 #if defined(IS_MACOSX)
@@ -50,7 +50,7 @@ void aWindow();
 		// Create array storing window
 		CGWindowID window[1] = { win };
 		CFArrayRef wlist = CFArrayCreate(NULL,
-				(const void**) window, 1, NULL);
+				(const void**)window, 1, NULL);
 
 		// Get window info
 		CFArrayRef info = CGWindowListCreateDescriptionFromArray(wlist);
@@ -83,7 +83,7 @@ void aWindow();
 
 		CFArrayRef windows = NULL;
 		// Get all windows associated with the app
-		AXUIElementCopyAttributeValues (application,
+		AXUIElementCopyAttributeValues(application,
 			kAXWindowsAttribute, 0, 1024, &windows);
 
 		// Reference to resulting value
@@ -187,7 +187,7 @@ void aWindow();
 
 
 	// Functions                                                                  
-	static void* GetWindowProperty (MData win, Atom atom, uint32* items){
+	static void* GetWindowProperty(MData win, Atom atom, uint32* items){
 		// Property variables
 		Atom type; int format;
 		unsigned long  nItems;
@@ -198,7 +198,7 @@ void aWindow();
 		// Check the atom
 		if (atom != None){
 			// Retrieve and validate the specified property
-			if (!XGetWindowProperty (rDisplay, win.XWin, atom, 0,
+			if (!XGetWindowProperty(rDisplay, win.XWin, atom, 0,
 				BUFSIZ, False, AnyPropertyType, &type, &format,
 				&nItems, &bAfter, &result) && result && nItems){
 
@@ -230,12 +230,12 @@ void aWindow();
 
 
 	//////
-	static void SetDesktopForWindow (MData win){
+	static void SetDesktopForWindow(MData win){
 		Display *rDisplay = XOpenDisplay(NULL);
 		// Validate every atom that we want to use
 		if (WM_DESKTOP != None && WM_CURDESK != None){
 			// Get desktop property
-			long* desktop = (long*)GetWindowProperty (win, WM_DESKTOP,NULL);
+			long* desktop = (long*)GetWindowProperty(win, WM_DESKTOP,NULL);
 
 			// Check result value
 			if (desktop != NULL){
@@ -298,7 +298,7 @@ void aWindow(uintptr handle){
 	setHandle(handle);
 }
 
-bool IsValid (){
+bool IsValid(){
 	aWindow(ahandle);
 	if(!IsAxEnabled(true)){
 		printf("%s\n", "Window:Accessibility API is disabled!\nFailed to enable access for assistive devices.");
@@ -339,7 +339,7 @@ bool IsValid (){
 	if (result == NULL) {return false;}
 
 	// Free result and return true
-	XFree (result); 
+	XFree(result); 
 	return true;
 
 #elif defined(IS_WINDOWS)
@@ -354,7 +354,7 @@ bool IsValid (){
 #endif
 }
 
-bool IsAxEnabled (bool options){
+bool IsAxEnabled(bool options){
 #if defined(IS_MACOSX)
 
 	// Statically load all required functions one time
@@ -383,8 +383,7 @@ bool IsAxEnabled (bool options){
 		// Convert display prompt value into a dictionary
 		const void* k[] = { *gkAXTrustedCheckOptionPrompt };
 		const void* v[] = { displayPrompt };
-		CFDictionaryRef o = CFDictionaryCreate
-			(NULL, k, v, 1, NULL, NULL);
+		CFDictionaryRef o = CFDictionaryCreate(NULL, k, v, 1, NULL, NULL);
 
 		// Determine whether the process is actually trusted
 		bool result = (*gAXIsProcessTrustedWithOptions)(o);
@@ -414,7 +413,7 @@ bool IsAxEnabled (bool options){
 }
 
 // int
-bool setHandle (uintptr handle){
+bool setHandle(uintptr handle){
 #if defined(IS_MACOSX)
 	// Release the AX element
 	if (mData.AxID != NULL){
@@ -425,8 +424,10 @@ bool setHandle (uintptr handle){
 	mData.CgID = 0;
 	mData.AxID = 0;
 
-	if (handle == 0)return 0;
+	if (handle == 0){
+		return 0;
 		// return true;
+	}
 
 	// Retrieve the window element
 	CGWindowID cgID = (CGWindowID)handle;
@@ -488,7 +489,7 @@ uintptr getHandle(){
 #endif
 }
 
-bool IsTopMost (void){
+bool IsTopMost(void){
 	// Check the window validity
 	if (!IsValid()) {return false;}
 #if defined(IS_MACOSX)
@@ -503,7 +504,7 @@ bool IsTopMost (void){
 
 #elif defined(IS_WINDOWS)
 
-	return (GetWindowLongPtr (mData.HWnd,
+	return (GetWindowLongPtr(mData.HWnd,
 		GWL_EXSTYLE) & WS_EX_TOPMOST) != 0;
 
 #endif
@@ -517,12 +518,13 @@ bool IsMinimized(void){
 	CFBooleanRef data = NULL;
 
 	// Determine whether the window is minimized
-	if (AXUIElementCopyAttributeValue (mData.AxID,
+	if (AXUIElementCopyAttributeValue(mData.AxID,
 		kAXMinimizedAttribute, (CFTypeRef*) &data)
 		== kAXErrorSuccess && data != NULL){
 		// Convert resulting data into a bool
 		bool result = CFBooleanGetValue(data);
-		CFRelease (data); return result;
+		CFRelease(data); 
+		return result;
 	}
 
 	return false;
@@ -535,7 +537,7 @@ bool IsMinimized(void){
 
 #elif defined(IS_WINDOWS)
 
-	return (GetWindowLongPtr (mData.HWnd,
+	return (GetWindowLongPtr(mData.HWnd,
 			GWL_STYLE) & WS_MINIMIZE) != 0;
 
 #endif
@@ -622,7 +624,7 @@ void SetActive(const MData win){
 		e.data.l[1] = CurrentTime;
 
 		// Send the message
-		XSendEvent(rDisplay, XRootWindow (rDisplay, s), False,
+		XSendEvent(rDisplay, XRootWindow(rDisplay, s), False,
 			SubstructureNotifyMask | SubstructureRedirectMask,
 			(XEvent*) &e);
 	}else{
@@ -645,7 +647,7 @@ void SetActive(const MData win){
 #endif
 }
 
-MData GetActive (void){
+MData GetActive(void){
 #if defined(IS_MACOSX)
 
 	MData result;
@@ -655,8 +657,8 @@ MData GetActive (void){
 
 	ProcessSerialNumber psn; pid_t pid;
 	// Attempt to retrieve the front process
-	if (GetFrontProcess (&psn      ) != 0 ||
-		GetProcessPID   (&psn, &pid) != 0){
+	if (GetFrontProcess(&psn) != 0 ||
+		GetProcessPID(&psn, &pid) != 0){
 		return result;
 	}
 
@@ -668,7 +670,7 @@ MData GetActive (void){
 
 	AXUIElementRef element;
 	// Retrieve the currently focused window
-	if (AXUIElementCopyAttributeValue (focused,
+	if (AXUIElementCopyAttributeValue(focused,
 		kAXFocusedWindowAttribute, (CFTypeRef*)
 		&element) == kAXErrorSuccess && element){
 
@@ -710,12 +712,12 @@ MData GetActive (void){
 	// Check result value
 	if (active != NULL){
 		// Extract window from the result
-		long window = *((long*) active);
-		XFree (active); 
+		long window = *((long*)active);
+		XFree(active); 
 
 		if (window != 0){
 			// Set and return the foreground window
-			result.XWin = (Window) window;
+			result.XWin = (Window)window;
 			return result;
 		}
 	}
@@ -753,7 +755,7 @@ MData GetActive (void){
 }
 
 
-void SetTopMost (bool state){
+void SetTopMost(bool state){
 	// Check window validity
 	if (!IsValid()) {return;}
 #if defined(IS_MACOSX)
@@ -847,7 +849,7 @@ char *GetTitle(){
 	// Check result value
 	if (result != NULL){
 		// Convert result to a string
-		char *name = (char*) result;
+		char *name = (char*)result;
 		XFree(result);
 
 		if (name != NULL) {return name;}
@@ -859,7 +861,7 @@ char *GetTitle(){
 	// Check result value
 	if (result != NULL){
 		// Convert result to a string
-		char *name = (char*) result;
+		char *name = (char*)result;
 		XFree(result); 
 		return name;
 	}
@@ -903,7 +905,7 @@ int32 WGetPID(void){
 	// Check result and convert it
 	if (result == NULL) {return 0;}
 	int32 pid = (int32) *result;
-	XFree (result); 
+	XFree(result); 
 	return pid;
 
 #elif defined(IS_WINDOWS)

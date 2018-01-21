@@ -63,7 +63,7 @@ import (
 )
 
 const (
-	version string = "v0.47.0.490, Mount Cook!"
+	version string = "v0.47.0.491, Mount Cook!"
 )
 
 type (
