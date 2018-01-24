@@ -46,6 +46,14 @@ func main() {
 	cx, cy = robotgo.FindColorCS(388, 179, 300, 300, 0xAADCDC)
 	fmt.Println("pos...", cx, cy)
 
+	cnt := robotgo.CountColor(bitmap, 0xAADCDC)
+	fmt.Println("count...", cnt)
+	cnt1 := robotgo.CountColorCS(10, 20, 30, 40, 0xAADCDC)
+	fmt.Println("count...", cnt1)
+
+	count := robotgo.CountBitmap(abitMap, bitmap)
+	fmt.Println("count...", count)
+
 	bit := robotgo.CaptureScreen(1, 2, 40, 40)
 	fmt.Println("CaptureScreen...", bit)
 	fx, fy = robotgo.FindBitmap(bit)
