@@ -19,14 +19,14 @@ environment:
     CC: gcc.exe
   matrix:
     - GOARCH: amd64
-      # GOVERSION: 1.9.2
+      # GOVERSION: 1.9.3
       GETH_ARCH: amd64
       MSYS2_ARCH: x86_64
       MSYS2_BITS: 64
       MSYSTEM: MINGW64
       PATH: C:\msys64\mingw64\bin\;C:\Program Files (x86)\NSIS\;%PATH%
     - GOARCH: 386
-      # GOVERSION: 1.9.2      
+      # GOVERSION: 1.9.3    
       GETH_ARCH: 386
       MSYS2_ARCH: i686
       MSYS2_BITS: 32
@@ -34,7 +34,7 @@ environment:
       PATH: C:\msys64\mingw32\bin\;C:\Program Files (x86)\NSIS\;%PATH%
   # - COMPILER: MINGW_W64
   #   ARCHITECTURE: x64
-  GOVERSION: 1.9.2
+  GOVERSION: 1.9.3
   GOPATH: c:\gopath
 
 # scripts that run after cloning repository
