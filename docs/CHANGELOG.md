@@ -1,6 +1,60 @@
 # CHANGELOG
 
 <!--### RobotGo-->
+## RobotGo v0.48.0, Ben Nevis
+
+### Add  
+
+- [NEW] Add active window by name func ActiveName
+- [NEW] Add type string utf-8 support
+
+Add func CharCodeAt, UnicodeType, PasteStr and update TypeStr, TypeString
+
+- [NEW] Add count of bitmap func CountBitmap
+- [NEW] Add func SaveCapture and examples
+- [NEW] Add time sleep func Sleep
+- [NEW] Add more key listen
+- [NEW] Add func PointInBounds and examples
+- [NEW] Add func GetPxColor return C.MMRGBHex
+- [NEW] Add FindColorCS param tolerance
+- [NEW] Add func ToBitmap and examples
+- [NEW] Add CBitmap type and examples
+- [NEW] Add more examples
+- [NEW] Add func ToMMBitmapRef
+- [NEW] Add func BitmapClick and MovesClick
+- [NEW] Add func ToMMRGBHex convert color hex
+- [NEW] Add  func count bitmap color and CountColorCS
+- [NEW] Add more color processing and conversion
+
+Add func ToMMRGBHex, U32ToHex, U8ToHex, PadHex, HexToRgb, RgbToHex and examples
+
+- [NEW] Add func tochar bitmap and gostring and fmt code
+
+
+### Update
+- [NEW] Remove robot and examples
+- [NEW] Update vendor and appveyor.yml
+- [NEW] Update keyboard code
+- [NEW] Update godoc
+- [NEW] Update CHANGELOG.md
+- [NEW] Change TostringBitmap return string
+- [NEW] Update C language code and other naming 
+- [NEW] Update code and code style
+- [NEW] Update move mouse smooth
+
+
+### Fix
+
+- [FIX] Fix mac set active and active by pid
+- [FIX] Fix windows active by pid #101 
+- [FIX] Fix FindColor param tolerance
+- [FIX] Fix find bitmap float args
+- [FIX] Fix some range error
+- [FIX] Update doc fix #97
+- [FIX] Update README.md fix link error
+
+See Commits for more details, after Dec 13.
+
 ## RobotGo v0.47.0, Mount Cook
 
 ### Add  
