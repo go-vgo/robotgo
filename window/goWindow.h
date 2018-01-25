@@ -57,16 +57,46 @@ void set_active(const MData win){
 	SetActive(win);
 }
 
+#if defined(IS_WINDOWS)
+	typedef struct{
+	    HWND hWnd;
+	    DWORD dwPid;
+	}WNDINFO;
+
+	BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam){
+	    WNDINFO* pInfo = (WNDINFO*)lParam;
+	    DWORD dwProcessId = 0;
+	    GetWindowThreadProcessId(hWnd, &dwProcessId);
+
+	    if(dwProcessId == pInfo->dwPid){
+	        pInfo->hWnd = hWnd;
+	        return FALSE;
+	    }
+	    return TRUE;
+	}
+
+	HWND GetHwndByPId(DWORD dwProcessId){
+	    WNDINFO info = {0};
+	    info.hWnd = NULL;
+	    info.dwPid = dwProcessId;
+	    EnumWindows(EnumWindowsProc, (LPARAM)&info);
+	    // printf("%d\n", info.hWnd);
+	    return info.hWnd;
+	}
+#endif
+
 void active_PID(uintptr pid){
 	MData win;
 	#if defined(IS_MACOSX)
 		// Handle to a AXUIElementRef
 		win.AxID = AXUIElementCreateApplication(pid);
 	#elif defined(USE_X11)
-		win.XWin = (Window) pid;		// Handle to an X11 window
+		win.XWin = (Window)pid;		// Handle to an X11 window
 	#elif defined(IS_WINDOWS)
-		win.HWnd = (HWND) pid;		// Handle to a window HWND
+		// win.HWnd = (HWND)pid;		// Handle to a window HWND
+		win.HWnd = GetHwndByPId(pid);
 	#endif
+
 	SetActive(win);
 }
 

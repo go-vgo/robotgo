@@ -504,8 +504,8 @@ bool IsTopMost(void){
 
 #elif defined(IS_WINDOWS)
 
-	return (GetWindowLongPtr(mData.HWnd,
-		GWL_EXSTYLE) & WS_EX_TOPMOST) != 0;
+	return (GetWindowLongPtr(mData.HWnd, GWL_EXSTYLE) 
+		& WS_EX_TOPMOST) != 0;
 
 #endif
 }
@@ -537,8 +537,8 @@ bool IsMinimized(void){
 
 #elif defined(IS_WINDOWS)
 
-	return (GetWindowLongPtr(mData.HWnd,
-			GWL_STYLE) & WS_MINIMIZE) != 0;
+	return (GetWindowLongPtr(mData.HWnd, GWL_STYLE) 
+		& WS_MINIMIZE) != 0;
 
 #endif
 }
@@ -560,8 +560,8 @@ bool IsMaximized(void){
 
 #elif defined(IS_WINDOWS)
 
-	return (GetWindowLongPtr (mData.HWnd,
-			GWL_STYLE) & WS_MAXIMIZE) != 0;
+	return (GetWindowLongPtr(mData.HWnd, GWL_STYLE) 
+		& WS_MAXIMIZE) != 0;
 
 #endif
 }
@@ -676,8 +676,8 @@ MData GetActive(void){
 
 		CGWindowID win = 0;
 		// Use undocumented API to get WID
-		if (_AXUIElementGetWindow (element,
-			&win) == kAXErrorSuccess && win){
+		if (_AXUIElementGetWindow (element, &win) 
+			== kAXErrorSuccess && win){
 			// Manually set internals
 			result.CgID = win;
 			result.AxID = element;
@@ -697,8 +697,7 @@ MData GetActive(void){
 	MData result;
 	Display *rDisplay = XOpenDisplay(NULL);
 	// Check X-Window display
-	if (WM_ACTIVE == None ||
-		rDisplay == NULL){
+	if (WM_ACTIVE == None || rDisplay == NULL){
 		return result;
 	}
 
@@ -725,8 +724,7 @@ MData GetActive(void){
 	// Use input focus instead
 	Window window = None;
 	int revert = RevertToNone;
-	XGetInputFocus(rDisplay,
-			&window, &revert);
+	XGetInputFocus(rDisplay, &window, &revert);
 
 	// Return foreground window
 	result.XWin = window;
@@ -770,9 +768,9 @@ void SetTopMost(bool state){
 
 #elif defined(IS_WINDOWS)
 
-	SetWindowPos (mData.HWnd, state ?
-		HWND_TOPMOST : HWND_NOTOPMOST, 0,
-		0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+	SetWindowPos(mData.HWnd, 
+		state ? HWND_TOPMOST : HWND_NOTOPMOST, 
+		0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 
 #endif
 }
