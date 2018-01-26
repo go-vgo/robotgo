@@ -26,8 +26,8 @@ func main() {
 	robotgo.TypeString("Hello World")
 
 	robotgo.TypeString("留给真爱你的人")
-	robotgo.TypeStr("留给真爱你的人")
-	ustr := uint32(robotgo.CharCodeAt("留给真爱你的人", 0))
+	robotgo.TypeStr("所以, 你好, 再见")
+	ustr := uint32(robotgo.CharCodeAt("所以, 你好, 再见", 0))
 	robotgo.UnicodeType(ustr)
 
 	robotgo.PasteStr("粘贴字符串, paste")

@@ -24,6 +24,8 @@ func main() {
 
 	abitMap := robotgo.CaptureScreen()
 	fmt.Println("abitMap...", abitMap)
+	gbit := robotgo.ToBitmap(abitMap)
+	fmt.Println("bitmap...", gbit.Width)
 
 	gbitMap := robotgo.GoCaptureScreen()
 	fmt.Println("GoCaptureScreen...", gbitMap.Width)
