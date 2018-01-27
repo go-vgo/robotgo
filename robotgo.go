@@ -1111,6 +1111,7 @@ func AddEvent(aeve string) int {
 		"f11": "69",
 		"f12": "70",
 		// more
+		"esc":     "11",
 		"tab":     "15",
 		"ctrl":    "29",
 		"control": "29",
