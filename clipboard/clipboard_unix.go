@@ -12,13 +12,13 @@ import (
 )
 
 const (
-	Primary bool
-
 	xsel  = "xsel"
 	xclip = "xclip"
 )
 
 var (
+	Primary bool
+
 	pasteCmdArgs []string
 	copyCmdArgs  []string
 
