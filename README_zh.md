@@ -50,7 +50,7 @@ Xcode Command Line Tools
 ```    
 #### For Windows:
 ```
-MinGW or other GCC
+MinGW-w64 (推荐使用) or other GCC
 ```
 #### For everything else (Linux 等其他系统):
 ```

@@ -52,7 +52,7 @@ Xcode Command Line Tools
 ```    
 #### For Windows:
 ```
-MinGW or other GCC
+MinGW-w64 (Use recommended) or other GCC
 ```
 #### For everything else:
 ```
