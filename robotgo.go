@@ -1,4 +1,4 @@
-// Copyright 2016-2017 The go-vgo Project Developers. See the COPYRIGHT
+// Copyright 2016 The go-vgo Project Developers. See the COPYRIGHT
 // file at the top-level directory of this distribution and at
 // https://github.com/go-vgo/robotgo/blob/master/LICENSE
 //
@@ -63,11 +63,11 @@ import (
 )
 
 const (
-	version string = "v0.48.0.503, Ben Nevis!"
+	version string = "v0.48.0.504, Ben Nevis!"
 )
 
 type (
-	// Map a map
+	// Map a map[string]interface{}
 	Map map[string]interface{}
 	// CHex c rgb Hex type
 	CHex C.MMRGBHex

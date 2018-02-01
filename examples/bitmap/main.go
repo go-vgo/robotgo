@@ -1,4 +1,4 @@
-// Copyright 2016-2017 The go-vgo Project Developers. See the COPYRIGHT
+// Copyright 2016 The go-vgo Project Developers. See the COPYRIGHT
 // file at the top-level directory of this distribution and at
 // https://github.com/go-vgo/robotgo/blob/master/LICENSE
 //

@@ -41,7 +41,7 @@ To make sure every PR is checked, we got team maintainers. A maintainer should b
 
 ## Owners
 
-Since Robotgo is a pure community organization without any company support, Copyright 2016-2017 The go-vgo Project Developers.
+Since Robotgo is a pure community organization without any company support, Copyright 2016 The go-vgo Project Developers.
 
 
 ## Versions
@@ -55,7 +55,7 @@ Since the `master` branch is a tip version, if you wish to use Robotgo in produc
 Code that you contribute should use the standard copyright header:
 
 ```
-// Copyright 2016-2017 The go-vgo Project Developers. See the COPYRIGHT
+// Copyright 2016 The go-vgo Project Developers. See the COPYRIGHT
 // file at the top-level directory of this distribution and at
 // https://github.com/go-vgo/robotgo/blob/master/LICENSE
 //
