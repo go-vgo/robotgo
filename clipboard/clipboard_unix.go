@@ -17,6 +17,7 @@ const (
 )
 
 var (
+	// Primary choose primary mode on unix
 	Primary bool
 
 	pasteCmdArgs []string
@@ -28,7 +29,7 @@ var (
 	xclipPasteArgs = []string{xclip, "-out", "-selection", "clipboard"}
 	xclipCopyArgs  = []string{xclip, "-in", "-selection", "clipboard"}
 
-	missingCommands = errors.New("No clipboard utilities available. Please install xsel or xclip")
+	errMissingCommands = errors.New("No clipboard utilities available. Please install xsel or xclip")
 )
 
 func init() {
@@ -65,7 +66,7 @@ func getCopyCommand() *exec.Cmd {
 
 func readAll() (string, error) {
 	if Unsupported {
-		return "", missingCommands
+		return "", errMissingCommands
 	}
 	pasteCmd := getPasteCommand()
 	out, err := pasteCmd.Output()
@@ -77,7 +78,7 @@ func readAll() (string, error) {
 
 func writeAll(text string) error {
 	if Unsupported {
-		return missingCommands
+		return errMissingCommands
 	}
 	copyCmd := getCopyCommand()
 	in, err := copyCmd.StdinPipe()
