@@ -275,7 +275,8 @@ func GoCaptureScreen(args ...int) Bitmap {
 	return bitmap
 }
 
-// BCaptureScreen capture the screen and return bitmap(go struct), Wno-deprecated
+// BCaptureScreen capture the screen and return bitmap(go struct),
+// Wno-deprecated
 // func BCaptureScreen(args ...int) Bitmap {
 // 	var (
 // 		x C.size_t
@@ -372,7 +373,8 @@ func Drag(x, y int) {
 	C.drag_mouse(cx, cy)
 }
 
-// MoveMouseSmooth move the mouse smooth
+// MoveMouseSmooth move the mouse smooth,
+// moves mouse to x, y human like, with the mouse button up.
 func MoveMouseSmooth(x, y int, args ...interface{}) {
 	cx := C.size_t(x)
 	cy := C.size_t(y)
@@ -398,7 +400,8 @@ func MoveMouseSmooth(x, y int, args ...interface{}) {
 	C.move_mouse_smooth(cx, cy, low, high, C.int(mouseDelay))
 }
 
-// MoveSmooth move the mouse smooth
+// MoveSmooth move the mouse smooth,
+// moves mouse to x, y human like, with the mouse button up.
 func MoveSmooth(x, y int, args ...interface{}) {
 	cx := C.size_t(x)
 	cy := C.size_t(y)
@@ -1094,11 +1097,13 @@ func CountColorCS(x, y, w, h int, color CHex, args ...float32) int {
 |_______|   \__/     |_______||__| \__|     |__|
 */
 
-// AddEvent add event listener
+// AddEvent add event listener,
+//
 // parameters for the string type,
-// the keyboard corresponding key parameters
+// the keyboard corresponding key parameters,
+//
 // mouse arguments: mleft, mright, wheelDown, wheelUp,
-// wheelLeft, wheelRight
+// wheelLeft, wheelRight.
 func AddEvent(aeve string) int {
 	keycode := Map{
 		"f1":  "59",
