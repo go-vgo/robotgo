@@ -63,7 +63,7 @@ import (
 )
 
 const (
-	version string = "v0.48.0.505, Ben Nevis!"
+	version string = "v0.48.0.506, Ben Nevis!"
 )
 
 type (
@@ -630,24 +630,23 @@ func KeyToggle(args ...string) string {
 		// keyDelay = 10
 	)
 
-	Try(func() {
+	if len(args) > 1 {
 		adown = args[1]
+
 		if len(args) > 2 {
 			amkey = args[2]
 
-			Try(func() {
+			if len(args) > 3 {
 				mKeyT = args[3]
-			}, func(e interface{}) {
-				// fmt.Println("err:::", e)
+			} else {
 				mKeyT = "null"
-			})
+			}
 		} else {
 			amkey = "null"
 		}
-	}, func(e interface{}) {
-		// fmt.Println("err:::", e)
+	} else {
 		adown = "null"
-	})
+	}
 
 	ckey := C.CString(args[0])
 	cadown := C.CString(adown)
@@ -1096,7 +1095,7 @@ func CountColorCS(x, y, w, h int, color CHex, args ...float32) int {
 */
 
 // AddEvent add event listener
-// parameters for the string type, 
+// parameters for the string type,
 // the keyboard corresponding key parameters
 // mouse arguments: mleft, mright, wheelDown, wheelUp,
 // wheelLeft, wheelRight
