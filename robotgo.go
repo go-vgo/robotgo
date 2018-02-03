@@ -63,7 +63,7 @@ import (
 )
 
 const (
-	version string = "v0.48.0.504, Ben Nevis!"
+	version string = "v0.48.0.505, Ben Nevis!"
 )
 
 type (
@@ -1096,6 +1096,10 @@ func CountColorCS(x, y, w, h int, color CHex, args ...float32) int {
 */
 
 // AddEvent add event listener
+// parameters for the string type, 
+// the keyboard corresponding key parameters
+// mouse arguments: mleft, mright, wheelDown, wheelUp,
+// wheelLeft, wheelRight
 func AddEvent(aeve string) int {
 	keycode := Map{
 		"f1":  "59",
