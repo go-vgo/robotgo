@@ -63,7 +63,7 @@ import (
 )
 
 const (
-	version string = "v0.48.0.506, Ben Nevis!"
+	version string = "v0.48.0.508, Ben Nevis!"
 )
 
 type (
@@ -1414,7 +1414,7 @@ func ActiveName(name string) error {
 }
 
 // Kill kill the process by PID
-func Kill(pid int) error {
-	ps := os.Process{Pid: pid}
+func Kill(pid int32) error {
+	ps := os.Process{Pid: int(pid)}
 	return ps.Kill()
 }

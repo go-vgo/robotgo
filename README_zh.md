@@ -235,14 +235,18 @@ func main() {
 
     if len(fpid) > 0 {
       robotgo.ActivePID(fpid[0])
+
+      robotgo.Kill(fpid[0])
     }
   }
 
   robotgo.ActiveName("chrome")
 
   isExist, err := robotgo.PidExists(100)
-  if err == nil {
+  if err == nil && isExist {
     fmt.Println("pid exists is", isExist)
+
+    robotgo.Kill(100)
   }
 
   abool := robotgo.ShowAlert("test", "robotgo")
