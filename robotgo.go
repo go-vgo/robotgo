@@ -63,7 +63,7 @@ import (
 )
 
 const (
-	version string = "v0.48.0.509, Ben Nevis!"
+	version string = "v0.48.0.510, Ben Nevis!"
 )
 
 type (
@@ -375,7 +375,7 @@ func Drag(x, y int) {
 
 // MoveMouseSmooth move the mouse smooth,
 // moves mouse to x, y human like, with the mouse button up.
-func MoveMouseSmooth(x, y int, args ...interface{}) {
+func MoveMouseSmooth(x, y int, args ...interface{}) bool {
 	cx := C.size_t(x)
 	cy := C.size_t(y)
 
@@ -397,12 +397,14 @@ func MoveMouseSmooth(x, y int, args ...interface{}) {
 		high = 3.0
 	}
 
-	C.move_mouse_smooth(cx, cy, low, high, C.int(mouseDelay))
+	cbool := C.move_mouse_smooth(cx, cy, low, high, C.int(mouseDelay))
+
+	return bool(cbool)
 }
 
 // MoveSmooth move the mouse smooth,
 // moves mouse to x, y human like, with the mouse button up.
-func MoveSmooth(x, y int, args ...interface{}) {
+func MoveSmooth(x, y int, args ...interface{}) bool {
 	cx := C.size_t(x)
 	cy := C.size_t(y)
 
@@ -424,7 +426,9 @@ func MoveSmooth(x, y int, args ...interface{}) {
 		high = 3.0
 	}
 
-	C.move_mouse_smooth(cx, cy, low, high, C.int(mouseDelay))
+	cbool := C.move_mouse_smooth(cx, cy, low, high, C.int(mouseDelay))
+
+	return bool(cbool)
 }
 
 // GetMousePos get mouse portion

@@ -335,8 +335,8 @@ bool smoothlyMoveMouse(MMPoint endPoint, double lowSpeed, double highSpeed)
 	double distance;
 
 	while ((distance = 
-			crude_hypot((double)pos.x - endPoint.x, (double)pos.y - endPoint.y))
-		> 1.0) {
+			crude_hypot((double)pos.x - endPoint.x, (double)pos.y - endPoint.y)
+		) > 1.0) {
 			
 		double gravity = DEADBEEF_UNIFORM(5.0, 500.0);
 		// double gravity = DEADBEEF_UNIFORM(lowSpeed, highSpeed);

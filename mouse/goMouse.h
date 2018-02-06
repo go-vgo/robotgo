@@ -64,15 +64,14 @@ int drag_mouse(size_t x, size_t y){
 	return 0;
 }
 
-int move_mouse_smooth(size_t x, size_t y, double lowSpeed, 
+bool move_mouse_smooth(size_t x, size_t y, double lowSpeed, 
 	double highSpeed, int msDelay){
 	MMPoint point;
 	point = MMPointMake(x, y);
-	smoothlyMoveMouse(point, lowSpeed, highSpeed);
+	bool cbool = smoothlyMoveMouse(point, lowSpeed, highSpeed);
 	microsleep(msDelay);
 
-	return 0;
-
+	return cbool;
 }
 
 MMPoint get_mouse_pos(){
