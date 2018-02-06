@@ -63,7 +63,7 @@ import (
 )
 
 const (
-	version string = "v0.48.0.508, Ben Nevis!"
+	version string = "v0.48.0.509, Ben Nevis!"
 )
 
 type (
@@ -393,8 +393,8 @@ func MoveMouseSmooth(x, y int, args ...interface{}) {
 		low = C.double(args[0].(float64))
 		high = C.double(args[1].(float64))
 	} else {
-		low = 5.0
-		high = 500.0
+		low = 1.0
+		high = 3.0
 	}
 
 	C.move_mouse_smooth(cx, cy, low, high, C.int(mouseDelay))
@@ -420,8 +420,8 @@ func MoveSmooth(x, y int, args ...interface{}) {
 		low = C.double(args[0].(float64))
 		high = C.double(args[1].(float64))
 	} else {
-		low = 5.0
-		high = 500.0
+		low = 1.0
+		high = 3.0
 	}
 
 	C.move_mouse_smooth(cx, cy, low, high, C.int(mouseDelay))
@@ -429,7 +429,7 @@ func MoveSmooth(x, y int, args ...interface{}) {
 
 // GetMousePos get mouse portion
 func GetMousePos() (int, int) {
-	pos := C.get_mousePos()
+	pos := C.get_mouse_pos()
 	// fmt.Println("pos:###", pos, pos.x, pos.y)
 	x := int(pos.x)
 	y := int(pos.y)

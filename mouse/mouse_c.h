@@ -334,10 +334,12 @@ bool smoothlyMoveMouse(MMPoint endPoint, double lowSpeed, double highSpeed)
 	double velo_x = 0.0, velo_y = 0.0;
 	double distance;
 
-	while ((distance = crude_hypot((double)pos.x - endPoint.x,
-	                               (double)pos.y - endPoint.y)) > 1.0) {
-		// double gravity = DEADBEEF_UNIFORM(5.0, 500.0);
-		double gravity = DEADBEEF_UNIFORM(lowSpeed, highSpeed);
+	while ((distance = 
+			crude_hypot((double)pos.x - endPoint.x, (double)pos.y - endPoint.y))
+		> 1.0) {
+			
+		double gravity = DEADBEEF_UNIFORM(5.0, 500.0);
+		// double gravity = DEADBEEF_UNIFORM(lowSpeed, highSpeed);
 		double veloDistance;
 		velo_x += (gravity * ((double)endPoint.x - pos.x)) / distance;
 		velo_y += (gravity * ((double)endPoint.y - pos.y)) / distance;
@@ -359,7 +361,8 @@ bool smoothlyMoveMouse(MMPoint endPoint, double lowSpeed, double highSpeed)
 		moveMouse(pos);
 
 		/* Wait 1 - 3 milliseconds. */
-		microsleep(DEADBEEF_UNIFORM(1.0, 3.0));
+		microsleep(DEADBEEF_UNIFORM(lowSpeed, highSpeed));
+		// microsleep(DEADBEEF_UNIFORM(1.0, 3.0));
 	}
 
 	return true;

@@ -16,7 +16,8 @@ int mouseDelay = 10;
 // int keyboardDelay = 10;
 
 
-// int CheckMouseButton(const char * const b, MMMouseButton * const button){
+// int CheckMouseButton(const char * const b,
+// MMMouseButton * const button){
 // 	if (!button) return -1;
 
 // 	if (strcmp(b, "left") == 0)
@@ -74,7 +75,7 @@ int move_mouse_smooth(size_t x, size_t y, double lowSpeed,
 
 }
 
-MMPoint get_mousePos(){
+MMPoint get_mouse_pos(){
 	MMPoint pos = getMousePos();
 
 	// Return object with .x and .y.
