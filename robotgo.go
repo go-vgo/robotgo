@@ -63,7 +63,7 @@ import (
 )
 
 const (
-	version string = "v0.48.0.510, Ben Nevis!"
+	version string = "v0.48.0.511, Ben Nevis!"
 )
 
 type (
@@ -1128,6 +1128,7 @@ func AddEvent(aeve string) int {
 		"ctrl":    "29",
 		"control": "29",
 		"alt":     "56",
+		"space":   "57",
 		"shift":   "42",
 		"enter":   "28",
 		"command": "3675",
