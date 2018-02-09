@@ -1,4 +1,4 @@
-FROM golang:1.9.2
+FROM golang:1.9.4
 
 RUN apt-get update  
 # customize dependencies
@@ -9,7 +9,8 @@ RUN apt-get install -y libx11-dev
 RUN apt-get install -y xorg-dev
 RUN apt-get install -y libxtst-dev libpng++-dev 
 # Event: 
-RUN apt-get install -y xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev
+RUN apt-get install -y xcb libxcb-xkb-dev x11-xkb-utils 
+RUN apt-get install -y libx11-xcb-dev libxkbcommon-x11-dev
 RUN apt-get install -y libxkbcommon-dev
 # Clipboard:
 RUN apt-get install -y xsel
