@@ -15,8 +15,8 @@
 // #include "../MMBitmap_c.h"
 
 void padHex(MMRGBHex color, char* hex){
-	//Length needs to be 7 because snprintf includes a terminating null.
-	//Use %06x to pad hex value with leading 0s.
+	// Length needs to be 7 because snprintf includes a terminating null.
+	// Use %06x to pad hex value with leading 0s.
 	snprintf(hex, 7, "%06x", color);
 }
 

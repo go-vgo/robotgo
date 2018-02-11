@@ -8,8 +8,7 @@
 	// #include "../base/xdisplay_c.h"
 #endif
 
-MMSize getMainDisplaySize(void)
-{
+MMSize getMainDisplaySize(void){
 #if defined(IS_MACOSX)
 	CGDirectDisplayID displayID = CGMainDisplayID();
 	return MMSizeMake(CGDisplayPixelsWide(displayID),
@@ -26,8 +25,7 @@ MMSize getMainDisplaySize(void)
 #endif
 }
 
-bool pointVisibleOnMainDisplay(MMPoint point)
-{
+bool pointVisibleOnMainDisplay(MMPoint point){
 	MMSize displaySize = getMainDisplaySize();
 	return point.x < displaySize.width && point.y < displaySize.height;
 }

@@ -17,8 +17,7 @@
 	#include <string.h>
 #endif
 
-MMBitmapRef copyMMBitmapFromDisplayInRect(MMRect rect)
-{
+MMBitmapRef copyMMBitmapFromDisplayInRect(MMRect rect){
 #if defined(IS_MACOSX)
 
 	MMBitmapRef bitmap = NULL;
