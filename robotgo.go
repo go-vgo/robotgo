@@ -967,12 +967,12 @@ func ToMMBitmapRef(bit CBitmap) C.MMBitmapRef {
 }
 
 // GetPortion get bitmap portion
-func GetPortion(bit C.MMBitmapRef, x, y, w, h C.size_t) C.MMBitmapRef {
+func GetPortion(bit C.MMBitmapRef, x, y, w, h int) C.MMBitmapRef {
 	var rect C.MMRect
-	rect.origin.x = x
-	rect.origin.y = y
-	rect.size.width = w
-	rect.size.height = h
+	rect.origin.x = C.size_t(x)
+	rect.origin.y = C.size_t(y)
+	rect.size.width = C.size_t(w)
+	rect.size.height = C.size_t(h)
 
 	pos := C.get_portion(bit, rect)
 	return pos
@@ -1097,10 +1097,10 @@ func GetImgSize(imgPath string) (int, int) {
 	bitmap := OpenBitmap(imgPath)
 	gbit := ToBitmap(bitmap)
 
-	x := gbit.Width / 2
-	y := gbit.Height / 2
+	w := gbit.Width / 2
+	h := gbit.Height / 2
 
-	return x, y
+	return w, h
 }
 
 /*
