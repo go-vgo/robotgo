@@ -63,7 +63,7 @@ import (
 )
 
 const (
-	version string = "v0.48.0.511, Ben Nevis!"
+	version string = "v0.48.0.514, Ben Nevis!"
 )
 
 type (
@@ -1090,6 +1090,17 @@ func CountColorCS(x, y, w, h int, color CHex, args ...float32) int {
 	rx := CountColor(bitmap, color, tolerance)
 
 	return rx
+}
+
+// GetImgSize get the image size
+func GetImgSize(imgPath string) (int, int) {
+	bitmap := OpenBitmap(imgPath)
+	gbit := ToBitmap(bitmap)
+
+	x := gbit.Width / 2
+	y := gbit.Height / 2
+
+	return x, y
 }
 
 /*
