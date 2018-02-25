@@ -543,9 +543,23 @@ func SetMouseDelay(x int) {
 // ScrollMouse scroll the mouse
 func ScrollMouse(x int, y string) {
 	cx := C.size_t(x)
-	z := C.CString(y)
-	C.scroll_mouse(cx, z)
-	defer C.free(unsafe.Pointer(z))
+	cy := C.CString(y)
+	C.scroll_mouse(cx, cy)
+
+	defer C.free(unsafe.Pointer(cy))
+}
+
+func Scroll(x, y int, args ...int) {
+	var msDelay = 10
+	if len(args) > 0 {
+		msDelay = args[0]
+	}
+
+	cx := C.int(x)
+	cy := C.int(y)
+	cz:=C.int(msDelay)
+
+	C.scroll(cx, cy, cz)
 }
 
 /*
