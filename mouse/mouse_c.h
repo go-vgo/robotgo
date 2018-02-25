@@ -353,7 +353,7 @@ void scrollMouseXY(int x, int y){
 		mouseScrollInputV.type = INPUT_MOUSE;
 		mouseScrollInputV.mi.dx = 0;
 		mouseScrollInputV.mi.dy = 0;
-		mouseScrollInputV.mi.dwFlags = MOUSEEVENTF_HWHEEL;
+		mouseScrollInputV.mi.dwFlags = MOUSEEVENTF_WHEEL;
 		mouseScrollInputV.mi.time = 0;
 		mouseScrollInputV.mi.dwExtraInfo = 0;
 		mouseScrollInputV.mi.mouseData = WHEEL_DELTA * y;

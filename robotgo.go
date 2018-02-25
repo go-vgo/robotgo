@@ -63,7 +63,7 @@ import (
 )
 
 const (
-	version string = "v0.48.0.514, Ben Nevis!"
+	version string = "v0.48.0.520, Ben Nevis!"
 )
 
 type (
@@ -549,6 +549,7 @@ func ScrollMouse(x int, y string) {
 	defer C.free(unsafe.Pointer(cy))
 }
 
+// Scroll scroll the mouse with x, y
 func Scroll(x, y int, args ...int) {
 	var msDelay = 10
 	if len(args) > 0 {

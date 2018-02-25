@@ -86,6 +86,7 @@ func mouse() {
 
 	// scrolls the mouse either up
 	robotgo.ScrollMouse(10, "up")
+	robotgo.Scroll(100, 200)
 	// toggles right mouse button
 	robotgo.MouseToggle("down", "right")
 
