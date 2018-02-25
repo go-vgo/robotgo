@@ -63,7 +63,7 @@ import (
 )
 
 const (
-	version string = "v0.48.0.520, Ben Nevis!"
+	version string = "v0.48.0.522, Ben Nevis!"
 )
 
 type (
@@ -558,7 +558,7 @@ func Scroll(x, y int, args ...int) {
 
 	cx := C.int(x)
 	cy := C.int(y)
-	cz:=C.int(msDelay)
+	cz := C.int(msDelay)
 
 	C.scroll(cx, cy, cz)
 }
