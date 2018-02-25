@@ -64,7 +64,7 @@ int drag_mouse(size_t x, size_t y){
 	return 0;
 }
 
-bool move_mouse_smooth(size_t x, size_t y, double lowSpeed, 
+bool move_mouse_smooth(size_t x, size_t y, double lowSpeed,
 	double highSpeed, int msDelay){
 	MMPoint point;
 	point = MMPointMake(x, y);
@@ -110,12 +110,20 @@ int mouse_toggle(char* d, MMMouseButton button){
 
 	toggleMouse(down, button);
 	microsleep(mouseDelay);
+	
 	return 0;
 }
 
 int set_mouse_delay(size_t val){
 	// int val = 10;
 	mouseDelay = val;
+
+	return 0;
+}
+
+int scroll(int x, int y, int msDelay){
+	scrollMouseXY(x, y);
+	microsleep(msDelay);
 
 	return 0;
 }
