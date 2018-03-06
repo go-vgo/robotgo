@@ -103,6 +103,16 @@
 			"revisionTime": "2017-06-01T20:57:54Z"
 		},
 		{
+			"checksumSHA1": "uZ3mletGtExUozsdwpZ+B4KmFXk=",
+			"path": "github.com/vcaesar/imgo",
+			"revision": "67f0b2002c0030cda52e4cf2bd8b9e5826adf6e5",
+			"revisionTime": "2018-03-04T12:31:00Z"
+		},
+		{
+			"path": "golang.org/x/image/bmp",
+			"revision": ""
+		},
+		{
 			"checksumSHA1": "EL5tiYbzPcSM0nhJpvMSDnDNvxI=",
 			"path": "golang.org/x/sys/unix",
 			"revision": "4ed4d404df456f81e878683a0363ed3013a59003",
