@@ -155,7 +155,9 @@ MMBitmapRef bitmap_from_string(const char *str){
 	MMBitmapRef bitmap;
 	MMBMPStringError err;
 
-	if ((bitmap = createMMBitmapFromString((unsigned char*)str, len, &err)) == NULL) {
+	if ((bitmap = createMMBitmapFromString(
+		(unsigned char*)str, len, &err))
+		== NULL) {
 		return NULL;
 	}
 

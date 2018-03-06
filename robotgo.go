@@ -50,6 +50,7 @@ import "C"
 
 import (
 	// "fmt"
+	"image"
 	"os"
 	"reflect"
 	"runtime"
@@ -60,10 +61,11 @@ import (
 
 	"github.com/go-vgo/robotgo/clipboard"
 	"github.com/shirou/gopsutil/process"
+	"github.com/vcaesar/imgo"
 )
 
 const (
-	version string = "v0.48.0.522, Ben Nevis!"
+	version string = "v0.48.0.525, Ben Nevis!"
 )
 
 type (
@@ -912,6 +914,16 @@ func OpenBitmap(args ...interface{}) C.MMBitmapRef {
 	// fmt.Println("opening...", bit)
 	return bit
 	// defer C.free(unsafe.Pointer(path))
+}
+
+// DecodeImg decode the image to image.Image and return
+func DecodeImg(path string) (image.Image, string, error) {
+	return imgo.DecodeFile(path)
+}
+
+// OpenImg open the image return []byte
+func OpenImg(path string) []byte {
+	return imgo.ImgToBytes(path)
 }
 
 // BitmapStr bitmap from string
