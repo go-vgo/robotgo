@@ -65,7 +65,7 @@ import (
 )
 
 const (
-	version string = "v0.48.0.525, Ben Nevis!"
+	version string = "v0.48.0.529, Ben Nevis!"
 )
 
 type (
