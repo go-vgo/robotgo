@@ -105,7 +105,7 @@ void moveMouse(MMPoint point){
 		Display *display = XGetMainDisplay();
 		XWarpPointer(display, None, DefaultRootWindow(display),
 					0, 0, 0, 0, point.x, point.y);
-		XFlush(display);
+		XSync(display, false);
 	#elif defined(IS_WINDOWS)
 		//Mouse motion is now done using SendInput with MOUSEINPUT. We use Absolute mouse positioning
 		#define MOUSE_COORD_TO_ABS(coord, width_or_height) (((65536 * coord) / width_or_height) + (coord < 0 ? -1 : 1))
@@ -183,7 +183,7 @@ void toggleMouse(bool down, MMMouseButton button){
 	#elif defined(USE_X11)
 		Display *display = XGetMainDisplay();
 		XTestFakeButtonEvent(display, button, down ? True : False, CurrentTime);
-		XFlush(display);
+		XSync(display, false);
 	#elif defined(IS_WINDOWS)
 		mouse_event(MMMouseToMEventF(down, button), 0, 0, 0, 0);
 	#endif
@@ -276,7 +276,7 @@ void scrollMouse(int scrollMagnitude, MMMouseWheelDirection scrollDirection){
 			XTestFakeButtonEvent(display, dir, 0, CurrentTime);
 		}
 
-		XFlush(display);
+		XSync(display, false);
 
 	#elif defined(IS_WINDOWS)
 
@@ -338,7 +338,7 @@ void scrollMouseXY(int x, int y){
 			XTestFakeButtonEvent(display, ydir, 0, CurrentTime);
 		}
 
-		XFlush(display);
+		XSync(display, false);
 
 	#elif defined(IS_WINDOWS)
 
