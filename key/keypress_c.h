@@ -22,7 +22,7 @@
 		(XTestFakeKeyEvent(display, \
 		                   XKeysymToKeycode(display, key), \
 		                   is_press, CurrentTime), \
-		 XFlush(display))
+		 XSync(display, false))
 	#define X_KEY_EVENT_WAIT(display, key, is_press) \
 		(X_KEY_EVENT(display, key, is_press), \
 		 microsleep(DEADBEEF_UNIFORM(0.0, 62.5)))
