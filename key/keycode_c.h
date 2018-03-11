@@ -132,9 +132,8 @@ MMKeyCode keyCodeForChar(const char c)
 
 #if defined(IS_MACOSX)
 
-CFStringRef createStringForKey(CGKeyCode keyCode)
-{
-	TISInputSourceRef currentKeyboard = TISCopyCurrentKeyboardInputSource();
+CFStringRef createStringForKey(CGKeyCode keyCode){
+	TISInputSourceRef currentKeyboard = TISCopyCurrentASCIICapableKeyboardInputSource();
 	CFDataRef layoutData =
 		(CFDataRef)TISGetInputSourceProperty(currentKeyboard,
 		                          kTISPropertyUnicodeKeyLayoutData);
