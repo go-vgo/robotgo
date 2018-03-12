@@ -65,7 +65,7 @@ import (
 )
 
 const (
-	version string = "v0.48.0.529, Ben Nevis!"
+	version string = "v0.48.0.534, Ben Nevis!"
 )
 
 type (
@@ -111,6 +111,11 @@ func Try(fun func(), handler func(interface{})) {
 // Sleep time.Sleep
 func Sleep(tm float64) {
 	time.Sleep(time.Duration(tm) * time.Second)
+}
+
+// MicroSleep time C.microsleep(tm)
+func MicroSleep(tm float64) {
+	C.microsleep(C.double(tm))
 }
 
 // GoString teans C.char to string
