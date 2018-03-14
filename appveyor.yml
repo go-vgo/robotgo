@@ -35,7 +35,7 @@ environment:
   # - COMPILER: MINGW_W64
   #   ARCHITECTURE: x64
   GOVERSION: 1.9.4
-  GOPATH: c:\gopath
+  # GOPATH: c:\gopath
 
 # scripts that run after cloning repository
 # install:
