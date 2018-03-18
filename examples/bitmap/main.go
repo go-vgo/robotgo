@@ -90,6 +90,11 @@ func main() {
 	byt := robotgo.OpenImg("test.png")
 	imgo.Save("test2.png", byt)
 
+	w, h := robotgo.GetImgSize("test.png")
+	fmt.Println("image width and hight ", w, h)
+	w, h = imgo.GetSize("test.png")
+	fmt.Println("image width and hight ", w, h)
+
 	// convert image
 	robotgo.Convert("test.png", "test.tif")
 

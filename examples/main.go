@@ -28,11 +28,15 @@ func key() {
 	robotgo.TypeString("Hello World")
 
 	robotgo.TypeString("留给真爱你的人")
+	robotgo.MicroSleep(1)
+
 	robotgo.TypeStr("所以, 你好, 再见")
+	robotgo.Sleep(1)
+
 	ustr := uint32(robotgo.CharCodeAt("所以, 你好, 再见", 0))
 	robotgo.UnicodeType(ustr)
 
-	robotgo.PasteStr("粘贴字符串, paste")
+	robotgo.PasteStr(" 粘贴字符串, paste")
 
 	// press "enter"
 	robotgo.KeyTap("enter")
@@ -229,6 +233,11 @@ func bitmap() {
 
 	byt := robotgo.OpenImg("test.png")
 	imgo.Save("test2.png", byt)
+
+	w, h := robotgo.GetImgSize("test.png")
+	fmt.Println("image width and hight ", w, h)
+	w, h = imgo.GetSize("test.png")
+	fmt.Println("image width and hight ", w, h)
 
 	// convert image
 	robotgo.Convert("test.png", "test.tif")
