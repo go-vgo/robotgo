@@ -45,40 +45,40 @@
 			"revisionTime": "2017-07-14T06:33:53Z"
 		},
 		{
-			"checksumSHA1": "PHwqGzRGjJ81TtD7aBgcppCjeRg=",
+			"checksumSHA1": "cspJvF0E9whCLlbX8MlrYemtOzo=",
 			"path": "github.com/shirou/gopsutil/cpu",
-			"revision": "5776ff9c7c5d063d574ef53d740f75c68b448e53",
-			"revisionTime": "2018-02-27T22:58:47Z"
+			"revision": "b99342a9ceb013854c12cfb0b55c2adc57837a29",
+			"revisionTime": "2018-03-24T06:57:29Z"
 		},
 		{
-			"checksumSHA1": "sy4twPdTy18BS0k2PxntChG2FcE=",
+			"checksumSHA1": "X93ayElJyx5k/xOUSMzMdYIbQ7M=",
 			"path": "github.com/shirou/gopsutil/host",
-			"revision": "5776ff9c7c5d063d574ef53d740f75c68b448e53",
-			"revisionTime": "2018-02-27T22:58:47Z"
+			"revision": "b99342a9ceb013854c12cfb0b55c2adc57837a29",
+			"revisionTime": "2018-03-24T06:57:29Z"
 		},
 		{
 			"checksumSHA1": "xPMr7RbEnFd1XxOFpLOSdX4cEO0=",
 			"path": "github.com/shirou/gopsutil/internal/common",
-			"revision": "5776ff9c7c5d063d574ef53d740f75c68b448e53",
-			"revisionTime": "2018-02-27T22:58:47Z"
+			"revision": "b99342a9ceb013854c12cfb0b55c2adc57837a29",
+			"revisionTime": "2018-03-24T06:57:29Z"
 		},
 		{
-			"checksumSHA1": "Cgm7wMq9rJpnUeZFV3OD8qkTKOM=",
+			"checksumSHA1": "s/McZHJfB9Kt5lyI2VccZ8yUaW0=",
 			"path": "github.com/shirou/gopsutil/mem",
-			"revision": "5776ff9c7c5d063d574ef53d740f75c68b448e53",
-			"revisionTime": "2018-02-27T22:58:47Z"
+			"revision": "b99342a9ceb013854c12cfb0b55c2adc57837a29",
+			"revisionTime": "2018-03-24T06:57:29Z"
 		},
 		{
-			"checksumSHA1": "Z7FjZvR5J5xh6Ne572gD7tRUsc8=",
+			"checksumSHA1": "cfj8JcHTkICoDEj6AAuniOi48FA=",
 			"path": "github.com/shirou/gopsutil/net",
-			"revision": "5776ff9c7c5d063d574ef53d740f75c68b448e53",
-			"revisionTime": "2018-02-27T22:58:47Z"
+			"revision": "b99342a9ceb013854c12cfb0b55c2adc57837a29",
+			"revisionTime": "2018-03-24T06:57:29Z"
 		},
 		{
-			"checksumSHA1": "l372fZbcjJ2OlVmg0JihEjbtUcE=",
+			"checksumSHA1": "IkOLZLYKoKuA1rVTJtPcgGGMA0Y=",
 			"path": "github.com/shirou/gopsutil/process",
-			"revision": "5776ff9c7c5d063d574ef53d740f75c68b448e53",
-			"revisionTime": "2018-02-27T22:58:47Z"
+			"revision": "b99342a9ceb013854c12cfb0b55c2adc57837a29",
+			"revisionTime": "2018-03-24T06:57:29Z"
 		},
 		{
 			"checksumSHA1": "Nve7SpDmjsv6+rhkXAkfg/UQx94=",
@@ -103,13 +103,17 @@
 			"revisionTime": "2017-06-01T20:57:54Z"
 		},
 		{
-			"checksumSHA1": "uZ3mletGtExUozsdwpZ+B4KmFXk=",
+			"checksumSHA1": "qqYvzeNRTp9tXZwP2IBx/euloqo=",
 			"path": "github.com/vcaesar/imgo",
-			"revision": "67f0b2002c0030cda52e4cf2bd8b9e5826adf6e5",
-			"revisionTime": "2018-03-04T12:31:00Z"
+			"revision": "fece97d8745e9e2299516bf074772fccf03a53a5",
+			"revisionTime": "2018-03-07T10:09:24Z"
 		},
 		{
 			"path": "golang.org/x/image/bmp",
+			"revision": ""
+		},
+		{
+			"path": "golang.org/x/sys/plan9",
 			"revision": ""
 		},
 		{
@@ -123,6 +127,30 @@
 			"path": "golang.org/x/sys/windows",
 			"revision": "4ed4d404df456f81e878683a0363ed3013a59003",
 			"revisionTime": "2017-06-30T13:23:30Z"
+		},
+		{
+			"path": "golang.org/x/sys/windows/registry",
+			"revision": ""
+		},
+		{
+			"path": "golang.org/x/sys/windows/svc",
+			"revision": ""
+		},
+		{
+			"path": "golang.org/x/sys/windows/svc/debug",
+			"revision": ""
+		},
+		{
+			"path": "golang.org/x/sys/windows/svc/eventlog",
+			"revision": ""
+		},
+		{
+			"path": "golang.org/x/sys/windows/svc/example",
+			"revision": ""
+		},
+		{
+			"path": "golang.org/x/sys/windows/svc/mgr",
+			"revision": ""
 		}
 	],
 	"rootPath": "github.com/go-vgo/robotgo"
