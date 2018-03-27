@@ -30,7 +30,8 @@ package main
 
 import (
   "fmt"
-	"github.com/go-vgo/robotgo"
+
+  "github.com/go-vgo/robotgo"
 )
 
 func main() {
@@ -46,7 +47,7 @@ func main() {
   arr := []string{"alt", "command"}
   robotgo.KeyTap("i", arr)
 
-  robotgo.WriteAll("测试")
+  robotgo.WriteAll("Test")
   text, err := robotgo.ReadAll()
   if err == nil {
     fmt.Println(text)
@@ -134,11 +135,21 @@ func main() {
   fpid, err := robotgo.FindIds("Google")
   if err == nil {
     fmt.Println("pids...", fpid)
+
+    if len(fpid) > 0 {
+      robotgo.ActivePID(fpid[0])
+
+      robotgo.Kill(fpid[0])
+    }
   }
 
+  robotgo.ActiveName("chrome")
+
   isExist, err := robotgo.PidExists(100)
-  if err == nil {
+  if err == nil && isExist {
     fmt.Println("pid exists is", isExist)
+
+    robotgo.Kill(100)
   }
 
   abool := robotgo.ShowAlert("test", "robotgo")
