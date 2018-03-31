@@ -1,4 +1,4 @@
-FROM golang:1.9.4
+FROM golang:1.10.1
 
 RUN apt-get update  
 # customize dependencies
