@@ -4,7 +4,7 @@ jobs:
   build:
     docker:
       # using custom image, see .circleci/images/primary/Dockerfile
-      - image: govgo/robotgoci:0.0.2
+      - image: govgo/robotgoci:1.10.1
     working_directory: /go/src/github.com/go-vgo/robotgo
     steps:
       - checkout
