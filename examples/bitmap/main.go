@@ -104,4 +104,7 @@ func main() {
 
 	fx, fy = robotgo.FindBitmap(openbit)
 	fmt.Println("FindBitmap------", fx, fy)
+
+	fx, fy = robotgo.FindPic("test.tif")
+	fmt.Println("FindPic------", fx, fy)
 }
