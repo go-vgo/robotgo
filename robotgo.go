@@ -784,6 +784,9 @@ func SetKeyboardDelay(x int) {
 */
 
 // FindBitmap find the bitmap
+//
+// 	robotgo.FindBitmap(bitmap, subbitamp C.MMBitmapRef, tolerance float64)
+//
 func FindBitmap(args ...interface{}) (int, int) {
 	var (
 		bit       C.MMBitmapRef
@@ -810,7 +813,10 @@ func FindBitmap(args ...interface{}) (int, int) {
 }
 
 // FindPic finding the image by path
-func FindPic(path string, args...interface{})(int, int){
+//
+//  robotgo.FindPic(path string, subbitamp C.MMBitmapRef, tolerance float64)
+//
+func FindPic(path string, args ...interface{}) (int, int) {
 	var (
 		sbit      C.MMBitmapRef
 		tolerance float64
@@ -832,7 +838,7 @@ func FindPic(path string, args...interface{})(int, int){
 
 	fx, fy := FindBitmap(openbit, sbit, tolerance)
 
-	return fx,fy
+	return fx, fy
 }
 
 // FindEveryBitmap find the every bitmap
