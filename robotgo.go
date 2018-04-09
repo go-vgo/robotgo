@@ -809,6 +809,32 @@ func FindBitmap(args ...interface{}) (int, int) {
 	return int(pos.x), int(pos.y)
 }
 
+// FindPic finding the image by path
+func FindPic(path string, args...interface{})(int, int){
+	var (
+		sbit      C.MMBitmapRef
+		tolerance float64
+	)
+
+	openbit := OpenBitmap(path)
+
+	if len(args) > 0 {
+		sbit = args[0].(C.MMBitmapRef)
+	} else {
+		sbit = CaptureScreen()
+	}
+
+	if len(args) > 1 {
+		tolerance = args[1].(float64)
+	} else {
+		tolerance = 0.5
+	}
+
+	fx, fy := FindBitmap(openbit, sbit, tolerance)
+
+	return fx,fy
+}
+
 // FindEveryBitmap find the every bitmap
 func FindEveryBitmap(args ...interface{}) (int, int) {
 	var (
