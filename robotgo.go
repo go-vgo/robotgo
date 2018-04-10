@@ -65,7 +65,7 @@ import (
 )
 
 const (
-	version string = "v0.48.0.544, Ben Nevis!"
+	version string = "v0.48.0.549, Ben Nevis!"
 )
 
 type (
@@ -245,41 +245,15 @@ func CaptureScreen(args ...int) C.MMBitmapRef {
 
 // GoCaptureScreen capture the screen and return bitmap(go struct)
 func GoCaptureScreen(args ...int) Bitmap {
-	var (
-		x C.size_t
-		y C.size_t
-		w C.size_t
-		h C.size_t
-	)
+	var bit C.MMBitmapRef
 
-	Try(func() {
-		x = C.size_t(args[0])
-		y = C.size_t(args[1])
-		w = C.size_t(args[2])
-		h = C.size_t(args[3])
-	}, func(e interface{}) {
-		// fmt.Println("err:::", e)
-		x = 0
-		y = 0
-		//Get screen size.
-		var displaySize C.MMSize
-		displaySize = C.getMainDisplaySize()
-		w = displaySize.width
-		h = displaySize.height
-	})
-
-	bit := C.capture_screen(x, y, w, h)
-	// fmt.Println("...", bit)
-	bitmap := Bitmap{
-		ImageBuffer:   (*uint8)(bit.imageBuffer),
-		Width:         int(bit.width),
-		Height:        int(bit.height),
-		Bytewidth:     int(bit.bytewidth),
-		BitsPerPixel:  uint8(bit.bitsPerPixel),
-		BytesPerPixel: uint8(bit.bytesPerPixel),
+	if len(args) > 3 {
+		bit = CaptureScreen(args[0], args[1], args[2], args[3])
+	} else {
+		bit = CaptureScreen()
 	}
 
-	return bitmap
+	return ToBitmap(bit)
 }
 
 // BCaptureScreen capture the screen and return bitmap(go struct),
@@ -783,6 +757,37 @@ func SetKeyboardDelay(x int) {
 |______/  |__|     |__|     |__|  |__| /__/     \__\ | _|
 */
 
+// ToBitmap trans C.MMBitmapRef to Bitmap
+func ToBitmap(bit C.MMBitmapRef) Bitmap {
+	bitmap := Bitmap{
+		ImageBuffer:   (*uint8)(bit.imageBuffer),
+		Width:         int(bit.width),
+		Height:        int(bit.height),
+		Bytewidth:     int(bit.bytewidth),
+		BitsPerPixel:  uint8(bit.bitsPerPixel),
+		BytesPerPixel: uint8(bit.bytesPerPixel),
+	}
+
+	return bitmap
+}
+
+// ToMMBitmapRef trans CBitmap to C.MMBitmapRef
+func ToMMBitmapRef(bit CBitmap) C.MMBitmapRef {
+	return C.MMBitmapRef(bit)
+}
+
+// TostringBitmap tostring bitmap to string
+func TostringBitmap(bit C.MMBitmapRef) string {
+	strBit := C.tostring_bitmap(bit)
+	return C.GoString(strBit)
+}
+
+// TocharBitmap tostring bitmap to C.char
+func TocharBitmap(bit C.MMBitmapRef) *C.char {
+	strBit := C.tostring_bitmap(bit)
+	return strBit
+}
+
 func internalFindBitmap(bit, sbit C.MMBitmapRef, tolerance float64) (int, int) {
 	pos := C.find_bitmap(bit, sbit, C.float(tolerance))
 	// fmt.Println("pos----", pos)
@@ -801,6 +806,7 @@ func FindBitmap(args ...interface{}) (int, int) {
 	)
 
 	bit = args[0].(C.MMBitmapRef)
+
 	if len(args) > 1 {
 		sbit = args[1].(C.MMBitmapRef)
 	} else {
@@ -1002,37 +1008,6 @@ func SaveBitmap(args ...interface{}) string {
 // 	// return bit
 // 	// defer C.free(unsafe.Pointer(path))
 // }
-
-// TostringBitmap tostring bitmap to string
-func TostringBitmap(bit C.MMBitmapRef) string {
-	strBit := C.tostring_bitmap(bit)
-	return C.GoString(strBit)
-}
-
-// TocharBitmap tostring bitmap to C.char
-func TocharBitmap(bit C.MMBitmapRef) *C.char {
-	strBit := C.tostring_bitmap(bit)
-	return strBit
-}
-
-// ToBitmap trans C.MMBitmapRef to Bitmap
-func ToBitmap(bit C.MMBitmapRef) Bitmap {
-	bitmap := Bitmap{
-		ImageBuffer:   (*uint8)(bit.imageBuffer),
-		Width:         int(bit.width),
-		Height:        int(bit.height),
-		Bytewidth:     int(bit.bytewidth),
-		BitsPerPixel:  uint8(bit.bitsPerPixel),
-		BytesPerPixel: uint8(bit.bytesPerPixel),
-	}
-
-	return bitmap
-}
-
-// ToMMBitmapRef trans CBitmap to C.MMBitmapRef
-func ToMMBitmapRef(bit CBitmap) C.MMBitmapRef {
-	return C.MMBitmapRef(bit)
-}
 
 // GetPortion get bitmap portion
 func GetPortion(bit C.MMBitmapRef, x, y, w, h int) C.MMBitmapRef {
