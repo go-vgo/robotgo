@@ -85,7 +85,7 @@ void set_active(const MData win){
 	}
 #endif
 
-void active_PID(uintptr pid){
+void active_PID(uintptr pid, uintptr isHwnd){
 	MData win;
 	#if defined(IS_MACOSX)
 		// Handle to a AXUIElementRef
@@ -94,7 +94,11 @@ void active_PID(uintptr pid){
 		win.XWin = (Window)pid;		// Handle to an X11 window
 	#elif defined(IS_WINDOWS)
 		// win.HWnd = (HWND)pid;		// Handle to a window HWND
-		win.HWnd = GetHwndByPId(pid);
+		if (isHwnd == 0) {
+			win.HWnd = GetHwndByPId(pid);
+		} else {
+			win.HWnd = (HWND)pid;
+		}
 	#endif
 
 	SetActive(win);
