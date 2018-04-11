@@ -1318,7 +1318,7 @@ func GetHandle() int {
 	return ghwnd
 }
 
-// GetBHandle get the window handle
+// GetBHandle get the window handle, Wno-deprecated
 func GetBHandle() int {
 	hwnd := C.bget_handle()
 	ghwnd := int(hwnd)
@@ -1437,7 +1437,7 @@ func FindNames() ([]string, error) {
 	return strArr, err
 }
 
-// FindIds find the process id by the process name
+// FindIds find the all process id by the process name
 func FindIds(name string) ([]int32, error) {
 	var pids []int32
 	nps, err := Process()
@@ -1457,7 +1457,7 @@ func FindIds(name string) ([]int32, error) {
 	return pids, err
 }
 
-// ActivePID active window by PID, 
+// ActivePID active window by PID,
 // If args[0] > 0 on the Windows platform via a window handle to active
 func ActivePID(pid int32, args ...int) {
 	var hwnd int

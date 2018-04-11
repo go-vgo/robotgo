@@ -475,17 +475,14 @@ bool setHandle(uintptr handle){
 #endif
 }
 
-//uint32 uintptr
+// uint32 uintptr
 uintptr getHandle(){
 #if defined(IS_MACOSX)
 	return (uintptr)mData.CgID;
-
 #elif defined(USE_X11)
 	return (uintptr)mData.XWin;
-
 #elif defined(IS_WINDOWS)
 	return (uintptr)mData.HWnd;
-
 #endif
 }
 

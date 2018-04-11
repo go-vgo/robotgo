@@ -38,11 +38,6 @@ bool set_handle(uintptr handle){
 }
 
 uintptr get_handle(){
-	uintptr hwnd = getHandle();
-	return hwnd;
-}
-
-uintptr bget_handle(){
 	MData mData = GetActive();
 	#if defined(IS_MACOSX)
 		return (uintptr)mData.CgID;
@@ -51,6 +46,11 @@ uintptr bget_handle(){
 	#elif defined(IS_WINDOWS)
 		return (uintptr)mData.HWnd;
 	#endif
+}
+
+uintptr bget_handle(){
+	uintptr hwnd = getHandle();
+	return hwnd;
 }
 
 void set_active(const MData win){
