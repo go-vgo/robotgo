@@ -65,13 +65,17 @@ func VirtualMemoryWithContext(ctx context.Context) (*VirtualMemoryStat, error) {
 			ret.PageTables = t * 1024
 		case "SwapCached":
 			ret.SwapCached = t * 1024
+		case "CommitLimit":
+			ret.CommitLimit = t * 1024
+		case "Committed_AS":
+			ret.CommittedAS = t * 1024
 		}
 	}
 	if !memavail {
 		ret.Available = ret.Free + ret.Buffers + ret.Cached
 	}
-	ret.Used = ret.Total - ret.Available
-	ret.UsedPercent = float64(ret.Total-ret.Available) / float64(ret.Total) * 100.0
+	ret.Used = ret.Total - ret.Free - ret.Buffers - ret.Cached
+	ret.UsedPercent = float64(ret.Used) / float64(ret.Total) * 100.0
 
 	return ret, nil
 }
