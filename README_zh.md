@@ -262,7 +262,6 @@ func main() {
 ## Plans
 - 更新 Find an image on screen, read pixels from an image
 - 更新 Window Handle
-- Linux 支持 UTF-8
 - 尝试支持 Android, 也许支持 IOS
 
 ## Donate

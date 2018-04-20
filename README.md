@@ -264,7 +264,6 @@ func main() {
 ## Plans
 - Update Find an image on screen, read pixels from an image
 - Update Window Handle
-- Linux support UTF-8
 - Try support Android, maybe support IOS
 
 ## Donate
