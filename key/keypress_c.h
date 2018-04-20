@@ -225,8 +225,8 @@ void toggleUnicode(UniChar ch, const bool down)
 		int min, max, numcodes;
 		XDisplayKeycodes(dpy, &min, &max);
 		KeySym *keysym;
-		keysym = XGetKeyboardMapping(dpy, min,max-min+1, &numcodes);
-		keysym[(max-min-1)*numcodes]=sym;
+		keysym = XGetKeyboardMapping(dpy, min, max-min+1, &numcodes);
+		keysym[(max-min-1)*numcodes] = sym;
 		XChangeKeyboardMapping(dpy, min, numcodes, keysym, (max-min));
 		XFree(keysym);
 		XFlush(dpy);

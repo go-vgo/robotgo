@@ -66,7 +66,7 @@ import (
 )
 
 const (
-	version string = "v0.48.0.549, Ben Nevis!"
+	version string = "v0.48.0.556, Ben Nevis!"
 )
 
 type (
@@ -692,7 +692,7 @@ func CharCodeAt(s string, n int) rune {
 	return 0
 }
 
-func toUc(text string) []string {
+func toUC(text string) []string {
 	var uc []string
 
 	textQuoted := strconv.QuoteToASCII(text)
@@ -706,7 +706,7 @@ func toUc(text string) []string {
 	return uc
 }
 
-func inputUtf(str string) {
+func inputUTF(str string) {
 	cstr := C.CString(str)
 	C.input_utf(cstr)
 
@@ -716,9 +716,9 @@ func inputUtf(str string) {
 // TypeStr type string, support UTF-8
 func TypeStr(str string) {
 	if runtime.GOOS == "linux" {
-		strUc := toUc(str)
+		strUc := toUC(str)
 		for i := 0; i < len(strUc); i++ {
-			inputUtf(strUc[i])
+			inputUTF(strUc[i])
 			MicroSleep(7)
 		}
 	} else {
