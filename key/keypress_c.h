@@ -214,6 +214,39 @@ void toggleUnicode(UniChar ch, const bool down)
 
 #if defined(USE_X11)
 	#define toggleUniKey(c, down) toggleKey(c, down, MOD_NONE)
+
+	int input_utf(const char *utf) {
+		Display *dpy;
+		dpy = XOpenDisplay(NULL);
+
+		KeySym sym = XStringToKeysym(utf);
+		// KeySym sym = XKeycodeToKeysym(dpy, utf);
+
+		int min, max, numcodes;
+		XDisplayKeycodes(dpy, &min, &max);
+		KeySym *keysym;
+		keysym = XGetKeyboardMapping(dpy, min,max-min+1, &numcodes);
+		keysym[(max-min-1)*numcodes]=sym;
+		XChangeKeyboardMapping(dpy, min, numcodes, keysym, (max-min));
+		XFree(keysym);
+		XFlush(dpy);
+
+		KeyCode code = XKeysymToKeycode(dpy, sym);
+
+		XTestFakeKeyEvent(dpy, code, True, 1);
+		XTestFakeKeyEvent(dpy, code, False, 1);
+
+		XFlush(dpy);
+
+		XCloseDisplay(dpy);
+
+		return 0;
+	}
+#endif
+#if !defined(USE_X11)
+	int input_utf(const char *utf){
+		return 0;
+	}
 #endif
 
 // unicode type

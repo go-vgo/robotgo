@@ -54,6 +54,7 @@ import (
 	"os"
 	"reflect"
 	"runtime"
+	"strconv"
 	"strings"
 	"time"
 	"unsafe"
@@ -691,11 +692,40 @@ func CharCodeAt(s string, n int) rune {
 	return 0
 }
 
+func toUc(text string) []string {
+	var uc []string
+
+	textQuoted := strconv.QuoteToASCII(text)
+	textUnquoted := textQuoted[1 : len(textQuoted)-1]
+
+	sUnicodev := strings.Split(textUnquoted, "\\u")
+	for i := 1; i < len(sUnicodev); i++ {
+		uc = append(uc, "U"+sUnicodev[i])
+	}
+
+	return uc
+}
+
+func inputUtf(str string) {
+	cstr := C.CString(str)
+	C.input_utf(cstr)
+
+	defer C.free(unsafe.Pointer(cstr))
+}
+
 // TypeStr type string, support UTF-8
 func TypeStr(str string) {
-	for i := 0; i < len([]rune(str)); i++ {
-		ustr := uint32(CharCodeAt(str, i))
-		UnicodeType(ustr)
+	if runtime.GOOS == "linux" {
+		strUc := toUc(str)
+		for i := 0; i < len(strUc); i++ {
+			inputUtf(strUc[i])
+			MicroSleep(7)
+		}
+	} else {
+		for i := 0; i < len([]rune(str)); i++ {
+			ustr := uint32(CharCodeAt(str, i))
+			UnicodeType(ustr)
+		}
 	}
 }
 
