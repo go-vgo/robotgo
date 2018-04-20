@@ -706,15 +706,20 @@ func toUc(text string) []string {
 	return uc
 }
 
+func inputUtf(str string) {
+	cstr := C.CString(str)
+	C.input_utf(cstr)
+
+	defer C.free(unsafe.Pointer(cstr))
+}
+
 // TypeStr type string, support UTF-8
 func TypeStr(str string) {
 	if runtime.GOOS == "linux" {
 		strUc := toUc(str)
 		for i := 0; i < len(strUc); i++ {
-			cstr := C.CString(strUc[i])
-			C.input_utf(cstr)
-
-			defer C.free(unsafe.Pointer(cstr))
+			inputUtf(strUc[i])
+			MicroSleep(7)
 		}
 	} else {
 		for i := 0; i < len([]rune(str)); i++ {
