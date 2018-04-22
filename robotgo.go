@@ -713,13 +713,19 @@ func inputUTF(str string) {
 	defer C.free(unsafe.Pointer(cstr))
 }
 
-// TypeStr type string, support UTF-8
-func TypeStr(str string) {
+// TypeStr send a string, support UTF-8
+// TypeStr(string: The string to send, float64: microsleep time)
+func TypeStr(str string, args ...float64) {
+	var tm = 7.0
+	if len(args) > 0 {
+		tm = args[0]
+	}
+
 	if runtime.GOOS == "linux" {
 		strUc := toUC(str)
 		for i := 0; i < len(strUc); i++ {
 			inputUTF(strUc[i])
-			MicroSleep(7)
+			MicroSleep(tm)
 		}
 	} else {
 		for i := 0; i < len([]rune(str)); i++ {
@@ -735,14 +741,16 @@ func UnicodeType(str uint32) {
 	C.unicodeType(cstr)
 }
 
-// TypeString type string, support unicode
-func TypeString(x string) {
-	cx := C.CString(x)
-	C.type_string(cx)
-	defer C.free(unsafe.Pointer(cx))
+// TypeString send a string, support unicode
+// TypeStr(string: The string to send)
+func TypeString(str string) {
+	cstr := C.CString(str)
+	C.type_string(cstr)
+
+	defer C.free(unsafe.Pointer(cstr))
 }
 
-// PasteStr paste string, support UTF-8
+// PasteStr paste a string, support UTF-8
 func PasteStr(str string) {
 	clipboard.WriteAll(str)
 	if runtime.GOOS == "darwin" {
@@ -753,29 +761,31 @@ func PasteStr(str string) {
 }
 
 // TypeStrDelay type string delayed
-func TypeStrDelay(str string, y int) {
+func TypeStrDelay(str string, delay int) {
 	cstr := C.CString(str)
-	cy := C.size_t(y)
-	C.type_string_delayed(cstr, cy)
+	cdelay := C.size_t(delay)
+	C.type_string_delayed(cstr, cdelay)
+
 	defer C.free(unsafe.Pointer(cstr))
 }
 
 // TypeStringDelayed type string delayed, Wno-deprecated
-func TypeStringDelayed(x string, y int) {
-	cx := C.CString(x)
-	cy := C.size_t(y)
-	C.type_string_delayed(cx, cy)
-	defer C.free(unsafe.Pointer(cx))
+func TypeStringDelayed(str string, delay int) {
+	cstr := C.CString(str)
+	cdelay := C.size_t(delay)
+	C.type_string_delayed(cstr, cdelay)
+
+	defer C.free(unsafe.Pointer(cstr))
 }
 
 // SetKeyDelay set keyboard delay
-func SetKeyDelay(x int) {
-	C.set_keyboard_delay(C.size_t(x))
+func SetKeyDelay(key int) {
+	C.set_keyboard_delay(C.size_t(key))
 }
 
 // SetKeyboardDelay set keyboard delay, Wno-deprecated
-func SetKeyboardDelay(x int) {
-	C.set_keyboard_delay(C.size_t(x))
+func SetKeyboardDelay(key int) {
+	C.set_keyboard_delay(C.size_t(key))
 }
 
 /*
