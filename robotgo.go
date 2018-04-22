@@ -517,9 +517,9 @@ func MouseToggle(args ...interface{}) {
 }
 
 // SetMouseDelay set mouse delay
-func SetMouseDelay(x int) {
-	cx := C.size_t(x)
-	C.set_mouse_delay(cx)
+func SetMouseDelay(delay int) {
+	cdelay := C.size_t(delay)
+	C.set_mouse_delay(cdelay)
 }
 
 // ScrollMouse scroll the mouse
@@ -779,13 +779,13 @@ func TypeStringDelayed(str string, delay int) {
 }
 
 // SetKeyDelay set keyboard delay
-func SetKeyDelay(key int) {
-	C.set_keyboard_delay(C.size_t(key))
+func SetKeyDelay(delay int) {
+	C.set_keyboard_delay(C.size_t(delay))
 }
 
 // SetKeyboardDelay set keyboard delay, Wno-deprecated
-func SetKeyboardDelay(key int) {
-	C.set_keyboard_delay(C.size_t(key))
+func SetKeyboardDelay(delay int) {
+	C.set_keyboard_delay(C.size_t(delay))
 }
 
 /*
