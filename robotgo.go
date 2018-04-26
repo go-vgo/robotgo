@@ -698,9 +698,9 @@ func toUC(text string) []string {
 	textQuoted := strconv.QuoteToASCII(text)
 	textUnquoted := textQuoted[1 : len(textQuoted)-1]
 
-	sUnicodev := strings.Split(textUnquoted, "\\u")
-	for i := 1; i < len(sUnicodev); i++ {
-		uc = append(uc, "U"+sUnicodev[i])
+	strUnicodev := strings.Split(textUnquoted, "\\u")
+	for i := 1; i < len(strUnicodev); i++ {
+		uc = append(uc, "U"+strUnicodev[i])
 	}
 
 	return uc
@@ -771,11 +771,7 @@ func TypeStrDelay(str string, delay int) {
 
 // TypeStringDelayed type string delayed, Wno-deprecated
 func TypeStringDelayed(str string, delay int) {
-	cstr := C.CString(str)
-	cdelay := C.size_t(delay)
-	C.type_string_delayed(cstr, cdelay)
-
-	defer C.free(unsafe.Pointer(cstr))
+	TypeStrDelay(str, delay)
 }
 
 // SetKeyDelay set keyboard delay
