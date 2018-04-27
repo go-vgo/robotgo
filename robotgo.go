@@ -66,7 +66,7 @@ import (
 )
 
 const (
-	version string = "v0.49.0.561, Olympus Mons!"
+	version string = "v0.49.0.562, Olympus Mons!"
 )
 
 type (

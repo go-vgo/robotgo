@@ -1,6 +1,49 @@
 # CHANGELOG
 
 <!--### RobotGo-->
+
+## RobotGo v0.49.0, Olympus Mons
+
+### Add  
+
+- [NEW] Add get image size func
+- [NEW] Add linux type string utf-8 support
+- [NEW] Add scroll mouse support x, y
+- [NEW] Add AddEvent() "esc" support fix #105
+- [NEW] Add AddEvent "space" fix #110
+- [NEW] Add clipboard choose primary mode on unix
+- [NEW] Add move smooth return
+- [NEW] Add more bitmap func and examples
+- [NEW] Add MicroSleep func
+- [NEW] Add find image by path
+
+
+### Update
+- [NEW] Update KeyToggle code
+- [NEW] Update activePid allow Windows via hwnd
+- [NEW] Update godoc and README.md
+- [NEW] Update CHANGELOG.md
+- [NEW] Update Kill() parameter and examples
+- [NEW] Update examples and remove useless function
+- [NEW] Update appveyor, circle and dockerfile
+- [NEW] Update code style
+- [NEW] Update and optimize func
+- [NEW] Update travis support go 1.10
+- [NEW] Update CI (use custom go image) and add func internalFindBitmap
+- [NEW] Update godoc and deprecated GetBHandle
+- [NEW] Optimize code func args and name
+
+
+### Fix
+
+- [FIX] Fix mac input method keytap not work
+- [FIX] Fix clipboard golint
+- [FIX] Update move smooth fix #96 (set mouse smooth speed)
+- [FIX] Fix Getportion param to go type
+- [FIX] Fix XFlush wait for events flushing
+
+See Commits for more details, after Jan 25.
+
 ## RobotGo v0.48.0, Ben Nevis
 
 ### Add  
