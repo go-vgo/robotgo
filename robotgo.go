@@ -629,7 +629,7 @@ func KeyTap(args ...interface{}) {
 func KeyToggle(args ...string) string {
 	var (
 		adown string
-		amkey string
+		mKey  string
 		mKeyT string
 		// keyDelay = 10
 	)
@@ -638,7 +638,7 @@ func KeyToggle(args ...string) string {
 		adown = args[1]
 
 		if len(args) > 2 {
-			amkey = args[2]
+			mKey = args[2]
 
 			if len(args) > 3 {
 				mKeyT = args[3]
@@ -646,7 +646,7 @@ func KeyToggle(args ...string) string {
 				mKeyT = "null"
 			}
 		} else {
-			amkey = "null"
+			mKey = "null"
 		}
 	} else {
 		adown = "null"
@@ -654,16 +654,16 @@ func KeyToggle(args ...string) string {
 
 	ckey := C.CString(args[0])
 	cadown := C.CString(adown)
-	camkey := C.CString(amkey)
+	cmKey := C.CString(mKey)
 	cmKeyT := C.CString(mKeyT)
 	// defer func() {
-	str := C.key_toggle(ckey, cadown, camkey, cmKeyT)
-	// str := C.key_Toggle(ckey, cadown, camkey, cmKeyT, C.int(keyDelay))
+	str := C.key_toggle(ckey, cadown, cmKey, cmKeyT)
+	// str := C.key_Toggle(ckey, cadown, cmKey, cmKeyT, C.int(keyDelay))
 	// fmt.Println(str)
 	// }()
 	defer C.free(unsafe.Pointer(ckey))
 	defer C.free(unsafe.Pointer(cadown))
-	defer C.free(unsafe.Pointer(camkey))
+	defer C.free(unsafe.Pointer(cmKey))
 	defer C.free(unsafe.Pointer(cmKeyT))
 
 	return C.GoString(str)
@@ -1088,11 +1088,17 @@ func ReadBitmap(bitmap C.MMBitmapRef) bool {
 	return gbool
 }
 
-// CopyBitpb copy bitmap to pasteboard
-func CopyBitpb(bitmap C.MMBitmapRef) bool {
+// CopyBitPB copy bitmap to pasteboard
+func CopyBitPB(bitmap C.MMBitmapRef) bool {
 	abool := C.bitmap_copy_to_pboard(bitmap)
 	gbool := bool(abool)
+
 	return gbool
+}
+
+// CopyBitpb copy bitmap to pasteboard, Wno-deprecated
+func CopyBitpb(bitmap C.MMBitmapRef) bool {
+	return CopyBitPB(bitmap)
 }
 
 // DeepCopyBit deep copy bitmap
