@@ -1,5 +1,5 @@
 # FROM golang:1.10.1
-FROM govgo/go:1.10.1
+FROM govgo/go:1.10.2
 
 RUN apt-get update
 # customize dependencies
