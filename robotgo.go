@@ -223,12 +223,12 @@ func CaptureScreen(args ...int) C.MMBitmapRef {
 		h C.size_t
 	)
 
-	Try(func() {
+	if len(args) > 3 {
 		x = C.size_t(args[0])
 		y = C.size_t(args[1])
 		w = C.size_t(args[2])
 		h = C.size_t(args[3])
-	}, func(e interface{}) {
+	} else {
 		// fmt.Println("err:::", e)
 		x = 0
 		y = 0
@@ -237,7 +237,7 @@ func CaptureScreen(args ...int) C.MMBitmapRef {
 		displaySize = C.getMainDisplaySize()
 		w = displaySize.width
 		h = displaySize.height
-	})
+	}
 
 	bit := C.capture_screen(x, y, w, h)
 	// fmt.Println("...", bit.width)

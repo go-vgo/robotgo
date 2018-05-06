@@ -92,7 +92,7 @@ char* get_pixel_color(size_t x, size_t y){
 }
 
 MMSize get_screen_size(){
-	//Get display size.
+	// Get display size.
 	MMSize displaySize = getMainDisplaySize();
 	return displaySize;
 }
@@ -131,7 +131,6 @@ MMBitmapRef capture_screen(size_t x, size_t y, size_t w, size_t h){
 
 	MMBitmapRef bitmap = copyMMBitmapFromDisplayInRect(MMRectMake(x, y, w, h));
 	// printf("%s\n", bitmap);
-
 	return bitmap;
 }
 
