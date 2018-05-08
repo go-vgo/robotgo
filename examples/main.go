@@ -178,10 +178,7 @@ func bitmap() {
 	gbit := robotgo.ToBitmap(bitmap)
 	fmt.Println("go bitmap", gbit, gbit.Width)
 
-	// searches for needle in bitmap
-	fx, fy := robotgo.FindBit(bitmap)
-	fmt.Println("FindBitmap------", fx, fy)
-
+	// find the color in bitmap
 	color := robotgo.GetColor(bitmap, 1, 2)
 	fmt.Println("color...", color)
 	cx, cy := robotgo.FindColor(bitmap, robotgo.CHex(color), 1.0)
@@ -201,9 +198,13 @@ func bitmap() {
 
 	bit := robotgo.CaptureScreen(1, 2, 40, 40)
 	fmt.Println("CaptureScreen...", bit)
-	fx, fy = robotgo.FindBitmap(bit)
+
+	// searches for needle in bitmap
+	fx, fy := robotgo.FindBitmap(bit, bitmap)
 	fmt.Println("FindBitmap------", fx, fy)
-	fx, fy = robotgo.FindBitmap(bit, bitmap)
+	// fx, fy := robotgo.FindBit(bitmap)
+	// fmt.Println("FindBitmap------", fx, fy)
+	fx, fy = robotgo.FindBitmap(bit)
 	fmt.Println("FindBitmap------", fx, fy)
 
 	// bitmap := robotgo.CaptureScreen(10, 20, 30, 40)
@@ -251,6 +252,9 @@ func bitmap() {
 
 	fx, fy = robotgo.FindPic("test.tif")
 	fmt.Println("FindPic------", fx, fy)
+
+	// free the bitmap
+	robotgo.FreeBitmap(abitMap)
 }
 
 func event() {
