@@ -13,10 +13,11 @@
   - [ ] Yes (provide example code)
   - [ ] No
   - [ ] Not relevant
-- Provide example code: 
-    ```Go
+- Provide example code:
 
-    ```
+```Go
+
+```
 - Log gist:
 
 ## Description
