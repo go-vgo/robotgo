@@ -14,9 +14,9 @@ The pull request will be closed without any reasons if it does not satisfy any o
 
 **Provide test code:**
 
-    ```Go
-        
-    ```
+```Go
+    
+```
     
 ## Description
 
