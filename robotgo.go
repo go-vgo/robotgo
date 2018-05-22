@@ -980,17 +980,14 @@ func PointInBounds(bitmap C.MMBitmapRef, x, y int) bool {
 	return bool(cbool)
 }
 
-// OpenBitmap open the bitmap
-func OpenBitmap(args ...interface{}) C.MMBitmapRef {
-	path := C.CString(args[0].(string))
-	var mtype C.uint16_t
+// OpenBitmap open the bitmap return C.MMBitmapRef
+func OpenBitmap(gpath string, args ...interface{}) C.MMBitmapRef {
+	path := C.CString(gpath)
+	var mtype C.uint16_t = 1
 
-	Try(func() {
-		mtype = C.uint16_t(args[1].(int))
-	}, func(e interface{}) {
-		// fmt.Println("err:::", e)
-		mtype = 1
-	})
+	if len(args) > 0 {
+		mtype = C.uint16_t(args[0].(int))
+	}
 
 	bit := C.bitmap_open(path, mtype)
 	defer C.free(unsafe.Pointer(path))
@@ -1018,23 +1015,21 @@ func BitmapStr(str string) C.MMBitmapRef {
 	return bit
 }
 
-// SaveBitmap save the bitmap
+// SaveBitmap save the bitmap to image
+// robotgo.SaveBimap(bitmap C.MMBitmapRef, path string, type int)
 func SaveBitmap(args ...interface{}) string {
-	var mtype C.uint16_t
-	Try(func() {
+	var mtype C.uint16_t = 1
+	if len(args) > 2 {
 		mtype = C.uint16_t(args[2].(int))
-	}, func(e interface{}) {
-		// fmt.Println("err:::", e)
-		mtype = 1
-	})
+	}
 
 	path := C.CString(args[1].(string))
-	savebit := C.bitmap_save(args[0].(C.MMBitmapRef), path, mtype)
-	// fmt.Println("saved...", savebit)
+	saveBit := C.bitmap_save(args[0].(C.MMBitmapRef), path, mtype)
+	// fmt.Println("saved...", saveBit)
 	// return bit
 	defer C.free(unsafe.Pointer(path))
 
-	return C.GoString(savebit)
+	return C.GoString(saveBit)
 }
 
 // func SaveBitmap(bit C.MMBitmapRef, gpath string, mtype C.MMImageType) {
