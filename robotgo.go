@@ -834,23 +834,20 @@ func internalFindBitmap(bit, sbit C.MMBitmapRef, tolerance float64) (int, int) {
 //
 //	robotgo.FindBitmap(bitmap, subbitamp C.MMBitmapRef, tolerance float64)
 //
-func FindBitmap(args ...interface{}) (int, int) {
+func FindBitmap(bit C.MMBitmapRef, args ...interface{}) (int, int) {
 	var (
-		bit       C.MMBitmapRef
 		sbit      C.MMBitmapRef
 		tolerance float64
 	)
 
-	bit = args[0].(C.MMBitmapRef)
-
-	if len(args) > 1 {
-		sbit = args[1].(C.MMBitmapRef)
+	if len(args) > 0 {
+		sbit = args[0].(C.MMBitmapRef)
 	} else {
 		sbit = CaptureScreen()
 	}
 
-	if len(args) > 2 {
-		tolerance = args[2].(float64)
+	if len(args) > 1 {
+		tolerance = args[1].(float64)
 	} else {
 		tolerance = 0.5
 	}
@@ -981,12 +978,12 @@ func PointInBounds(bitmap C.MMBitmapRef, x, y int) bool {
 }
 
 // OpenBitmap open the bitmap return C.MMBitmapRef
-func OpenBitmap(gpath string, args ...interface{}) C.MMBitmapRef {
+func OpenBitmap(gpath string, args ...int) C.MMBitmapRef {
 	path := C.CString(gpath)
 	var mtype C.uint16_t = 1
 
 	if len(args) > 0 {
-		mtype = C.uint16_t(args[0].(int))
+		mtype = C.uint16_t(args[0])
 	}
 
 	bit := C.bitmap_open(path, mtype)
@@ -1017,10 +1014,10 @@ func BitmapStr(str string) C.MMBitmapRef {
 
 // SaveBitmap save the bitmap to image
 // robotgo.SaveBimap(bitmap C.MMBitmapRef, path string, type int)
-func SaveBitmap(bitmap C.MMBitmapRef, gpath string, args ...interface{}) string {
+func SaveBitmap(bitmap C.MMBitmapRef, gpath string, args ...int) string {
 	var mtype C.uint16_t = 1
 	if len(args) > 0 {
-		mtype = C.uint16_t(args[0].(int))
+		mtype = C.uint16_t(args[0])
 	}
 
 	path := C.CString(gpath)
@@ -1053,18 +1050,13 @@ func GetPortion(bit C.MMBitmapRef, x, y, w, h int) C.MMBitmapRef {
 }
 
 // Convert convert bitmap
-func Convert(args ...interface{}) {
-	var mtype int
-	Try(func() {
-		mtype = args[2].(int)
-	}, func(e interface{}) {
-		// fmt.Println("err:::", e)
-		mtype = 1
-	})
+func Convert(opath, spath string, args ...int) {
+	var mtype = 1
+	if len(args) > 0 {
+		mtype = args[0]
+	}
 
 	// C.CString()
-	opath := args[0].(string)
-	spath := args[1].(string)
 	bitmap := OpenBitmap(opath)
 	// fmt.Println("a----", bit_map)
 	SaveBitmap(bitmap, spath, mtype)
