@@ -1017,14 +1017,14 @@ func BitmapStr(str string) C.MMBitmapRef {
 
 // SaveBitmap save the bitmap to image
 // robotgo.SaveBimap(bitmap C.MMBitmapRef, path string, type int)
-func SaveBitmap(args ...interface{}) string {
+func SaveBitmap(bitmap C.MMBitmapRef, gpath string, args ...interface{}) string {
 	var mtype C.uint16_t = 1
-	if len(args) > 2 {
-		mtype = C.uint16_t(args[2].(int))
+	if len(args) > 0 {
+		mtype = C.uint16_t(args[0].(int))
 	}
 
-	path := C.CString(args[1].(string))
-	saveBit := C.bitmap_save(args[0].(C.MMBitmapRef), path, mtype)
+	path := C.CString(gpath)
+	saveBit := C.bitmap_save(bitmap, path, mtype)
 	// fmt.Println("saved...", saveBit)
 	// return bit
 	defer C.free(unsafe.Pointer(path))
