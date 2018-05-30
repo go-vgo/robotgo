@@ -885,38 +885,36 @@ func FindPic(path string, args ...interface{}) (int, int) {
 }
 
 // FindEveryBitmap find the every bitmap
-func FindEveryBitmap(args ...interface{}) (int, int) {
+func FindEveryBitmap(bit C.MMBitmapRef, args ...interface{}) (int, int) {
 	var (
-		bit       C.MMBitmapRef
 		sbit      C.MMBitmapRef
 		tolerance C.float
 		lpos      C.MMPoint
 	)
 
-	bit = args[0].(C.MMBitmapRef)
-	if len(args) > 1 {
-		sbit = args[1].(C.MMBitmapRef)
+	if len(args) > 0 {
+		sbit = args[0].(C.MMBitmapRef)
 	} else {
 		sbit = CaptureScreen()
 	}
 
-	if len(args) > 2 {
-		tolerance = C.float(args[2].(float64))
+	if len(args) > 1 {
+		tolerance = C.float(args[1].(float64))
 	} else {
 		tolerance = 0.5
 	}
 
-	if len(args) > 3 {
-		lpos.x = C.size_t(args[3].(int))
+	if len(args) > 2 {
+		lpos.x = C.size_t(args[2].(int))
 		lpos.y = 0
 	} else {
 		lpos.x = 0
 		lpos.y = 0
 	}
 
-	if len(args) > 4 {
-		lpos.x = C.size_t(args[3].(int))
-		lpos.y = C.size_t(args[4].(int))
+	if len(args) > 3 {
+		lpos.x = C.size_t(args[2].(int))
+		lpos.y = C.size_t(args[3].(int))
 	}
 
 	pos := C.find_every_bitmap(bit, sbit, tolerance, &lpos)
