@@ -559,7 +559,7 @@ func Scroll(x, y int, args ...int) {
 //
 // See keys:
 //	https://github.com/go-vgo/robotgo/blob/master/docs/keys.md
-func KeyTap(args ...interface{}) {
+func KeyTap(tapKey string, args ...interface{}) {
 	var (
 		akey     string
 		keyT     = "null"
@@ -571,9 +571,9 @@ func KeyTap(args ...interface{}) {
 	ckeyArr := make([](*_Ctype_char), 0)
 
 	Try(func() {
-		if reflect.TypeOf(args[1]) == reflect.TypeOf(keyArr) {
+		if reflect.TypeOf(args[0]) == reflect.TypeOf(keyArr) {
 
-			keyArr = args[1].([]string)
+			keyArr = args[0].([]string)
 
 			num = len(keyArr)
 
@@ -581,17 +581,17 @@ func KeyTap(args ...interface{}) {
 				ckeyArr = append(ckeyArr, (*C.char)(unsafe.Pointer(C.CString(keyArr[i]))))
 			}
 
-			if len(args) > 2 {
-				keyDelay = args[2].(int)
+			if len(args) > 1 {
+				keyDelay = args[1].(int)
 			}
 		} else {
-			akey = args[1].(string)
+			akey = args[0].(string)
 
-			if len(args) > 2 {
-				if reflect.TypeOf(args[2]) == reflect.TypeOf(akey) {
-					keyT = args[2].(string)
+			if len(args) > 1 {
+				if reflect.TypeOf(args[1]) == reflect.TypeOf(akey) {
+					keyT = args[1].(string)
 				} else {
-					keyDelay = args[2].(int)
+					keyDelay = args[1].(int)
 				}
 			}
 		}
@@ -603,7 +603,7 @@ func KeyTap(args ...interface{}) {
 	})
 	// }()
 
-	zkey := C.CString(args[0].(string))
+	zkey := C.CString(tapKey)
 
 	if akey == "" && len(keyArr) != 0 {
 		C.key_Tap(zkey, (**_Ctype_char)(unsafe.Pointer(&ckeyArr[0])),
