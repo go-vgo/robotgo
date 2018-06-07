@@ -492,18 +492,18 @@ func MovesClick(x, y int, args ...interface{}) {
 }
 
 // MouseToggle toggle the mouse
-func MouseToggle(args ...interface{}) {
+func MouseToggle(togKey string, args ...interface{}) {
 	var button C.MMMouseButton
 
 	Try(func() {
 		// button = args[1].(C.MMMouseButton)
-		if args[1].(string) == "left" {
+		if args[0].(string) == "left" {
 			button = C.LEFT_BUTTON
 		}
-		if args[1].(string) == "center" {
+		if args[0].(string) == "center" {
 			button = C.CENTER_BUTTON
 		}
-		if args[1].(string) == "right" {
+		if args[0].(string) == "right" {
 			button = C.RIGHT_BUTTON
 		}
 	}, func(e interface{}) {
@@ -511,7 +511,7 @@ func MouseToggle(args ...interface{}) {
 		button = C.LEFT_BUTTON
 	})
 
-	down := C.CString(args[0].(string))
+	down := C.CString(togKey)
 	C.mouse_toggle(down, button)
 	defer C.free(unsafe.Pointer(down))
 }
