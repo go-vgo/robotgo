@@ -8,6 +8,16 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+#include "bitmap_class.h"
+#include "bitmap_find_c.h"
+#include "../base/color_find_c.h"
+// #include "../screen/screen_c.h"
+#include "../base/io_c.h"
+#include "../base/pasteboard_c.h"
+#include "../base/str_io_c.h"
+#include <assert.h>
+#include <stdio.h>
+
 // class BMP
 // {
 // 	public:
@@ -18,15 +28,6 @@
 // 		uint8_t bytesPerPixel;
 // 		uint8_t *image;
 // };
-#include "bitmap_class.h"
-#include "bitmap_find_c.h"
-#include "../base/color_find_c.h"
-// #include "../screen/screen_c.h"
-#include "../base/io_c.h"
-#include "../base/pasteboard_c.h"
-#include "../base/str_io_c.h"
-#include <assert.h>
-#include <stdio.h>
 
 /* Returns false and sets error if |bitmap| is NULL. */
 bool bitmap_ready(MMBitmapRef bitmap){

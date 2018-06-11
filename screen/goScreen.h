@@ -99,22 +99,22 @@ MMSize get_screen_size(){
 
 char* set_XDisplay_name(char* name){
 	#if defined(USE_X11)
-	setXDisplay(name);
-	return "success";
+		setXDisplay(name);
+		return "success";
 	#else
-	return "setXDisplayName is only supported on Linux";
+		return "setXDisplayName is only supported on Linux";
 	#endif
 }
 
 char* get_XDisplay_name(){
 	#if defined(USE_X11)
-	const char* display = getXDisplay();
-	char* sd = (char*)calloc(100, sizeof(char*));
-    if(sd)strcpy(sd, display);
+		const char* display = getXDisplay();
+		char* sd = (char*)calloc(100, sizeof(char*));
+		if(sd)strcpy(sd, display);
 
-	return sd;
+		return sd;
 	#else
-	return "getXDisplayName is only supported on Linux";
+		return "getXDisplayName is only supported on Linux";
 	#endif
 }
 

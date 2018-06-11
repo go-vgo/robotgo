@@ -41,7 +41,7 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRect rect){
 	bufferSize = CFDataGetLength(imageData);
 	buffer = malloc(bufferSize);
 
-	CFDataGetBytes(imageData, CFRangeMake(0,bufferSize), buffer);
+	CFDataGetBytes(imageData, CFRangeMake(0, bufferSize), buffer);
 
 	bitmap = createMMBitmap(buffer,
 		CGImageGetWidth(image),
