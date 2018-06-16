@@ -807,6 +807,20 @@ func ToBitmap(bit C.MMBitmapRef) Bitmap {
 	return bitmap
 }
 
+// ToCBitmap trans Bitmap to C.MMBitmapRef
+func ToCBitmap(bit Bitmap) C.MMBitmapRef {
+	cbitmap := C.createMMBitmap(
+		(*C.uint8_t)(bit.ImageBuffer),
+		C.size_t(bit.Width),
+		C.size_t(bit.Height),
+		C.size_t(bit.Bytewidth),
+		C.uint8_t(bit.BitsPerPixel),
+		C.uint8_t(bit.BytesPerPixel),
+	)
+
+	return cbitmap
+}
+
 // ToMMBitmapRef trans CBitmap to C.MMBitmapRef
 func ToMMBitmapRef(bit CBitmap) C.MMBitmapRef {
 	return C.MMBitmapRef(bit)
