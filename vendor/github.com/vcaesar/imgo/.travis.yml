@@ -1,0 +1,14 @@
+language: go
+
+go_import_path: github.com/vcaesar/imgo
+
+go:
+  # - 1.8.x
+  - 1.9.x
+  - 1.10.x
+  # - tip
+
+install:
+  - export PATH=$PATH:$HOME/gopath/bin
+  # - go get -u github.com/go-ego/gse  
+  - go get -v -t ./...
