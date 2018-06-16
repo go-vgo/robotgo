@@ -23,7 +23,6 @@ void padHex(MMRGBHex color, char* hex){
 char* pad_hex(MMRGBHex color){
 	char hex[7];
 	padHex(color, hex);
-
 	// destroyMMBitmap(bitmap);
 
 	char* str = (char*)calloc(100, sizeof(char*));
@@ -57,6 +56,7 @@ MMRGBHex get_px_color(size_t x, size_t y){
 	// bitmap = MMRectMake(x, y, 1, 1);
 
 	color = MMRGBHexAtPoint(bitmap, 0, 0);
+	destroyMMBitmap(bitmap);
 
 	return color;
 }
@@ -76,13 +76,10 @@ char* get_pixel_color(size_t x, size_t y){
 	color = MMRGBHexAtPoint(bitmap, 0, 0);
 
 	char hex[7];
-
 	padHex(color, hex);
-
 	destroyMMBitmap(bitmap);
 
 	// printf("%s\n", hex);
-
 	// return 0;
 
 	char* s = (char*)calloc(100, sizeof(char*));
