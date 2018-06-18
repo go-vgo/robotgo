@@ -66,7 +66,7 @@ import (
 )
 
 const (
-	version string = "v0.49.0.562, Olympus Mons!"
+	version string = "v0.49.0.581, Olympus Mons!"
 )
 
 type (
@@ -413,7 +413,7 @@ func MoveSmooth(x, y int, args ...interface{}) bool {
 	return bool(cbool)
 }
 
-// GetMousePos get mouse portion
+// GetMousePos get mouse's portion
 func GetMousePos() (int, int) {
 	pos := C.get_mouse_pos()
 	// fmt.Println("pos:###", pos, pos.x, pos.y)
@@ -727,11 +727,17 @@ func TypeStr(str string, args ...float64) {
 			inputUTF(strUc[i])
 			MicroSleep(tm)
 		}
-	} else {
-		for i := 0; i < len([]rune(str)); i++ {
-			ustr := uint32(CharCodeAt(str, i))
-			UnicodeType(ustr)
-		}
+
+		return
+	}
+
+	for i := 0; i < len([]rune(str)); i++ {
+		ustr := uint32(CharCodeAt(str, i))
+		UnicodeType(ustr)
+
+		// if len(args) > 0 {
+		// 	MicroSleep(tm)
+		// }
 	}
 }
 
