@@ -178,6 +178,10 @@ func bitmap() {
 	gbit := robotgo.ToBitmap(bitmap)
 	fmt.Println("go bitmap", gbit, gbit.Width)
 
+	cbit := robotgo.ToCBitmap(gbit)
+	log.Println("cbit == bitmap: ", cbit == bitmap)
+	robotgo.SaveBitmap(cbit, "tocbtimap.png")
+
 	// find the color in bitmap
 	color := robotgo.GetColor(bitmap, 1, 2)
 	fmt.Println("color...", color)
