@@ -29,9 +29,9 @@ QQ 群: 595877611
 - [License](#license)
 
 ## Docs
+- [GoDoc](https://godoc.org/github.com/go-vgo/robotgo)
 - [中文文档](https://github.com/go-vgo/robotgo/blob/master/docs/doc_zh.md)&nbsp;&nbsp;&nbsp;
 - [English Docs](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) 
-- [GoDoc](https://godoc.org/github.com/go-vgo/robotgo)
 
 ## Requirements:
 环境要求:

@@ -32,9 +32,9 @@ This is a work in progress.
 - [License](#license)
 
 ## Docs
+  - [GoDoc](https://godoc.org/github.com/go-vgo/robotgo)
   - [API Docs](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) &nbsp;&nbsp;&nbsp;
   - [中文文档](https://github.com/go-vgo/robotgo/blob/master/docs/doc_zh.md)
-  - [GoDoc](https://godoc.org/github.com/go-vgo/robotgo)
 
 ## Requirements:
 
