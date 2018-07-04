@@ -17,6 +17,12 @@
   version = "v1.2.1"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/lxn/win"
+  packages = ["."]
+  revision = "7e1250ba2e7749fb9eb865da9ee93fb5a2fe73f1"
+
+[[projects]]
   name = "github.com/shirou/gopsutil"
   packages = [
     "cpu",
@@ -26,8 +32,8 @@
     "net",
     "process"
   ]
-  revision = "eeb1d38d69593f121e060d24d17f7b1f0936b203"
-  version = "v2.18.05"
+  revision = "4a180b209f5f494e5923cfce81ea30ba23915877"
+  version = "v2.18.06"
 
 [[projects]]
   branch = "master"
@@ -45,7 +51,7 @@
   branch = "master"
   name = "golang.org/x/image"
   packages = ["bmp"]
-  revision = "af66defab954cb421ca110193eed9477c8541e2a"
+  revision = "cc896f830cedae125428bc9fe1b0362aa91b3fb1"
 
 [[projects]]
   branch = "master"
@@ -54,11 +60,11 @@
     "unix",
     "windows"
   ]
-  revision = "6c888cc515d3ed83fc103cf1d84468aad274b0a7"
+  revision = "151529c776cdc58ddbe7963ba9af779f3577b419"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "aced52ab90c19ab02a6a92216b5d4d097e45428090dcdb67eaaeb52604ea29c0"
+  inputs-digest = "b0823ba26a4b2c75bed4b3f87b65fcf3b8f7dcbe253b3f5449e7d39546493625"
   solver-name = "gps-cdcl"
   solver-version = 1

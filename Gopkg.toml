@@ -33,6 +33,10 @@
   branch = "master"
   name = "github.com/vcaesar/imgo"
 
+[[constraint]]
+  branch = "master"
+  name = "github.com/lxn/win"
+
 [prune]
   go-tests = true
   unused-packages = true

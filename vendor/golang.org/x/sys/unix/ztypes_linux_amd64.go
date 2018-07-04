@@ -723,6 +723,8 @@ const (
 
 	AT_SYMLINK_FOLLOW   = 0x400
 	AT_SYMLINK_NOFOLLOW = 0x100
+
+	AT_EACCESS = 0x200
 )
 
 type PollFd struct {
