@@ -850,10 +850,12 @@ func internalFindBitmap(bit, sbit C.MMBitmapRef, tolerance float64) (int, int) {
 	return int(pos.x), int(pos.y)
 }
 
-// FindBitmap find the bitmap
+// FindBitmap find the bitmap's pos
 //
 //	robotgo.FindBitmap(bitmap, subbitamp C.MMBitmapRef, tolerance float64)
 //
+//  |tolerance| should be in the range 0.0f - 1.0f, denoting how closely the
+//  colors in the bitmaps need to match, with 0 being exact and 1 being any.
 func FindBitmap(bit C.MMBitmapRef, args ...interface{}) (int, int) {
 	var (
 		sbit      C.MMBitmapRef

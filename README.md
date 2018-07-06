@@ -56,7 +56,7 @@ MinGW-w64 (Use recommended) or other GCC
 ```
 #### For everything else:
 ```
-GCC
+GCC, libpng
     
 X11 with the XTest extension (also known as the Xtst library)
 
