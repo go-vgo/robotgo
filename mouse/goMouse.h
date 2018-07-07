@@ -129,7 +129,7 @@ int scroll_mouse(size_t scrollMagnitude, char *s){
 	if (strcmp(s, "up") == 0) {
 		scrollDirection = DIRECTION_UP;
 	} else if (strcmp(s, "down") == 0) {
-			scrollDirection = DIRECTION_DOWN;
+		scrollDirection = DIRECTION_DOWN;
 	} else {
 		// return "Invalid scroll direction specified.";
 		return 1;
