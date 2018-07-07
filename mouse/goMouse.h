@@ -20,20 +20,15 @@ int mouseDelay = 10;
 // MMMouseButton * const button){
 // 	if (!button) return -1;
 
-// 	if (strcmp(b, "left") == 0)
-// 	{
+// 	if (strcmp(b, "left") == 0) {
 // 		*button = LEFT_BUTTON;
 // 	}
-// 	else if (strcmp(b, "right") == 0)
-// 	{
+// 	else if (strcmp(b, "right") == 0) {
 // 		*button = RIGHT_BUTTON;
 // 	}
-// 	else if (strcmp(b, "middle") == 0)
-// 	{
+// 	else if (strcmp(b, "middle") == 0) {
 // 		*button = CENTER_BUTTON;
-// 	}
-// 	else
-// 	{
+// 	} else {
 // 		return -2;
 // 	}
 
@@ -85,10 +80,9 @@ MMPoint get_mouse_pos(){
 int mouse_click(MMMouseButton button, bool doubleC){
 	// MMMouseButton button = LEFT_BUTTON;
 	// bool doubleC = false;
-
-	if (!doubleC){
+	if (!doubleC) {
 		clickMouse(button);
-	}else{
+	} else {
 		doubleClick(button);
 	}
 
@@ -100,11 +94,11 @@ int mouse_click(MMMouseButton button, bool doubleC){
 int mouse_toggle(char* d, MMMouseButton button){
 	// MMMouseButton button = LEFT_BUTTON;
 	bool down = false;
-	if (strcmp(d, "down") == 0){
+	if (strcmp(d, "down") == 0) {
 		down = true;
-	}else if (strcmp(d, "up") == 0){
+	} else if (strcmp(d, "up") == 0) {
 		down = false;
-	}else{
+	} else {
 		return 1;
 	}
 
@@ -130,14 +124,13 @@ int scroll(int x, int y, int msDelay){
 
 int scroll_mouse(size_t scrollMagnitude, char *s){
 	// int scrollMagnitude = 20;
-
 	MMMouseWheelDirection scrollDirection;
 
-	if (strcmp(s, "up") == 0){
+	if (strcmp(s, "up") == 0) {
 		scrollDirection = DIRECTION_UP;
-	}else if (strcmp(s, "down") == 0){
+	} else if (strcmp(s, "down") == 0) {
 			scrollDirection = DIRECTION_DOWN;
-	}else{
+	} else {
 		// return "Invalid scroll direction specified.";
 		return 1;
 	}

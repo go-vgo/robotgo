@@ -68,7 +68,8 @@ MMPoint find_bitmap(MMBitmapRef bitmap, MMBitmapRef sbit, float tolerance){
 	}
 
 	MMRect rect = MMBitmapGetBounds(sbit);
-	// printf("x=%d,y=%d,width=%d,height=%d\n", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+	// printf("x=%d,y=%d,width=%d,height=%d\n", rect.origin.x, 
+	// rect.origin.y, rect.size.width, rect.size.height);
 
 	if (findBitmapInRect(bitmap, sbit, &point,
 	                     rect, tolerance) == 0) {
@@ -140,7 +141,6 @@ bool point_in_bounds(MMBitmapRef bitmap, MMPoint point){
 
 MMBitmapRef bitmap_open(char *path, uint16_t ttype){
 	// MMImageType type;
-
 	MMBitmapRef bitmap;
 	MMIOError err;
 

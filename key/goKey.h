@@ -101,12 +101,10 @@ struct KeyNames{
 	{ NULL,               K_NOT_A_KEY } /* end marker */
 };
 
-int CheckKeyCodes(char* k, MMKeyCode *key)
-{
-	if (!key) return -1;
+int CheckKeyCodes(char* k, MMKeyCode *key){
+	if (!key) { return -1; }
 
-	if (strlen(k) == 1)
-	{
+	if (strlen(k) == 1){
 		*key = keyCodeForChar(*k);
 		return 0;
 	}
@@ -114,50 +112,39 @@ int CheckKeyCodes(char* k, MMKeyCode *key)
 	*key = K_NOT_A_KEY;
 
 	struct KeyNames* kn = key_names;
-	while (kn->name)
-	{
-		if (strcmp(k, kn->name) == 0)
-		{
+	while (kn->name) {
+		if (strcmp(k, kn->name) == 0){
 			*key = kn->key;
 			break;
 		}
 		kn++;
 	}
 
-	if (*key == K_NOT_A_KEY)
-	{
+	if (*key == K_NOT_A_KEY){
 		return -2;
 	}
 
 	return 0;
 }
 
-int CheckKeyFlags(char* f, MMKeyFlags* flags)
-{
-	if (!flags) return -1;
+int CheckKeyFlags(char* f, MMKeyFlags* flags){
+	if (!flags) { return -1; }
 
-	if (strcmp(f, "alt") == 0)
-	{
+	if (strcmp(f, "alt") == 0){
 		*flags = MOD_ALT;
 	}
-	else if(strcmp(f, "command") == 0)
-	{
+	else if(strcmp(f, "command") == 0){
 		*flags = MOD_META;
 	}
-	else if(strcmp(f, "control") == 0)
-	{
+	else if(strcmp(f, "control") == 0){
 		*flags = MOD_CONTROL;
 	}
-	else if(strcmp(f, "shift") == 0)
-	{
+	else if(strcmp(f, "shift") == 0){
 		*flags = MOD_SHIFT;
 	}
-	else if(strcmp(f, "none") == 0)
-	{
+	else if(strcmp(f, "none") == 0){
 		*flags = (MMKeyFlags) MOD_NONE;
-	}
-	else
-	{
+	} else {
 		return -2;
 	}
 
@@ -166,14 +153,14 @@ int CheckKeyFlags(char* f, MMKeyFlags* flags)
 
 int GetFlagsFromValue(char* value[], MMKeyFlags* flags, int num){
 	if (!flags) {return -1;}
-		int i;
-		for ( i= 0; i <num; i++){
-			MMKeyFlags f = MOD_NONE;
-			const int rv = CheckKeyFlags(value[i], &f);
-			if (rv) return rv;
+	int i;
+	for ( i= 0; i <num; i++){
+		MMKeyFlags f = MOD_NONE;
+		const int rv = CheckKeyFlags(value[i], &f);
+		if (rv) {return rv;}
 
-			*flags = (MMKeyFlags)(*flags | f);
-		}
+		*flags = (MMKeyFlags)(*flags | f);
+	}
 	return 0;
 	// return CheckKeyFlags(fstr, flags);
 }
@@ -184,27 +171,27 @@ char* key_Tap(char *k, char* keyArr[], int num, int keyDelay){
 	// MMKeyFlags flags = 0;
 	MMKeyCode key;
 
-			switch(GetFlagsFromValue(keyArr, &flags, num)){
-			// switch (CheckKeyFlags(akey, &flags)){
-				case -1:
-					return "Null pointer in key flag.";
-					break;
-				case -2:
-					return "Invalid key flag specified.";
-					break;
-			}
+	switch(GetFlagsFromValue(keyArr, &flags, num)){
+	// switch (CheckKeyFlags(akey, &flags)){
+		case -1:
+			return "Null pointer in key flag.";
+			break;
+		case -2:
+			return "Invalid key flag specified.";
+			break;
+	}
 
 	switch(CheckKeyCodes(k, &key)){
-			case -1:
-				return "Null pointer in key code.";
-				break;
-			case -2:
-				return "Invalid key code specified.";
-				break;
-			default:
-				tapKeyCode(key, flags);
-				microsleep(keyDelay);
-		}
+		case -1:
+			return "Null pointer in key code.";
+			break;
+		case -2:
+			return "Invalid key code specified.";
+			break;
+		default:
+			tapKeyCode(key, flags);
+			microsleep(keyDelay);
+	}
 
 	return "0";
 }
@@ -265,11 +252,11 @@ char* key_toggle(char *k, char *d, char *akey, char *keyT){
 	if (d != 0){
 		// char *d;
 		// d = *dstr;
-		if (strcmp(d, "down") == 0){
+		if (strcmp(d, "down") == 0) {
 			down = true;
-		}else if (strcmp(d, "up") == 0){
+		} else if (strcmp(d, "up") == 0){
 			down = false;
-		}else{
+		} else {
 			return "Invalid key state specified.";
 		}
 	}
@@ -284,17 +271,16 @@ char* key_toggle(char *k, char *d, char *akey, char *keyT){
 					return "Invalid key flag specified.";
 					break;
 			}
-		}else{
+		} else {
 			char* akeyArr[2] = {akey, keyT};
-			switch (GetFlagsFromValue(akeyArr, &flags, 2))
-				{
-					case -1:
-						return "Null pointer in key flag.";
-						break;
-					case -2:
-						return "Invalid key flag specified.";
-						break;
-				}
+			switch (GetFlagsFromValue(akeyArr, &flags, 2)){
+				case -1:
+					return "Null pointer in key flag.";
+					break;
+				case -2:
+					return "Invalid key flag specified.";
+					break;
+			}
 		}
 	}
 
