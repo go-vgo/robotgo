@@ -207,7 +207,7 @@ func GetScreenSize() (int, int) {
 
 // Scale get the screen scale
 func Scale() int {
-	dip := map[int]int{
+	dpi := map[int]int{
 		96:  100,
 		120: 125,
 		144: 150,
@@ -215,7 +215,7 @@ func Scale() int {
 	}
 
 	x := ScaleX()
-	return dip[x]
+	return dpi[x]
 }
 
 // GetScaleSize get the screen scale size
