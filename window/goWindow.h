@@ -18,6 +18,27 @@ int show_alert(const char *title, const char *msg,
 	return alert;
 }
 
+intptr scalex(){
+	#if defined(IS_WINDOWS)
+		// Get desktop dc
+		HDC desktopDc = GetDC(NULL);
+		// Get native resolution
+		intptr horizontalDPI = GetDeviceCaps(desktopDc, LOGPIXELSX);
+		// intptr verticalDPI = GetDeviceCaps(desktopDc, LOGPIXELSY);
+		return horizontalDPI;
+	#endif
+}
+
+intptr scaley(){
+	#if defined(IS_WINDOWS)
+		// Get desktop dc
+		HDC desktopDc = GetDC(NULL);
+		// Get native resolution
+		intptr verticalDPI = GetDeviceCaps(desktopDc, LOGPIXELSY);
+		return verticalDPI;
+	#endif
+}
+
 bool is_valid(){
 	bool abool = IsValid();
 	return abool;
@@ -68,7 +89,7 @@ void set_active(const MData win){
 	    DWORD dwProcessId = 0;
 	    GetWindowThreadProcessId(hWnd, &dwProcessId);
 
-	    if(dwProcessId == pInfo->dwPid) {
+	    if (dwProcessId == pInfo->dwPid) {
 	        pInfo->hWnd = hWnd;
 	        return FALSE;
 	    }

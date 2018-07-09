@@ -1293,6 +1293,16 @@ ____    __    ____  __  .__   __.  _______   ______   ____    __    ____
 
 */
 
+// ScaleX get primary display horizontal DPI scale factor
+func ScaleX() int {
+	return int(C.scalex())
+}
+
+// ScaleY get primary display vertical DPI scale factor
+func ScaleY() int {
+	return int(C.scaley())
+}
+
 // ShowAlert show a alert window
 func ShowAlert(title, msg string, args ...string) int {
 	var (

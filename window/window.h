@@ -560,7 +560,7 @@ bool IsMaximized(void){
 
 void SetActive(const MData win){
 	// Check if the window is valid
-	if (!IsValid()) {return;}
+	if (!IsValid()) { return; }
 #if defined(IS_MACOSX)
 
 	// Attempt to raise the specified window object
