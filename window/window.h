@@ -298,9 +298,9 @@ void initWindow(uintptr handle){
 
 bool IsValid(){
 	initWindow(initHandle);
-	if(!IsAxEnabled(true)){
-		printf("%s\n", "Window:Accessibility API is disabled!\n
-		Failed to enable access for assistive devices.");
+	if (!IsAxEnabled(true)) {
+		printf("%s\n", "Window:Accessibility API is disabled!\n"
+		"Failed to enable access for assistive devices.");
 	}
 	MData actdata = GetActive();
 

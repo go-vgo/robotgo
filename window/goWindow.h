@@ -68,7 +68,7 @@ void set_active(const MData win){
 	    DWORD dwProcessId = 0;
 	    GetWindowThreadProcessId(hWnd, &dwProcessId);
 
-	    if(dwProcessId == pInfo->dwPid){
+	    if(dwProcessId == pInfo->dwPid) {
 	        pInfo->hWnd = hWnd;
 	        return FALSE;
 	    }
