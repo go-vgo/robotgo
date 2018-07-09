@@ -188,11 +188,41 @@ func GetPixelColor(x, y int) string {
 	return gcolor
 }
 
-// GetScreenSize get screen size
+// ScaleX get primary display horizontal DPI scale factor
+func ScaleX() int {
+	return int(C.scalex())
+}
+
+// ScaleY get primary display vertical DPI scale factor
+func ScaleY() int {
+	return int(C.scaley())
+}
+
+// GetScreenSize get the screen size
 func GetScreenSize() (int, int) {
 	size := C.get_screen_size()
 	// fmt.Println("...", size, size.width)
 	return int(size.width), int(size.height)
+}
+
+// Scale get the screen scale
+func Scale() int {
+	dpi := map[int]int{
+		96:  100,
+		120: 125,
+		144: 150,
+		192: 200,
+	}
+
+	x := ScaleX()
+	return dpi[x]
+}
+
+// GetScaleSize get the screen scale size
+func GetScaleSize() (int, int) {
+	x, y := GetScreenSize()
+	s := Scale()
+	return x * s / 100, y * s / 100
 }
 
 // SetXDisplayName set XDisplay name
@@ -1292,16 +1322,6 @@ ____    __    ____  __  .__   __.  _______   ______   ____    __    ____
     \__/  \__/     |__| |__| \__| |_______/ \______/      \__/  \__/
 
 */
-
-// ScaleX get primary display horizontal DPI scale factor
-func ScaleX() int {
-	return int(C.scalex())
-}
-
-// ScaleY get primary display vertical DPI scale factor
-func ScaleY() int {
-	return int(C.scaley())
-}
 
 // ShowAlert show a alert window
 func ShowAlert(title, msg string, args ...string) int {
