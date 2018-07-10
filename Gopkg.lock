@@ -2,6 +2,28 @@
 
 
 [[projects]]
+  branch = "master"
+  name = "github.com/BurntSushi/xgb"
+  packages = [
+    ".",
+    "shape",
+    "xinerama",
+    "xproto"
+  ]
+  revision = "27f122750802c950b2c869a5b63dafcf590ced95"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/BurntSushi/xgbutil"
+  packages = [
+    ".",
+    "ewmh",
+    "xevent",
+    "xprop"
+  ]
+  revision = "f7c97cef3b4e6c88280a5a7091c3314e815ca243"
+
+[[projects]]
   name = "github.com/StackExchange/wmi"
   packages = ["."]
   revision = "5d049714c4a64225c3c79a7cf7d02f7fb5b96338"
@@ -51,7 +73,7 @@
   branch = "master"
   name = "golang.org/x/image"
   packages = ["bmp"]
-  revision = "cc896f830cedae125428bc9fe1b0362aa91b3fb1"
+  revision = "c73c2afc3b812cdd6385de5a50616511c4a3d458"
 
 [[projects]]
   branch = "master"
@@ -60,11 +82,11 @@
     "unix",
     "windows"
   ]
-  revision = "151529c776cdc58ddbe7963ba9af779f3577b419"
+  revision = "1b2967e3c290b7c545b3db0deeda16e9be4f98a2"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "b0823ba26a4b2c75bed4b3f87b65fcf3b8f7dcbe253b3f5449e7d39546493625"
+  inputs-digest = "f6de864b2bfc793263e5bb920647127b4fbbca0daac0da4f8951f5844570f035"
   solver-name = "gps-cdcl"
   solver-version = 1
