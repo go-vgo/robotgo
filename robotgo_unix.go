@@ -42,7 +42,8 @@ func ActivePIDC(pid int32, args ...int) {
 	internalActive(int32(xid), hwnd)
 }
 
-// ActivePID makes the window of the PID the active window
+// ActivePID active the window by PID,
+// If args[0] > 0 on the Windows platform via a window handle to active,
 // If args[0] > 0 on the unix platform via a xid to active
 func ActivePID(pid int32, args ...int) error {
 	if xu == nil {
