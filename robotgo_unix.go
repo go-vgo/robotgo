@@ -43,13 +43,23 @@ func ActivePIDC(pid int32, args ...int) {
 }
 
 // ActivePID makes the window of the PID the active window
-func ActivePID(pid int32) error {
+// If args[0] > 0 on the unix platform via a xid to active
+func ActivePID(pid int32, args ...int) error {
 	if xu == nil {
 		var err error
 		xu, err = xgbutil.NewConn()
 		if err != nil {
 			return err
 		}
+	}
+
+	if len(args) > 0 {
+		err := ewmh.ActiveWindowReq(xu, xproto.Window(pid))
+		if err != nil {
+			return err
+		}
+
+		return nil
 	}
 
 	xid, err := getXidFromPid(xu, pid)
