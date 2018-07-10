@@ -1,0 +1,60 @@
+xgbutil is a utility library designed to work with the X Go Binding. This 
+project's main goal is to make various X related tasks easier. For example, 
+binding keys, using the EWMH or ICCCM specs with the window manager, 
+moving/resizing windows, assigning function callbacks to particular events,
+drawing images to a window, etc.
+
+xgbutil attempts to be thread safe, but it has not been completely tested in 
+this regard. In general, the X event loop implemented in the xevent package is 
+sequential. The idea is to be sequential by default, and let the user spawn 
+concurrent code at their discretion. (i.e., the complexity of making the main 
+event loop generally concurrent is vast.)
+
+You may sleep safely at night by assuming that XGB is thread safe, though.
+
+To start using xgbutil, you should have at least a passing familiarity with X. 
+Your first stop should be the examples directory.
+
+Installation
+============
+go get github.com/BurntSushi/xgbutil
+
+Dependencies
+============
+XGB is the main dependency. Use of the xgraphics packages requires graphics-go
+and freetype-go.
+
+XGB project URL: https://github.com/BurntSushi/xgb
+
+Quick Example
+=============
+go get github.com/BurntSushi/xgbutil/_examples/window-name-sizes
+"$GOPATH"/bin/window-name-sizes
+
+The output will be a list of names of all top-level windows and their geometry 
+including window manager decorations. (Assuming your window manager supports 
+some basic EWMH properties.)
+
+Documentation
+=============
+gopkgdoc is well-suited to provide documentation for xgbutil. Its cross-package 
+hyperlinking on types is also extremely useful, since much of xgbutil relies on 
+XGB.
+
+With that said, documentation is also hosted here: 
+http://godoc.burntsushi.net/pkg/github.com/BurntSushi/xgbutil/
+
+Examples
+========
+There are several examples in the examples directory covering common use cases. 
+They are heavily documented and should run out of the box.
+
+Python
+======
+An older project of mine, xpybutil, served as inspiration for xgbutil. If you 
+want to use Python, xpybutil should help quite a bit. Please note though, that 
+at this point, xgbutil provides a lot more functionality and is much better 
+documented.
+
+xpybutil project URL: https://github.com/BurntSushi/xpybutil
+
