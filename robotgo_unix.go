@@ -4,6 +4,7 @@ package robotgo
 
 import (
 	"errors"
+	"log"
 
 	"github.com/BurntSushi/xgb/xproto"
 	"github.com/BurntSushi/xgbutil"
@@ -12,9 +13,9 @@ import (
 
 var xu *xgbutil.XUtil
 
-// ActivePID active the window by PID,
+// ActivePIDC active the window by PID,
 // If args[0] > 0 on the unix platform via a xid to active
-func ActivePID(pid int32, args ...int) {
+func ActivePIDC(pid int32, args ...int) {
 	var hwnd int
 	if len(args) > 0 {
 		hwnd = args[0]
@@ -23,16 +24,26 @@ func ActivePID(pid int32, args ...int) {
 		return
 	}
 
+	if xu == nil {
+		var err error
+		xu, err = xgbutil.NewConn()
+		if err != nil {
+			log.Println("xgbutil.NewConn errors is: ", err)
+			return
+		}
+	}
+
 	xid, err := getXidFromPid(xu, pid)
 	if err != nil {
+		log.Println("getXidFromPid errors is: ", err)
 		return
 	}
 
 	internalActive(int32(xid), hwnd)
 }
 
-// ActivePIDXgb makes the window of the PID the active window
-func ActivePIDXgb(pid int32) error {
+// ActivePID makes the window of the PID the active window
+func ActivePID(pid int32) error {
 	if xu == nil {
 		var err error
 		xu, err = xgbutil.NewConn()
