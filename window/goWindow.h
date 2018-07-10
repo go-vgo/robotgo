@@ -19,7 +19,11 @@ int show_alert(const char *title, const char *msg,
 }
 
 intptr scalex(){
-	#if defined(IS_WINDOWS)
+	#if defined(IS_MACOSX)
+		return 0;
+	#elif defined(USE_X11)
+		return 0;
+	#elif defined(IS_WINDOWS)
 		// Get desktop dc
 		HDC desktopDc = GetDC(NULL);
 		// Get native resolution
@@ -30,7 +34,11 @@ intptr scalex(){
 }
 
 intptr scaley(){
-	#if defined(IS_WINDOWS)
+	#if defined(IS_MACOSX)
+		return 0;
+	#elif defined(USE_X11)
+		return 0;
+	#elif defined(IS_WINDOWS)
 		// Get desktop dc
 		HDC desktopDc = GetDC(NULL);
 		// Get native resolution
