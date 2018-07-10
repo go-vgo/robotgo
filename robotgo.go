@@ -1536,16 +1536,20 @@ func FindIds(name string) ([]int32, error) {
 	return pids, err
 }
 
-// ActivePID active window by PID,
-// If args[0] > 0 on the Windows platform via a window handle to active
-func ActivePID(pid int32, args ...int) {
-	var hwnd int
-	if len(args) > 0 {
-		hwnd = args[0]
-	}
-
+func internalActive(pid int32, hwnd int) {
 	C.active_PID(C.uintptr(pid), C.uintptr(hwnd))
 }
+
+// ActivePID active the window by PID,
+// If args[0] > 0 on the Windows platform via a window handle to active
+// func ActivePID(pid int32, args ...int) {
+// 	var hwnd int
+// 	if len(args) > 0 {
+// 		hwnd = args[0]
+// 	}
+
+// 	C.active_PID(C.uintptr(pid), C.uintptr(hwnd))
+// }
 
 // ActiveName active window by name
 func ActiveName(name string) error {
