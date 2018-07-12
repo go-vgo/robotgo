@@ -8,12 +8,14 @@ package clipboard
 
 import (
 	"syscall"
+	"time"
 	"unsafe"
 )
 
 const (
 	cfUnicodetext = 13
-	gmemFixed     = 0x0000
+	// gmemFixed     = 0x0000
+	gmemMoveable = 0x0002
 )
 
 var (
@@ -32,15 +34,32 @@ var (
 	lstrcpy      = kernel32.NewProc("lstrcpyW")
 )
 
+// waitOpenClipboard opens the clipboard, waiting for up to a second to do so.
+func waitOpenClipboard() error {
+	started := time.Now()
+	limit := started.Add(time.Second)
+	var r uintptr
+	var err error
+	for time.Now().Before(limit) {
+		r, _, err = openClipboard.Call(0)
+		if r != 0 {
+			return nil
+		}
+		time.Sleep(time.Millisecond)
+	}
+	return err
+}
+
 func readAll() (string, error) {
-	r, _, err := openClipboard.Call(0)
-	if r == 0 {
+	// r, _, err := openClipboard.Call(0)
+	err := waitOpenClipboard()
+	if err != nil {
 		return "", err
 	}
 	defer closeClipboard.Call()
 
 	h, _, err := getClipboardData.Call(cfUnicodetext)
-	if r == 0 {
+	if h == 0 {
 		return "", err
 	}
 
@@ -51,7 +70,7 @@ func readAll() (string, error) {
 
 	text := syscall.UTF16ToString((*[1 << 20]uint16)(unsafe.Pointer(l))[:])
 
-	r, _, err = globalUnlock.Call(h)
+	r, _, err := globalUnlock.Call(h)
 	if r == 0 {
 		return "", err
 	}
@@ -60,23 +79,31 @@ func readAll() (string, error) {
 }
 
 func writeAll(text string) error {
-	r, _, err := openClipboard.Call(0)
-	if r == 0 {
+	err := waitOpenClipboard()
+	if err != nil {
 		return err
 	}
 	defer closeClipboard.Call()
 
-	r, _, err = emptyClipboard.Call(0)
+	r, _, err := emptyClipboard.Call(0)
 	if r == 0 {
 		return err
 	}
 
 	data := syscall.StringToUTF16(text)
 
-	h, _, err := globalAlloc.Call(gmemFixed, uintptr(len(data)*int(unsafe.Sizeof(data[0]))))
+	// "If the hMem parameter identifies a memory object, the object must have
+	// been allocated using the function with the GMEM_MOVEABLE flag."
+	h, _, err := globalAlloc.Call(gmemMoveable,
+		uintptr(len(data)*int(unsafe.Sizeof(data[0]))))
 	if h == 0 {
 		return err
 	}
+	defer func() {
+		if h != 0 {
+			globalFree.Call(h)
+		}
+	}()
 
 	l, _, err := globalLock.Call(h)
 	if l == 0 {
@@ -95,7 +122,11 @@ func writeAll(text string) error {
 
 	r, _, err = setClipboardData.Call(cfUnicodetext, h)
 	if r == 0 {
-		return err
+		if err.(syscall.Errno) != 0 {
+			return err
+		}
 	}
+
+	h = 0 // suppress deferred cleanup
 	return nil
 }
