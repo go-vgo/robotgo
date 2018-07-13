@@ -19,7 +19,7 @@ import (
 	// "go-vgo/robotgo"
 )
 
-func main() {
+func bitmap() {
 	////////////////////////////////////////////////////////////////////////////////
 	// Bitmap
 	////////////////////////////////////////////////////////////////////////////////
@@ -69,6 +69,7 @@ func main() {
 	fx, fy = robotgo.FindBitmap(bit)
 	fmt.Println("FindBitmap------", fx, fy)
 
+	// bitmap := robotgo.CaptureScreen(10, 20, 30, 40)
 	abool := robotgo.PointInBounds(bitmap, 1, 2)
 	fmt.Println("point in bounds...", abool)
 
@@ -116,4 +117,8 @@ func main() {
 
 	// free the bitmap
 	robotgo.FreeBitmap(abitMap)
+}
+
+func main() {
+	bitmap()
 }

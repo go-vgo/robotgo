@@ -17,7 +17,7 @@ import (
 	// "go-vgo/robotgo"
 )
 
-func main() {
+func screen() {
 	////////////////////////////////////////////////////////////////////////////////
 	// Read the screen
 	////////////////////////////////////////////////////////////////////////////////
@@ -58,4 +58,8 @@ func main() {
 	// gets the pixel color at 10, 20.
 	color2 := robotgo.GetPixelColor(10, 20)
 	fmt.Println("color---", color2)
+}
+
+func main() {
+	screen()
 }
