@@ -66,7 +66,7 @@ import (
 )
 
 const (
-	version string = "v0.49.0.600, Olympus Mons!"
+	version string = "v0.49.0.607, Olympus Mons!"
 )
 
 type (
@@ -359,9 +359,7 @@ func SaveCapture(spath string, args ...int) {
 // MoveMouse move the mouse
 func MoveMouse(x, y int) {
 	// C.size_t  int
-	cx := C.size_t(x)
-	cy := C.size_t(y)
-	C.move_mouse(cx, cy)
+	Move(x, y)
 }
 
 // Move move the mouse
@@ -373,9 +371,7 @@ func Move(x, y int) {
 
 // DragMouse drag the mouse
 func DragMouse(x, y int) {
-	cx := C.size_t(x)
-	cy := C.size_t(y)
-	C.drag_mouse(cx, cy)
+	Drag(x, y)
 }
 
 // Drag drag the mouse
@@ -388,30 +384,7 @@ func Drag(x, y int) {
 // MoveMouseSmooth move the mouse smooth,
 // moves mouse to x, y human like, with the mouse button up.
 func MoveMouseSmooth(x, y int, args ...interface{}) bool {
-	cx := C.size_t(x)
-	cy := C.size_t(y)
-
-	var (
-		mouseDelay = 10
-		low        C.double
-		high       C.double
-	)
-
-	if len(args) > 2 {
-		mouseDelay = args[2].(int)
-	}
-
-	if len(args) > 1 {
-		low = C.double(args[0].(float64))
-		high = C.double(args[1].(float64))
-	} else {
-		low = 1.0
-		high = 3.0
-	}
-
-	cbool := C.move_mouse_smooth(cx, cy, low, high, C.int(mouseDelay))
-
-	return bool(cbool)
+	return MoveSmooth(x, y, args...)
 }
 
 // MoveSmooth move the mouse smooth,
