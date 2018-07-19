@@ -499,9 +499,9 @@ func MovesClick(x, y int, args ...interface{}) {
 
 // MouseToggle toggle the mouse
 func MouseToggle(togKey string, args ...interface{}) {
-	var button C.MMMouseButton
+	var button C.MMMouseButton = C.LEFT_BUTTON
 
-	Try(func() {
+	if len(args) > 0 {
 		// button = args[1].(C.MMMouseButton)
 		if args[0].(string) == "left" {
 			button = C.LEFT_BUTTON
@@ -512,10 +512,7 @@ func MouseToggle(togKey string, args ...interface{}) {
 		if args[0].(string) == "right" {
 			button = C.RIGHT_BUTTON
 		}
-	}, func(e interface{}) {
-		// fmt.Println("err:::", e)
-		button = C.LEFT_BUTTON
-	})
+	}
 
 	down := C.CString(togKey)
 	C.mouse_toggle(down, button)
@@ -1304,19 +1301,18 @@ func ShowAlert(title, msg string, args ...string) int {
 	var (
 		// title         string
 		// msg           string
-		defaultButton string
-		cancelButton  string
+		defaultButton = "Ok"
+		cancelButton  = "Cancel"
 	)
 
-	Try(func() {
+	if len(args) > 0 {
 		// title = args[0]
 		// msg = args[1]
 		defaultButton = args[0]
+	}
+	if len(args) > 1 {
 		cancelButton = args[1]
-	}, func(e interface{}) {
-		defaultButton = "Ok"
-		cancelButton = "Cancel"
-	})
+	}
 
 	atitle := C.CString(title)
 	amsg := C.CString(msg)
