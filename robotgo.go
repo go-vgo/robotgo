@@ -455,40 +455,17 @@ func GetMousePos() (int, int) {
 
 // MouseClick click the mouse
 func MouseClick(args ...interface{}) {
-	var (
-		button C.MMMouseButton
-		double C.bool
-	)
-
-	Try(func() {
-		// button = args[0].(C.MMMouseButton)
-		if args[0].(string) == "left" {
-			button = C.LEFT_BUTTON
-		}
-		if args[0].(string) == "center" {
-			button = C.CENTER_BUTTON
-		}
-		if args[0].(string) == "right" {
-			button = C.RIGHT_BUTTON
-		}
-		double = C.bool(args[1].(bool))
-	}, func(e interface{}) {
-		// fmt.Println("err:::", e)
-		button = C.LEFT_BUTTON
-		double = false
-	})
-
-	C.mouse_click(button, double)
+	Click(args...)
 }
 
 // Click click the mouse
 func Click(args ...interface{}) {
 	var (
-		button C.MMMouseButton
+		button C.MMMouseButton = C.LEFT_BUTTON
 		double C.bool
 	)
 
-	Try(func() {
+	if len(args) > 0 {
 		// button = args[0].(C.MMMouseButton)
 		if args[0].(string) == "left" {
 			button = C.LEFT_BUTTON
@@ -499,12 +476,11 @@ func Click(args ...interface{}) {
 		if args[0].(string) == "right" {
 			button = C.RIGHT_BUTTON
 		}
+	}
+
+	if len(args) > 1 {
 		double = C.bool(args[1].(bool))
-	}, func(e interface{}) {
-		// fmt.Println("err:::", e)
-		button = C.LEFT_BUTTON
-		double = false
-	})
+	}
 
 	C.mouse_click(button, double)
 }
@@ -512,13 +488,13 @@ func Click(args ...interface{}) {
 // MoveClick move and click the mouse
 func MoveClick(x, y int, args ...interface{}) {
 	MoveMouse(x, y)
-	MouseClick(args)
+	MouseClick(args...)
 }
 
 // MovesClick move smooth and click the mouse
 func MovesClick(x, y int, args ...interface{}) {
 	MoveSmooth(x, y)
-	MouseClick(args)
+	MouseClick(args...)
 }
 
 // MouseToggle toggle the mouse
