@@ -66,8 +66,14 @@ import (
 )
 
 const (
-	version string = "v0.49.0.607, Olympus Mons!"
+	// Version get the robotgo version
+	Version string = "v0.49.0.610, Olympus Mons!"
 )
+
+// GetVersion get the robotgo version
+func GetVersion() string {
+	return Version
+}
 
 type (
 	// Map a map[string]interface{}
@@ -92,11 +98,6 @@ type Bitmap struct {
 type MPoint struct {
 	x int
 	y int
-}
-
-// GetVersion get version
-func GetVersion() string {
-	return version
 }
 
 // Try handler(err)
