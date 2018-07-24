@@ -210,10 +210,16 @@ func GetScreenSize() (int, int) {
 func Scale() int {
 	dpi := map[int]int{
 		0:   100,
+		// DPI Scaling Level
 		96:  100,
 		120: 125,
 		144: 150,
 		192: 200,
+		// Custom DPI
+		240: 250,
+		288: 300,
+		384: 400,
+		480: 500,
 	}
 
 	x := ScaleX()
