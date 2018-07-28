@@ -83,6 +83,9 @@ func bitmap() {
 
 	// sbitmap := robotgo.BitmapFromstring(bitstr, 2)
 	// fmt.Println("...", sbitmap)
+	sbitmap := robotgo.BitmapStr(bitstr)
+	fmt.Println("bitmap str...", sbitmap)
+	robotgo.SaveBitmap(sbitmap, "teststr.png")
 
 	// saves image to absolute filepath in the given format
 	robotgo.SaveBitmap(bitmap, "test.png")

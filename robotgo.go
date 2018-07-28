@@ -819,8 +819,10 @@ func FindBitmap(bit C.MMBitmapRef, args ...interface{}) (int, int) {
 	}
 
 	fx, fy := internalFindBitmap(bit, sbit, tolerance)
-	FreeBitmap(bit)
-	FreeBitmap(sbit)
+	// FreeBitmap(bit)
+	if len(args) <= 0 {
+		FreeBitmap(sbit)
+	}
 
 	return fx, fy
 }
@@ -851,7 +853,9 @@ func FindPic(path string, args ...interface{}) (int, int) {
 
 	fx, fy := internalFindBitmap(openbit, sbit, tolerance)
 	FreeBitmap(openbit)
-	FreeBitmap(sbit)
+	if len(args) <= 0 {
+		FreeBitmap(sbit)
+	}
 
 	return fx, fy
 }
@@ -890,8 +894,10 @@ func FindEveryBitmap(bit C.MMBitmapRef, args ...interface{}) (int, int) {
 	}
 
 	pos := C.find_every_bitmap(bit, sbit, tolerance, &lpos)
-	FreeBitmap(bit)
-	FreeBitmap(sbit)
+	// FreeBitmap(bit)
+	if len(args) <= 0 {
+		FreeBitmap(sbit)
+	}
 
 	// fmt.Println("pos----", pos)
 	return int(pos.x), int(pos.y)
