@@ -291,6 +291,7 @@ func GoCaptureScreen(args ...int) Bitmap {
 	} else {
 		bit = CaptureScreen()
 	}
+	defer FreeBitmap(bit)
 
 	return ToBitmap(bit)
 }
@@ -312,6 +313,7 @@ func SaveCapture(spath string, args ...int) {
 	}
 
 	SaveBitmap(bit, spath)
+	FreeBitmap(bit)
 }
 
 /*
