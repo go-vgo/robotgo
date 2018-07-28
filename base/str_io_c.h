@@ -164,17 +164,16 @@ static bool getSizeFromString(const uint8_t *buf, size_t buflen,
 
 /* Parses one dimension from string as described in getSizeFromString().
  * Returns dimension on success, or 0 on error. */
-static uint32_t parseDimension(const uint8_t *buf, size_t buflen,
-                               size_t *numlen)
-{
+static uint32_t parseDimension(const uint8_t *buf,
+							   size_t buflen, size_t *numlen){
 	char num[MAX_DIMENSION_LEN + 1];
 	size_t i;
-	// ssize_t len;
+	// ssize_t len; 
 	// size_t len;
-	uint8_t * len;
+	// uint8_t * len;
 
 	assert(buf != NULL);
-	assert(len != NULL);
+	// assert(len != NULL);
 	for (i = 0; i < buflen && buf[i] != ',' && buf[i] != '\0'; ++i) {
 		if (!isdigit(buf[i]) || i > MAX_DIMENSION_LEN) return 0;
 		num[i] = buf[i];
