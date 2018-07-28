@@ -858,7 +858,11 @@ func FindBitmap(bit C.MMBitmapRef, args ...interface{}) (int, int) {
 		tolerance = 0.5
 	}
 
-	return internalFindBitmap(bit, sbit, tolerance)
+	fx, fy := internalFindBitmap(bit, sbit, tolerance)
+	FreeBitmap(bit)
+	FreeBitmap(sbit)
+
+	return fx, fy
 }
 
 // FindPic finding the image by path
@@ -886,6 +890,8 @@ func FindPic(path string, args ...interface{}) (int, int) {
 	}
 
 	fx, fy := internalFindBitmap(openbit, sbit, tolerance)
+	FreeBitmap(openbit)
+	FreeBitmap(sbit)
 
 	return fx, fy
 }
