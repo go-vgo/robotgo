@@ -930,6 +930,9 @@ func FindEveryBitmap(bit C.MMBitmapRef, args ...interface{}) (int, int) {
 	}
 
 	pos := C.find_every_bitmap(bit, sbit, tolerance, &lpos)
+	FreeBitmap(bit)
+	FreeBitmap(sbit)
+
 	// fmt.Println("pos----", pos)
 	return int(pos.x), int(pos.y)
 }
@@ -1140,6 +1143,8 @@ func FindColorCS(x, y, w, h int, color CHex, args ...float32) (int, int) {
 
 	bitmap := CaptureScreen(x, y, w, h)
 	rx, ry := FindColor(bitmap, color, tolerance)
+	FreeBitmap(bitmap)
+
 	return rx, ry
 }
 
@@ -1170,6 +1175,7 @@ func CountColorCS(x, y, w, h int, color CHex, args ...float32) int {
 
 	bitmap := CaptureScreen(x, y, w, h)
 	rx := CountColor(bitmap, color, tolerance)
+	FreeBitmap(bitmap)
 
 	return rx
 }
@@ -1181,6 +1187,7 @@ func GetImgSize(imgPath string) (int, int) {
 
 	w := gbit.Width / 2
 	h := gbit.Height / 2
+	FreeBitmap(bitmap)
 
 	return w, h
 }
