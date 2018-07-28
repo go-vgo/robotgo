@@ -67,7 +67,7 @@ import (
 
 const (
 	// Version get the robotgo version
-	Version string = "v0.49.0.610, Olympus Mons!"
+	Version string = "v0.49.0.616, Olympus Mons!"
 )
 
 // GetVersion get the robotgo version
@@ -294,46 +294,6 @@ func GoCaptureScreen(args ...int) Bitmap {
 
 	return ToBitmap(bit)
 }
-
-// BCaptureScreen capture the screen and return bitmap(go struct),
-// Wno-deprecated
-// func BCaptureScreen(args ...int) Bitmap {
-// 	var (
-// 		x C.size_t
-// 		y C.size_t
-// 		w C.size_t
-// 		h C.size_t
-// 	)
-
-// 	Try(func() {
-// 		x = C.size_t(args[0])
-// 		y = C.size_t(args[1])
-// 		w = C.size_t(args[2])
-// 		h = C.size_t(args[3])
-// 	}, func(e interface{}) {
-// 		// fmt.Println("err:::", e)
-// 		x = 0
-// 		y = 0
-// 		//Get screen size.
-// 		var displaySize C.MMSize
-// 		displaySize = C.getMainDisplaySize()
-// 		w = displaySize.width
-// 		h = displaySize.height
-// 	})
-
-// 	bit := C.capture_screen(x, y, w, h)
-// 	// fmt.Println("...", bit)
-// 	bitmap := Bitmap{
-// 		ImageBuffer:   (*uint8)(bit.imageBuffer),
-// 		Width:         int(bit.width),
-// 		Height:        int(bit.height),
-// 		Bytewidth:     int(bit.bytewidth),
-// 		BitsPerPixel:  uint8(bit.bitsPerPixel),
-// 		BytesPerPixel: uint8(bit.bytesPerPixel),
-// 	}
-
-// 	return bitmap
-// }
 
 // SaveCapture capture screen and save
 func SaveCapture(spath string, args ...int) {
@@ -1042,14 +1002,6 @@ func SaveBitmap(bitmap C.MMBitmapRef, gpath string, args ...int) string {
 	return C.GoString(saveBit)
 }
 
-// func SaveBitmap(bit C.MMBitmapRef, gpath string, mtype C.MMImageType) {
-// 	path := C.CString(gpath)
-// 	savebit := C.aSaveBitmap(bit, path, mtype)
-// 	fmt.Println("saving...", savebit)
-// 	// return bit
-// 	// defer C.free(unsafe.Pointer(path))
-// }
-
 // GetPortion get bitmap portion
 func GetPortion(bit C.MMBitmapRef, x, y, w, h int) C.MMBitmapRef {
 	var rect C.MMRect
@@ -1268,17 +1220,6 @@ func AddEvent(aeve string) int {
 func StopEvent() {
 	C.stop_event()
 }
-
-// LEvent add event listener, Wno-deprecated
-// func LEvent(aeve string) int {
-// 	cs := C.CString(aeve)
-// 	eve := C.add_event(cs)
-// 	// fmt.Println("event@@", eve)
-// 	geve := int(eve)
-// 	defer C.free(unsafe.Pointer(cs))
-
-// 	return geve
-// }
 
 /*
 ____    __    ____  __  .__   __.  _______   ______   ____    __    ____
