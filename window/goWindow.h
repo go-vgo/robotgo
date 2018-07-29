@@ -10,6 +10,7 @@
 
 #include "alert_c.h"
 #include "window.h"
+#include "win32.h"
 
 int show_alert(const char *title, const char *msg,
 	const char *defaultButton, const char *cancelButton){
@@ -56,24 +57,6 @@ bool is_valid(){
 // 	int z = findwindow(name);
 // 	return z;
 // }
-
-#if defined(IS_WINDOWS)
-void win_min(HWND hwnd, bool state){
-	if (state) {
-		ShowWindow(hwnd, SW_MINIMIZE);
-	} else {
-		ShowWindow(hwnd, SW_RESTORE);
-	}
-}
-
-void win_max(HWND hwnd, bool state){
-	if (state) {
-		ShowWindow(hwnd, SW_MAXIMIZE);
-	} else {
-		ShowWindow(hwnd, SW_RESTORE);
-	}
-}
-#endif
 
 void min_window(uintptr pid, bool state, uintptr isHwnd){
 	#if defined(IS_MACOSX)
@@ -141,34 +124,6 @@ uintptr bget_handle(){
 void set_active(const MData win){
 	SetActive(win);
 }
-
-#if defined(IS_WINDOWS)
-	typedef struct{
-	    HWND hWnd;
-	    DWORD dwPid;
-	}WNDINFO;
-
-	BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam){
-	    WNDINFO* pInfo = (WNDINFO*)lParam;
-	    DWORD dwProcessId = 0;
-	    GetWindowThreadProcessId(hWnd, &dwProcessId);
-
-	    if (dwProcessId == pInfo->dwPid) {
-	        pInfo->hWnd = hWnd;
-	        return FALSE;
-	    }
-	    return TRUE;
-	}
-
-	HWND GetHwndByPId(DWORD dwProcessId){
-	    WNDINFO info = {0};
-	    info.hWnd = NULL;
-	    info.dwPid = dwProcessId;
-	    EnumWindows(EnumWindowsProc, (LPARAM)&info);
-	    // printf("%d\n", info.hWnd);
-	    return info.hWnd;
-	}
-#endif
 
 void active_PID(uintptr pid, uintptr isHwnd){
 	MData win;
