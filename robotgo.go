@@ -1322,9 +1322,9 @@ func GetTitle() string {
 }
 
 // GetPID get the process id
-func GetPID() int {
+func GetPID() int32 {
 	pid := C.get_PID()
-	return int(pid)
+	return int32(pid)
 }
 
 // Pids get the all process id
