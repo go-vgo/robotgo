@@ -254,12 +254,7 @@ func GetXDisplayName() string {
 
 // CaptureScreen capture the screen return bitmap(c struct)
 func CaptureScreen(args ...int) C.MMBitmapRef {
-	var (
-		x C.size_t
-		y C.size_t
-		w C.size_t
-		h C.size_t
-	)
+	var x, y, w, h C.size_t
 
 	if len(args) > 3 {
 		x = C.size_t(args[0])
@@ -574,9 +569,7 @@ func KeyTap(tapKey string, args ...interface{}) {
 //	https://github.com/go-vgo/robotgo/blob/master/docs/keys.md
 func KeyToggle(args ...string) string {
 	var (
-		adown string
-		mKey  string
-		mKeyT string
+		adown, mKey, mKeyT string
 		// keyDelay = 10
 	)
 
@@ -906,7 +899,7 @@ func FindEveryBitmap(bit C.MMBitmapRef, args ...interface{}) (int, int) {
 }
 
 // CountBitmap count of the bitmap
-func CountBitmap(bitmap C.MMBitmapRef, sbit C.MMBitmapRef, args ...float32) int {
+func CountBitmap(bitmap, sbit C.MMBitmapRef, args ...float32) int {
 	var tolerance C.float
 	if len(args) > 0 {
 		tolerance = C.float(args[0])

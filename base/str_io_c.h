@@ -170,7 +170,7 @@ static uint32_t parseDimension(const uint8_t *buf,
 	size_t i;
 	// ssize_t len; 
 	// size_t len;
-	// uint8_t * len;
+	// uint8_t *len;
 
 	assert(buf != NULL);
 	// assert(len != NULL);
