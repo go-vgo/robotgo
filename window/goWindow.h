@@ -79,6 +79,7 @@ void min_window(uintptr pid, bool state, uintptr isHwnd){
 	#if defined(IS_MACOSX)
 		// return 0;
 		AXUIElementRef axID = AXUIElementCreateApplication(pid);
+		
 		AXUIElementSetAttributeValue(axID, kAXMinimizedAttribute,
 		state ? kCFBooleanTrue : kCFBooleanFalse);
 	#elif defined(USE_X11)
@@ -88,7 +89,7 @@ void min_window(uintptr pid, bool state, uintptr isHwnd){
 	#elif defined(IS_WINDOWS)
 		if (isHwnd == 0) {
 			HWND hwnd = GetHwndByPId(pid);
-			win_min(hwnd, state)
+			win_min(hwnd, state);
 		} else {
 			win_min((HWND)pid, state);
 		}
