@@ -14,3 +14,10 @@ func FindWindow(str string) win.HWND {
 
 	return hwnd
 }
+
+// GetHWND get foreground window hwnd
+func GetHWND() win.HWND {
+	hwnd := win.GetForegroundWindow()
+
+	return hwnd
+}

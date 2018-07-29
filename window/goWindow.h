@@ -10,6 +10,7 @@
 
 #include "alert_c.h"
 #include "window.h"
+#include "win32.h"
 
 int show_alert(const char *title, const char *msg,
 	const char *defaultButton, const char *cancelButton){
@@ -57,6 +58,44 @@ bool is_valid(){
 // 	return z;
 // }
 
+void min_window(uintptr pid, bool state, uintptr isHwnd){
+	#if defined(IS_MACOSX)
+		// return 0;
+		AXUIElementRef axID = AXUIElementCreateApplication(pid);
+		
+		AXUIElementSetAttributeValue(axID, kAXMinimizedAttribute,
+		state ? kCFBooleanTrue : kCFBooleanFalse);
+	#elif defined(USE_X11)
+		// Ignore X errors
+		XDismissErrors();
+		// SetState((Window)pid, STATE_MINIMIZE, state);
+	#elif defined(IS_WINDOWS)
+		if (isHwnd == 0) {
+			HWND hwnd = GetHwndByPId(pid);
+			win_min(hwnd, state);
+		} else {
+			win_min((HWND)pid, state);
+		}
+	#endif
+}
+
+void max_window(uintptr pid, bool state, uintptr isHwnd){
+	#if defined(IS_MACOSX)
+		// return 0;
+	#elif defined(USE_X11)
+		XDismissErrors();
+		// SetState((Window)pid, STATE_MINIMIZE, false);
+		// SetState((Window)pid, STATE_MAXIMIZE, state);
+	#elif defined(IS_WINDOWS)
+		if (isHwnd == 0) {
+			HWND hwnd = GetHwndByPId(pid);
+			win_max(hwnd, state);
+		} else {
+			win_max((HWND)pid, state);
+		}
+	#endif
+}
+
 void close_window(void){
 	CloseWin();
 }
@@ -85,34 +124,6 @@ uintptr bget_handle(){
 void set_active(const MData win){
 	SetActive(win);
 }
-
-#if defined(IS_WINDOWS)
-	typedef struct{
-	    HWND hWnd;
-	    DWORD dwPid;
-	}WNDINFO;
-
-	BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam){
-	    WNDINFO* pInfo = (WNDINFO*)lParam;
-	    DWORD dwProcessId = 0;
-	    GetWindowThreadProcessId(hWnd, &dwProcessId);
-
-	    if (dwProcessId == pInfo->dwPid) {
-	        pInfo->hWnd = hWnd;
-	        return FALSE;
-	    }
-	    return TRUE;
-	}
-
-	HWND GetHwndByPId(DWORD dwProcessId){
-	    WNDINFO info = {0};
-	    info.hWnd = NULL;
-	    info.dwPid = dwProcessId;
-	    EnumWindows(EnumWindowsProc, (LPARAM)&info);
-	    // printf("%d\n", info.hWnd);
-	    return info.hWnd;
-	}
-#endif
 
 void active_PID(uintptr pid, uintptr isHwnd){
 	MData win;
