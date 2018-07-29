@@ -58,6 +58,12 @@ func window() {
 		if len(fpid) > 0 {
 			robotgo.ActivePID(fpid[0])
 
+			// Windows
+			// hwnd := robotgo.FindWindow("google")
+			// hwnd := robotgo.GetHWND()
+			robotgo.MinWindow(fpid[0])
+			robotgo.MaxWindow(fpid[0])
+
 			robotgo.Kill(fpid[0])
 		}
 	}
