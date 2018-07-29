@@ -57,6 +57,24 @@ bool is_valid(){
 // 	return z;
 // }
 
+#if defined(IS_WINDOWS)
+void win_min(HWND hwnd, bool state){
+	if (state) {
+		ShowWindow(hwnd, SW_MINIMIZE);
+	} else {
+		ShowWindow(hwnd, SW_RESTORE);
+	}
+}
+
+void win_max(HWND hwnd, bool state){
+	if (state) {
+		ShowWindow(hwnd, SW_MAXIMIZE);
+	} else {
+		ShowWindow(hwnd, SW_RESTORE);
+	}
+}
+#endif
+
 void close_window(void){
 	CloseWin();
 }
