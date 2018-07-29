@@ -75,6 +75,43 @@ void win_max(HWND hwnd, bool state){
 }
 #endif
 
+void min_window(uintptr pid, bool state, uintptr isHwnd){
+	#if defined(IS_MACOSX)
+		// return 0;
+		AXUIElementRef axID = AXUIElementCreateApplication(pid);
+		AXUIElementSetAttributeValue(axID, kAXMinimizedAttribute,
+		state ? kCFBooleanTrue : kCFBooleanFalse);
+	#elif defined(USE_X11)
+		// Ignore X errors
+		XDismissErrors();
+		// SetState((Window)pid, STATE_MINIMIZE, state);
+	#elif defined(IS_WINDOWS)
+		if (isHwnd == 0) {
+			HWND hwnd = GetHwndByPId(pid);
+			win_min(hwnd, state)
+		} else {
+			win_min((HWND)pid, state);
+		}
+	#endif
+}
+
+void max_window(uintptr pid, bool state, uintptr isHwnd){
+	#if defined(IS_MACOSX)
+		// return 0;
+	#elif defined(USE_X11)
+		XDismissErrors();
+		// SetState((Window)pid, STATE_MINIMIZE, false);
+		// SetState((Window)pid, STATE_MAXIMIZE, state);
+	#elif defined(IS_WINDOWS)
+		if (isHwnd == 0) {
+			HWND hwnd = GetHwndByPId(pid);
+			win_max(hwnd, state);
+		} else {
+			win_max((HWND)pid, state);
+		}
+	#endif
+}
+
 void close_window(void){
 	CloseWin();
 }
