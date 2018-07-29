@@ -1287,20 +1287,34 @@ func GetActive() C.MData {
 }
 
 // MinWindow set the window min
-func MinWindow(pid int32, state bool, args ...int) {
-	var hwnd int
+func MinWindow(pid int32, args ...interface{}) {
+	var (
+		state = true
+		hwnd  int
+	)
+
 	if len(args) > 0 {
-		hwnd = args[0]
+		state = args[0].(bool)
+	}
+	if len(args) > 1 {
+		hwnd = args[1].(int)
 	}
 
 	C.min_window(C.uintptr(pid), C.bool(state), C.uintptr(hwnd))
 }
 
 // MaxWindow set the window max
-func MaxWindow(pid int32, state bool, args ...int) {
-	var hwnd int
+func MaxWindow(pid int32, args ...interface{}) {
+	var (
+		state = true
+		hwnd  int
+	)
+
 	if len(args) > 0 {
-		hwnd = args[0]
+		state = args[0].(bool)
+	}
+	if len(args) > 1 {
+		hwnd = args[1].(int)
 	}
 
 	C.max_window(C.uintptr(pid), C.bool(state), C.uintptr(hwnd))
