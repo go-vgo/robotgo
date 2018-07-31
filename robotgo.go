@@ -798,7 +798,7 @@ func internalFindBitmap(bit, sbit C.MMBitmapRef, tolerance float64) (int, int) {
 func FindBitmap(bit C.MMBitmapRef, args ...interface{}) (int, int) {
 	var (
 		sbit      C.MMBitmapRef
-		tolerance float64
+		tolerance = 0.01
 	)
 
 	if len(args) > 0 {
@@ -809,8 +809,6 @@ func FindBitmap(bit C.MMBitmapRef, args ...interface{}) (int, int) {
 
 	if len(args) > 1 {
 		tolerance = args[1].(float64)
-	} else {
-		tolerance = 0.5
 	}
 
 	fx, fy := internalFindBitmap(bit, sbit, tolerance)
@@ -829,7 +827,7 @@ func FindBitmap(bit C.MMBitmapRef, args ...interface{}) (int, int) {
 func FindPic(path string, args ...interface{}) (int, int) {
 	var (
 		sbit      C.MMBitmapRef
-		tolerance float64
+		tolerance = 0.01
 	)
 
 	openbit := OpenBitmap(path)
@@ -842,8 +840,6 @@ func FindPic(path string, args ...interface{}) (int, int) {
 
 	if len(args) > 1 {
 		tolerance = args[1].(float64)
-	} else {
-		tolerance = 0.5
 	}
 
 	fx, fy := internalFindBitmap(openbit, sbit, tolerance)
@@ -859,7 +855,7 @@ func FindPic(path string, args ...interface{}) (int, int) {
 func FindEveryBitmap(bit C.MMBitmapRef, args ...interface{}) (int, int) {
 	var (
 		sbit      C.MMBitmapRef
-		tolerance C.float
+		tolerance C.float = 0.01
 		lpos      C.MMPoint
 	)
 
@@ -871,8 +867,6 @@ func FindEveryBitmap(bit C.MMBitmapRef, args ...interface{}) (int, int) {
 
 	if len(args) > 1 {
 		tolerance = C.float(args[1].(float64))
-	} else {
-		tolerance = 0.5
 	}
 
 	if len(args) > 2 {
@@ -900,11 +894,9 @@ func FindEveryBitmap(bit C.MMBitmapRef, args ...interface{}) (int, int) {
 
 // CountBitmap count of the bitmap
 func CountBitmap(bitmap, sbit C.MMBitmapRef, args ...float32) int {
-	var tolerance C.float
+	var tolerance C.float = 0.01
 	if len(args) > 0 {
 		tolerance = C.float(args[0])
-	} else {
-		tolerance = 0.5
 	}
 
 	count := C.count_of_bitmap(bitmap, sbit, tolerance)
@@ -1069,12 +1061,10 @@ func GetColor(bitmap C.MMBitmapRef, x, y int) C.MMRGBHex {
 
 // FindColor find bitmap color
 func FindColor(bitmap C.MMBitmapRef, color CHex, args ...float32) (int, int) {
-	var tolerance C.float
+	var tolerance C.float = 0.01
 
 	if len(args) > 0 {
 		tolerance = C.float(args[0])
-	} else {
-		tolerance = 0.5
 	}
 
 	pos := C.bitmap_find_color(bitmap, C.MMRGBHex(color), tolerance)
@@ -1086,12 +1076,10 @@ func FindColor(bitmap C.MMBitmapRef, color CHex, args ...float32) (int, int) {
 
 // FindColorCS findcolor by CaptureScreen
 func FindColorCS(x, y, w, h int, color CHex, args ...float32) (int, int) {
-	var tolerance float32
+	var tolerance float32 = 0.01
 
 	if len(args) > 0 {
 		tolerance = args[0]
-	} else {
-		tolerance = 0.5
 	}
 
 	bitmap := CaptureScreen(x, y, w, h)
@@ -1103,12 +1091,10 @@ func FindColorCS(x, y, w, h int, color CHex, args ...float32) (int, int) {
 
 // CountColor count bitmap color
 func CountColor(bitmap C.MMBitmapRef, color CHex, args ...float32) int {
-	var tolerance C.float
+	var tolerance C.float = 0.01
 
 	if len(args) > 0 {
 		tolerance = C.float(args[0])
-	} else {
-		tolerance = 0.5
 	}
 
 	count := C.bitmap_count_of_color(bitmap, C.MMRGBHex(color), tolerance)
@@ -1118,12 +1104,10 @@ func CountColor(bitmap C.MMBitmapRef, color CHex, args ...float32) int {
 
 // CountColorCS count bitmap color by CaptureScreen
 func CountColorCS(x, y, w, h int, color CHex, args ...float32) int {
-	var tolerance float32
+	var tolerance float32 = 0.01
 
 	if len(args) > 0 {
 		tolerance = args[0]
-	} else {
-		tolerance = 0.5
 	}
 
 	bitmap := CaptureScreen(x, y, w, h)
