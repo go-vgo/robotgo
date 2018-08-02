@@ -24,7 +24,9 @@ package robotgo
 
 /*
 //#if defined(IS_MACOSX)
+	// #cgo darwin CFLAGS: -mmacosx-version-min=10.10 -DMACOSX_DEPLOYMENT_TARGET=10.10
 	#cgo darwin CFLAGS: -x objective-c  -Wno-deprecated-declarations
+	// #cgo darwin LDFLAGS: -mmacosx-version-min=10.10
 	#cgo darwin LDFLAGS: -framework Cocoa -framework OpenGL -framework IOKit
 	#cgo darwin LDFLAGS: -framework Carbon -framework CoreFoundation
 	#cgo darwin LDFLAGS:-L${SRCDIR}/cdeps/mac -lpng -lz
