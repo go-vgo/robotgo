@@ -1,1 +1,1 @@
-C language dependent package, better compilation.
+C language dependent package, better to compilation.

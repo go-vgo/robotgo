@@ -26,6 +26,7 @@ This is a work in progress.
 - [Installation](#installation)
 - [Update](#update)
 - [Examples](#examples)
+- [Cross-compiling](#Cross-compiling)
 - [Plans](#plans)
 - [Donate](#donate)
 - [Contributors](#contributors)
@@ -255,6 +256,19 @@ func main() {
   title := robotgo.GetTitle()
   fmt.Println("title@@@", title)
 } 
+```
+
+## Cross-compiling
+
+##### Windows64 to win32
+```Go
+SET CGO_ENABLED=1
+SET GOARCH=386
+go build main.go
+```
+#### Ohter to windows
+```Go
+GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ go build -x ./
 ```
 
 ## Plans
