@@ -254,7 +254,7 @@ func GetXDisplayName() string {
 	return gname
 }
 
-// CaptureScreen capture the screen return bitmap(c struct)
+// CaptureScreen capture the screen return bitmap(c struct),
 // use `defer robotgo.FreeBitmap(bitmap)` to free the bitmap
 func CaptureScreen(args ...int) C.MMBitmapRef {
 	var x, y, w, h C.size_t
@@ -798,7 +798,7 @@ func internalFindBitmap(bit, sbit C.MMBitmapRef, tolerance float64) (int, int) {
 //
 //  |tolerance| should be in the range 0.0f - 1.0f, denoting how closely the
 //  colors in the bitmaps need to match, with 0 being exact and 1 being any.
-// 
+//
 // This method only automatically free the internal bitmap,
 // use `defer robotgo.FreeBitmap(bit)` to free the bitmap
 func FindBitmap(bit C.MMBitmapRef, args ...interface{}) (int, int) {

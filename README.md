@@ -183,6 +183,9 @@ import (
 
 func main() {
   bitmap := robotgo.CaptureScreen(10, 20, 30, 40)
+  // use `defer robotgo.FreeBitmap(bit)` to free the bitmap
+  defer robotgo.FreeBitmap(bitmap)
+
   fmt.Println("...", bitmap)
 
   fx, fy := robotgo.FindBitmap(bitmap)
