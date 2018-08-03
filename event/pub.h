@@ -16,21 +16,21 @@
 #include "../base/os.h"
 
 #if defined(IS_MACOSX)
-	#include "hook/darwin/input_c.h"
-	#include "hook/darwin/hook_c.h"
-	#include "hook/darwin/event_c.h"
-	#include "hook/darwin/properties_c.h"
+	#include "../cdeps/hook/darwin/input_c.h"
+	#include "../cdeps/hook/darwin/hook_c.h"
+	#include "../cdeps/hook/darwin/event_c.h"
+	#include "../cdeps/hook/darwin/properties_c.h"
 #elif defined(USE_X11)
 	//#define USE_XKBCOMMON 0
-	#include "hook/x11/input_c.h"
-	#include "hook/x11/hook_c.h"
-	#include "hook/x11/event_c.h"
-	#include "hook/x11/properties_c.h"
+	#include "../cdeps/hook/x11/input_c.h"
+	#include "../cdeps/hook/x11/hook_c.h"
+	#include "../cdeps/hook/x11/event_c.h"
+	#include "../cdeps/hook/x11/properties_c.h"
 #elif defined(IS_WINDOWS)
-	#include "hook/windows/input_c.h"
-	#include "hook/windows/hook_c.h"
-	#include "hook/windows/event_c.h"
-	#include "hook/windows/properties_c.h"
+	#include "../cdeps/hook/windows/input_c.h"
+	#include "../cdeps/hook/windows/hook_c.h"
+	#include "../cdeps/hook/windows/event_c.h"
+	#include "../cdeps/hook/windows/properties_c.h"
 #endif
 
 #include <inttypes.h>
@@ -38,7 +38,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
-#include "hook/iohook.h"
+#include "../cdeps/hook/iohook.h"
 
 
 int vccode[100];
