@@ -1075,7 +1075,7 @@ func FindColor(color CHex, args ...interface{}) (int, int) {
 	}
 
 	if len(args) > 1 {
-		tolerance = C.float(args[1].(float32))
+		tolerance = C.float(args[1].(float64))
 	}
 
 	pos := C.bitmap_find_color(bitmap, C.MMRGBHex(color), tolerance)
@@ -1090,8 +1090,8 @@ func FindColor(color CHex, args ...interface{}) (int, int) {
 }
 
 // FindColorCS findcolor by CaptureScreen
-func FindColorCS(color CHex, x, y, w, h int, args ...float32) (int, int) {
-	var tolerance float32 = 0.01
+func FindColorCS(color CHex, x, y, w, h int, args ...float64) (int, int) {
+	var tolerance = 0.01
 
 	if len(args) > 0 {
 		tolerance = args[0]
@@ -1118,7 +1118,7 @@ func CountColor(color CHex, args ...interface{}) int {
 	}
 
 	if len(args) > 1 {
-		tolerance = C.float(args[1].(float32))
+		tolerance = C.float(args[1].(float64))
 	}
 
 	count := C.bitmap_count_of_color(bitmap, C.MMRGBHex(color), tolerance)
@@ -1130,8 +1130,8 @@ func CountColor(color CHex, args ...interface{}) int {
 }
 
 // CountColorCS count bitmap color by CaptureScreen
-func CountColorCS(color CHex, x, y, w, h int, args ...float32) int {
-	var tolerance float32 = 0.01
+func CountColorCS(color CHex, x, y, w, h int, args ...float64) int {
+	var tolerance = 0.01
 
 	if len(args) > 0 {
 		tolerance = args[0]

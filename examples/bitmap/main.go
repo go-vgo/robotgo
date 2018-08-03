@@ -30,34 +30,40 @@ func bitmap() {
 
 	// gets part of the screen
 	bitmap := robotgo.CaptureScreen(100, 200, 30, 40)
+	defer robotgo.FreeBitmap(bitmap)
 	fmt.Println("CaptureScreen...", bitmap)
 
 	gbit := robotgo.ToBitmap(bitmap)
 	fmt.Println("go bitmap", gbit, gbit.Width)
 
 	cbit := robotgo.ToCBitmap(gbit)
+	// defer robotgo.FreeBitmap(cbit)
 	log.Println("cbit == bitmap: ", cbit == bitmap)
 	robotgo.SaveBitmap(cbit, "tocbitmap.png")
 
 	// find the color in bitmap
 	color := robotgo.GetColor(bitmap, 1, 2)
 	fmt.Println("color...", color)
-	cx, cy := robotgo.FindColor(bitmap, robotgo.CHex(color), 1.0)
+	cx, cy := robotgo.FindColor(robotgo.CHex(color), bitmap, 1.0)
 	fmt.Println("pos...", cx, cy)
-	cx, cy = robotgo.FindColor(bitmap, 0xAADCDC)
-	fmt.Println("pos...", cx, cy)
-	cx, cy = robotgo.FindColorCS(388, 179, 300, 300, 0xAADCDC)
+	cx, cy = robotgo.FindColor(robotgo.CHex(color))
 	fmt.Println("pos...", cx, cy)
 
-	cnt := robotgo.CountColor(bitmap, 0xAADCDC)
+	cx, cy = robotgo.FindColor(0xAADCDC, bitmap)
+	fmt.Println("pos...", cx, cy)
+	cx, cy = robotgo.FindColorCS(0xAADCDC, 388, 179, 300, 300)
+	fmt.Println("pos...", cx, cy)
+
+	cnt := robotgo.CountColor(0xAADCDC, bitmap)
 	fmt.Println("count...", cnt)
-	cnt1 := robotgo.CountColorCS(10, 20, 30, 40, 0xAADCDC)
+	cnt1 := robotgo.CountColorCS(0xAADCDC, 10, 20, 30, 40)
 	fmt.Println("count...", cnt1)
 
 	count := robotgo.CountBitmap(abitMap, bitmap)
 	fmt.Println("count...", count)
 
 	bit := robotgo.CaptureScreen(1, 2, 40, 40)
+	defer robotgo.FreeBitmap(bit)
 	fmt.Println("CaptureScreen...", bit)
 
 	// searches for needle in bitmap
@@ -120,6 +126,7 @@ func bitmap() {
 
 	// free the bitmap
 	robotgo.FreeBitmap(abitMap)
+	// robotgo.FreeBitmap(bitmap)
 }
 
 func main() {
