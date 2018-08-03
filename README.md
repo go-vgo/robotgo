@@ -26,7 +26,7 @@ This is a work in progress.
 - [Installation](#installation)
 - [Update](#update)
 - [Examples](#examples)
-- [Cross-compiling](#Cross-compiling)
+- [Cross-Compiling](#crosscompiling)
 - [Plans](#plans)
 - [Donate](#donate)
 - [Contributors](#contributors)
@@ -258,7 +258,7 @@ func main() {
 } 
 ```
 
-## Cross-compiling
+## CrossCompiling
 
 ##### Windows64 to win32
 ```Go
