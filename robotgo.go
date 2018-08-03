@@ -1062,14 +1062,27 @@ func GetColor(bitmap C.MMBitmapRef, x, y int) C.MMRGBHex {
 }
 
 // FindColor find bitmap color
-func FindColor(bitmap C.MMBitmapRef, color CHex, args ...float32) (int, int) {
-	var tolerance C.float = 0.01
+func FindColor(color CHex, args ...interface{}) (int, int) {
+	var (
+		tolerance C.float = 0.01
+		bitmap    C.MMBitmapRef
+	)
 
 	if len(args) > 0 {
-		tolerance = C.float(args[0])
+		bitmap = args[0].(C.MMBitmapRef)
+	} else {
+		bitmap = CaptureScreen()
+	}
+
+	if len(args) > 1 {
+		tolerance = C.float(args[1].(float32))
 	}
 
 	pos := C.bitmap_find_color(bitmap, C.MMRGBHex(color), tolerance)
+	if len(args) <= 0 {
+		FreeBitmap(bitmap)
+	}
+
 	x := int(pos.x)
 	y := int(pos.y)
 
@@ -1077,7 +1090,7 @@ func FindColor(bitmap C.MMBitmapRef, color CHex, args ...float32) (int, int) {
 }
 
 // FindColorCS findcolor by CaptureScreen
-func FindColorCS(x, y, w, h int, color CHex, args ...float32) (int, int) {
+func FindColorCS(color CHex, x, y, w, h int, args ...float32) (int, int) {
 	var tolerance float32 = 0.01
 
 	if len(args) > 0 {
@@ -1085,27 +1098,39 @@ func FindColorCS(x, y, w, h int, color CHex, args ...float32) (int, int) {
 	}
 
 	bitmap := CaptureScreen(x, y, w, h)
-	rx, ry := FindColor(bitmap, color, tolerance)
+	rx, ry := FindColor(color, bitmap, tolerance)
 	FreeBitmap(bitmap)
 
 	return rx, ry
 }
 
 // CountColor count bitmap color
-func CountColor(bitmap C.MMBitmapRef, color CHex, args ...float32) int {
-	var tolerance C.float = 0.01
+func CountColor(color CHex, args ...interface{}) int {
+	var (
+		tolerance C.float = 0.01
+		bitmap    C.MMBitmapRef
+	)
 
 	if len(args) > 0 {
-		tolerance = C.float(args[0])
+		bitmap = args[0].(C.MMBitmapRef)
+	} else {
+		bitmap = CaptureScreen()
+	}
+
+	if len(args) > 1 {
+		tolerance = C.float(args[1].(float32))
 	}
 
 	count := C.bitmap_count_of_color(bitmap, C.MMRGBHex(color), tolerance)
+	if len(args) <= 0 {
+		FreeBitmap(bitmap)
+	}
 
 	return int(count)
 }
 
 // CountColorCS count bitmap color by CaptureScreen
-func CountColorCS(x, y, w, h int, color CHex, args ...float32) int {
+func CountColorCS(color CHex, x, y, w, h int, args ...float32) int {
 	var tolerance float32 = 0.01
 
 	if len(args) > 0 {
@@ -1113,7 +1138,7 @@ func CountColorCS(x, y, w, h int, color CHex, args ...float32) int {
 	}
 
 	bitmap := CaptureScreen(x, y, w, h)
-	rx := CountColor(bitmap, color, tolerance)
+	rx := CountColor(color, bitmap, tolerance)
 	FreeBitmap(bitmap)
 
 	return rx
