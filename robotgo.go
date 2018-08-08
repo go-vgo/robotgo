@@ -61,6 +61,7 @@ import (
 	"time"
 	"unsafe"
 	// "syscall"
+	"os/exec"
 
 	"github.com/go-vgo/robotgo/clipboard"
 	"github.com/shirou/gopsutil/process"
@@ -784,6 +785,25 @@ func TostringBitmap(bit C.MMBitmapRef) string {
 func TocharBitmap(bit C.MMBitmapRef) *C.char {
 	strBit := C.tostring_bitmap(bit)
 	return strBit
+}
+
+// GetText get the image text by tesseract ocr
+func GetText(imgPath string, args ...string) (string, error) {
+	var lang = "eng"
+
+	if len(args) > 0 {
+		lang = args[0]
+		if lang == "zh" {
+			lang = "chi_sim"
+		}
+	}
+
+	body, err := exec.Command("tesseract", imgPath,
+		"stdout", "-l", lang).Output()
+	if err != nil {
+		return "", err
+	}
+	return string(body), nil
 }
 
 func internalFindBitmap(bit, sbit C.MMBitmapRef, tolerance float64) (int, int) {
