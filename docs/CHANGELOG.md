@@ -1,6 +1,64 @@
 # CHANGELOG
 
 <!--### RobotGo-->
+# ## RobotGo v0.50.0, The Appalachian Mountains
+
+## Add  
+
+- [NEW] Add simple ocr support
+- [NEW] Add max and min window api and win32.h file
+- [NEW] Automatic free internal bitmap and add bitmapStr example
+- [NEW] Update findBitmap and findColor default tolerance 0.5 to 0.01, [improve find accuracy and time]
+- [NEW] Add more Window example
+- [NEW] Add cross compile docs
+- [NEW] Add free bitmap and tolerance godoc
+- [NEW] Add GetForegroundWindow and FindWindow func support
+- [NEW] Add bitmap to CBitmap func, Add ToCBitmap example to examples
+- [NEW] Add get Scale and GetScaleSize func, get primary display DPI scale factor fix #129, #135
+   Add Custom DPI Scaling support, 
+   Add scale default value,
+   Add scale example
+
+## Update
+
+- [NEW] Update README.md [add freeBitmap example]
+- [NEW] Optimize findColor and uniform API with findBitmap
+- [NEW] Update godoc, CI and README.md
+- [NEW] Update CHANGELOG.md
+- [NEW] Update examples [add freeBitmap and update findColor]
+- [NEW] Optimize bitmap code, optimize args and not try [many methods]
+- [NEW] Update getPid type to int32
+- [NEW] Update var and other code style, fix non-standard code
+   Update code and update some name
+- [NEW] Update pkg to newest
+- [NEW] Remove duplicate code and old useless code
+- [NEW] Update mouse click and fix moveClick and movesClick args
+- [NEW] Update code style use if not try
+- [NEW] Update clipboard example
+- [NEW] Update typestr use return not else
+- [NEW] Update mouse toggle, keytap and savebitmap func args
+- [NEW] Update examples remove duplicate code
+- [NEW] Update bitmap and other examples
+- [NEW] Simplify linux dependency installation commands
+- [NEW] Update issue_template.md
+-[NEW] Update pull_request_template.md
+- [NEW] Move govendor to dep
+- [NEW] Update robotgo ci to 1.10.3
+
+## Fix
+
+- [FIX] Update active pid to fix #140, fixed linux activePid
+- [FIX] Fixed findBitmap and findPic memory leak
+- [FIX] Add getPxColor destroyMMBitmap fix memory leak
+- [FIX] Fix float args not float32
+- [FIX] Fix windows clipboard memory leak
+- [FIX] Update macos .a downgrade to 10.10 just warning not exit [fix #102, #128, #134]
+- [FIX] use 10.10 to compile .a verifyed multi os
+- [FIX] Fix #145 not assert
+- [FIX] Fix some warning use supplemental code
+
+See Commits for more details, after Apr 30.
+
 
 ## RobotGo v0.49.0, Olympus Mons
 
@@ -19,6 +77,7 @@
 
 
 ### Update
+
 - [NEW] Update KeyToggle code
 - [NEW] Update activePid allow Windows via hwnd
 - [NEW] Update godoc and README.md
