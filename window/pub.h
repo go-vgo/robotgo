@@ -10,6 +10,22 @@
 
 // #include "../base/os.h"
 
+struct _MData{
+	#if defined(IS_MACOSX)
+		CGWindowID		CgID;		// Handle to a CGWindowID
+		AXUIElementRef	AxID;		// Handle to a AXUIElementRef
+	#elif defined(USE_X11)
+		Window		XWin;		// Handle to an X11 window
+	#elif defined(IS_WINDOWS)
+		HWND			HWnd;		// Handle to a window HWND
+		TCHAR 	Title[512];
+	#endif
+};
+
+typedef struct _MData MData;
+
+MData mData;
+
 #if defined(IS_MACOSX)
 
 	static Boolean(*gAXIsProcessTrustedWithOptions) (CFDictionaryRef);
@@ -24,8 +40,8 @@
 
 		// Create array storing window
 		CGWindowID window[1] = { win };
-		CFArrayRef wlist = CFArrayCreate(NULL,
-				(const void**)window, 1, NULL);
+		CFArrayRef wlist = CFArrayCreate(NULL, 
+						(const void**)window, 1, NULL);
 
 		// Get window info
 		CFArrayRef info = CGWindowListCreateDescriptionFromArray(wlist);

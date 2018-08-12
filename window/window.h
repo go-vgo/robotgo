@@ -13,22 +13,6 @@
 #include "process.h"
 #include "pub.h"
 
-struct _MData{
-	#if defined(IS_MACOSX)
-		CGWindowID		CgID;		// Handle to a CGWindowID
-		AXUIElementRef	AxID;		// Handle to a AXUIElementRef
-	#elif defined(USE_X11)
-		Window		XWin;		// Handle to an X11 window
-	#elif defined(IS_WINDOWS)
-		HWND			HWnd;		// Handle to a window HWND
-		TCHAR 	Title[512];
-	#endif
-};
-
-typedef struct _MData MData;
-
-MData mData;
-
 bool setHandle(uintptr handle);
 bool IsValid();
 bool IsAxEnabled(bool options);
