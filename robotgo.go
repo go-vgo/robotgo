@@ -194,12 +194,12 @@ func GetPixelColor(x, y int) string {
 
 // ScaleX get primary display horizontal DPI scale factor
 func ScaleX() int {
-	return int(C.scalex())
+	return int(C.scaleX())
 }
 
 // ScaleY get primary display vertical DPI scale factor
 func ScaleY() int {
-	return int(C.scaley())
+	return int(C.scaleY())
 }
 
 // GetScreenSize get the screen size

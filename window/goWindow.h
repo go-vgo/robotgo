@@ -19,7 +19,7 @@ int show_alert(const char *title, const char *msg,
 	return alert;
 }
 
-intptr scalex(){
+intptr scaleX(){
 	#if defined(IS_MACOSX)
 		return 0;
 	#elif defined(USE_X11)
@@ -34,7 +34,7 @@ intptr scalex(){
 	#endif
 }
 
-intptr scaley(){
+intptr scaleY(){
 	#if defined(IS_MACOSX)
 		return 0;
 	#elif defined(USE_X11)
