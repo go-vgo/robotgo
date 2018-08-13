@@ -49,7 +49,7 @@ Bounds get_bounds(uintptr pid, uintptr isHwnd){
         MData win;
         win.XWin = (Window)pid;
 
-        Bounds client = GetClient();
+        Bounds client = get_client(pid, isHwnd);
         Bounds frame = GetFrame(win);
 
         bounds.X = client.X - frame.X;
@@ -91,6 +91,8 @@ Bounds get_client(uintptr pid, uintptr isHwnd){
 
 	#elif defined(USE_X11)
 
+        Display *rDisplay = XOpenDisplay(NULL);
+
 		// Ignore X errors
 		XDismissErrors();
 		MData win;
@@ -103,17 +105,17 @@ Bounds get_client(uintptr pid, uintptr isHwnd){
 		int32 x = 0, y = 0;
 
 		// Check if the window is the root
-		XQueryTree(rDisplay, win,
+		XQueryTree(rDisplay, win.XWin,
 			&root, &parent, &children, &count);
 		if (children) { XFree(children); }
 
 		// Retrieve window attributes
 		XWindowAttributes attr = { 0 };
-		XGetWindowAttributes(rDisplay, win, &attr);
+		XGetWindowAttributes(rDisplay, win.XWin, &attr);
 
 		// Coordinates must be translated
 		if (parent != attr.root){
-			XTranslateCoordinates(rDisplay, win, attr.root, attr.x,
+			XTranslateCoordinates(rDisplay, win.XWin, attr.root, attr.x,
 			 attr.y, &x, &y, &parent);
 		}
 		// Coordinates can be left alone

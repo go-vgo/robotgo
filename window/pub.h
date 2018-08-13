@@ -276,7 +276,7 @@ typedef struct _Bounds Bounds;
 			if (result != NULL) {
 				if (nItems == 4) {
 					frame.X = (int32) result[0];
-					frame.Y = (int32) result[2]
+					frame.Y = (int32) result[2];
 					frame.W = (int32) result[0] + (int32) result[1];
 					frame.H =  (int32) result[2] + (int32) result[3];
 				}
