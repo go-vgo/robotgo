@@ -255,6 +255,30 @@ MData mData;
 		}
 	}
 
+	static Bounds GetFrame(MData win){
+		Bounds frame;
+		// Retrieve frame bounds
+		if (WM_EXTENTS != None) {
+			long* result; uint32 nItems = 0;
+			// Get the window extents property
+			result = (long*) GetWindowProperty(win, WM_EXTENTS, &nItems);
+
+			// Verify the results
+			if (result != NULL) {
+				if (nItems == 4) {
+					frame.X = (int32) result[0];
+					frame.Y = (int32) result[2]
+					frame.W = (int32) result[0] + (int32) result[1];
+					frame.H =  (int32) result[2] + (int32) result[3];
+				}
+
+				XFree(result);
+			}
+		}
+
+		return frame;
+	}
+
 
 #elif defined(IS_WINDOWS)
 	//

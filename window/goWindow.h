@@ -11,6 +11,7 @@
 #include "alert_c.h"
 #include "window.h"
 #include "win32.h"
+#include "win_sys.h"
 
 int show_alert(const char *title, const char *msg,
 	const char *defaultButton, const char *cancelButton){
