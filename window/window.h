@@ -170,8 +170,8 @@ bool setHandle(uintptr handle){
 	mData.AxID = 0;
 
 	if (handle == 0){
-		return 0;
-		// return true;
+		// return 0;
+		return true;
 	}
 
 	// Retrieve the window element
