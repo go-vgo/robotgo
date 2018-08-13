@@ -46,9 +46,11 @@ Bounds get_bounds(uintptr pid, uintptr isHwnd){
 
         // Ignore X errors
         XDismissErrors();
+        MData win;
+        win.XWin = (Window)pid;
 
         Bounds client = GetClient();
-        Bounds frame = GetFrame((Window)pid);
+        Bounds frame = GetFrame(win);
 
         bounds.X = client.X - frame.X;
         bounds.Y = client.Y - frame.Y;
@@ -76,4 +78,82 @@ Bounds get_bounds(uintptr pid, uintptr isHwnd){
         return bounds;
 
     #endif
+}
+
+Bounds get_client(uintptr pid, uintptr isHwnd){
+	// Check if the window is valid
+	Bounds bounds;
+	if (!IsValid()) { return bounds; }
+
+	#if defined(IS_MACOSX)
+
+		return GetBounds(pid, isHwnd);
+
+	#elif defined(USE_X11)
+
+		// Ignore X errors
+		XDismissErrors();
+		MData win;
+        win.XWin = (Window)pid;
+
+		// Property variables
+		MData root, parent;
+		MData* children;
+		unsigned int count;
+		int32 x = 0, y = 0;
+
+		// Check if the window is the root
+		XQueryTree(rDisplay, win,
+			&root, &parent, &children, &count);
+		if (children) { XFree(children); }
+
+		// Retrieve window attributes
+		XWindowAttributes attr = { 0 };
+		XGetWindowAttributes(rDisplay, win, &attr);
+
+		// Coordinates must be translated
+		if (parent != attr.root){
+			XTranslateCoordinates(rDisplay, win, attr.root, attr.x,
+			 attr.y, &x, &y, &parent);
+		}
+		// Coordinates can be left alone
+		else {
+			x = attr.x;
+			y = attr.y;
+		}
+
+		// Return resulting window bounds
+		bounds.X = x;
+		bounds.Y = y;
+		bounds.W = attr.width;
+		bounds.H = attr.height;
+		return bounds;
+
+	#elif defined(IS_WINDOWS)
+		HWND hwnd;
+		if (isHwnd == 0) {
+			hwnd= GetHwndByPId(pid);
+		} else {
+			hwnd = (HWND)pid;
+		}
+
+
+		RECT rect = { 0 };
+		GetClientRect(hwnd, &rect);
+
+		POINT point;
+		point.x = rect.left;
+		point.y = rect.top;
+
+		// Convert the client point to screen
+		ClientToScreen(hwnd, &point);
+
+		bounds.X = point.x;
+		bounds.Y = point.y;
+		bounds.W = rect.right - rect.left;
+		bounds.H = rect.bottom - rect.top;
+
+		return bounds;
+
+	#endif
 }
