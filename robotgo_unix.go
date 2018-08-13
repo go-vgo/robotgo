@@ -43,9 +43,9 @@ func ActivePIDC(pid int32, args ...int) {
 		}
 	}
 
-	xid, err := getXidFromPid(xu, pid)
+	xid, err := GetXidFromPid(xu, pid)
 	if err != nil {
-		log.Println("getXidFromPid errors is: ", err)
+		log.Println("GetXidFromPid errors is: ", err)
 		return
 	}
 
@@ -73,7 +73,7 @@ func ActivePID(pid int32, args ...int) error {
 		return nil
 	}
 
-	xid, err := getXidFromPid(xu, pid)
+	xid, err := GetXidFromPid(xu, pid)
 	if err != nil {
 		return err
 	}
@@ -86,7 +86,8 @@ func ActivePID(pid int32, args ...int) error {
 	return nil
 }
 
-func getXidFromPid(xu *xgbutil.XUtil, pid int32) (xproto.Window, error) {
+// GetXidFromPid get the xide from pid
+func GetXidFromPid(xu *xgbutil.XUtil, pid int32) (xproto.Window, error) {
 	windows, err := ewmh.ClientListGet(xu)
 	if err != nil {
 		return 0, err
