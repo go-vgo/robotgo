@@ -1,4 +1,5 @@
 // #include "../base/os.h"
+Bounds get_client(uintptr pid, uintptr isHwnd);
 
 Bounds get_bounds(uintptr pid, uintptr isHwnd){
 	// Check if the window is valid
@@ -99,8 +100,8 @@ Bounds get_client(uintptr pid, uintptr isHwnd){
         win.XWin = (Window)pid;
 
 		// Property variables
-		MData root, parent;
-		MData* children;
+		Window root, parent;
+		Window* children;
 		unsigned int count;
 		int32 x = 0, y = 0;
 
