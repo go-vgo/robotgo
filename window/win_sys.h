@@ -15,14 +15,14 @@ Bounds get_bounds(uintptr pid, uintptr isHwnd){
 
         // Determine the current point of the window
         if (AXUIElementCopyAttributeValue(AxID, 
-            kAXPositionAttribute, (CFTypeRef*) &axp)
+			kAXPositionAttribute, (CFTypeRef*) &axp)
             != kAXErrorSuccess || axp == NULL){
             goto exit;
         }
 
         // Determine the current size of the window
         if (AXUIElementCopyAttributeValue(AxID, 
-            kAXSizeAttribute, (CFTypeRef*) &axs)
+			kAXSizeAttribute, (CFTypeRef*) &axs)
             != kAXErrorSuccess || axs == NULL){
             goto exit;
         }
@@ -36,9 +36,9 @@ Bounds get_bounds(uintptr pid, uintptr isHwnd){
             bounds.W = s.width;
             bounds.H = s.height;
         }
-        
-    exit:
-        if (axp != NULL) { CFRelease(axp); }
+
+	exit:
+	    if (axp != NULL) { CFRelease(axp); }
         if (axs != NULL) { CFRelease(axs); }
 
         return bounds;

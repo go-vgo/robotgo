@@ -32,16 +32,7 @@ func GetBounds(pid int32, args ...int) (int, int, int, int) {
 		return internalGetBounds(pid, hwnd)
 	}
 
-	if xu == nil {
-		var err error
-		xu, err = xgbutil.NewConn()
-		if err != nil {
-			log.Println("xgbutil.NewConn errors is: ", err)
-			return 0, 0, 0, 0
-		}
-	}
-
-	xid, err := GetXidFromPid(xu, pid)
+	xid, err := GetXId(xu, pid)
 	if err != nil {
 		log.Println("GetXidFromPid errors is: ", err)
 		return 0, 0, 0, 0
@@ -61,16 +52,7 @@ func ActivePIDC(pid int32, args ...int) {
 		return
 	}
 
-	if xu == nil {
-		var err error
-		xu, err = xgbutil.NewConn()
-		if err != nil {
-			log.Println("xgbutil.NewConn errors is: ", err)
-			return
-		}
-	}
-
-	xid, err := GetXidFromPid(xu, pid)
+	xid, err := GetXId(xu, pid)
 	if err != nil {
 		log.Println("GetXidFromPid errors is: ", err)
 		return
@@ -112,6 +94,21 @@ func ActivePID(pid int32, args ...int) error {
 	}
 
 	return nil
+}
+
+// GetXId get the xid
+func GetXId(xu *xgbutil.XUtil, pid int32) (xproto.Window, error) {
+	if xu == nil {
+		var err error
+		xu, err = xgbutil.NewConn()
+		if err != nil {
+			// log.Println("xgbutil.NewConn errors is: ", err)
+			return 0, err
+		}
+	}
+
+	xid, err := GetXidFromPid(xu, pid)
+	return xid, err
 }
 
 // GetXidFromPid get the xide from pid
