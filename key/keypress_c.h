@@ -29,8 +29,7 @@
 #endif
 
 #if defined(IS_MACOSX)
-static io_connect_t _getAuxiliaryKeyDriver(void)
-{
+static io_connect_t _getAuxiliaryKeyDriver(void){
 	static mach_port_t sEventDrvrRef = 0;
 	mach_port_t masterPort, service, iter;
 	kern_return_t kr;
@@ -52,13 +51,11 @@ static io_connect_t _getAuxiliaryKeyDriver(void)
 #endif
 
 #if defined(IS_WINDOWS)
-void win32KeyEvent(int key, MMKeyFlags flags)
-{
+void win32KeyEvent(int key, MMKeyFlags flags){
 	int scan = MapVirtualKey(key & 0xff, MAPVK_VK_TO_VSC);
 
 	/* Set the scan code for extended keys */
-	switch (key)
-	{
+	switch (key){
 		case VK_RCONTROL:
 		case VK_SNAPSHOT: /* Print Screen */
 		case VK_RMENU: /* Right Alt / Alt Gr */
@@ -106,8 +103,7 @@ void win32KeyEvent(int key, MMKeyFlags flags)
 }
 #endif
 
-void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags)
-{
+void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags){
 #if defined(IS_MACOSX)
 	/* The media keys all have 1000 added to them to help us detect them. */
 	if (code >= 1000) {
@@ -156,14 +152,12 @@ void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags)
 #endif
 }
 
-void tapKeyCode(MMKeyCode code, MMKeyFlags flags)
-{
+void tapKeyCode(MMKeyCode code, MMKeyFlags flags){
 	toggleKeyCode(code, true, flags);
 	toggleKeyCode(code, false, flags);
 }
 
-void toggleKey(char c, const bool down, MMKeyFlags flags)
-{
+void toggleKey(char c, const bool down, MMKeyFlags flags){
 	MMKeyCode keyCode = keyCodeForChar(c);
 
 	//Prevent unused variable warning for Mac and Linux.
@@ -185,15 +179,13 @@ void toggleKey(char c, const bool down, MMKeyFlags flags)
 	toggleKeyCode(keyCode, down, flags);
 }
 
-void tapKey(char c, MMKeyFlags flags)
-{
+void tapKey(char c, MMKeyFlags flags){
 	toggleKey(c, true, flags);
 	toggleKey(c, false, flags);
 }
 
 #if defined(IS_MACOSX)
-void toggleUnicode(UniChar ch, const bool down)
-{
+void toggleUnicode(UniChar ch, const bool down){
 	/* This function relies on the convenient
 	 * CGEventKeyboardSetUnicodeString(), which allows us to not have to
 	 * convert characters to a keycode, but does not support adding modifier

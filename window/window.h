@@ -170,8 +170,8 @@ bool setHandle(uintptr handle){
 	mData.AxID = 0;
 
 	if (handle == 0){
-		return 0;
-		// return true;
+		// return 0;
+		return true;
 	}
 
 	// Retrieve the window element
@@ -275,7 +275,7 @@ bool IsMinimized(void){
 
 	// Ignore X errors
 	// XDismissErrors();
-	// return GetState (mData.XWin, STATE_MINIMIZE);
+	// return GetState(mData.XWin, STATE_MINIMIZE);
 
 #elif defined(IS_WINDOWS)
 
@@ -298,7 +298,7 @@ bool IsMaximized(void){
 
 	// Ignore X errors
 	// XDismissErrors();
-	// return GetState (mData.XWin, STATE_MAXIMIZE);
+	// return GetState(mData.XWin, STATE_MAXIMIZE);
 
 #elif defined(IS_WINDOWS)
 
@@ -447,7 +447,7 @@ MData GetActive(void){
 
 	// Get the current active window
 	result.XWin = XDefaultRootWindow(rDisplay);
-	void* active = GetWindowProperty(result,WM_ACTIVE,NULL);
+	void* active = GetWindowProperty(result, WM_ACTIVE, NULL);
 
 	// Check result value
 	if (active != NULL) {
@@ -607,8 +607,9 @@ char *GetTitle(){
 
 #elif defined(IS_WINDOWS)
 
-	return GetWindowText
-		(mData.HWnd, mData.Title, 512) > 0 ? mData.Title : "";
+	return GetWindowText(
+		mData.HWnd, mData.Title, 512) > 0 ? 
+		mData.Title : "";
 	// return GetWindowText
 	// 	(mData.HWnd, name, 512) > 0 ?
 	// 	_UTF8Encode(name) : "null";
@@ -624,10 +625,9 @@ int32 WGetPID(void){
 
 	pid_t pid = 0;
 	// Attempt to retrieve the window pid
-	if (AXUIElementGetPid(mData.AxID, &pid)
-			== kAXErrorSuccess) {
-				return pid;
-			}
+	if (AXUIElementGetPid(mData.AxID, &pid)== kAXErrorSuccess) {
+			return pid;
+		}
 
 	return 0;
 
