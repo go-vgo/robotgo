@@ -30,7 +30,7 @@ Bounds get_bounds(uintptr pid, uintptr isHwnd){
         CGPoint p; CGSize s;
         // Attempt to convert both values into atomic types
         if (AXValueGetValue(axp, kAXValueCGPointType, &p) &&
-            AXValueGetValue(axs, kAXValueCGSizeType,  &s)){
+        	AXValueGetValue(axs, kAXValueCGSizeType,  &s)){
             bounds.X = p.x;
             bounds.Y = p.y;
             bounds.W = s.width;
@@ -38,8 +38,8 @@ Bounds get_bounds(uintptr pid, uintptr isHwnd){
         }
 
 	exit:
-	    if (axp != NULL) { CFRelease(axp); }
-        if (axs != NULL) { CFRelease(axs); }
+		if (axp != NULL) { CFRelease(axp); }
+    	if (axs != NULL) { CFRelease(axs); }
 
         return bounds;
 
