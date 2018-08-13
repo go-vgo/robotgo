@@ -26,6 +26,15 @@ typedef struct _MData MData;
 
 MData mData;
 
+struct _Bounds{
+	int32		X;				// Top left X coordinate
+	int32		Y;				// Top left Y coordinate
+	int32		W;				// Total bounds width
+	int32		H;				// Total bounds height
+};
+
+typedef struct _Bounds Bounds;
+
 #if defined(IS_MACOSX)
 
 	static Boolean(*gAXIsProcessTrustedWithOptions) (CFDictionaryRef);
