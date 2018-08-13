@@ -38,7 +38,7 @@ func GetBounds(pid int32, args ...int) (int, int, int, int) {
 		return 0, 0, 0, 0
 	}
 
-	internalGetBounds(int32(xid), hwnd)
+	return internalGetBounds(int32(xid), hwnd)
 }
 
 // ActivePIDC active the window by PID,
