@@ -1398,13 +1398,8 @@ func GetPID() int32 {
 	return int32(pid)
 }
 
-// GetBounds get the window bounds
-func GetBounds(pid int32, args ...int) (int, int, int, int) {
-	var hwnd int
-	if len(args) > 0 {
-		hwnd = args[0]
-	}
-
+// internalGetBounds get the window bounds
+func internalGetBounds(pid int32, hwnd int) (int, int, int, int) {
 	bounds := C.get_bounds(C.uintptr(pid), C.uintptr(hwnd))
 	return int(bounds.X), int(bounds.Y), int(bounds.W), int(bounds.H)
 }

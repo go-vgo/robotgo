@@ -23,6 +23,33 @@ import (
 
 var xu *xgbutil.XUtil
 
+// GetBounds get the window bounds
+func GetBounds(pid int32, args ...int) (int, int, int, int) {
+	var hwnd int
+	if len(args) > 0 {
+		hwnd = args[0]
+
+		return internalGetBounds(pid, hwnd)
+	}
+
+	if xu == nil {
+		var err error
+		xu, err = xgbutil.NewConn()
+		if err != nil {
+			log.Println("xgbutil.NewConn errors is: ", err)
+			return 0, 0, 0, 0
+		}
+	}
+
+	xid, err := GetXidFromPid(xu, pid)
+	if err != nil {
+		log.Println("GetXidFromPid errors is: ", err)
+		return 0, 0, 0, 0
+	}
+
+	internalGetBounds(int32(xid), hwnd)
+}
+
 // ActivePIDC active the window by PID,
 // If args[0] > 0 on the unix platform via a xid to active
 func ActivePIDC(pid int32, args ...int) {
@@ -73,6 +100,7 @@ func ActivePID(pid int32, args ...int) error {
 		return nil
 	}
 
+	// get xid from pid
 	xid, err := GetXidFromPid(xu, pid)
 	if err != nil {
 		return err
@@ -103,5 +131,5 @@ func GetXidFromPid(xu *xgbutil.XUtil, pid int32) (xproto.Window, error) {
 		}
 	}
 
-	return 0, errors.New("failed to find a window with a matching pid")
+	return 0, errors.New("failed to find a window with a matching pid.")
 }
