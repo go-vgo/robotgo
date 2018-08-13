@@ -88,7 +88,7 @@ Bounds get_client(uintptr pid, uintptr isHwnd){
 
 	#if defined(IS_MACOSX)
 
-		return GetBounds(pid, isHwnd);
+		return get_bounds(pid, isHwnd);
 
 	#elif defined(USE_X11)
 
