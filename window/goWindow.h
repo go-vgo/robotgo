@@ -20,33 +20,12 @@ int show_alert(const char *title, const char *msg,
 	return alert;
 }
 
-intptr scaleX(){
-	#if defined(IS_MACOSX)
-		return 0;
-	#elif defined(USE_X11)
-		return 0;
-	#elif defined(IS_WINDOWS)
-		// Get desktop dc
-		HDC desktopDc = GetDC(NULL);
-		// Get native resolution
-		intptr horizontalDPI = GetDeviceCaps(desktopDc, LOGPIXELSX);
-		// intptr verticalDPI = GetDeviceCaps(desktopDc, LOGPIXELSY);
-		return horizontalDPI;
-	#endif
+intptr scale_x(){
+	return scaleX();
 }
 
-intptr scaleY(){
-	#if defined(IS_MACOSX)
-		return 0;
-	#elif defined(USE_X11)
-		return 0;
-	#elif defined(IS_WINDOWS)
-		// Get desktop dc
-		HDC desktopDc = GetDC(NULL);
-		// Get native resolution
-		intptr verticalDPI = GetDeviceCaps(desktopDc, LOGPIXELSY);
-		return verticalDPI;
-	#endif
+intptr scale_y(){
+	return scaleY();
 }
 
 bool is_valid(){

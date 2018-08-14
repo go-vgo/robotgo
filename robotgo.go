@@ -194,12 +194,12 @@ func GetPixelColor(x, y int) string {
 
 // ScaleX get primary display horizontal DPI scale factor
 func ScaleX() int {
-	return int(C.scaleX())
+	return int(C.scale_x())
 }
 
 // ScaleY get primary display vertical DPI scale factor
 func ScaleY() int {
-	return int(C.scaleY())
+	return int(C.scale_y())
 }
 
 // GetScreenSize get the screen size
@@ -1548,6 +1548,6 @@ func ActiveName(name string) error {
 
 // Kill kill the process by PID
 func Kill(pid int32) error {
-	ps := os.Process{Pid: int(pid)}
+	ps := os.Process{Pid: int(pid)}	
 	return ps.Kill()
 }

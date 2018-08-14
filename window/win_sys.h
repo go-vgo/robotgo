@@ -1,5 +1,35 @@
 // #include "../base/os.h"
+
 Bounds get_client(uintptr pid, uintptr isHwnd);
+
+intptr scaleX(){
+	#if defined(IS_MACOSX)
+		return 0;
+	#elif defined(USE_X11)
+		return 0;
+	#elif defined(IS_WINDOWS)
+		// Get desktop dc
+		HDC desktopDc = GetDC(NULL);
+		// Get native resolution
+		intptr horizontalDPI = GetDeviceCaps(desktopDc, LOGPIXELSX);
+		// intptr verticalDPI = GetDeviceCaps(desktopDc, LOGPIXELSY);
+		return horizontalDPI;
+	#endif
+}
+
+intptr scaleY(){
+	#if defined(IS_MACOSX)
+		return 0;
+	#elif defined(USE_X11)
+		return 0;
+	#elif defined(IS_WINDOWS)
+		// Get desktop dc
+		HDC desktopDc = GetDC(NULL);
+		// Get native resolution
+		intptr verticalDPI = GetDeviceCaps(desktopDc, LOGPIXELSY);
+		return verticalDPI;
+	#endif
+}
 
 Bounds get_bounds(uintptr pid, uintptr isHwnd){
 	// Check if the window is valid
@@ -8,40 +38,41 @@ Bounds get_bounds(uintptr pid, uintptr isHwnd){
 
     #if defined(IS_MACOSX)
 
-        // Bounds bounds;
-        AXValueRef axp = NULL;
-        AXValueRef axs = NULL;
-        AXUIElementRef AxID = AXUIElementCreateApplication(pid);
+		// Bounds bounds;
+		AXValueRef axp = NULL;
+		AXValueRef axs = NULL;
+		AXUIElementRef AxID = AXUIElementCreateApplication(pid);
 
-        // Determine the current point of the window
-        if (AXUIElementCopyAttributeValue(AxID, 
-			kAXPositionAttribute, (CFTypeRef*) &axp)
-            != kAXErrorSuccess || axp == NULL){
-            goto exit;
-        }
+		// Determine the current point of the window
+		if (AXUIElementCopyAttributeValue(
+			AxID, kAXPositionAttribute, (CFTypeRef*) &axp)
+			!= kAXErrorSuccess || axp == NULL){
+			goto exit;
+		}
 
-        // Determine the current size of the window
-        if (AXUIElementCopyAttributeValue(AxID, 
-			kAXSizeAttribute, (CFTypeRef*) &axs)
-            != kAXErrorSuccess || axs == NULL){
-            goto exit;
-        }
+		// Determine the current size of the window
+		if (AXUIElementCopyAttributeValue(
+			AxID, kAXSizeAttribute, (CFTypeRef*) &axs)
+			!= kAXErrorSuccess || axs == NULL){
+			goto exit;
+		}
 
-        CGPoint p; CGSize s;
-        // Attempt to convert both values into atomic types
-        if (AXValueGetValue(axp, kAXValueCGPointType, &p) &&
-        	AXValueGetValue(axs, kAXValueCGSizeType,  &s)){
-            bounds.X = p.x;
-            bounds.Y = p.y;
-            bounds.W = s.width;
-            bounds.H = s.height;
-        }
-
+		CGPoint p; CGSize s;
+		// Attempt to convert both values into atomic types
+		if (AXValueGetValue(axp, kAXValueCGPointType, &p) &&
+			AXValueGetValue(axs, kAXValueCGSizeType, &s)){
+			bounds.X = p.x;
+			bounds.Y = p.y;
+			bounds.W = s.width;
+			bounds.H = s.height;
+		}
+		
+		// return bounds;
 	exit:
 		if (axp != NULL) { CFRelease(axp); }
-    	if (axs != NULL) { CFRelease(axs); }
+		if (axs != NULL) { CFRelease(axs); }
 
-        return bounds;
+		return bounds;
 
     #elif defined(USE_X11)
 

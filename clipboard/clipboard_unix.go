@@ -20,8 +20,7 @@ var (
 	// Primary choose primary mode on unix
 	Primary bool
 
-	pasteCmdArgs []string
-	copyCmdArgs  []string
+	pasteCmdArgs, copyCmdArgs []string
 
 	xselPasteArgs = []string{xsel, "--output", "--clipboard"}
 	xselCopyArgs  = []string{xsel, "--input", "--clipboard"}
