@@ -100,6 +100,7 @@ png.h: No such file or directory? Please see [issues/47](https://github.com/go-v
 ```
 go get -u github.com/go-vgo/robotgo  
 ```
+Note go1.10.x C file compilation cache problem.
 
 ## [Examples:](https://github.com/go-vgo/robotgo/blob/master/examples)
 

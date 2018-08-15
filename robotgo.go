@@ -1548,6 +1548,6 @@ func ActiveName(name string) error {
 
 // Kill kill the process by PID
 func Kill(pid int32) error {
-	ps := os.Process{Pid: int(pid)}	
+	ps := os.Process{Pid: int(pid)}
 	return ps.Kill()
 }
