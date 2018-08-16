@@ -58,6 +58,9 @@ func window() {
 		if len(fpid) > 0 {
 			robotgo.ActivePID(fpid[0])
 
+			x, y, w, h := robotgo.GetBounds(fpid[0])
+			fmt.Println("GetBounds is: ", x, y, w, h)
+
 			// Windows
 			// hwnd := robotgo.FindWindow("google")
 			// hwnd := robotgo.GetHWND()
