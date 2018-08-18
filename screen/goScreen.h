@@ -62,29 +62,9 @@ MMRGBHex get_px_color(size_t x, size_t y){
 }
 
 char* get_pixel_color(size_t x, size_t y){
-	MMBitmapRef bitmap;
-	MMRGBHex color;
+	MMRGBHex color = get_px_color(x, y);
 
-	if (!pointVisibleOnMainDisplay(MMPointMake(x, y))){
-		// return 1;
-		return "screen's dimensions.";
-	}
-
-	bitmap = copyMMBitmapFromDisplayInRect(MMRectMake(x, y, 1, 1));
-	// bitmap = MMRectMake(x, y, 1, 1);
-
-	color = MMRGBHexAtPoint(bitmap, 0, 0);
-
-	char hex[7];
-	padHex(color, hex);
-	destroyMMBitmap(bitmap);
-
-	// printf("%s\n", hex);
-	// return 0;
-
-	char* s = (char*)calloc(100, sizeof(char*));
-    if(s)strcpy(s, hex);
-
+	char* s = pad_hex(color);
 	return s;
 }
 
