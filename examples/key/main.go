@@ -28,6 +28,8 @@ func key() {
 	robotgo.TypeString("留给真爱你的人")
 	robotgo.MicroSleep(1)
 
+	robotgo.TypeStr("山达尔星新星军团, galaxy. こんにちは世界.")
+	robotgo.Sleep(1)
 	robotgo.TypeStr("所以, 你好, 再见")
 	robotgo.Sleep(1)
 
