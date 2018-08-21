@@ -549,7 +549,29 @@ void CloseWin(void){
 #endif
 }
 
-char *GetTitle(){
+char* get_main_title(){
+	get_title_by_hand(mData);
+}
+
+char* get_title_by_pid(uintptr pid, uintptr isHwnd){
+	MData m_data;
+	
+	#if defined(IS_MACOSX)
+		m_data.AxID = AXUIElementCreateApplication(pid);
+	#elif defined(USE_X11)
+		m_data.XWin = (Window)pid;
+	#elif defined(IS_WINDOWS)
+		if (isHwnd == 0) {
+			m_data.HWnd= GetHwndByPId(pid);
+		} else {
+			m_data.HWnd = (HWND)pid;
+		}
+	#endif
+
+	get_title_by_hand(m_data);
+}
+
+char* get_title_by_hand(MData m_data){
 	// Check if the window is valid
 	if (!IsValid()) {return "IsValid failed.";}
 
@@ -558,7 +580,7 @@ char *GetTitle(){
 	CFStringRef data = NULL;
 
 	// Determine the current title of the window
-	if (AXUIElementCopyAttributeValue(mData.AxID,
+	if (AXUIElementCopyAttributeValue(m_data.AxID,
 		kAXTitleAttribute, (CFTypeRef*) &data)
 		== kAXErrorSuccess && data != NULL) {
 		char conv[512];
@@ -581,7 +603,7 @@ char *GetTitle(){
 	XDismissErrors();
 
 	// Get window title (UTF-8)
-	result = GetWindowProperty(mData, WM_NAME,NULL);
+	result = GetWindowProperty(m_data, WM_NAME,NULL);
 
 	// Check result value
 	if (result != NULL) {
@@ -593,7 +615,7 @@ char *GetTitle(){
 	}
 
 	// Get window title (ASCII)
-	result = GetWindowProperty(mData, XA_WM_NAME,NULL);
+	result = GetWindowProperty(m_data, XA_WM_NAME,NULL);
 
 	// Check result value
 	if (result != NULL) {
@@ -608,8 +630,8 @@ char *GetTitle(){
 #elif defined(IS_WINDOWS)
 
 	return GetWindowText(
-		mData.HWnd, mData.Title, 512) > 0 ? 
-		mData.Title : "";
+		m_data.HWnd, m_data.Title, 512) > 0 ? 
+		m_data.Title : "";
 	// return GetWindowText
 	// 	(mData.HWnd, name, 512) > 0 ?
 	// 	_UTF8Encode(name) : "null";
