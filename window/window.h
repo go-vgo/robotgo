@@ -12,6 +12,7 @@
 // #include <stdlib.h>
 #include "process.h"
 #include "pub.h"
+#include "win32.h"
 
 bool setHandle(uintptr handle);
 bool IsValid();
@@ -45,6 +46,26 @@ void initWindow(uintptr handle){
 #endif
 
 	setHandle(handle);
+}
+
+MData set_hand_pid(uintptr pid, uintptr isHwnd){
+	MData win;
+
+	#if defined(IS_MACOSX)
+		// Handle to a AXUIElementRef
+		win.AxID = AXUIElementCreateApplication(pid);
+	#elif defined(USE_X11)
+		win.XWin = (Window)pid;  // Handle to an X11 window
+	#elif defined(IS_WINDOWS)
+		// win.HWnd = (HWND)pid;		// Handle to a window HWND
+		if (isHwnd == 0) {
+			win.HWnd = GetHwndByPId(pid);
+		} else {
+			win.HWnd = (HWND)pid;
+		}
+	#endif
+
+	return win;
 }
 
 bool IsValid(){
@@ -550,31 +571,18 @@ void CloseWin(void){
 }
 
 char* get_main_title(){
-	get_title_by_hand(mData);
+	return get_title_by_hand(mData);
 }
 
 char* get_title_by_pid(uintptr pid, uintptr isHwnd){
-	MData win;
-	
-	#if defined(IS_MACOSX)
-		win.AxID = AXUIElementCreateApplication(pid);
-	#elif defined(USE_X11)
-		win.XWin = (Window)pid;
-	#elif defined(IS_WINDOWS)
-		if (isHwnd == 0) {
-			win.HWnd = GetHwndByPId(pid);
-		} else {
-			win.HWnd = (HWND)pid;
-		}
-	#endif
-
-	get_title_by_hand(win);
+	MData win = set_hand_pid(pid, isHwnd);
+  	return get_title_by_hand(win);
 }
 
 char* get_title_by_hand(MData m_data){
 	// Check if the window is valid
 	if (!IsValid()) {return "IsValid failed.";}
-	
+
 #if defined(IS_MACOSX)
 
 	CFStringRef data = NULL;

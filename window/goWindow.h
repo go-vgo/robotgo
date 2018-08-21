@@ -10,7 +10,6 @@
 
 #include "alert_c.h"
 #include "window.h"
-#include "win32.h"
 #include "win_sys.h"
 
 int show_alert(const char *title, const char *msg,
@@ -87,6 +86,7 @@ bool set_handle(uintptr handle){
 
 uintptr get_handle(){
 	MData mData = GetActive();
+
 	#if defined(IS_MACOSX)
 		return (uintptr)mData.CgID;
 	#elif defined(USE_X11)
@@ -106,21 +106,7 @@ void set_active(const MData win){
 }
 
 void active_PID(uintptr pid, uintptr isHwnd){
-	MData win;
-	#if defined(IS_MACOSX)
-		// Handle to a AXUIElementRef
-		win.AxID = AXUIElementCreateApplication(pid);
-	#elif defined(USE_X11)
-		win.XWin = (Window)pid;		// Handle to an X11 window
-	#elif defined(IS_WINDOWS)
-		// win.HWnd = (HWND)pid;		// Handle to a window HWND
-		if (isHwnd == 0) {
-			win.HWnd = GetHwndByPId(pid);
-		} else {
-			win.HWnd = (HWND)pid;
-		}
-	#endif
-
+	MData win = set_hand_pid(pid, isHwnd);
 	SetActive(win);
 }
 
