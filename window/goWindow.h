@@ -129,8 +129,8 @@ MData get_active(){
 	return mdata;
 }
 
-char* get_title(){
-	char* title = GetTitle();
+char* get_title(uintptr pid, uintptr isHwnd){
+	char* title = get_title_by_pid(pid, isHwnd);
 	// printf("title::::%s\n", title );
 	return title;
 }

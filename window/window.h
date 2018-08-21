@@ -18,6 +18,7 @@ bool IsValid();
 bool IsAxEnabled(bool options);
 MData GetActive(void);
 void initWindow();
+char* get_title_by_hand(MData m_data);
 
 //int findwindow()
 
@@ -545,7 +546,6 @@ void CloseWin(void){
 #elif defined(IS_WINDOWS)
 
 	PostMessage(mData.HWnd, WM_CLOSE, 0, 0);
-
 #endif
 }
 
@@ -554,27 +554,27 @@ char* get_main_title(){
 }
 
 char* get_title_by_pid(uintptr pid, uintptr isHwnd){
-	MData m_data;
+	MData win;
 	
 	#if defined(IS_MACOSX)
-		m_data.AxID = AXUIElementCreateApplication(pid);
+		win.AxID = AXUIElementCreateApplication(pid);
 	#elif defined(USE_X11)
-		m_data.XWin = (Window)pid;
+		win.XWin = (Window)pid;
 	#elif defined(IS_WINDOWS)
 		if (isHwnd == 0) {
-			m_data.HWnd= GetHwndByPId(pid);
+			win.HWnd = GetHwndByPId(pid);
 		} else {
-			m_data.HWnd = (HWND)pid;
+			win.HWnd = (HWND)pid;
 		}
 	#endif
 
-	get_title_by_hand(m_data);
+	get_title_by_hand(win);
 }
 
 char* get_title_by_hand(MData m_data){
 	// Check if the window is valid
 	if (!IsValid()) {return "IsValid failed.";}
-
+	
 #if defined(IS_MACOSX)
 
 	CFStringRef data = NULL;
