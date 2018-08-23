@@ -1385,10 +1385,23 @@ func GetBHandle() int {
 }
 
 // GetTitle get the window title
-func GetTitle() string {
-	title := C.get_title()
+func GetTitle(args ...int32) string {
+	if len(args) <= 0 {
+		title := C.get_main_title()
+		gtittle := C.GoString(title)
+		return gtittle
+	}
+
+	var hwnd, isHwnd int32
+	if len(args) > 0 {
+		hwnd = args[0]
+	}
+	if len(args) > 1 {
+		isHwnd = args[1]
+	}
+	title := C.get_title(C.uintptr(hwnd), C.uintptr(isHwnd))
 	gtittle := C.GoString(title)
-	// fmt.Println("title...", gtittle)
+
 	return gtittle
 }
 

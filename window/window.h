@@ -12,12 +12,14 @@
 // #include <stdlib.h>
 #include "process.h"
 #include "pub.h"
+#include "win32.h"
 
 bool setHandle(uintptr handle);
 bool IsValid();
 bool IsAxEnabled(bool options);
 MData GetActive(void);
 void initWindow();
+char* get_title_by_hand(MData m_data);
 
 //int findwindow()
 
@@ -44,6 +46,26 @@ void initWindow(uintptr handle){
 #endif
 
 	setHandle(handle);
+}
+
+MData set_hand_pid(uintptr pid, uintptr isHwnd){
+	MData win;
+
+	#if defined(IS_MACOSX)
+		// Handle to a AXUIElementRef
+		win.AxID = AXUIElementCreateApplication(pid);
+	#elif defined(USE_X11)
+		win.XWin = (Window)pid;  // Handle to an X11 window
+	#elif defined(IS_WINDOWS)
+		// win.HWnd = (HWND)pid;		// Handle to a window HWND
+		if (isHwnd == 0) {
+			win.HWnd = GetHwndByPId(pid);
+		} else {
+			win.HWnd = (HWND)pid;
+		}
+	#endif
+
+	return win;
 }
 
 bool IsValid(){
@@ -545,11 +567,22 @@ void CloseWin(void){
 #elif defined(IS_WINDOWS)
 
 	PostMessage(mData.HWnd, WM_CLOSE, 0, 0);
-
 #endif
 }
 
-char *GetTitle(){
+char* get_main_title(){
+	// Check if the window is valid
+	if (!IsValid()) {return "IsValid failed.";}
+	
+	return get_title_by_hand(mData);
+}
+
+char* get_title_by_pid(uintptr pid, uintptr isHwnd){
+	MData win = set_hand_pid(pid, isHwnd);
+  	return get_title_by_hand(win);
+}
+
+char* get_title_by_hand(MData m_data){
 	// Check if the window is valid
 	if (!IsValid()) {return "IsValid failed.";}
 
@@ -558,7 +591,7 @@ char *GetTitle(){
 	CFStringRef data = NULL;
 
 	// Determine the current title of the window
-	if (AXUIElementCopyAttributeValue(mData.AxID,
+	if (AXUIElementCopyAttributeValue(m_data.AxID,
 		kAXTitleAttribute, (CFTypeRef*) &data)
 		== kAXErrorSuccess && data != NULL) {
 		char conv[512];
@@ -581,7 +614,7 @@ char *GetTitle(){
 	XDismissErrors();
 
 	// Get window title (UTF-8)
-	result = GetWindowProperty(mData, WM_NAME,NULL);
+	result = GetWindowProperty(m_data, WM_NAME,NULL);
 
 	// Check result value
 	if (result != NULL) {
@@ -593,7 +626,7 @@ char *GetTitle(){
 	}
 
 	// Get window title (ASCII)
-	result = GetWindowProperty(mData, XA_WM_NAME,NULL);
+	result = GetWindowProperty(m_data, XA_WM_NAME,NULL);
 
 	// Check result value
 	if (result != NULL) {
@@ -608,8 +641,8 @@ char *GetTitle(){
 #elif defined(IS_WINDOWS)
 
 	return GetWindowText(
-		mData.HWnd, mData.Title, 512) > 0 ? 
-		mData.Title : "";
+		m_data.HWnd, m_data.Title, 512) > 0 ? 
+		m_data.Title : "";
 	// return GetWindowText
 	// 	(mData.HWnd, name, 512) > 0 ?
 	// 	_UTF8Encode(name) : "null";
