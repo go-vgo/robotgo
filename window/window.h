@@ -571,6 +571,9 @@ void CloseWin(void){
 }
 
 char* get_main_title(){
+	// Check if the window is valid
+	if (!IsValid()) {return "IsValid failed.";}
+	
 	return get_title_by_hand(mData);
 }
 
