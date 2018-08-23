@@ -1358,8 +1358,21 @@ func MaxWindow(pid int32, args ...interface{}) {
 }
 
 // CloseWindow close the window
-func CloseWindow() {
-	C.close_window()
+func CloseWindow(args ...int32) {
+	if len(args) <= 0 {
+		C.close_main_window()
+		return
+	}
+
+	var hwnd, isHwnd int32
+	if len(args) > 0 {
+		hwnd = args[0]
+	}
+	if len(args) > 1 {
+		isHwnd = args[1]
+	}
+
+	C.close_window(C.uintptr(hwnd), C.uintptr(isHwnd))
 }
 
 // SetHandle set the window handle
