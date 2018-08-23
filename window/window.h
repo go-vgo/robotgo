@@ -20,6 +20,7 @@ bool IsAxEnabled(bool options);
 MData GetActive(void);
 void initWindow();
 char* get_title_by_hand(MData m_data);
+void close_window_by_Id(MData m_data);
 
 //int findwindow()
 
@@ -538,15 +539,28 @@ void SetTopMost(bool state){
 #endif
 }
 
+void close_main_window (){
+   // Check if the window is valid
+	if (!IsValid()) { return; }
+
+	close_window_by_Id(mData);
+}
+
+void close_window_by_PId(uintptr pid, uintptr isHwnd){
+	MData win = set_hand_pid(pid, isHwnd);
+	close_window_by_Id(win);
+}
+
+
 // CloseWindow
-void CloseWin(void){
+void close_window_by_Id(MData m_data){
 	// Check window validity
 	if (!IsValid()) {return;}
 #if defined(IS_MACOSX)
 	AXUIElementRef b = NULL;
 
 	// Retrieve the close button of this window
-	if (AXUIElementCopyAttributeValue(mData.AxID,
+	if (AXUIElementCopyAttributeValue(m_data.AxID,
 		kAXCloseButtonAttribute, (CFTypeRef*) &b)
 		== kAXErrorSuccess && b != NULL) {
 		// Simulate button press on the close button
@@ -562,11 +576,11 @@ void CloseWin(void){
 	XDismissErrors();
 
 	// Close the window
-	XDestroyWindow(rDisplay, mData.XWin);
+	XDestroyWindow(rDisplay, m_data.XWin);
 
 #elif defined(IS_WINDOWS)
 
-	PostMessage(mData.HWnd, WM_CLOSE, 0, 0);
+	PostMessage(m_data.HWnd, WM_CLOSE, 0, 0);
 #endif
 }
 
