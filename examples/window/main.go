@@ -58,6 +58,9 @@ func window() {
 		if len(fpid) > 0 {
 			robotgo.ActivePID(fpid[0])
 
+			tl := robotgo.GetTitle(fpid[0])
+			fmt.Println("pid[0] title is: ", tl)
+
 			x, y, w, h := robotgo.GetBounds(fpid[0])
 			fmt.Println("GetBounds is: ", x, y, w, h)
 
