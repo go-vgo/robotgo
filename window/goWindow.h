@@ -75,8 +75,8 @@ void max_window(uintptr pid, bool state, uintptr isHwnd){
 	#endif
 }
 
-void close_window(void){
-	CloseWin();
+void close_window(uintptr pid, uintptr isHwnd){
+	close_window_by_PId(pid, isHwnd);
 }
 
 bool set_handle(uintptr handle){
