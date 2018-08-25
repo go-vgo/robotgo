@@ -49,7 +49,7 @@ void initWindow(uintptr handle){
 	setHandle(handle);
 }
 
-MData set_hand_pid(uintptr pid, uintptr isHwnd){
+MData set_handle_pid(uintptr pid, uintptr isHwnd){
 	MData win;
 
 	#if defined(IS_MACOSX)
@@ -547,7 +547,7 @@ void close_main_window (){
 }
 
 void close_window_by_PId(uintptr pid, uintptr isHwnd){
-	MData win = set_hand_pid(pid, isHwnd);
+	MData win = set_handle_pid(pid, isHwnd);
 	close_window_by_Id(win);
 }
 
@@ -592,7 +592,7 @@ char* get_main_title(){
 }
 
 char* get_title_by_pid(uintptr pid, uintptr isHwnd){
-	MData win = set_hand_pid(pid, isHwnd);
+	MData win = set_handle_pid(pid, isHwnd);
   	return get_title_by_hand(win);
 }
 

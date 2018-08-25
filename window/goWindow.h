@@ -106,7 +106,7 @@ void set_active(const MData win){
 }
 
 void active_PID(uintptr pid, uintptr isHwnd){
-	MData win = set_hand_pid(pid, isHwnd);
+	MData win = set_handle_pid(pid, isHwnd);
 	SetActive(win);
 }
 

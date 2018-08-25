@@ -1381,6 +1381,16 @@ func SetHandle(hwnd int) {
 	C.set_handle(chwnd)
 }
 
+// SetHandlePid set the window handle by pid
+func SetHandlePid(pid int32, args ...int32) C.MData {
+	var isHwnd int32
+	if len(args) > 0 {
+		isHwnd = args[0]
+	}
+
+	return C.set_handle_pid(C.uintptr(pid), C.uintptr(isHwnd))
+}
+
 // GetHandle get the window handle
 func GetHandle() int {
 	hwnd := C.get_handle()

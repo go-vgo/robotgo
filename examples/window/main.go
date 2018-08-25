@@ -69,6 +69,7 @@ func window() {
 			// hwnd := robotgo.GetHWND()
 			robotgo.MinWindow(fpid[0])
 			robotgo.MaxWindow(fpid[0])
+			robotgo.CloseWindow(fpid[0])
 
 			robotgo.Kill(fpid[0])
 		}
