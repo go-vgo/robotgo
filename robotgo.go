@@ -1382,7 +1382,17 @@ func SetHandle(hwnd int) {
 }
 
 // SetHandlePid set the window handle by pid
-func SetHandlePid(pid int32, args ...int32) C.MData {
+func SetHandlePid(pid int32, args ...int32) {
+	var isHwnd int32
+	if len(args) > 0 {
+		isHwnd = args[0]
+	}
+
+	C.set_handle_pid_mData(C.uintptr(pid), C.uintptr(isHwnd))
+}
+
+// GetHandPid get handle mdata by pid
+func GetHandPid(pid int32, args ...int32) C.MData {
 	var isHwnd int32
 	if len(args) > 0 {
 		isHwnd = args[0]

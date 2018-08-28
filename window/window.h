@@ -69,6 +69,11 @@ MData set_handle_pid(uintptr pid, uintptr isHwnd){
 	return win;
 }
 
+void set_handle_pid_mData(uintptr pid, uintptr isHwnd){
+	MData win = set_handle_pid(pid, isHwnd);
+	mData = win;
+}
+
 bool IsValid(){
 	initWindow(initHandle);
 	if (!IsAxEnabled(true)) {
