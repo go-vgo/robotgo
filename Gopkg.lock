@@ -42,7 +42,13 @@
   branch = "master"
   name = "github.com/lxn/win"
   packages = ["."]
-  revision = "7e1250ba2e7749fb9eb865da9ee93fb5a2fe73f1"
+  revision = "785c4956069227e430929ac27bfa26af2ff25dfb"
+
+[[projects]]
+  name = "github.com/otiai10/gosseract"
+  packages = ["."]
+  revision = "b026a6fd291f00736db60738f4e83a79d26359cb"
+  version = "v2.2.0"
 
 [[projects]]
   name = "github.com/shirou/gopsutil"
@@ -54,8 +60,8 @@
     "net",
     "process"
   ]
-  revision = "4a180b209f5f494e5923cfce81ea30ba23915877"
-  version = "v2.18.06"
+  revision = "8048a2e9c5773235122027dd585cf821b2af1249"
+  version = "v2.18.07"
 
 [[projects]]
   branch = "master"
@@ -82,11 +88,11 @@
     "unix",
     "windows"
   ]
-  revision = "bd9dbc187b6e1dacfdd2722a87e83093c2d7bd6e"
+  revision = "49385e6e15226593f68b26af201feec29d5bba22"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "f6de864b2bfc793263e5bb920647127b4fbbca0daac0da4f8951f5844570f035"
+  inputs-digest = "0fd06dbf29cbad04968ef5a7c12e61c18ab8595bcb2d30c9f35698f0873916d1"
   solver-name = "gps-cdcl"
   solver-version = 1

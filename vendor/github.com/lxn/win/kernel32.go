@@ -57,7 +57,9 @@ var (
 	libkernel32 uintptr
 
 	// Functions
+	activateActCtx                     uintptr
 	closeHandle                        uintptr
+	createActCtx                       uintptr
 	fileTimeToSystemTime               uintptr
 	getConsoleTitle                    uintptr
 	getConsoleWindow                   uintptr
@@ -89,6 +91,7 @@ type (
 	LCID      uint32
 	LCTYPE    uint32
 	LANGID    uint16
+	HMODULE   uintptr
 )
 
 type FILETIME struct {
@@ -116,12 +119,26 @@ type SYSTEMTIME struct {
 	WMilliseconds uint16
 }
 
+type ACTCTX struct {
+	size                  uint32
+	Flags                 uint32
+	Source                *uint16 // UTF-16 string
+	ProcessorArchitecture uint16
+	LangID                uint16
+	AssemblyDirectory     *uint16 // UTF-16 string
+	ResourceName          *uint16 // UTF-16 string
+	ApplicationName       *uint16 // UTF-16 string
+	Module                HMODULE
+}
+
 func init() {
 	// Library
 	libkernel32 = MustLoadLibrary("kernel32.dll")
 
 	// Functions
+	activateActCtx = MustGetProcAddress(libkernel32, "ActivateActCtx")
 	closeHandle = MustGetProcAddress(libkernel32, "CloseHandle")
+	createActCtx = MustGetProcAddress(libkernel32, "CreateActCtxW")
 	fileTimeToSystemTime = MustGetProcAddress(libkernel32, "FileTimeToSystemTime")
 	getConsoleTitle = MustGetProcAddress(libkernel32, "GetConsoleTitleW")
 	getConsoleWindow = MustGetProcAddress(libkernel32, "GetConsoleWindow")
@@ -145,6 +162,15 @@ func init() {
 	systemTimeToFileTime = MustGetProcAddress(libkernel32, "SystemTimeToFileTime")
 }
 
+func ActivateActCtx(ctx HANDLE) (uintptr, bool) {
+	var cookie uintptr
+	ret, _, _ := syscall.Syscall(activateActCtx, 2,
+		uintptr(ctx),
+		uintptr(unsafe.Pointer(&cookie)),
+		0)
+	return cookie, ret != 0
+}
+
 func CloseHandle(hObject HANDLE) bool {
 	ret, _, _ := syscall.Syscall(closeHandle, 1,
 		uintptr(hObject),
@@ -152,6 +178,19 @@ func CloseHandle(hObject HANDLE) bool {
 		0)
 
 	return ret != 0
+}
+
+func CreateActCtx(ctx *ACTCTX) HANDLE {
+	if ctx != nil {
+		ctx.size = uint32(unsafe.Sizeof(*ctx))
+	}
+	ret, _, _ := syscall.Syscall(
+		createActCtx,
+		1,
+		uintptr(unsafe.Pointer(ctx)),
+		0,
+		0)
+	return HANDLE(ret)
 }
 
 func FileTimeToSystemTime(lpFileTime *FILETIME, lpSystemTime *SYSTEMTIME) bool {
