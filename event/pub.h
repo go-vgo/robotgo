@@ -9,7 +9,7 @@
 // except according to those terms.
 //
 // The hook directory link from the https://github.com/robotn/gohook/
-// event/hook, you need to follow the relevant agreement and LICENSE.
+// hook, you need to follow the relevant agreement and LICENSE.
 // See the LICENSE file at the top-level directory of this distribution and at
 // https://github.com/robotn/gohook/blob/master/LICENSE
 
@@ -51,9 +51,9 @@ int cstatus = 1;
 
 
 int stop_event();
-int add_event(char *aevent);
-// int allEvent(char *aevent);
-int allEvent(char *aevent, int vcode[], int size);
+int add_event(char *key_event);
+// int allEvent(char *key_event);
+int allEvent(char *key_event, int vcode[], int size);
 
 // NOTE: The following callback executes on the same thread that hook_run() is called
 // from.

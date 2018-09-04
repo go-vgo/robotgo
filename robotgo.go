@@ -1198,7 +1198,7 @@ func GetImgSize(imgPath string) (int, int) {
 //
 // mouse arguments: mleft, mright, wheelDown, wheelUp,
 // wheelLeft, wheelRight.
-func AddEvent(aeve string) int {
+func AddEvent(key string) int {
 	keycode := Map{
 		"f1":  "59",
 		"f2":  "60",
@@ -1233,19 +1233,19 @@ func AddEvent(aeve string) int {
 	)
 
 	for i := 0; i < len(mArr); i++ {
-		if aeve == mArr[i] {
+		if key == mArr[i] {
 			mouseBool = true
 		}
 	}
 
-	if len(aeve) > 1 && !mouseBool {
-		keve = keycode[aeve].(string)
+	if len(key) > 1 && !mouseBool {
+		keve = keycode[key].(string)
 		cs = C.CString(keve)
 	} else {
-		cs = C.CString(aeve)
+		cs = C.CString(key)
 	}
 
-	// cs := C.CString(aeve)
+	// cs := C.CString(key)
 	eve := C.add_event(cs)
 	// fmt.Println("event@@", eve)
 	geve := int(eve)
