@@ -25,6 +25,7 @@ RobotGo supports Mac, Windows, and Linux(X11).
 - [Update](#update)
 - [Examples](#examples)
 - [Cross-Compiling](#crosscompiling)
+- [Authors](#authors)
 - [Plans](#plans)
 - [Donate](#donate)
 - [Contributors](#contributors)
@@ -280,6 +281,11 @@ GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64
 // CC=mingw-w64\x86_64-7.2.0-win32-seh-rt_v5-rev1\mingw64\bin\gcc.exe 
 // CXX=mingw-w64\x86_64-7.2.0-win32-seh-rt_v5-rev1\mingw64\bin\g++.exe
 ```
+
+## Authors
+* [The author is vz](https://github.com/vcaesar)
+* [Maintainers](https://github.com/orgs/go-vgo/people)
+* [Contributors](https://github.com/go-vgo/robotgo/graphs/contributors)
 
 ## Plans
 - Update Find an image on screen, read pixels from an image
