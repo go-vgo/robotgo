@@ -257,6 +257,8 @@ func GetXDisplayName() string {
 
 // CaptureScreen capture the screen return bitmap(c struct),
 // use `defer robotgo.FreeBitmap(bitmap)` to free the bitmap
+//
+// robotgo.CaptureScreen(x, y, w, h int)
 func CaptureScreen(args ...int) C.MMBitmapRef {
 	var x, y, w, h C.size_t
 
@@ -477,6 +479,7 @@ func ScrollMouse(x int, direction string) {
 }
 
 // Scroll scroll the mouse with x, y
+//
 // robotgo.Scroll(x, y, msDelay int)
 func Scroll(x, y int, args ...int) {
 	var msDelay = 10
@@ -658,7 +661,8 @@ func inputUTF(str string) {
 }
 
 // TypeStr send a string, support UTF-8
-// TypeStr(string: The string to send, float64: microsleep time)
+//
+// robotgo.TypeStr(string: The string to send, float64: microsleep time)
 func TypeStr(str string, args ...float64) {
 	var tm = 7.0
 	if len(args) > 0 {
@@ -1008,6 +1012,7 @@ func BitmapStr(str string) C.MMBitmapRef {
 }
 
 // SaveBitmap save the bitmap to image
+//
 // robotgo.SaveBimap(bitmap C.MMBitmapRef, path string, type int)
 func SaveBitmap(bitmap C.MMBitmapRef, gpath string, args ...int) string {
 	var mtype C.uint16_t = 1
