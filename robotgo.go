@@ -468,15 +468,16 @@ func SetMouseDelay(delay int) {
 }
 
 // ScrollMouse scroll the mouse
-func ScrollMouse(x int, y string) {
+func ScrollMouse(x int, direction string) {
 	cx := C.size_t(x)
-	cy := C.CString(y)
+	cy := C.CString(direction)
 	C.scroll_mouse(cx, cy)
 
 	defer C.free(unsafe.Pointer(cy))
 }
 
 // Scroll scroll the mouse with x, y
+// robotgo.Scroll(x, y, msDelay int)
 func Scroll(x, y int, args ...int) {
 	var msDelay = 10
 	if len(args) > 0 {
