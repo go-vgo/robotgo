@@ -398,11 +398,15 @@ func GetMousePos() (int, int) {
 }
 
 // MouseClick click the mouse
+//
+// robotgo.MouseClick(button string, double bool)
 func MouseClick(args ...interface{}) {
 	Click(args...)
 }
 
 // Click click the mouse
+//
+// robotgo.Click(button string, double bool)
 func Click(args ...interface{}) {
 	var (
 		button C.MMMouseButton = C.LEFT_BUTTON
