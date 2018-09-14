@@ -1045,7 +1045,9 @@ func GetPortion(bit C.MMBitmapRef, x, y, w, h int) C.MMBitmapRef {
 	return pos
 }
 
-// Convert convert bitmap
+// Convert convert the bitmap
+//
+// robotgo.Convert(opath, spath string, type int)
 func Convert(opath, spath string, args ...int) {
 	var mtype = 1
 	if len(args) > 0 {
@@ -1098,6 +1100,8 @@ func GetColor(bitmap C.MMBitmapRef, x, y int) C.MMRGBHex {
 }
 
 // FindColor find bitmap color
+//
+// robotgo.FindColor(color CHex, bitmap C.MMBitmapRef, tolerance float)
 func FindColor(color CHex, args ...interface{}) (int, int) {
 	var (
 		tolerance C.float = 0.01
