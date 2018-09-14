@@ -360,6 +360,8 @@ func MoveMouseSmooth(x, y int, args ...interface{}) bool {
 
 // MoveSmooth move the mouse smooth,
 // moves mouse to x, y human like, with the mouse button up.
+//
+// robotgo.MoveSmooth(x, y int, low, high float64, mouseDelay int)
 func MoveSmooth(x, y int, args ...interface{}) bool {
 	cx := C.size_t(x)
 	cy := C.size_t(y)
@@ -434,6 +436,8 @@ func Click(args ...interface{}) {
 }
 
 // MoveClick move and click the mouse
+//
+// robotgo.MoveClick(x, y int, button string, double bool)
 func MoveClick(x, y int, args ...interface{}) {
 	MoveMouse(x, y)
 	MouseClick(args...)
