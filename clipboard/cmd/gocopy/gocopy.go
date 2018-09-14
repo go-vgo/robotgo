@@ -8,7 +8,6 @@ import (
 )
 
 func main() {
-
 	out, err := ioutil.ReadAll(os.Stdin)
 	if err != nil {
 		panic(err)

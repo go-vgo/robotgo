@@ -2,7 +2,10 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// Package clipboard read/write on clipboard
+/*
+
+Package clipboard read/write on clipboard
+*/
 package clipboard
 
 // import ()
@@ -17,6 +20,7 @@ func WriteAll(text string) error {
 	return writeAll(text)
 }
 
-// Unsupported might be set true during clipboard init, to help callers decide
-// whether or not to offer clipboard options.
+// Unsupported might be set true during clipboard init,
+// to help callers decide whether or not to
+// offer clipboard options.
 var Unsupported bool
