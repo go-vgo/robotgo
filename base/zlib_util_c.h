@@ -6,8 +6,7 @@
 
 #define ZLIB_CHUNK (16 * 1024)
 
-uint8_t *zlib_decompress(const uint8_t *buf, size_t *len)
-{
+uint8_t *zlib_decompress(const uint8_t *buf, size_t *len){
 	size_t output_size = ZLIB_CHUNK;
 	uint8_t *output = malloc(output_size);
 	int err;

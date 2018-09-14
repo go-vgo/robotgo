@@ -29,8 +29,7 @@ const static int8_t b64_decode_table[256] = {
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* F0-FF */
 };
 
-uint8_t *base64decode(const uint8_t *src, const size_t buflen, size_t *retlen)
-{
+uint8_t *base64decode(const uint8_t *src, const size_t buflen, size_t *retlen){
 	int8_t digit, lastdigit;
 	size_t i, j;
 	uint8_t *decoded;
@@ -65,8 +64,7 @@ uint8_t *base64decode(const uint8_t *src, const size_t buflen, size_t *retlen)
 	return decoded; /* Must be free()'d by caller */
 }
 
-uint8_t *base64encode(const uint8_t *src, const size_t buflen, size_t *retlen)
-{
+uint8_t *base64encode(const uint8_t *src, const size_t buflen, size_t *retlen){
 	size_t i, j;
 	const size_t maxlen = (((buflen + 3) & ~3)) * 4;
 	uint8_t *encoded = malloc(maxlen + 1);

@@ -79,7 +79,7 @@ char* set_XDisplay_name(char* name){
 		setXDisplay(name);
 		return "success";
 	#else
-		return "setXDisplayName is only supported on Linux";
+		return "SetXDisplayName is only supported on Linux";
 	#endif
 }
 
@@ -91,7 +91,7 @@ char* get_XDisplay_name(){
 
 		return sd;
 	#else
-		return "getXDisplayName is only supported on Linux";
+		return "GetXDisplayName is only supported on Linux";
 	#endif
 }
 
