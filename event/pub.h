@@ -49,9 +49,11 @@ int rrevent;
 // uint16_t *cevent;
 int cstatus = 1;
 
+typedef int (*fnc2)(int); // 回调函数的名称为 fnc2，参数是 char *str
+extern int showKeyCode(int s );
 
 int stop_event();
-int add_event(char *key_event);
+int add_event_listener();
 // int allEvent(char *key_event);
 int allEvent(char *key_event, int vcode[], int size);
 

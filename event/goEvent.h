@@ -19,147 +19,57 @@
 
 #include "pub.h"
 
-
 void dispatch_proc(iohook_event * const event) {
-	char buffer[256] = { 0 };
-	size_t length = snprintf(buffer, sizeof(buffer),
-			"id=%i,when=%" PRIu64 ",mask=0x%X",
-			event->type, event->time, event->mask);
+
+    int keycode;
 
 	switch (event->type) {
 		case EVENT_KEY_PRESSED:
 			// If the escape key is pressed, naturally terminate the program.
 			if (event->data.keyboard.keycode == VC_ESCAPE) {
-				// int status = hook_stop();
-				// switch (status) {
-				// 	// System level errors.
-				// 	case IOHOOK_ERROR_OUT_OF_MEMORY:
-				// 		loggerProc(LOG_LEVEL_ERROR, "Failed to allocate memory. (%#X)", status);
-				// 		break;
 
-				// 	case IOHOOK_ERROR_X_RECORD_GET_CONTEXT:
-				// 		// NOTE This is the only platform specific error that occurs on hook_stop().
-				// 		loggerProc(LOG_LEVEL_ERROR, "Failed to get XRecord context. (%#X)", status);
-				// 		break;
-
-				// 	// Default error.
-				// 	case IOHOOK_FAILURE:
-				// 	default:
-				// 		loggerProc(LOG_LEVEL_ERROR, "An unknown hook error occurred. (%#X)", status);
-				// 		break;
-				// }
 			}
 		case EVENT_KEY_RELEASED:
-			snprintf(buffer + length, sizeof(buffer) - length,
-				",keycode=%u,rawcode=0x%X",
-				event->data.keyboard.keycode, event->data.keyboard.rawcode);
-				int akeyCode = (uint16_t) event->data.keyboard.keycode;
 
-				if (event->data.keyboard.keycode == VC_ESCAPE
-					&& atoi(cevent) == 11) {
-					int stopEvent = stop_event();
-					// printf("stop_event%d\n", stopEvent);
-					cstatus = 0;
-				}
+            keycode = (int) event->data.keyboard.keycode;
+            //printf("EVENT_KEY_RELEASED:%d\n", keycode);
+            showKeyCode(keycode);
+            //callback(keycode);
 
-				// printf("atoi(str)---%d\n", atoi(cevent));
-				if (akeyCode == atoi(cevent)) {
-					int stopEvent = stop_event();
-					// printf("%d\n", stopEvent);
-					cstatus = 0;
-				}
 			break;
 
 		case EVENT_KEY_TYPED:
-			snprintf(buffer + length, sizeof(buffer) - length,
-				",keychar=%lc,rawcode=%u",
-				(uint16_t) event->data.keyboard.keychar,
-				event->data.keyboard.rawcode);
-				
-				#ifdef  WE_REALLY_WANT_A_POINTER
-					char *buf = malloc (6);
-				#else
-					char buf[6];
-				#endif
 
-					sprintf(buf, "%lc", (uint16_t) event->data.keyboard.keychar);
+            keycode = (int) event->data.keyboard.keycode;
+            //printf("EVENT_KEY_TYPED:%d\n", keycode);
 
-				#ifdef WE_REALLY_WANT_A_POINTER
-					free (buf);
-				#endif
-
-				if (strcmp(buf, cevent) == 0) {
-					int stopEvent = stop_event();
-					// printf("%d\n", stopEvent);
-					cstatus = 0;
-				}
-				// return (char*) event->data.keyboard.keychar;
-			break;
-
-		case EVENT_MOUSE_PRESSED:
-		case EVENT_MOUSE_RELEASED:
-		case EVENT_MOUSE_CLICKED:
-		case EVENT_MOUSE_MOVED:
-		case EVENT_MOUSE_DRAGGED:
-			snprintf(buffer + length, sizeof(buffer) - length,
-				",x=%i,y=%i,button=%i,clicks=%i",
-				event->data.mouse.x, event->data.mouse.y,
-				event->data.mouse.button, event->data.mouse.clicks);
-
-				int abutton = event->data.mouse.button;
-				int aclicks = event->data.mouse.clicks;
-				int amouse = -1;
-
-				if (strcmp(cevent, "mleft") == 0) {
-					amouse = 1;
-				}
-				if (strcmp(cevent, "mright") == 0) {
-					amouse = 2;
-				}
-				if (strcmp(cevent, "wheelDown") == 0) {
-					amouse = 4;
-				}
-				if (strcmp(cevent, "wheelUp") == 0) {
-					amouse = 5;
-				}
-				if (strcmp(cevent, "wheelLeft") == 0) {
-					amouse = 6;
-				}
-				if (strcmp(cevent, "wheelRight") == 0) {
-					amouse = 7;
-				}
-				if (abutton == amouse && aclicks == 1) {
-					int stopEvent = stop_event();
-					cstatus = 0;
-				}
-
-			break;
-
-		case EVENT_MOUSE_WHEEL:
-			snprintf(buffer + length, sizeof(buffer) - length,
-				",type=%i,amount=%i,rotation=%i",
-				event->data.wheel.type, event->data.wheel.amount,
-				event->data.wheel.rotation);
 			break;
 
 		default:
 			break;
 	}
-
-	// fprintf(stdout, "----%s\n",	 buffer);
 }
 
-int add_event(char *key_event) {
-	// (uint16_t *)
-	cevent = key_event;
+int add_event_listener() {
+
+    printf("start C add_event\n");
+
+
 	// Set the logger callback for library output.
+	printf("start C hookSetlogger\n");
+
 	hookSetlogger(&loggerProc);
 
+    printf("start C hook_set_dispatch_proc\n");
 	// Set the event callback for IOhook events.
 	hook_set_dispatch_proc(&dispatch_proc);
+
+	printf("start C hook_run\n");
 	// Start the hook and block.
 	// NOTE If EVENT_HOOK_ENABLED was delivered, the status will always succeed.
 	int status = hook_run();
+
+    printf("hook_run status:%d\n", status);
 
 	switch (status) {
 		case IOHOOK_SUCCESS:
@@ -228,8 +138,6 @@ int add_event(char *key_event) {
 			break;
 	}
 
-	// return status;
-	// printf("%d\n", status);
 	return cstatus;
 }
 

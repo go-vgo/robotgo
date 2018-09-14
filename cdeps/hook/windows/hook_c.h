@@ -712,6 +712,8 @@ IOHOOK_API int hook_run() {
 		while (GetMessage(&message, (HWND) NULL, 0, 0) > 0) {
 			TranslateMessage(&message);
 			DispatchMessage(&message);
+
+			printf("&message: %s",&message);
 		}
 	}
 	else {
