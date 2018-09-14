@@ -1260,6 +1260,13 @@ func AddEvent(key string) int {
 	return geve
 }
 
+func AddEventListener() int {
+
+	C.add_event_listener()
+
+	return 1
+}
+
 // StopEvent stop event listener
 func StopEvent() {
 	C.stop_event()
