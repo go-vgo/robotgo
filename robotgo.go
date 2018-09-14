@@ -793,6 +793,8 @@ func TocharBitmap(bit C.MMBitmapRef) *C.char {
 }
 
 // GetText get the image text by tesseract ocr
+//
+// robotgo.GetText(imgPath, lang string)
 func GetText(imgPath string, args ...string) (string, error) {
 	var lang = "eng"
 
@@ -977,6 +979,8 @@ func PointInBounds(bitmap C.MMBitmapRef, x, y int) bool {
 }
 
 // OpenBitmap open the bitmap return C.MMBitmapRef
+//
+// robotgo.OpenBitmap(path string, type int)
 func OpenBitmap(gpath string, args ...int) C.MMBitmapRef {
 	path := C.CString(gpath)
 	var mtype C.uint16_t = 1
