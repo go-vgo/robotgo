@@ -24,17 +24,14 @@ package robotgo
 
 /*
 //#if defined(IS_MACOSX)
-	// #cgo darwin CFLAGS: -mmacosx-version-min=10.10 -DMACOSX_DEPLOYMENT_TARGET=10.10
 	#cgo darwin CFLAGS: -x objective-c  -Wno-deprecated-declarations
-	// #cgo darwin LDFLAGS: -mmacosx-version-min=10.10
 	#cgo darwin LDFLAGS: -framework Cocoa -framework OpenGL -framework IOKit
 	#cgo darwin LDFLAGS: -framework Carbon -framework CoreFoundation
 	#cgo darwin LDFLAGS:-L${SRCDIR}/cdeps/mac -lpng -lz
 //#elif defined(USE_X11)
 	// Drop -std=c11
 	#cgo linux CFLAGS: -I/usr/src
-	#cgo linux LDFLAGS: -L/usr/src -lpng -lz -lX11 -lXtst -lX11-xcb -lxcb
-	#cgo linux LDFLAGS: -lxcb-xkb -lxkbcommon -lxkbcommon-x11 -lm
+	#cgo linux LDFLAGS: -L/usr/src -lpng -lz -lX11 -lXtst -lm
 //#endif
 	// #cgo windows LDFLAGS: -lgdi32 -luser32 -lpng -lz
 	#cgo windows LDFLAGS: -lgdi32 -luser32
@@ -45,7 +42,7 @@ package robotgo
 #include "mouse/goMouse.h"
 #include "key/goKey.h"
 #include "bitmap/goBitmap.h"
-#include "event/goEvent.h"
+//#include "event/goEvent.h"
 #include "window/goWindow.h"
 */
 import "C"
@@ -64,6 +61,7 @@ import (
 	"os/exec"
 
 	"github.com/go-vgo/robotgo/clipboard"
+	"github.com/robotn/gohook"
 	"github.com/shirou/gopsutil/process"
 	"github.com/vcaesar/imgo"
 )
@@ -1247,8 +1245,7 @@ func AddEvent(key string) int {
 	}
 
 	var (
-		cs   *C.char
-		keve string
+		// cs   *C.char
 		mArr = []string{"mleft", "mright", "wheelDown",
 			"wheelUp", "wheelLeft", "wheelRight"}
 		mouseBool bool
@@ -1261,24 +1258,18 @@ func AddEvent(key string) int {
 	}
 
 	if len(key) > 1 && !mouseBool {
-		keve = keycode[key].(string)
-		cs = C.CString(keve)
-	} else {
-		cs = C.CString(key)
+		key = keycode[key].(string)
 	}
 
-	// cs := C.CString(key)
-	eve := C.add_event(cs)
-	// fmt.Println("event@@", eve)
-	geve := int(eve)
-	defer C.free(unsafe.Pointer(cs))
+	geve := hook.AddEvent(key)
+	// defer C.free(unsafe.Pointer(cs))
 
 	return geve
 }
 
 // StopEvent stop event listener
 func StopEvent() {
-	C.stop_event()
+	hook.StopEvent()
 }
 
 /*
