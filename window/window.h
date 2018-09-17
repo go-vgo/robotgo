@@ -659,12 +659,15 @@ char* get_title_by_hand(MData m_data){
 
 #elif defined(IS_WINDOWS)
 
-	return GetWindowText(
-		m_data.HWnd, m_data.Title, 512) > 0 ? 
-		m_data.Title : "";
-	// return GetWindowText
-	// 	(mData.HWnd, name, 512) > 0 ?
-	// 	_UTF8Encode(name) : "null";
+	if (GetWindowText(m_data.HWnd, m_data.Title, 512) > 0){
+		char* name = m_data.Title;
+
+		char* str = (char*)calloc(100, sizeof(char*));
+	    if(str)strcpy(str, name);
+		return str;
+	}
+
+	return "";
 
 #endif
 }
