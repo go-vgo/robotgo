@@ -1,1 +1,1 @@
-C language dependent package, better to compilation. You need to follow the relevant agreement and LICENSE.
+C language dependent package, better to compilation.

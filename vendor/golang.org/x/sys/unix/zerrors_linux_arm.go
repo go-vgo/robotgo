@@ -1898,6 +1898,9 @@ const (
 	STATX_TYPE                           = 0x1
 	STATX_UID                            = 0x8
 	STATX__RESERVED                      = 0x80000000
+	SYNC_FILE_RANGE_WAIT_AFTER           = 0x4
+	SYNC_FILE_RANGE_WAIT_BEFORE          = 0x1
+	SYNC_FILE_RANGE_WRITE                = 0x2
 	SYSFS_MAGIC                          = 0x62656572
 	S_BLKSIZE                            = 0x200
 	S_IEXEC                              = 0x40

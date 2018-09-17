@@ -51,6 +51,12 @@
   version = "v2.2.0"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/robotn/gohook"
+  packages = ["."]
+  revision = "3dccbf0083168096c576bf62abb3d5d4c916e2ea"
+
+[[projects]]
   name = "github.com/shirou/gopsutil"
   packages = [
     "cpu",
@@ -88,11 +94,11 @@
     "unix",
     "windows"
   ]
-  revision = "49385e6e15226593f68b26af201feec29d5bba22"
+  revision = "d0be0721c37eeb5299f245a996a483160fc36940"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "0fd06dbf29cbad04968ef5a7c12e61c18ab8595bcb2d30c9f35698f0873916d1"
+  inputs-digest = "b1299bcf48c5b674a219acd0d53d6e1dc9cd44f60a9448f74d2fb623eaf9b00a"
   solver-name = "gps-cdcl"
   solver-version = 1
