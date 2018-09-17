@@ -1,0 +1,80 @@
+# version format
+version: "{build}"
+
+# Operating system (build VM template)
+# os: Windows Server 2012 R2
+os: Visual Studio 2017
+
+# Platform.
+# platform: 
+#   - x64
+#   - x86
+
+clone_folder: c:\gopath\src\github.com\robotn\gohook
+
+# Environment variables
+environment:
+  global:
+    GOPATH: C:\gopath
+    CC: gcc.exe
+  matrix:
+    - GOARCH: amd64
+      # GOVERSION: 1.9.3
+      GETH_ARCH: amd64
+      MSYS2_ARCH: x86_64
+      MSYS2_BITS: 64
+      MSYSTEM: MINGW64
+      PATH: C:\msys64\mingw64\bin\;C:\Program Files (x86)\NSIS\;%PATH%
+    - GOARCH: 386
+      # GOVERSION: 1.9.3    
+      GETH_ARCH: 386
+      MSYS2_ARCH: i686
+      MSYS2_BITS: 32
+      MSYSTEM: MINGW32
+      PATH: C:\msys64\mingw32\bin\;C:\Program Files (x86)\NSIS\;%PATH%
+  # - COMPILER: MINGW_W64
+  #   ARCHITECTURE: x64
+  GOVERSION: 1.10.4
+  # GOPATH: c:\gopath
+
+# scripts that run after cloning repository
+# install:
+#   - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
+#   - go version
+#   - go env
+#   - gcc --version
+  # - python --version
+
+install:
+  - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
+  - git submodule update --init
+  - rmdir C:\go /s /q
+  - appveyor DownloadFile https://storage.googleapis.com/golang/go%GOVERSION%.windows-%GETH_ARCH%.zip
+  - 7z x go%GOVERSION%.windows-%GETH_ARCH%.zip -y -oC:\ > NUL
+  - go version
+  - go env
+  - gcc --version  
+
+# To run your custom scripts instead of automatic MSBuild
+build_script:
+  # We need to disable firewall - https://github.com/appveyor/ci/issues/1579#issuecomment-309830648
+  - ps: Disable-NetFirewallRule -DisplayName 'File and Printer Sharing (SMB-Out)'
+  - cd c:\gopath\src\github.com\robotn\gohook
+  - git branch
+  - go get -t ./...
+
+# To run your custom scripts instead of automatic tests
+test_script:
+  # Unit tests
+  - ps: Add-AppveyorTest "Unit Tests" -Outcome Running
+  - go test -u github.com/robotn/gohook...
+  - ps: Update-AppveyorTest "Unit Tests" -Outcome Passed
+
+# notifications:
+#   - provider: Email
+#     to:
+#       - .io
+#     on_build_failure: true
+#     on_build_status_changed: true
+# to disable deployment
+deploy: off

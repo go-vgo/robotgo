@@ -663,7 +663,7 @@ char* get_title_by_hand(MData m_data){
 		char* name = m_data.Title;
 
 		char* str = (char*)calloc(100, sizeof(char*));
-	    if(str)strcpy(str, name);
+		if(str)strcpy(str, name);
 		return str;
 	}
 

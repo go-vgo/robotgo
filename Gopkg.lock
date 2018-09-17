@@ -54,7 +54,7 @@
   branch = "master"
   name = "github.com/robotn/gohook"
   packages = ["."]
-  revision = "3dccbf0083168096c576bf62abb3d5d4c916e2ea"
+  revision = "40c3386427eb558eb26426d3f56ac766c3e32335"
 
 [[projects]]
   name = "github.com/shirou/gopsutil"

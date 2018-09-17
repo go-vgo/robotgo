@@ -50,6 +50,7 @@ _testmain.go
 !cdeps/mac/libpng.a
 !cdeps/win32/libpng.a
 !cdeps/win64/libpng.a
+cdeps/hook
 *.la
 *.lo
 
