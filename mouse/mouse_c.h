@@ -110,7 +110,7 @@ void moveMouse(MMPoint point){
 	#elif defined(IS_WINDOWS)
 		// Mouse motion is now done using SendInput with MOUSEINPUT. 
 		// We use Absolute mouse positioning
-		#define MOUSE_COORD_TO_ABS(coord, width_or_height) (
+		#define MOUSE_COORD_TO_ABS(coord, width_or_height) ( \
 			((65536 * coord) / width_or_height) + (coord < 0 ? -1 : 1))
 
 		point.x = MOUSE_COORD_TO_ABS(point.x, GetSystemMetrics(SM_CXSCREEN));
@@ -133,8 +133,8 @@ void dragMouse(MMPoint point, const MMMouseButton button){
 	#if defined(IS_MACOSX)
 		const CGEventType dragType = MMMouseDragToCGEventType(button);
 		CGEventRef drag = CGEventCreateMouseEvent(NULL, dragType,
-														CGPointFromMMPoint(point),
-														(CGMouseButton)button);
+						CGPointFromMMPoint(point), (CGMouseButton)button);
+
 		calculateDeltas(&drag, point);
 
 		CGEventPost(kCGSessionEventTap, drag);
@@ -180,9 +180,8 @@ void toggleMouse(bool down, MMMouseButton button){
 		const CGPoint currentPos = CGPointFromMMPoint(getMousePos());
 		const CGEventType mouseType = MMMouseToCGEventType(down, button);
 		CGEventRef event = CGEventCreateMouseEvent(NULL,
-												mouseType,
-												currentPos,
-												(CGMouseButton)button);
+						mouseType, currentPos, (CGMouseButton)button);
+						
 		CGEventPost(kCGSessionEventTap, event);
 		CFRelease(event);
 	#elif defined(USE_X11)
