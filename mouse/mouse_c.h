@@ -105,18 +105,23 @@ void moveMouse(MMPoint point){
 		Display *display = XGetMainDisplay();
 		XWarpPointer(display, None, DefaultRootWindow(display),
 					0, 0, 0, 0, point.x, point.y);
+
 		XSync(display, false);
 	#elif defined(IS_WINDOWS)
-		//Mouse motion is now done using SendInput with MOUSEINPUT. We use Absolute mouse positioning
-		#define MOUSE_COORD_TO_ABS(coord, width_or_height) (((65536 * coord) / width_or_height) + (coord < 0 ? -1 : 1))
+		// Mouse motion is now done using SendInput with MOUSEINPUT. 
+		// We use Absolute mouse positioning
+		#define MOUSE_COORD_TO_ABS(coord, width_or_height) (
+			((65536 * coord) / width_or_height) + (coord < 0 ? -1 : 1))
+
 		point.x = MOUSE_COORD_TO_ABS(point.x, GetSystemMetrics(SM_CXSCREEN));
 		point.y = MOUSE_COORD_TO_ABS(point.y, GetSystemMetrics(SM_CYSCREEN));
+
 		INPUT mouseInput;
 		mouseInput.type = INPUT_MOUSE;
 		mouseInput.mi.dx = point.x;
 		mouseInput.mi.dy = point.y;
 		mouseInput.mi.dwFlags = MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE;
-		mouseInput.mi.time = 0; //System will provide the timestamp
+		mouseInput.mi.time = 0;		// System will provide the timestamp
 		mouseInput.mi.dwExtraInfo = 0;
 		mouseInput.mi.mouseData = 0;
 		SendInput(1, &mouseInput, sizeof(mouseInput));
@@ -206,7 +211,8 @@ void doubleClick(MMMouseButton button){
 		const CGEventType mouseTypeDown = MMMouseToCGEventType(true, button);
 		const CGEventType mouseTypeUP = MMMouseToCGEventType(false, button);
 
-		CGEventRef event = CGEventCreateMouseEvent(NULL, mouseTypeDown, currentPos, kCGMouseButtonLeft);
+		CGEventRef event = CGEventCreateMouseEvent(
+				NULL, mouseTypeDown, currentPos, kCGMouseButtonLeft);
 
 		/* Set event to double click. */
 		CGEventSetIntegerValueField(event, kCGMouseEventClickState, 2);
@@ -243,7 +249,7 @@ void scrollMouse(int scrollMagnitude, MMMouseWheelDirection scrollDirection){
 	/* Direction should only be considered based on the scrollDirection. This
 	 * Should not interfere. */
 	int cleanScrollMagnitude = abs(scrollMagnitude);
-	if (!(scrollDirection == DIRECTION_UP || scrollDirection == DIRECTION_DOWN)){
+	if (!(scrollDirection == DIRECTION_UP || scrollDirection == DIRECTION_DOWN)) {
 		return;
 	}
 
@@ -265,13 +271,11 @@ void scrollMouse(int scrollMagnitude, MMMouseWheelDirection scrollDirection){
 		int dir = 4; /* Button 4 is up, 5 is down. */
 		Display *display = XGetMainDisplay();
 
-		if (scrollDirection == DIRECTION_DOWN)
-		{
+		if (scrollDirection == DIRECTION_DOWN) {
 			dir = 5;
 		}
 
-		for (x = 0; x < cleanScrollMagnitude; x++)
-		{
+		for (x = 0; x < cleanScrollMagnitude; x++) {
 			XTestFakeButtonEvent(display, dir, 1, CurrentTime);
 			XTestFakeButtonEvent(display, dir, 0, CurrentTime);
 		}
@@ -320,10 +324,10 @@ void scrollMouseXY(int x, int y){
 		int xdir = 6;
 		Display *display = XGetMainDisplay();
 
-		if (y < 0){
+		if (y < 0) {
 			ydir = 5;
 		}
-		if (x < 0){
+		if (x < 0) {
 			xdir = 7;
 		}
 
