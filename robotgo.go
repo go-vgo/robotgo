@@ -825,6 +825,11 @@ func internalFindBitmap(bit, sbit C.MMBitmapRef, tolerance float64) (int, int) {
 	return int(pos.x), int(pos.y)
 }
 
+// FindCBitmap find bitmap's pos by CBitmap
+func FindCBitmap(bmp CBitmap, args ...interface{}) (int, int) {
+	return FindBitmap(ToMMBitmapRef(bmp), args...)
+}
+
 // FindBitmap find the bitmap's pos
 //
 //	robotgo.FindBitmap(bitmap, subbitamp C.MMBitmapRef, tolerance float64)
