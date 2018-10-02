@@ -1565,7 +1565,8 @@ func FindNames() ([]string, error) {
 	return strArr, err
 }
 
-// FindIds find the all process id by the process name
+// FindIds finds the all processes named with a subset of "name" (case insensitive), 
+// return matched IDs.
 func FindIds(name string) ([]int32, error) {
 	var pids []int32
 	nps, err := Process()
@@ -1573,9 +1574,9 @@ func FindIds(name string) ([]int32, error) {
 		return pids, err
 	}
 
+	name = strings.ToLower(name)
 	for i := 0; i < len(nps); i++ {
 		psname := strings.ToLower(nps[i].Name)
-		name = strings.ToLower(name)
 		abool := strings.Contains(psname, name)
 		if abool {
 			pids = append(pids, nps[i].Pid)
