@@ -1565,7 +1565,7 @@ func FindNames() ([]string, error) {
 	return strArr, err
 }
 
-// FindIds finds the all processes named with a subset of "name" (case insensitive), returning matching IDs.
+// FindIds finds the all processes named with a subset of "name" (case insensitive), return matching IDs.
 func FindIds(name string) ([]int32, error) {
 	var pids []int32
 	nps, err := Process()
