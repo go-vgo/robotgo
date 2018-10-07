@@ -32,6 +32,7 @@ package robotgo
 	// Drop -std=c11
 	#cgo linux CFLAGS: -I/usr/src
 	#cgo linux LDFLAGS: -L/usr/src -lpng -lz -lX11 -lXtst -lm
+	// #cgo linux LDFLAGS: -lX11-xcb -lxcb -lxcb-xkb -lxkbcommon -lxkbcommon-x11
 //#endif
 	// #cgo windows LDFLAGS: -lgdi32 -luser32 -lpng -lz
 	#cgo windows LDFLAGS: -lgdi32 -luser32
@@ -297,19 +298,7 @@ func GoCaptureScreen(args ...int) Bitmap {
 
 // SaveCapture capture screen and save
 func SaveCapture(spath string, args ...int) {
-	var bit C.MMBitmapRef
-	if len(args) > 3 {
-		var (
-			x = args[0]
-			y = args[1]
-			w = args[2]
-			h = args[3]
-		)
-
-		bit = CaptureScreen(x, y, w, h)
-	} else {
-		bit = CaptureScreen()
-	}
+	bit := CaptureScreen(args...)
 
 	SaveBitmap(bit, spath)
 	FreeBitmap(bit)
