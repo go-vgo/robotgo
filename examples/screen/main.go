@@ -17,11 +17,7 @@ import (
 	// "go-vgo/robotgo"
 )
 
-func screen() {
-	////////////////////////////////////////////////////////////////////////////////
-	// Read the screen
-	////////////////////////////////////////////////////////////////////////////////
-
+func bitmap() {
 	abitMap := robotgo.CaptureScreen()
 	fmt.Println("abitMap...", abitMap)
 	gbit := robotgo.ToBitmap(abitMap)
@@ -32,11 +28,9 @@ func screen() {
 	// fmt.Println("...", gbitmap.Width, gbitmap.BytesPerPixel)
 
 	robotgo.SaveCapture("saveCapture.png", 10, 20, 100, 100)
+}
 
-	// gets the screen width and height
-	sx, sy := robotgo.GetScreenSize()
-	fmt.Println("...", sx, sy)
-
+func color() {
 	// gets the pixel color at 100, 200.
 	color := robotgo.GetPixelColor(100, 200)
 	fmt.Println("color----", color, "-----------------")
@@ -58,6 +52,20 @@ func screen() {
 	// gets the pixel color at 10, 20.
 	color2 := robotgo.GetPixelColor(10, 20)
 	fmt.Println("color---", color2)
+}
+
+func screen() {
+	////////////////////////////////////////////////////////////////////////////////
+	// Read the screen
+	////////////////////////////////////////////////////////////////////////////////
+
+	bitmap()
+
+	// gets the screen width and height
+	sx, sy := robotgo.GetScreenSize()
+	fmt.Println("...", sx, sy)
+
+	color()
 }
 
 func main() {
