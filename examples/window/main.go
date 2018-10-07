@@ -17,11 +17,7 @@ import (
 	// "go-vgo/robotgo"
 )
 
-func window() {
-	////////////////////////////////////////////////////////////////////////////////
-	// Window Handle
-	////////////////////////////////////////////////////////////////////////////////
-
+func alert() {
 	// show Alert Window
 	abool := robotgo.ShowAlert("hello", "robotgo")
 	if abool == 0 {
@@ -29,6 +25,9 @@ func window() {
 	}
 	robotgo.ShowAlert("hello", "robotgo", "Ok", "Cancel")
 
+}
+
+func get() {
 	// get the current process id
 	pid := robotgo.GetPID()
 	fmt.Println("pid----", pid)
@@ -50,7 +49,9 @@ func window() {
 
 	// set Window Active
 	robotgo.SetActive(mdata)
+}
 
+func findIds() {
 	// find the process id by the process name
 	fpid, err := robotgo.FindIds("Google")
 	if err == nil {
@@ -74,9 +75,23 @@ func window() {
 			robotgo.Kill(fpid[0])
 		}
 	}
+}
 
-	robotgo.ActiveName("chrome")
+func findName() {
+	// find the process name by the process id
+	name, err := robotgo.FindName(100)
+	if err == nil {
+		fmt.Println("name: ", name)
+	}
 
+	// find the all process name
+	names, err := robotgo.FindNames()
+	if err == nil {
+		fmt.Println("name: ", names)
+	}
+}
+
+func ps() {
 	// determine whether the process exists
 	isExist, err := robotgo.PidExists(100)
 	if err == nil && isExist {
@@ -91,23 +106,29 @@ func window() {
 		fmt.Println("pids: ", pids)
 	}
 
-	// find the process name by the process id
-	name, err := robotgo.FindName(100)
-	if err == nil {
-		fmt.Println("name: ", name)
-	}
-
-	// find the all process name
-	names, err := robotgo.FindNames()
-	if err == nil {
-		fmt.Println("name: ", names)
-	}
-
 	// get the all process struct
 	ps, err := robotgo.Process()
 	if err == nil {
 		fmt.Println("process: ", ps)
 	}
+}
+
+func window() {
+	////////////////////////////////////////////////////////////////////////////////
+	// Window Handle
+	////////////////////////////////////////////////////////////////////////////////
+
+	alert()
+
+	get()
+
+	findIds()
+
+	robotgo.ActiveName("chrome")
+
+	findName()
+
+	ps()
 
 	// close current Window
 	robotgo.CloseWindow()
