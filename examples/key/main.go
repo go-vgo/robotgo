@@ -17,11 +17,7 @@ import (
 	// "go-vgo/robotgo"
 )
 
-func key() {
-	////////////////////////////////////////////////////////////////////////////////
-	// Control the keyboard
-	////////////////////////////////////////////////////////////////////////////////
-
+func typeStr() {
 	// importing "Hello World"
 	robotgo.TypeString("Hello World")
 
@@ -37,7 +33,9 @@ func key() {
 	robotgo.UnicodeType(ustr)
 
 	robotgo.PasteStr(" 粘贴字符串, paste")
+}
 
+func keyTap() {
 	// press "enter"
 	robotgo.KeyTap("enter")
 	robotgo.KeyTap("a", "control")
@@ -58,12 +56,16 @@ func key() {
 	robotgo.KeyTap("m", "command")
 	robotgo.KeyTap("f1", "control")
 	robotgo.KeyTap("a", "control")
+}
 
+func keyToggle() {
 	robotgo.KeyToggle("a", "down")
 	robotgo.KeyToggle("a", "down", "alt")
 	robotgo.KeyToggle("a", "down", "alt", "command")
 	robotgo.KeyToggle("enter", "down")
+}
 
+func cilp() {
 	robotgo.TypeString("en")
 
 	// write string to clipboard
@@ -73,6 +75,19 @@ func key() {
 	if err == nil {
 		fmt.Println(text)
 	}
+}
+
+func key() {
+	////////////////////////////////////////////////////////////////////////////////
+	// Control the keyboard
+	////////////////////////////////////////////////////////////////////////////////
+
+	typeStr()
+
+	keyTap()
+	keyToggle()
+
+	cilp()
 }
 
 func main() {
