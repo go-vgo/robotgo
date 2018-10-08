@@ -17,31 +17,33 @@ import (
 	// "go-vgo/robotgo"
 )
 
-func mouse() {
-	////////////////////////////////////////////////////////////////////////////////
-	// Control the mouse
-	////////////////////////////////////////////////////////////////////////////////
+func move() {
+	robotgo.Move(100, 200)
 
 	// move the mouse to 100, 200
 	robotgo.MoveMouse(100, 200)
 
-	// click the left mouse button
-	robotgo.MouseClick()
-	// click the right mouse button
-	robotgo.MouseClick("right", false)
-	// double click the left mouse button
-	robotgo.MouseClick("left", true)
-
-	// scrolls the mouse either up
-	robotgo.ScrollMouse(10, "up")
-	robotgo.Scroll(100, 200)
-	// toggles right mouse button
-	robotgo.MouseToggle("down", "right")
-
 	// smooth move the mouse to 100, 200
-	robotgo.MoveMouseSmooth(100, 200)
+	robotgo.MoveSmooth(100, 200)
 	robotgo.MoveMouseSmooth(100, 200, 1.0, 100.0)
 
+	for i := 0; i < 1080; i += 1000 {
+		fmt.Println(i)
+		robotgo.MoveMouse(800, i)
+	}
+}
+
+func click() {
+
+	// click the left mouse button
+	robotgo.Click()
+	// click the right mouse button
+	robotgo.Click("right", false)
+	// double click the left mouse button
+	robotgo.MouseClick("left", true)
+}
+
+func get() {
 	// gets the mouse coordinates
 	x, y := robotgo.GetMousePos()
 	fmt.Println("pos:", x, y)
@@ -49,15 +51,32 @@ func mouse() {
 		fmt.Println("mouse...", "586")
 	}
 
-	robotgo.MouseToggle("up")
 	robotgo.MoveMouse(x, y)
-	robotgo.MoveMouse(100, 200)
+}
 
-	for i := 0; i < 1080; i += 1000 {
-		fmt.Println(i)
-		robotgo.MoveMouse(800, i)
-	}
+func toggleAndScroll() {
+	// scrolls the mouse either up
+	robotgo.ScrollMouse(10, "up")
+	robotgo.Scroll(100, 200)
 
+	// toggles right mouse button
+	robotgo.MouseToggle("down", "right")
+
+	robotgo.MouseToggle("up")
+}
+
+func mouse() {
+	////////////////////////////////////////////////////////////////////////////////
+	// Control the mouse
+	////////////////////////////////////////////////////////////////////////////////
+
+	move()
+
+	click()
+
+	get()
+
+	toggleAndScroll()
 }
 
 func main() {
