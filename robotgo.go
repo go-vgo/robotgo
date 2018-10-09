@@ -69,7 +69,7 @@ import (
 
 const (
 	// Version get the robotgo version
-	Version string = "v0.50.0.705, The Appalachian Mountains!"
+	Version string = "v0.60.0.725, Mount Olympus Όλυμπος!"
 )
 
 // GetVersion get the robotgo version
