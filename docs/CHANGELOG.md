@@ -1,7 +1,68 @@
 # CHANGELOG
 
 <!--### RobotGo-->
-# ## RobotGo v0.50.0, The Appalachian Mountains
+## RobotGo v0.60.0, Mount Olympus: Mytikas
+
+### Add  
+
+- [NEW] Add GetBounds func support (add get_client and get_frame C_func)
+- [NEW] Add GetXId and GetXidFromPid func
+- [NEW] Refactoring GetTitle() func allow by pid
+- [NEW] Refactoring CloseWindow() allow by pid
+- [NEW] Add SetHandPid() and GetHandPid() func support
+- [NEW] Add FindCBitmap func support
+ <br/>
+
+- [NEW] Refactoring bitmap example code
+- [NEW] Refactoring key example code
+- [NEW] Refactoring window example code
+- [NEW] Add an cbitmap example [#169]
+- [NEW] Refactoring screen and event example code
+- [NEW] Refactoring mouse example code
+<br/>
+
+- [NEW] Add more godoc
+- [NEW] Add getTitle example by pid
+- [NEW] Add close window example by pid
+- [NEW] Add getBounds example
+- [NEW] Split func and remove dep more clean
+- [NEW] Simplify SaveCapture code
+- [NEW] Update and merged get_pixel_color remove duplicate code
+- [NEW] Update README.md, add Note go1.10.x
+
+
+### Update
+
+- [NEW] Update issue template more obvious
+- [NEW] Move public mdata to pub
+- [NEW] Update godoc
+- [NEW] Update CHANGELOG.md
+- [NEW] Move some pub method to pub.h and rename some c_func
+- [NEW] Update code style and name style ( key, window and other )
+- [NEW] Update robotgo unix export getXidFromPid func
+- [NEW] Update set handle return use bool
+<br/>
+
+- [NEW] Update code style and move scale to win_sys.h
+- [NEW] Update example add more lang 
+- [NEW] Update pkg to newest
+- [NEW] Remove duplicate code and old useless code
+- [NEW] Update and clean README.md
+- [NEW] Update CI add go1.11.x version
+- [NEW] Update scroll godoc and clearer parameter name
+- [NEW] Update hint and code style
+- [NEW] Update FindIds doc and only set name once in loop
+
+### Fix
+
+- [FIX] Update type_string fixed #155, fixed window missing  some character
+- [FIX] Fixed GetWindowText return address of local variable and not use ternary operator ( GetTittle )
+- [FIX] Update README.md Fixed Release badge
+
+See Commits for more details, after Aug 8.
+
+
+## RobotGo v0.50.0, The Appalachian Mountains
 
 ## Add  
 
