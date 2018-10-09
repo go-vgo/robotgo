@@ -69,7 +69,7 @@ import (
 
 const (
 	// Version get the robotgo version
-	Version string = "v0.60.0.725, Mount Olympus Όλυμπος!"
+	Version string = "v0.60.0.725, Mount Olympus, Mytikas!"
 )
 
 // GetVersion get the robotgo version
@@ -80,9 +80,9 @@ func GetVersion() string {
 type (
 	// Map a map[string]interface{}
 	Map map[string]interface{}
-	// CHex c rgb Hex type
+	// CHex define CHex as c rgb Hex type (C.MMRGBHex)
 	CHex C.MMRGBHex
-	// CBitmap c bitmap type C.MMBitmapRef
+	// CBitmap define CBitmap as C.MMBitmapRef type
 	CBitmap C.MMBitmapRef
 )
 
