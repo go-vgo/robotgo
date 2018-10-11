@@ -572,39 +572,34 @@ func KeyTap(tapKey string, args ...interface{}) {
 //	https://github.com/go-vgo/robotgo/blob/master/docs/keys.md
 func KeyToggle(args ...string) string {
 	var (
-		adown, mKey, mKeyT string
+		down, mKey, mKeyT = "null", "null", "null"
 		// keyDelay = 10
 	)
 
 	if len(args) > 1 {
-		adown = args[1]
+		down = args[1]
 
 		if len(args) > 2 {
 			mKey = args[2]
 
 			if len(args) > 3 {
 				mKeyT = args[3]
-			} else {
-				mKeyT = "null"
 			}
-		} else {
-			mKey = "null"
 		}
-	} else {
-		adown = "null"
 	}
 
 	ckey := C.CString(args[0])
-	cadown := C.CString(adown)
+	cdown := C.CString(down)
 	cmKey := C.CString(mKey)
 	cmKeyT := C.CString(mKeyT)
+
 	// defer func() {
-	str := C.key_toggle(ckey, cadown, cmKey, cmKeyT)
-	// str := C.key_Toggle(ckey, cadown, cmKey, cmKeyT, C.int(keyDelay))
+	str := C.key_toggle(ckey, cdown, cmKey, cmKeyT)
+	// str := C.key_Toggle(ckey, cdown, cmKey, cmKeyT, C.int(keyDelay))
 	// fmt.Println(str)
 	// }()
 	defer C.free(unsafe.Pointer(ckey))
-	defer C.free(unsafe.Pointer(cadown))
+	defer C.free(unsafe.Pointer(cdown))
 	defer C.free(unsafe.Pointer(cmKey))
 	defer C.free(unsafe.Pointer(cmKeyT))
 
