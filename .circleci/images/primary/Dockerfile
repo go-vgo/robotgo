@@ -1,19 +1,25 @@
 # FROM golang:1.10.1
-FROM govgo/go:1.11.1
+FROM golang:1.11.1-stretch AS build
+# FROM govgo/go:1.11.1
 
-RUN apt-get update
+RUN apt-get update && apt-get install -y --no-install-recommends \
 # customize dependencies
-RUN apt-get install -y libx11-dev xorg-dev 
-# - sudo apt-get install libgtkglextmm-x11-dev
-# - sudo apt-get install libghc6-x11-dev
-# - sudo apt-get install libgl1-mesa-swx11-dev
-# RUN apt-get install -y xorg-dev
-RUN apt-get install -y libxtst-dev libpng++-dev
+    libx11-dev xorg-dev \
+    # libgtkglextmm-x11-dev
+    # libghc6-x11-dev
+    # libgl1-mesa-swx11-dev 
+    # xorg-dev
+    libxtst-dev libpng++-dev \
 # Event:
-RUN apt-get install -y xcb libxcb-xkb-dev x11-xkb-utils
-RUN apt-get install -y libx11-xcb-dev libxkbcommon-x11-dev
-RUN apt-get install -y libxkbcommon-dev
+    xcb libxcb-xkb-dev x11-xkb-utils \
+    libx11-xcb-dev libxkbcommon-x11-dev \
+    libxkbcommon-dev \
 # Clipboard:
-RUN apt-get install -y xsel xclip
+    xsel xclip && \
 # RUN apt-get install -y xclip
+#
+apt-get remove --purge --auto-remove && \
+apt-get clean               && \   
+rm -rf /var/lib/apt/lists/*
+
 RUN go get -u github.com/go-vgo/robotgo
