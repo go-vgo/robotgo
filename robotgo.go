@@ -960,7 +960,7 @@ func FindBit(args ...interface{}) (int, int) {
 // BitmapClick find the bitmap and click
 func BitmapClick(bitmap C.MMBitmapRef, args ...interface{}) {
 	x, y := FindBitmap(bitmap)
-	MovesClick(x, y, args)
+	MovesClick(x, y, args...)
 }
 
 // PointInBounds bitmap point in bounds
