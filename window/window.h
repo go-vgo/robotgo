@@ -615,11 +615,11 @@ char* get_title_by_hand(MData m_data){
 		== kAXErrorSuccess && data != NULL) {
 		char conv[512];
 		// Convert result to a C-String
-		CFStringGetCString(data, conv,
-			512, kCFStringEncodingUTF8);
+		CFStringGetCString(data, conv, 512, kCFStringEncodingUTF8);
 		CFRelease(data);
+
 		char* s = (char*)calloc(100, sizeof(char*));
-    	if (s) { strcpy(s,conv); }
+		if (s) { strcpy(s, conv); }
 		// return (char *)&conv;
 		return s;
 	}

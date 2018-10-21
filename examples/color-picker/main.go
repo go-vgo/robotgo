@@ -20,5 +20,7 @@ func colorPicker() {
 func main() {
 	fmt.Println("color picker...")
 
-	colorPicker()
+	for {
+		colorPicker()
+	}
 }
