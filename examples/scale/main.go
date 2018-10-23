@@ -16,6 +16,7 @@ func main() {
 	s := robotgo.Scale()
 	robotx := 35 * s / 100
 	roboty := 25 * s / 100
+
 	bit1 := robotgo.CaptureScreen(0, 0, robotx, roboty)
 	robotgo.SaveBitmap(bit1, "test2.png")
 

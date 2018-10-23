@@ -18,17 +18,6 @@
 #include <assert.h>
 #include <stdio.h>
 
-// class BMP
-// {
-// 	public:
-// 		size_t width;
-// 		size_t height;
-// 		size_t byteWidth;
-// 		uint8_t bitsPerPixel;
-// 		uint8_t bytesPerPixel;
-// 		uint8_t *image;
-// };
-
 /* Returns false and sets error if |bitmap| is NULL. */
 bool bitmap_ready(MMBitmapRef bitmap){
 	if (bitmap == NULL || bitmap->imageBuffer == NULL) {
@@ -68,7 +57,7 @@ MMPoint find_bitmap(MMBitmapRef bitmap, MMBitmapRef sbit, float tolerance){
 	}
 
 	MMRect rect = MMBitmapGetBounds(sbit);
-	// printf("x=%d,y=%d,width=%d,height=%d\n", rect.origin.x, 
+	// printf("x=%d, y=%d, width=%d, height=%d\n", rect.origin.x, 
 	// rect.origin.y, rect.size.width, rect.size.height);
 
 	if (findBitmapInRect(bitmap, sbit, &point,
