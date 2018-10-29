@@ -42,7 +42,7 @@
   branch = "master"
   name = "github.com/lxn/win"
   packages = ["."]
-  revision = "785c4956069227e430929ac27bfa26af2ff25dfb"
+  revision = "a7f87360b10eafe73bd3ff01db16976fe7560fbf"
 
 [[projects]]
   name = "github.com/otiai10/gosseract"
@@ -79,13 +79,13 @@
   branch = "master"
   name = "github.com/vcaesar/imgo"
   packages = ["."]
-  revision = "fece97d8745e9e2299516bf074772fccf03a53a5"
+  revision = "7a535c786a552a980ff9d883fda108dce63361ef"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/image"
   packages = ["bmp"]
-  revision = "c73c2afc3b812cdd6385de5a50616511c4a3d458"
+  revision = "2a2258ff36e99cf9156acfc715e3f83d47d6f0fd"
 
 [[projects]]
   branch = "master"
@@ -94,7 +94,7 @@
     "unix",
     "windows"
   ]
-  revision = "d0be0721c37eeb5299f245a996a483160fc36940"
+  revision = "95b1ffbd15a57cc5abb3f04402b9e8ec0016a52c"
 
 [solve-meta]
   analyzer-name = "dep"

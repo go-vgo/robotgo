@@ -46,7 +46,7 @@ type CHOOSECOLOR struct {
 	HwndOwner      HWND
 	HInstance      HWND
 	RgbResult      COLORREF
-	LpCustColors   *COLORREF
+	LpCustColors   *[16]COLORREF
 	Flags          uint32
 	LCustData      uintptr
 	LpfnHook       uintptr

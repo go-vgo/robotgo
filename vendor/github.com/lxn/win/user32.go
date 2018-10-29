@@ -1584,6 +1584,7 @@ var (
 	getClipboardData           uintptr
 	getCursorPos               uintptr
 	getDC                      uintptr
+	getDesktopWindow           uintptr
 	getFocus                   uintptr
 	getForegroundWindow        uintptr
 	getKeyState                uintptr
@@ -1705,6 +1706,7 @@ func init() {
 	getClipboardData = MustGetProcAddress(libuser32, "GetClipboardData")
 	getCursorPos = MustGetProcAddress(libuser32, "GetCursorPos")
 	getDC = MustGetProcAddress(libuser32, "GetDC")
+	getDesktopWindow = MustGetProcAddress(libuser32, "GetDesktopWindow")
 	getFocus = MustGetProcAddress(libuser32, "GetFocus")
 	getForegroundWindow = MustGetProcAddress(libuser32, "GetForegroundWindow")
 	getKeyState = MustGetProcAddress(libuser32, "GetKeyState")
@@ -2163,6 +2165,15 @@ func GetCursorPos(lpPoint *POINT) bool {
 		0)
 
 	return ret != 0
+}
+
+func GetDesktopWindow() HWND {
+	ret, _, _ := syscall.Syscall(getDesktopWindow, 0,
+		0,
+		0,
+		0)
+
+	return HWND(ret)
 }
 
 func GetDC(hWnd HWND) HDC {
