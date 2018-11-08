@@ -40,7 +40,7 @@ RobotGo supports Mac, Windows, and Linux(X11).
 
 ## Requirements:
 
-Now, Please make sure Golang, GCC is installed correctly before installing RobotGo.
+Now, Please make sure `Golang, GCC` is installed correctly before installing RobotGo.
 
 ### ALL: 
 ``` 
@@ -170,9 +170,9 @@ import (
 
 func main() {
   x, y := robotgo.GetMousePos()
-  fmt.Println("pos:", x, y)
+  fmt.Println("pos: ", x, y)
   color := robotgo.GetPixelColor(100, 200)
-  fmt.Println("color----", color)
+  fmt.Println("color---- ", color)
 } 
 ```
 
@@ -195,7 +195,7 @@ func main() {
   fmt.Println("...", bitmap)
 
   fx, fy := robotgo.FindBitmap(bitmap)
-  fmt.Println("FindBitmap------", fx, fy)
+  fmt.Println("FindBitmap------ ", fx, fy)
 
   robotgo.SaveBitmap(bitmap, "test.png")
 } 
@@ -215,12 +215,12 @@ import (
 func main() {
   keve := robotgo.AddEvent("k")
   if keve == 0 {
-    fmt.Println("you press...", "k")
+    fmt.Println("you press... ", "k")
   }
 
   mleft := robotgo.AddEvent("mleft")
   if mleft == 0 {
-    fmt.Println("you press...", "mouse left button")
+    fmt.Println("you press... ", "mouse left button")
   }
 } 
 ```
@@ -239,7 +239,7 @@ import (
 func main() {
   fpid, err := robotgo.FindIds("Google")
   if err == nil {
-    fmt.Println("pids...", fpid)
+    fmt.Println("pids... ", fpid)
 
     if len(fpid) > 0 {
       robotgo.ActivePID(fpid[0])
@@ -259,11 +259,11 @@ func main() {
 
   abool := robotgo.ShowAlert("test", "robotgo")
   if abool == 0 {
- 	  fmt.Println("ok@@@", "ok")
+ 	  fmt.Println("ok@@@ ", "ok")
   }
 
   title := robotgo.GetTitle()
-  fmt.Println("title@@@", title)
+  fmt.Println("title@@@ ", title)
 } 
 ```
 

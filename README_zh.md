@@ -37,7 +37,7 @@ QQ 群: 595877611
 ## Requirements:
 环境要求:
 
-在安装 RobotGo 之前, 请确保 Golang、GCC 被正确安装
+在安装 RobotGo 之前, 请确保 `Golang、GCC` 被正确安装
 
 ### ALL:  
 ```
@@ -167,7 +167,7 @@ import (
 
 func main() {
   x, y := robotgo.GetMousePos()
-  fmt.Println("pos:", x, y)
+  fmt.Println("pos: ", x, y)
   color := robotgo.GetPixelColor(100, 200)
   fmt.Println("color----", color)
 } 
@@ -211,12 +211,12 @@ import (
 func main() {
   keve := robotgo.AddEvent("k")
   if keve == 0 {
-    fmt.Println("you press...", "k")
+    fmt.Println("you press... ", "k")
   }
 
   mleft := robotgo.AddEvent("mleft")
   if mleft == 0 {
-    fmt.Println("you press...", "mouse left button")
+    fmt.Println("you press... ", "mouse left button")
   }
 } 
 ```
@@ -254,11 +254,11 @@ func main() {
 
   abool := robotgo.ShowAlert("test", "robotgo")
   if abool == 0 {
-    fmt.Println("ok@@@", "ok")
+    fmt.Println("ok@@@ ", "ok")
   }
 
   title := robotgo.GetTitle()
-  fmt.Println("title@@@", title)
+  fmt.Println("title@@@ ", title)
 } 
 ```
 
