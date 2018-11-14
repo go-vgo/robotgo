@@ -121,8 +121,7 @@ int showAlert(const char *title, const char *msg, const char *defaultButton,
  */
 static int runTask(const char *taskname, char * const argv[], int *exit_status);
 
-static int xmessage(char *argv[], int *exit_status)
-{
+static int xmessage(char *argv[], int *exit_status) {
 	// static const char * const MSG_PROGS[] = {"gmessage", "gxmessage",
 	//                                          "kmessage", "xmessage"};
 	static const char * const MSG_PROGS[] = {"xmessage"};
@@ -154,8 +153,7 @@ static int xmessage(char *argv[], int *exit_status)
 	return ret;
 }
 
-static int runTask(const char *taskname, char * const argv[], int *exit_status)
-{
+static int runTask(const char *taskname, char * const argv[], int *exit_status) {
 	pid_t pid = fork();
 	int status;
 
@@ -164,7 +162,7 @@ static int runTask(const char *taskname, char * const argv[], int *exit_status)
 			perror("fork");
 			return FORK_FAILED; /* Failed to fork. */
 		case 0: /* Child process */
-			if (strcmp(argv[0],"xmessage") == 0){
+			if (strcmp(argv[0], "xmessage") == 0){
 				execvp(taskname, argv);
 				perror("execvp failed");
 			}
