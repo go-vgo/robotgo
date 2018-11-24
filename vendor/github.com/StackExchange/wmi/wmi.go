@@ -285,6 +285,10 @@ func (c *Client) loadEntity(dst interface{}, src *ole.IDispatch) (errFieldMismat
 		}
 		defer prop.Clear()
 
+		if prop.Value() == nil {
+			continue
+		}
+
 		switch val := prop.Value().(type) {
 		case int8, int16, int32, int64, int:
 			v := reflect.ValueOf(val).Int()

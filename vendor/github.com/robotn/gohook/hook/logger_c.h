@@ -50,7 +50,7 @@ static bool default_logger(unsigned int level, const char *format, ...) {
 logger_t logger = &default_logger;
 
 
-IOHOOK_API void hookSetlogger(logger_t logger_proc) {
+IOHOOK_API void hook_set_logger(logger_t logger_proc) {
 	if (logger_proc == NULL) {
 		logger = &default_logger;
 	}

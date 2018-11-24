@@ -1,0 +1,37 @@
+# github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802
+github.com/BurntSushi/xgb/xproto
+github.com/BurntSushi/xgb
+github.com/BurntSushi/xgb/xinerama
+github.com/BurntSushi/xgb/shape
+# github.com/BurntSushi/xgbutil v0.0.0-20160919175755-f7c97cef3b4e
+github.com/BurntSushi/xgbutil
+github.com/BurntSushi/xgbutil/ewmh
+github.com/BurntSushi/xgbutil/xevent
+github.com/BurntSushi/xgbutil/xprop
+# github.com/StackExchange/wmi v0.0.0-20180725035823-b12b22c5341f
+github.com/StackExchange/wmi
+# github.com/go-ole/go-ole v1.2.1
+github.com/go-ole/go-ole
+github.com/go-ole/go-ole/oleutil
+# github.com/lxn/win v0.0.0-20181015143721-a7f87360b10e
+github.com/lxn/win
+# github.com/otiai10/gosseract v2.2.0+incompatible
+github.com/otiai10/gosseract
+# github.com/robotn/gohook v0.0.0-20181113164304-f27e2e52653b
+github.com/robotn/gohook
+# github.com/shirou/gopsutil v2.18.10+incompatible
+github.com/shirou/gopsutil/process
+github.com/shirou/gopsutil/cpu
+github.com/shirou/gopsutil/host
+github.com/shirou/gopsutil/internal/common
+github.com/shirou/gopsutil/mem
+github.com/shirou/gopsutil/net
+# github.com/shirou/w32 v0.0.0-20160930032740-bb4de0191aa4
+github.com/shirou/w32
+# github.com/vcaesar/imgo v0.0.0-20181001170449-7a535c786a55
+github.com/vcaesar/imgo
+# golang.org/x/image v0.0.0-20181116024801-cd38e8056d9b
+golang.org/x/image/bmp
+# golang.org/x/sys v0.0.0-20181122145206-62eef0e2fa9b
+golang.org/x/sys/unix
+golang.org/x/sys/windows

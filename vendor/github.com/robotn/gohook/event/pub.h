@@ -43,6 +43,7 @@ char *cevent;
 int rrevent;
 // uint16_t *cevent;
 int cstatus = 1;
+int event_status;
 
 
 int stop_event();
