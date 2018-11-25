@@ -1096,6 +1096,13 @@ func GetColor(bitmap C.MMBitmapRef, x, y int) C.MMRGBHex {
 	return color
 }
 
+// GetColors get bitmap color retrun string
+func GetColors(bitmap C.MMBitmapRef, x, y int) string {
+	clo := GetColor(bitmap, x, y)
+
+	return PadHex(clo)
+}
+
 // FindColor find bitmap color
 //
 // robotgo.FindColor(color CHex, bitmap C.MMBitmapRef, tolerance float)
