@@ -98,7 +98,8 @@ png.h: No such file or directory? Please see [issues/47](https://github.com/go-v
 ```
 go get -u github.com/go-vgo/robotgo   
 ```
-注意 go1.10.x C 文件编译缓存问题
+注意 go1.10.x C 文件编译缓存问题, [golang #24355](https://github.com/golang/go/issues/24355).
+`go mod vendor` problem, [golang #26366](https://github.com/golang/go/issues/26366).
 
 ## [Examples:](https://github.com/go-vgo/robotgo/blob/master/examples)
 
