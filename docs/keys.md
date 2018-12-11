@@ -73,6 +73,8 @@
 	"numpad_7"		No Linux support
 	"numpad_8"		No Linux support
 	"numpad_9"		No Linux support
+	"num_lock"
+	"numpad_lock"
 
 	"lights_mon_up"		 Turn up monitor brightness					No Windows support
 	"lights_mon_down"	 Turn down monitor brightness				No Windows support

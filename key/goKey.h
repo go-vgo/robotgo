@@ -95,6 +95,8 @@ struct KeyNames{
 	{ "numpad_7",		K_NUMPAD_7 },
 	{ "numpad_8",		K_NUMPAD_8 },
 	{ "numpad_9",		K_NUMPAD_9 },
+	{ "num_lock",	    K_NUMPAD_LOCK },
+	{ "numpad_lock",	K_NUMPAD_LOCK },
 
 	{ "lights_mon_up",    K_LIGHTS_MON_UP },
 	{ "lights_mon_down",  K_LIGHTS_MON_DOWN },
