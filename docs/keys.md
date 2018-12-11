@@ -43,6 +43,7 @@
 	"ctrl"
 	"control"
 	"shift"
+	"capslock"
 	"right_shift"
 	"space"
 	"printscreen"       No Mac support

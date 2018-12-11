@@ -34,6 +34,7 @@ struct KeyNames{
 	{ "end",            K_END },
 	{ "pageup",         K_PAGEUP },
 	{ "pagedown",       K_PAGEDOWN },
+	//
 	{ "f1",             K_F1 },
 	{ "f2",             K_F2 },
 	{ "f3",             K_F3 },
@@ -58,11 +59,13 @@ struct KeyNames{
 	{ "f22",            K_F22 },
 	{ "f23",            K_F23 },
 	{ "f24",            K_F24 },
+	//
 	{ "command",        K_META },
 	{ "alt",            K_ALT },
-	{ "ctrl",        	K_CONTROL },
+	{ "ctrl",           K_CONTROL },
 	{ "control",        K_CONTROL },
 	{ "shift",          K_SHIFT },
+	{ "capslock",       K_CAPSLOCK },
 	{ "right_shift",    K_RIGHTSHIFT },
 	{ "space",          K_SPACE },
 	{ "printscreen",    K_PRINTSCREEN },
