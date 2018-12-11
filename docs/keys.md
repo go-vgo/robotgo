@@ -40,6 +40,7 @@
 	"f24"
 	"command"
 	"alt"
+	"ctrl"
 	"control"
 	"shift"
 	"right_shift"

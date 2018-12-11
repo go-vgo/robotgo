@@ -60,6 +60,7 @@ struct KeyNames{
 	{ "f24",            K_F24 },
 	{ "command",        K_META },
 	{ "alt",            K_ALT },
+	{ "ctrl",        	K_CONTROL },
 	{ "control",        K_CONTROL },
 	{ "shift",          K_SHIFT },
 	{ "right_shift",    K_RIGHTSHIFT },
