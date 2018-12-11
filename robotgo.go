@@ -542,12 +542,11 @@ func KeyTap(tapKey string, args ...interface{}) {
 		}
 
 	} else {
-		// fmt.Println("err:::", e)
 		akey = "null"
 		keyArr = []string{"null"}
 	}
-	// }()
 
+	// zkey := C.CString(args[0])
 	zkey := C.CString(tapKey)
 	defer C.free(unsafe.Pointer(zkey))
 
@@ -558,7 +557,6 @@ func KeyTap(tapKey string, args ...interface{}) {
 		return
 	}
 
-	// zkey := C.CString(args[0])
 	amod := C.CString(akey)
 	amodt := C.CString(keyT)
 
@@ -933,30 +931,6 @@ func CountBitmap(bitmap, sbit C.MMBitmapRef, args ...float32) int {
 
 	count := C.count_of_bitmap(bitmap, sbit, tolerance)
 	return int(count)
-}
-
-// FindBit find the bitmap, Wno-deprecated
-func FindBit(args ...interface{}) (int, int) {
-	var bit C.MMBitmapRef
-	bit = args[0].(C.MMBitmapRef)
-
-	var rect C.MMRect
-	Try(func() {
-		rect.origin.x = C.size_t(args[1].(int))
-		rect.origin.y = C.size_t(args[2].(int))
-		rect.size.width = C.size_t(args[3].(int))
-		rect.size.height = C.size_t(args[4].(int))
-	}, func(e interface{}) {
-		// fmt.Println("err:::", e)
-		// rect.origin.x = x
-		// rect.origin.y = y
-		// rect.size.width = w
-		// rect.size.height = h
-	})
-
-	pos := C.aFindBitmap(bit, rect)
-	// fmt.Println("pos----", pos)
-	return int(pos.x), int(pos.y)
 }
 
 // BitmapClick find the bitmap and click
