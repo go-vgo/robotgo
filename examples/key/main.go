@@ -39,6 +39,7 @@ func keyTap() {
 	// press "enter"
 	robotgo.KeyTap("enter")
 	robotgo.KeyTap("a", "control")
+
 	// hide window
 	robotgo.KeyTap("h", "command")
 	robotgo.KeyTap("h", "command", 12)
@@ -46,12 +47,14 @@ func keyTap() {
 	// press "i", "alt", "command" Key combination
 	robotgo.KeyTap("i", "alt", "command")
 	robotgo.KeyTap("i", "alt", "command", 11)
+
 	arr := []string{"alt", "command"}
 	robotgo.KeyTap("i", arr)
 	robotgo.KeyTap("i", arr, 12)
 
 	// close window
 	robotgo.KeyTap("w", "command")
+
 	// minimize window
 	robotgo.KeyTap("m", "command")
 	robotgo.KeyTap("f1", "control")
