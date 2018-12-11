@@ -63,16 +63,17 @@
 	"audio_repeat"      Linux only
 	"audio_random"      Linux only
 
-	"numpad_0"		No Linux support
-	"numpad_1"		No Linux support
-	"numpad_2"		No Linux support
-	"numpad_3"		No Linux support
-	"numpad_4"		No Linux support
-	"numpad_5"		No Linux support
-	"numpad_6"		No Linux support
-	"numpad_7"		No Linux support
-	"numpad_8"		No Linux support
-	"numpad_9"		No Linux support
+	// "numpad_0"		No Linux support
+	"numpad_0"
+	"numpad_1"		
+	"numpad_2"		
+	"numpad_3"		
+	"numpad_4"		
+	"numpad_5"		
+	"numpad_6"		
+	"numpad_7"		
+	"numpad_8"		
+	"numpad_9"		
 	"num_lock"
 	"numpad_lock"
 
