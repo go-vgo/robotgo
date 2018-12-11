@@ -171,7 +171,7 @@ int GetFlagsFromValue(char* value[], MMKeyFlags* flags, int num){
 }
 
 // If it's not an array, it should be a single string value.
-char* key_Tap(char *k, char* keyArr[], int num, int keyDelay){
+char* key_Taps(char *k, char* keyArr[], int num, int keyDelay){
 	MMKeyFlags flags = MOD_NONE;
 	// MMKeyFlags flags = 0;
 	MMKeyCode key;

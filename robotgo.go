@@ -516,11 +516,10 @@ func KeyTap(tapKey string, args ...interface{}) {
 	// var ckeyArr []*C.char
 	ckeyArr := make([](*_Ctype_char), 0)
 
-	Try(func() {
+	if len(args) > 0 {
 		if reflect.TypeOf(args[0]) == reflect.TypeOf(keyArr) {
 
 			keyArr = args[0].([]string)
-
 			num = len(keyArr)
 
 			for i := 0; i < num; i++ {
@@ -542,30 +541,31 @@ func KeyTap(tapKey string, args ...interface{}) {
 			}
 		}
 
-	}, func(e interface{}) {
+	} else {
 		// fmt.Println("err:::", e)
 		akey = "null"
 		keyArr = []string{"null"}
-	})
+	}
 	// }()
 
 	zkey := C.CString(tapKey)
+	defer C.free(unsafe.Pointer(zkey))
 
 	if akey == "" && len(keyArr) != 0 {
-		C.key_Tap(zkey, (**_Ctype_char)(unsafe.Pointer(&ckeyArr[0])),
+		C.key_Taps(zkey, (**_Ctype_char)(unsafe.Pointer(&ckeyArr[0])),
 			C.int(num), C.int(keyDelay))
-	} else {
-		// zkey := C.CString(args[0])
-		amod := C.CString(akey)
-		amodt := C.CString(keyT)
 
-		C.key_tap(zkey, amod, amodt, C.int(keyDelay))
-
-		defer C.free(unsafe.Pointer(amod))
-		defer C.free(unsafe.Pointer(amodt))
+		return
 	}
 
-	defer C.free(unsafe.Pointer(zkey))
+	// zkey := C.CString(args[0])
+	amod := C.CString(akey)
+	amodt := C.CString(keyT)
+
+	C.key_tap(zkey, amod, amodt, C.int(keyDelay))
+
+	C.free(unsafe.Pointer(amod))
+	C.free(unsafe.Pointer(amodt))
 }
 
 // KeyToggle toggle the keyboard
