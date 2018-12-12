@@ -86,7 +86,6 @@ struct KeyNames{
 	{ "audio_repeat",   K_AUDIO_REPEAT },
 	{ "audio_random",   K_AUDIO_RANDOM },
 
-
 	{ "num0",		K_NUMPAD_0 },
 	{ "num1",		K_NUMPAD_1 },
 	{ "num2",		K_NUMPAD_2 },
@@ -98,6 +97,15 @@ struct KeyNames{
 	{ "num8",		K_NUMPAD_8 },
 	{ "num9",		K_NUMPAD_9 },
 	{ "num_lock",	K_NUMPAD_LOCK },
+
+	{"num.",	K_NUMPAD_DECIMAL},
+	{"num+",	K_NUMPAD_PLUS},
+	{"num-",	K_NUMPAD_MINUS},
+	{"num*",	K_NUMPAD_MUL},
+	{"num/",	K_NUMPAD_DIV},
+	{"num_clear",	K_NUMPAD_CLEAR},
+	{"num_enter",	K_NUMPAD_ENTER},
+	{"num_equal",	K_NUMPAD_EQUAL},
 
 	{ "numpad_0",		K_NUMPAD_0 },
 	{ "numpad_1",		K_NUMPAD_1 },
