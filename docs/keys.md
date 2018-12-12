@@ -77,6 +77,15 @@
 	"num9"		
 	"num_lock"
 
+	"num."
+	"num+"
+	"num-"
+	"num*"
+	"num/"
+	"num_clear"
+	"num_enter"
+	"num_equal"
+
 	// "numpad_0"		No Linux support
 	"numpad_0"
 	"numpad_1"		
