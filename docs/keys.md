@@ -43,6 +43,7 @@
 	"f23"
 	"f24"
 
+	"cmd"
 	"command"
 	"alt"
 	"ctrl"

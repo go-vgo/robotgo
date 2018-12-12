@@ -61,6 +61,7 @@ struct KeyNames{
 	{ "f23",            K_F23 },
 	{ "f24",            K_F24 },
 	//
+	{ "cmd",            K_META },
 	{ "command",        K_META },
 	{ "alt",            K_ALT },
 	{ "ctrl",           K_CONTROL },
