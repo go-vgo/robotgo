@@ -25,6 +25,7 @@ struct KeyNames{
 	{ "delete",         K_DELETE },
 	{ "enter",          K_RETURN },
 	{ "tab",            K_TAB },
+	{ "esc",            K_ESCAPE },
 	{ "escape",         K_ESCAPE },
 	{ "up",             K_UP },
 	{ "down",           K_DOWN },
@@ -85,6 +86,19 @@ struct KeyNames{
 	{ "audio_repeat",   K_AUDIO_REPEAT },
 	{ "audio_random",   K_AUDIO_RANDOM },
 
+
+	{ "num0",		K_NUMPAD_0 },
+	{ "num1",		K_NUMPAD_1 },
+	{ "num2",		K_NUMPAD_2 },
+	{ "num3",		K_NUMPAD_3 },
+	{ "num4",		K_NUMPAD_4 },
+	{ "num5",		K_NUMPAD_5 },
+	{ "num6",		K_NUMPAD_6 },
+	{ "num7",		K_NUMPAD_7 },
+	{ "num8",		K_NUMPAD_8 },
+	{ "num9",		K_NUMPAD_9 },
+	{ "num_lock",	K_NUMPAD_LOCK },
+
 	{ "numpad_0",		K_NUMPAD_0 },
 	{ "numpad_1",		K_NUMPAD_1 },
 	{ "numpad_2",		K_NUMPAD_2 },
@@ -95,7 +109,6 @@ struct KeyNames{
 	{ "numpad_7",		K_NUMPAD_7 },
 	{ "numpad_8",		K_NUMPAD_8 },
 	{ "numpad_9",		K_NUMPAD_9 },
-	{ "num_lock",	    K_NUMPAD_LOCK },
 	{ "numpad_lock",	K_NUMPAD_LOCK },
 
 	{ "lights_mon_up",    K_LIGHTS_MON_UP },

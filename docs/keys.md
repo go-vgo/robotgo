@@ -5,6 +5,7 @@
 	"delete"        
 	"enter"        
 	"tab"
+	"esc"
 	"escape"
 	"up"		Up arrow key           
 	"down"		Down arrow key
@@ -63,6 +64,19 @@
 	"audio_repeat"      Linux only
 	"audio_random"      Linux only
 
+
+	"num0"
+	"num1"		
+	"num2"		
+	"num3"		
+	"num4"		
+	"num5"		
+	"num6"		
+	"num7"		
+	"num8"		
+	"num9"		
+	"num_lock"
+
 	// "numpad_0"		No Linux support
 	"numpad_0"
 	"numpad_1"		
@@ -74,7 +88,6 @@
 	"numpad_7"		
 	"numpad_8"		
 	"numpad_9"		
-	"num_lock"
 	"numpad_lock"
 
 	"lights_mon_up"		 Turn up monitor brightness					No Windows support
