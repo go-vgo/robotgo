@@ -1,6 +1,8 @@
 # Keys
 
 ```Go
+	"A-Z a-z 0-9"
+
 	"backspace"
 	"delete"        
 	"enter"        
@@ -15,6 +17,7 @@
 	"end"
 	"pageup"
 	"pagedown"
+
 	"f1"
 	"f2"
 	"f3"
@@ -39,6 +42,7 @@
 	"f22"
 	"f23"
 	"f24"
+
 	"command"
 	"alt"
 	"ctrl"
