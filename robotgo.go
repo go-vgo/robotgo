@@ -1218,6 +1218,7 @@ func AddEvent(key string) int {
 		"space":   "57",
 		"shift":   "42",
 		"enter":   "28",
+		"cmd":     "3675",
 		"command": "3675",
 	}
 
