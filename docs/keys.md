@@ -46,6 +46,7 @@
 	"cmd"
 	"command"
 	"alt"
+	"ralt"
 	"ctrl"
 	"lctrl"
 	"rctrl"

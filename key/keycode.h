@@ -59,6 +59,7 @@ enum _MMKeyCode {
 
 	K_META = kVK_Command,
 	K_ALT = kVK_Option,
+	K_RALT = kVK_RightOption,
 	K_CONTROL = kVK_Control,
 	K_LCONTROL = kVK_Control,
 	K_RCONTROL = kVK_RightControl,
@@ -161,6 +162,7 @@ enum _MMKeyCode {
 
 	K_META = XK_Super_L,
 	K_ALT = XK_Alt_L,
+	K_RALT = XK_Alt_R,
 	K_CONTROL = XK_Control_L,
 	K_LCONTROL = XK_Control_L,
 	K_RCONTROL = XK_Control_R,
@@ -260,12 +262,13 @@ enum _MMKeyCode {
 	K_F24 = VK_F24,
 
 	K_META = VK_LWIN,
+	K_ALT = VK_MENU,
+	K_RALT = VK_RMENU,
 	K_CONTROL = VK_CONTROL,
 	K_LCONTROL  = VK_LCONTROL,
 	K_RCONTROL  = VK_RCONTROL,
 	K_SHIFT = VK_SHIFT,
 	K_RSHIFT = VK_RSHIFT,
-	K_ALT = VK_MENU,
 	K_CAPSLOCK = VK_CAPITAL,
 	K_SPACE = VK_SPACE,
 	K_PRINTSCREEN = VK_SNAPSHOT,
