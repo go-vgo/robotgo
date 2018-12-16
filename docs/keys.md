@@ -51,8 +51,9 @@
 	"rctrl"
 	"control"
 	"shift"
-	"capslock"
+	"rshift"
 	"right_shift"
+	"capslock"
 	"space"
 	"printscreen"       No Mac support
 	"insert"            No Mac support
