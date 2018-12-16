@@ -16,6 +16,7 @@ extern "C"
 #import <IOKit/hidsystem/ev_keymap.h>
 
 enum _MMKeyCode {
+	// a-z, 0-9
 	K_NOT_A_KEY = 9999,
 	K_BACKSPACE = kVK_Delete,
 	K_DELETE = kVK_ForwardDelete,
@@ -30,6 +31,7 @@ enum _MMKeyCode {
 	K_END = kVK_End,
 	K_PAGEUP = kVK_PageUp,
 	K_PAGEDOWN = kVK_PageDown,
+
 	K_F1 = kVK_F1,
 	K_F2 = kVK_F2,
 	K_F3 = kVK_F3,
@@ -54,9 +56,12 @@ enum _MMKeyCode {
 	K_F22 = K_NOT_A_KEY,
 	K_F23 = K_NOT_A_KEY,
 	K_F24 = K_NOT_A_KEY,
+
 	K_META = kVK_Command,
 	K_ALT = kVK_Option,
 	K_CONTROL = kVK_Control,
+	K_LCONTROL = kVK_Control,
+	K_RCONTROL = kVK_RightControl,
 	K_SHIFT = kVK_Shift,
 	K_RIGHTSHIFT = kVK_RightShift,
 	K_CAPSLOCK = kVK_CapsLock,
@@ -128,6 +133,7 @@ enum _MMKeyCode {
 	K_END = XK_End,
 	K_PAGEUP = XK_Page_Up,
 	K_PAGEDOWN = XK_Page_Down,
+
 	K_F1 = XK_F1,
 	K_F2 = XK_F2,
 	K_F3 = XK_F3,
@@ -152,9 +158,12 @@ enum _MMKeyCode {
 	K_F22 = XK_F22,
 	K_F23 = XK_F23,
 	K_F24 = XK_F24,
+
 	K_META = XK_Super_L,
 	K_ALT = XK_Alt_L,
 	K_CONTROL = XK_Control_L,
+	K_LCONTROL = XK_Control_L,
+	K_RCONTROL = XK_Control_R,
 	K_SHIFT = XK_Shift_L,
 	K_RIGHTSHIFT = XK_Shift_R,
 	K_CAPSLOCK = XK_Shift_Lock,
@@ -224,6 +233,7 @@ enum _MMKeyCode {
 	K_END = VK_END,
 	K_PAGEUP = VK_PRIOR,
 	K_PAGEDOWN = VK_NEXT,
+
 	K_F1 = VK_F1,
 	K_F2 = VK_F2,
 	K_F3 = VK_F3,
@@ -248,8 +258,11 @@ enum _MMKeyCode {
 	K_F22 = VK_F22,
 	K_F23 = VK_F23,
 	K_F24 = VK_F24,
+
 	K_META = VK_LWIN,
 	K_CONTROL = VK_CONTROL,
+	K_LCONTROL  = VK_LCONTROL,
+	K_RCONTROL  = VK_RCONTROL,
 	K_SHIFT = VK_SHIFT,
 	K_RIGHTSHIFT = VK_RSHIFT,
 	K_ALT = VK_MENU,
