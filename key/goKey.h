@@ -158,19 +158,19 @@ int CheckKeyCodes(char* k, MMKeyCode *key){
 int CheckKeyFlags(char* f, MMKeyFlags* flags){
 	if (!flags) { return -1; }
 
-	if (strcmp(f, "alt") == 0) {
+	if ( strcmp(f, "alt") == 0 ) {
 		*flags = MOD_ALT;
 	}
-	else if(strcmp(f, "command") == 0) {
+	else if( strcmp(f, "command") == 0 || strcmp(f, "cmd") == 0 ) {
 		*flags = MOD_META;
 	}
-	else if(strcmp(f, "control") == 0) {
+	else if( strcmp(f, "control") == 0 || strcmp(f, "ctrl") == 0 ) {
 		*flags = MOD_CONTROL;
 	}
-	else if(strcmp(f, "shift") == 0) {
+	else if( strcmp(f, "shift") == 0 ) {
 		*flags = MOD_SHIFT;
 	}
-	else if(strcmp(f, "none") == 0) {
+	else if( strcmp(f, "none") == 0 ) {
 		*flags = (MMKeyFlags) MOD_NONE;
 	} else {
 		return -2;
