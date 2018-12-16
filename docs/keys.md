@@ -47,6 +47,8 @@
 	"command"
 	"alt"
 	"ctrl"
+	"lctrl"
+	"rctrl"
 	"control"
 	"shift"
 	"capslock"
