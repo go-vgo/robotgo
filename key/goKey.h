@@ -62,6 +62,8 @@ struct KeyNames{
 	{ "f24",            K_F24 },
 	//
 	{ "cmd",            K_META },
+	{ "lcmd",           K_LMETA },
+	{ "rcmd",           K_RMETA },
 	{ "command",        K_META },
 	{ "alt",            K_ALT },
 	{ "lalt",           K_LALT },
@@ -167,7 +169,8 @@ int CheckKeyFlags(char* f, MMKeyFlags* flags){
 		strcmp(f, "lalt") == 0 ) {
 		*flags = MOD_ALT;
 	}
-	else if( strcmp(f, "command") == 0 || strcmp(f, "cmd") == 0 ) {
+	else if( strcmp(f, "command") == 0 || strcmp(f, "cmd") == 0 || 
+		strcmp(f, "rcmd") == 0 || strcmp(f, "lcmd") == 0 ) {
 		*flags = MOD_META;
 	}
 	else if( strcmp(f, "control") == 0 || strcmp(f, "ctrl") == 0 ||
