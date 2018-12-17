@@ -163,7 +163,7 @@ enum _MMKeyCode {
 
 	K_META = XK_Super_L,
 	K_ALT = XK_Alt_L,
-	K_LALT = VK_Alt_L,
+	K_LALT = XK_Alt_L,
 	K_RALT = XK_Alt_R,
 	K_CONTROL = XK_Control_L,
 	K_LCONTROL = XK_Control_L,
