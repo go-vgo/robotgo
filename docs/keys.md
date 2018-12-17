@@ -44,6 +44,8 @@
 	"f24"
 
 	"cmd"
+	"lcmd"
+	"rcmd"
 	"command"
 	"alt"
 	"lalt"
