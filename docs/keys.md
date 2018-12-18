@@ -55,6 +55,7 @@
 	"rctrl"
 	"control"
 	"shift"
+	"lshift"
 	"rshift"
 	"right_shift"
 	"capslock"

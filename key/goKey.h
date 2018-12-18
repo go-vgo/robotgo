@@ -73,6 +73,7 @@ struct KeyNames{
 	{ "rctrl",          K_RCONTROL },
 	{ "control",        K_CONTROL },
 	{ "shift",          K_SHIFT },
+	{ "lshift",         K_LSHIFT },
 	{ "rshift",         K_RSHIFT },
 	{ "right_shift",    K_RSHIFT },
 	{ "capslock",       K_CAPSLOCK },
@@ -178,7 +179,7 @@ int CheckKeyFlags(char* f, MMKeyFlags* flags){
 		*flags = MOD_CONTROL;
 	}
 	else if( strcmp(f, "shift") == 0 || strcmp(f, "right_shift") == 0 || 
-		strcmp(f, "rshift") == 0 ) {
+		strcmp(f, "rshift") == 0 || strcmp(f, "lshift") == 0 ) {
 		*flags = MOD_SHIFT;
 	}
 	else if( strcmp(f, "none") == 0 ) {
