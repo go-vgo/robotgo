@@ -60,8 +60,9 @@
 	"right_shift"
 	"capslock"
 	"space"
-	"printscreen"       No Mac support
-	"insert"            No Mac support
+	"print"
+	"printscreen"      // No Mac support
+	"insert"           
 	"menu"				Windows only
 
 	"audio_mute"		Mute the volume
