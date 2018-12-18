@@ -71,8 +71,9 @@ enum _MMKeyCode {
 	K_RSHIFT = kVK_RightShift,
 	K_CAPSLOCK = kVK_CapsLock,
 	K_SPACE = kVK_Space,
-	K_INSERT = K_NOT_A_KEY,
-	K_PRINTSCREEN = K_NOT_A_KEY,
+	K_INSERT = kVK_Help,
+	// K_PRINTSCREEN = K_NOT_A_KEY,
+	K_PRINTSCREEN = kVK_F13,
 	K_MENU = K_NOT_A_KEY,
 
 	K_NUMPAD_0 = kVK_ANSI_Keypad0,

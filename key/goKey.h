@@ -78,6 +78,7 @@ struct KeyNames{
 	{ "right_shift",    K_RSHIFT },
 	{ "capslock",       K_CAPSLOCK },
 	{ "space",          K_SPACE },
+	{ "print",          K_PRINTSCREEN },
 	{ "printscreen",    K_PRINTSCREEN },
 	{ "insert",         K_INSERT },
 	{ "menu",           K_MENU },
