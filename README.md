@@ -48,14 +48,17 @@ Golang
 
 GCC
 ```
+
 #### For Mac OS X:
 ```
 Xcode Command Line Tools
 ```    
+
 #### For Windows:
 ```
 MinGW-w64 (Use recommended) or other GCC
 ```
+
 #### For everything else:
 ```
 GCC, libpng
@@ -101,6 +104,7 @@ png.h: No such file or directory? Please see [issues/47](https://github.com/go-v
 ```
 go get -u github.com/go-vgo/robotgo  
 ```
+
 Note go1.10.x C file compilation cache problem, [golang #24355](https://github.com/golang/go/issues/24355). 
 `go mod vendor` problem, [golang #26366](https://github.com/golang/go/issues/26366).
 
@@ -276,6 +280,7 @@ SET CGO_ENABLED=1
 SET GOARCH=386
 go build main.go
 ```
+
 #### Other to windows
 ```Go
 GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ go build -x ./

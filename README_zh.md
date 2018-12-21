@@ -45,14 +45,17 @@ Golang
 
 GCC
 ```
+
 #### For Mac OS X:
 ```
 Xcode Command Line Tools
 ```    
+
 #### For Windows:
 ```
 MinGW-w64 (推荐使用) or other GCC
 ```
+
 #### For everything else (Linux 等其他系统):
 ```
 GCC, libpng
@@ -63,6 +66,7 @@ X11 with the XTest extension (also known as the Xtst library)
     
 xcb, xkb, libxkbcommon
 ```
+
 ##### Ubuntu:
 
 ```yml
@@ -86,6 +90,7 @@ sudo dnf install libpng-devel
 
 sudo dnf install xsel xclip
 ```
+
 ## Installation:
 ```
 go get github.com/go-vgo/robotgo
@@ -98,6 +103,7 @@ png.h: No such file or directory? Please see [issues/47](https://github.com/go-v
 ```
 go get -u github.com/go-vgo/robotgo   
 ```
+
 注意 go1.10.x C 文件编译缓存问题, [golang #24355](https://github.com/golang/go/issues/24355).
 `go mod vendor` problem, [golang #26366](https://github.com/golang/go/issues/26366).
 
@@ -271,6 +277,7 @@ SET CGO_ENABLED=1
 SET GOARCH=386
 go build main.go
 ```
+
 #### Other to windows
 ```Go
 GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ go build -x ./
