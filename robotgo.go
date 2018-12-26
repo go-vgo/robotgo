@@ -69,7 +69,7 @@ import (
 
 const (
 	// Version get the robotgo version
-	Version string = "v0.60.0.727, Mount Olympus: Mytikas!"
+	Version string = "v0.70.0.790, Mount Olympus: Mytikas!"
 )
 
 // GetVersion get the robotgo version
@@ -598,15 +598,13 @@ func KeyToggle(args ...string) string {
 	cmKey := C.CString(mKey)
 	cmKeyT := C.CString(mKeyT)
 
-	// defer func() {
 	str := C.key_toggle(ckey, cdown, cmKey, cmKeyT)
 	// str := C.key_Toggle(ckey, cdown, cmKey, cmKeyT, C.int(keyDelay))
-	// fmt.Println(str)
-	// }()
-	defer C.free(unsafe.Pointer(ckey))
-	defer C.free(unsafe.Pointer(cdown))
-	defer C.free(unsafe.Pointer(cmKey))
-	defer C.free(unsafe.Pointer(cmKeyT))
+
+	C.free(unsafe.Pointer(ckey))
+	C.free(unsafe.Pointer(cdown))
+	C.free(unsafe.Pointer(cmKey))
+	C.free(unsafe.Pointer(cmKeyT))
 
 	return C.GoString(str)
 }
@@ -1286,10 +1284,10 @@ func ShowAlert(title, msg string, args ...string) int {
 	cbool := C.show_alert(atitle, amsg, adefaultButton, acancelButton)
 	ibool := int(cbool)
 
-	defer C.free(unsafe.Pointer(atitle))
-	defer C.free(unsafe.Pointer(amsg))
-	defer C.free(unsafe.Pointer(adefaultButton))
-	defer C.free(unsafe.Pointer(acancelButton))
+	C.free(unsafe.Pointer(atitle))
+	C.free(unsafe.Pointer(amsg))
+	C.free(unsafe.Pointer(adefaultButton))
+	C.free(unsafe.Pointer(acancelButton))
 
 	return ibool
 }
