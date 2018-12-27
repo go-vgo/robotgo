@@ -23,6 +23,9 @@ func move() {
 	// move the mouse to 100, 200
 	robotgo.MoveMouse(100, 200)
 
+	robotgo.Drag(10, 10)
+	robotgo.Drag(20, 20, "right")
+
 	// smooth move the mouse to 100, 200
 	robotgo.MoveSmooth(100, 200)
 	robotgo.MoveMouseSmooth(100, 200, 1.0, 100.0)
@@ -37,8 +40,10 @@ func click() {
 
 	// click the left mouse button
 	robotgo.Click()
+
 	// click the right mouse button
 	robotgo.Click("right", false)
+
 	// double click the left mouse button
 	robotgo.MouseClick("left", true)
 }
