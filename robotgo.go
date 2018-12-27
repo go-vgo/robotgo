@@ -321,6 +321,24 @@ func SaveCapture(spath string, args ...int) {
 
 */
 
+// CheckMouse check the mouse button
+func CheckMouse(btn string) C.MMMouseButton {
+	// button = args[0].(C.MMMouseButton)
+	if btn == "left" {
+		return C.LEFT_BUTTON
+	}
+
+	if btn == "center" {
+		return C.CENTER_BUTTON
+	}
+
+	if btn == "right" {
+		return C.RIGHT_BUTTON
+	}
+
+	return C.LEFT_BUTTON
+}
+
 // MoveMouse move the mouse
 func MoveMouse(x, y int) {
 	// C.size_t  int
@@ -410,16 +428,7 @@ func Click(args ...interface{}) {
 	)
 
 	if len(args) > 0 {
-		// button = args[0].(C.MMMouseButton)
-		if args[0].(string) == "left" {
-			button = C.LEFT_BUTTON
-		}
-		if args[0].(string) == "center" {
-			button = C.CENTER_BUTTON
-		}
-		if args[0].(string) == "right" {
-			button = C.RIGHT_BUTTON
-		}
+		button = CheckMouse(args[0].(string))
 	}
 
 	if len(args) > 1 {
@@ -448,16 +457,7 @@ func MouseToggle(togKey string, args ...interface{}) {
 	var button C.MMMouseButton = C.LEFT_BUTTON
 
 	if len(args) > 0 {
-		// button = args[1].(C.MMMouseButton)
-		if args[0].(string) == "left" {
-			button = C.LEFT_BUTTON
-		}
-		if args[0].(string) == "center" {
-			button = C.CENTER_BUTTON
-		}
-		if args[0].(string) == "right" {
-			button = C.RIGHT_BUTTON
-		}
+		button = CheckMouse(args[0].(string))
 	}
 
 	down := C.CString(togKey)
