@@ -506,11 +506,11 @@ func Scroll(x, y int, args ...int) {
 
 */
 
-// KeyTap tap the keyboard;
+// KeyTap tap the keyboard code;
 //
 // See keys:
 //	https://github.com/go-vgo/robotgo/blob/master/docs/keys.md
-func KeyTap(tapKey string, args ...interface{}) {
+func KeyTap(tapKey string, args ...interface{}) string {
 	var (
 		akey     string
 		keyT     = "null"
@@ -556,19 +556,21 @@ func KeyTap(tapKey string, args ...interface{}) {
 	defer C.free(unsafe.Pointer(zkey))
 
 	if akey == "" && len(keyArr) != 0 {
-		C.key_Taps(zkey, (**_Ctype_char)(unsafe.Pointer(&ckeyArr[0])),
+		str := C.key_Taps(zkey, (**_Ctype_char)(unsafe.Pointer(&ckeyArr[0])),
 			C.int(num), C.int(keyDelay))
 
-		return
+		return C.GoString(str)
 	}
 
 	amod := C.CString(akey)
 	amodt := C.CString(keyT)
 
-	C.key_tap(zkey, amod, amodt, C.int(keyDelay))
+	str := C.key_tap(zkey, amod, amodt, C.int(keyDelay))
 
 	C.free(unsafe.Pointer(amod))
 	C.free(unsafe.Pointer(amodt))
+
+	return C.GoString(str)
 }
 
 // KeyToggle toggle the keyboard
