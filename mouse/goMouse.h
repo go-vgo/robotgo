@@ -16,8 +16,8 @@ int mouseDelay = 10;
 // int keyboardDelay = 10;
 
 
-// int CheckMouseButton(const char * const b,
-// MMMouseButton * const button){
+// int CheckMouseButton(const char * const b, 
+// 	MMMouseButton * const button){
 // 	if (!button) return -1;
 
 // 	if (strcmp(b, "left") == 0) {
@@ -37,18 +37,19 @@ int mouseDelay = 10;
 
 int move_mouse(size_t x, size_t y){
 	MMPoint point;
-	//int x = 103;
-	//int y = 104;
+	// int x = 103;
+	// int y = 104;
 	point = MMPointMake(x, y);
 	moveMouse(point);
 
 	return 0;
 }
 
-int drag_mouse(size_t x, size_t y){
+
+int drag_mouse(size_t x, size_t y, MMMouseButton button){
 	// const size_t x = 10;
 	// const size_t y = 20;
-	MMMouseButton button = LEFT_BUTTON;
+	// MMMouseButton button = LEFT_BUTTON;
 
 	MMPoint point;
 	point = MMPointMake(x, y);

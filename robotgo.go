@@ -353,15 +353,22 @@ func Move(x, y int) {
 }
 
 // DragMouse drag the mouse
-func DragMouse(x, y int) {
-	Drag(x, y)
+func DragMouse(x, y int, args ...string) {
+	Drag(x, y, args...)
 }
 
 // Drag drag the mouse
-func Drag(x, y int) {
+func Drag(x, y int, args ...string) {
+	var button C.MMMouseButton = C.LEFT_BUTTON
+
 	cx := C.size_t(x)
 	cy := C.size_t(y)
-	C.drag_mouse(cx, cy)
+
+	if len(args) > 0 {
+		button = CheckMouse(args[0])
+	}
+
+	C.drag_mouse(cx, cy, button)
 }
 
 // MoveMouseSmooth move the mouse smooth,
