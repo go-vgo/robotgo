@@ -196,13 +196,14 @@ int GetFlagsFromValue(char* value[], MMKeyFlags* flags, int num){
 	if (!flags) {return -1;}
 
 	int i;
-	for ( i= 0; i <num; i++){
+	for ( i= 0; i <num; i++) {
 		MMKeyFlags f = MOD_NONE;
 		const int rv = CheckKeyFlags(value[i], &f);
-		if (rv) {return rv;}
+		if (rv) { return rv; }
 
 		*flags = (MMKeyFlags)(*flags | f);
 	}
+
 	return 0;
 	// return CheckKeyFlags(fstr, flags);
 }
@@ -235,7 +236,8 @@ char* key_Taps(char *k, char* keyArr[], int num, int keyDelay){
 			microsleep(keyDelay);
 	}
 
-	return "0";
+	// return "0";
+	return "";
 }
 
 char* key_tap(char *k, char *akey, char *keyT, int keyDelay){
@@ -255,7 +257,7 @@ char* key_tap(char *k, char *akey, char *keyT, int keyDelay){
 					return "Invalid key flag specified.";
 					break;
 			}
-		}else{
+		} else {
 			char* akeyArr[2] = {akey, keyT};
 			switch(GetFlagsFromValue(akeyArr, &flags, 2)) {
 				case -1:
@@ -280,7 +282,7 @@ char* key_tap(char *k, char *akey, char *keyT, int keyDelay){
 			microsleep(keyDelay);
 	}
 
-	return "0";
+	return "";
 }
 
 char* key_toggle(char *k, char *d, char *akey, char *keyT){
@@ -291,7 +293,7 @@ char* key_toggle(char *k, char *d, char *akey, char *keyT){
 	// char *k;
 	// k = *kstr;
 
-	if (d != 0){
+	if (d != 0) {
 		// char *d;
 		// d = *dstr;
 		if (strcmp(d, "down") == 0) {
@@ -338,7 +340,7 @@ char* key_toggle(char *k, char *d, char *akey, char *keyT){
 			microsleep(keyboardDelay);
 	}
 
-	return "0";
+	return "";
 }
 
 void type_string(char *str){
