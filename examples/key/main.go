@@ -42,7 +42,11 @@ func keyTap() {
 	robotgo.KeyTap("a", "control")
 
 	// hide window
-	robotgo.KeyTap("h", "command")
+	err := robotgo.KeyTap("h", "command")
+	if err == "" {
+		fmt.Println("robotgo.KeyTap run error is nil.")
+	}
+
 	robotgo.KeyTap("h", "command", 12)
 
 	// press "i", "alt", "command" Key combination
@@ -66,7 +70,11 @@ func keyToggle() {
 	robotgo.KeyToggle("a", "down")
 	robotgo.KeyToggle("a", "down", "alt")
 	robotgo.KeyToggle("a", "down", "alt", "command")
-	robotgo.KeyToggle("enter", "down")
+
+	err := robotgo.KeyToggle("enter", "down")
+	if err == "" {
+		fmt.Println("robotgo.KeyToggle run error is nil.")
+	}
 }
 
 func cilp() {
