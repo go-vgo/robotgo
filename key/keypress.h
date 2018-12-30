@@ -10,10 +10,12 @@
 #else
 	#include <stdbool.h>
 #endif
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
+
 #if defined(IS_MACOSX)
 
 	typedef enum {

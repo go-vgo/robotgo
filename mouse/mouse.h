@@ -10,11 +10,13 @@
 #else
 	#include <stdbool.h>
 #endif
+
 #ifdef __cplusplus
 // #ifdefined(__cplusplus)||defined(c_plusplus)
 extern "C"
 {
 #endif
+
 #if defined(IS_MACOSX)
 
 	// #include </System/Library/Frameworks/ApplicationServices.framework/Headers/ApplicationServices.h>
@@ -96,9 +98,9 @@ void doubleClick(MMMouseButton button);
  * TODO: Add a smoothly scroll mouse next. */
 void scrollMouse(int scrollMagnitude, MMMouseWheelDirection scrollDirection);
 
-#endif /* MOUSE_H */
-
 //#ifdefined(__cplusplus)||defined(c_plusplus)
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* MOUSE_H */

@@ -6,8 +6,7 @@
 #include <string.h> /* For strcmp() */
 #include <ctype.h> /* For tolower() */
 
-const char *getExtension(const char *fname, size_t len)
-{
+const char *getExtension(const char *fname, size_t len){
 	if (fname == NULL || len <= 0) return NULL;
 
 	while (--len > 0 && fname[len] != '.' && fname[len] != '\0')
@@ -16,8 +15,7 @@ const char *getExtension(const char *fname, size_t len)
 	return fname + len + 1;
 }
 
-MMImageType imageTypeFromExtension(const char *extension)
-{
+MMImageType imageTypeFromExtension(const char *extension){
 	char ext[4];
 	const size_t maxlen = sizeof(ext) / sizeof(ext[0]);
 	size_t i;
@@ -37,10 +35,7 @@ MMImageType imageTypeFromExtension(const char *extension)
 	}
 }
 
-MMBitmapRef newMMBitmapFromFile(const char *path, 
-                                MMImageType type,
-                                MMIOError *err)
-{
+MMBitmapRef newMMBitmapFromFile(const char *path, MMImageType type, MMIOError *err){
 	switch (type) {
 		case kBMPImageType:
 			return newMMBitmapFromBMP(path, err);
@@ -52,10 +47,7 @@ MMBitmapRef newMMBitmapFromFile(const char *path,
 	}
 }
 
-int saveMMBitmapToFile(MMBitmapRef bitmap,
-                       const char *path,
-                       MMImageType type)
-{
+int saveMMBitmapToFile(MMBitmapRef bitmap, const char *path, MMImageType type){
 	switch (type) {
 		case kBMPImageType:
 			return saveMMBitmapAsBMP(bitmap, path);
@@ -66,8 +58,7 @@ int saveMMBitmapToFile(MMBitmapRef bitmap,
 	}
 }
 
-const char *MMIOErrorString(MMImageType type, MMIOError error)
-{
+const char *MMIOErrorString(MMImageType type, MMIOError error){
 	switch (type) {
 		case kBMPImageType:
 			return MMBMPReadErrorString(error);
