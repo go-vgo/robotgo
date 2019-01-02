@@ -3,7 +3,7 @@
 #define PASTEBOARD_H
 
 #include "MMBitmap.h"
-#include "io.h"
+#include "file_io.h"
 
 enum _MMBitmapPasteError {
 	kMMPasteNoError = 0,

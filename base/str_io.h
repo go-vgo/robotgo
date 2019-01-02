@@ -3,7 +3,7 @@
 #define STR_IO_H
 
 #include "MMBitmap.h"
-#include "io.h"
+#include "file_io.h"
 #include <stdint.h>
 
 

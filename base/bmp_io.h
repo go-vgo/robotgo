@@ -3,7 +3,7 @@
 #define BMP_IO_H
 
 #include "MMBitmap.h"
-#include "io.h"
+#include "file_io.h"
 
 enum _BMPReadError {
 	kBMPGenericError = 0,
