@@ -43,20 +43,20 @@
 	"f23"
 	"f24"
 
-	"cmd"
-	"lcmd"
-	"rcmd"
+	"cmd"		is the "win" key for windows
+	"lcmd"		left command
+	"rcmd"		right command
 	"command"
 	"alt"
-	"lalt"
-	"ralt"
+	"lalt"		left alt
+	"ralt"		right alt
 	"ctrl"
-	"lctrl"
-	"rctrl"
+	"lctrl"		left ctrl
+	"rctrl"		right ctrl
 	"control"
 	"shift"
-	"lshift"
-	"rshift"
+	"lshift"	left shift
+	"rshift"	right shift
 	"right_shift"
 	"capslock"
 	"space"
