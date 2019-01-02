@@ -1,6 +1,6 @@
 #pragma once
-#ifndef IO_H
-#define IO_H
+#ifndef FILE_IO_H
+#define FILE_IO_H
 
 #include "MMBitmap.h"
 #include <stddef.h>

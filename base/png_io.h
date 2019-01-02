@@ -3,7 +3,7 @@
 #define PNG_IO_H
 
 // #include "MMBitmap_c.h"
-// #include "io_c.h"
+// #include "file_io_c.h"
 
 enum _PNGReadError {
 	kPNGGenericError = 0,

@@ -12,7 +12,7 @@
 #include "bitmap_find_c.h"
 #include "../base/color_find_c.h"
 // #include "../screen/screen_c.h"
-#include "../base/io_c.h"
+#include "../base/file_io_c.h"
 #include "../base/pasteboard_c.h"
 #include "../base/str_io_c.h"
 #include <assert.h>
