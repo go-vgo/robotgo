@@ -39,37 +39,38 @@ func keyTap() {
 	// press "enter"
 	robotgo.KeyTap("enter")
 	robotgo.KeyTap("a")
-	robotgo.KeyTap("a", "control")
+	robotgo.KeyTap("a", "ctrl")
 
 	// hide window
-	err := robotgo.KeyTap("h", "command")
+	err := robotgo.KeyTap("h", "cmd")
 	if err == "" {
 		fmt.Println("robotgo.KeyTap run error is nil.")
 	}
 
-	robotgo.KeyTap("h", "command", 12)
+	robotgo.KeyTap("h", "cmd", 12)
 
 	// press "i", "alt", "command" Key combination
 	robotgo.KeyTap("i", "alt", "command")
 	robotgo.KeyTap("i", "alt", "command", 11)
 
-	arr := []string{"alt", "command"}
+	arr := []string{"alt", "cmd"}
 	robotgo.KeyTap("i", arr)
 	robotgo.KeyTap("i", arr, 12)
 
 	// close window
-	robotgo.KeyTap("w", "command")
+	robotgo.KeyTap("w", "cmd")
 
 	// minimize window
-	robotgo.KeyTap("m", "command")
-	robotgo.KeyTap("f1", "control")
+	robotgo.KeyTap("m", "cmd")
+
+	robotgo.KeyTap("f1", "ctrl")
 	robotgo.KeyTap("a", "control")
 }
 
 func keyToggle() {
 	robotgo.KeyToggle("a", "down")
 	robotgo.KeyToggle("a", "down", "alt")
-	robotgo.KeyToggle("a", "down", "alt", "command")
+	robotgo.KeyToggle("a", "down", "alt", "cmd")
 
 	err := robotgo.KeyToggle("enter", "down")
 	if err == "" {
