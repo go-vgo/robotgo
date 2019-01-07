@@ -1,6 +1,77 @@
 # CHANGELOG
 
 <!--### RobotGo-->
+
+## RobotGo v0.70.0, Caloris Montes
+
+# Caloris Montes
+
+### Add  
+
+- [NEW] Update keyboard use sendInput not keybd_event
+- [NEW] Update mouse use sendInput not mouse_event
+- [NEW] Add drag mouse other button support
+- [NEW] Add more numpad key support
+- [NEW] Add numpad key and escape abbreviation support
+- [NEW] Add new window10 zoom ratio
+- [NEW] Add linux numpad key support
+- [NEW] Add key "insert, printscreen" mac support
+- [NEW] Add check mouse button func
+- [NEW] Add keyTap run error return support and update godoc
+
+
+ <br/>
+
+- [NEW] Optimize and clearer keytap code
+- [NEW] Optimize and clean keyToggle code
+- [NEW] Update dockerfile clean image
+- [NEW] Add color picker and getMousePos() example
+- [NEW] Use go mod not dep, add go.mod remove dep files
+- [NEW] Add GetColors func return string
+- [NEW] Optimize defer code 
+<br/>
+
+- [NEW] Add more godoc
+- [NEW] Add add key "ctrl", "cmd" [ abbreviation ] support
+- [NEW] Add add key "capslock", "numpad_lock" support
+- [NEW] Add left and right "Ctrl, Shift, Alt, command" key support
+- [NEW] Update check key flags support "cmd" and "ctrl"
+- [NEW] Update key docs
+- [NEW] Add millisleep func and update godoc
+- [NEW] Add AddEvent() key "cmd" support
+- [NEW] Update key example code
+- [NEW] Update README.md, add Note go1.10.x issue
+- [NEW] Update keytap and toggle return "" and code style
+
+
+### Update
+
+- [NEW] Update issue template more obvious
+- [NEW] Update godoc
+- [NEW] Update CHANGELOG.md
+- [NEW] Update .gitignore
+- [NEW] Update code style and examples
+- [NEW] Update pkg to newest
+- [NEW] Add more scale example
+- [NEW] Add drag mouse example
+<br/>
+
+- [NEW] Update key docs and clear file name
+- [NEW] Remove old useless code
+- [NEW] Update README.md
+- [NEW] Update CI add go1.11.4 version
+
+### Fix
+
+- [FIX] Fixed bitmapClick() parameter bug
+- [FIX] Fixed some README.md typo
+- [FIX] Update scale example code close #153
+- [FIX] Update code style and fixed #endif error
+
+
+See Commits for more details, after Otc 8.
+
+
 ## RobotGo v0.60.0, Mount Olympus: Mytikas
 
 ### Add  
