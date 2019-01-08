@@ -60,6 +60,7 @@ MinGW-w64 (Use recommended) or other GCC
 ```
 
 #### For everything else:
+
 ```
 GCC, libpng
     
@@ -71,6 +72,7 @@ xcb, xkb, libxkbcommon
 ``` 
 
 ##### Ubuntu:
+
 ```yml
 sudo apt-get install gcc libc6-dev
 
@@ -107,6 +109,7 @@ go get -u github.com/go-vgo/robotgo
 
 Note go1.10.x C file compilation cache problem, [golang #24355](https://github.com/golang/go/issues/24355). 
 `go mod vendor` problem, [golang #26366](https://github.com/golang/go/issues/26366).
+
 
 ## [Examples:](https://github.com/go-vgo/robotgo/blob/master/examples)
 

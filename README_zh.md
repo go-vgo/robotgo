@@ -57,6 +57,7 @@ MinGW-w64 (推荐使用) or other GCC
 ```
 
 #### For everything else (Linux 等其他系统):
+
 ```
 GCC, libpng
     
@@ -106,6 +107,7 @@ go get -u github.com/go-vgo/robotgo
 
 注意 go1.10.x C 文件编译缓存问题, [golang #24355](https://github.com/golang/go/issues/24355).
 `go mod vendor` problem, [golang #26366](https://github.com/golang/go/issues/26366).
+
 
 ## [Examples:](https://github.com/go-vgo/robotgo/blob/master/examples)
 
@@ -227,6 +229,7 @@ func main() {
   }
 } 
 ```
+
 #### [窗口句柄](https://github.com/go-vgo/robotgo/blob/master/examples/window/main.go)
 
 ```Go
