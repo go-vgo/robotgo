@@ -13,9 +13,9 @@
 [![Join the chat at https://gitter.im/go-vgo/robotgo](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/go-vgo/robotgo?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 <!-- [![Release](https://github-release-version.herokuapp.com/github/go-vgo/robotgo/release.svg?style=flat)](https://github.com/go-vgo/robotgo/releases/latest) -->
 <!-- <a href="https://github.com/go-vgo/robotgo/releases"><img src="https://img.shields.io/badge/%20version%20-%206.0.0%20-blue.svg?style=flat-square" alt="Releases"></a> -->
-  
+
   >Golang Desktop Automation. Control the mouse, keyboard, bitmap, read the screen,   Window Handle and global event listener.
-  
+
 RobotGo supports Mac, Windows, and Linux(X11).
 
 [简体中文](https://github.com/go-vgo/robotgo/blob/master/README_zh.md)
@@ -42,8 +42,8 @@ RobotGo supports Mac, Windows, and Linux(X11).
 
 Now, Please make sure `Golang, GCC` is installed correctly before installing RobotGo.
 
-### ALL: 
-``` 
+### ALL:
+```
 Golang
 
 GCC
@@ -52,7 +52,7 @@ GCC
 #### For Mac OS X:
 ```
 Xcode Command Line Tools
-```    
+```
 
 #### For Windows:
 ```
@@ -63,20 +63,20 @@ MinGW-w64 (Use recommended) or other GCC
 
 ```
 GCC, libpng
-    
+
 X11 with the XTest extension (also known as the Xtst library)
 
 Event:
-    
+
 xcb, xkb, libxkbcommon
-``` 
+```
 
 ##### Ubuntu:
 
 ```yml
 sudo apt-get install gcc libc6-dev
 
-sudo apt-get install libx11-dev xorg-dev libxtst-dev libpng++-dev   
+sudo apt-get install libx11-dev xorg-dev libxtst-dev libpng++-dev
 
 sudo apt-get install xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev
 sudo apt-get install libxkbcommon-dev
@@ -104,10 +104,10 @@ png.h: No such file or directory? Please see [issues/47](https://github.com/go-v
 
 ## Update:
 ```
-go get -u github.com/go-vgo/robotgo  
+go get -u github.com/go-vgo/robotgo
 ```
 
-Note go1.10.x C file compilation cache problem, [golang #24355](https://github.com/golang/go/issues/24355). 
+Note go1.10.x C file compilation cache problem, [golang #24355](https://github.com/golang/go/issues/24355).
 `go mod vendor` problem, [golang #26366](https://github.com/golang/go/issues/26366).
 
 
@@ -126,8 +126,8 @@ func main() {
   robotgo.ScrollMouse(10, "up")
   robotgo.MouseClick("left", true)
   robotgo.MoveMouseSmooth(100, 200, 1.0, 100.0)
-} 
-``` 
+}
+```
 
 #### [Keyboard](https://github.com/go-vgo/robotgo/blob/master/examples/key/main.go)
 
@@ -144,10 +144,10 @@ func main() {
   robotgo.TypeString("Hello World")
   robotgo.TypeString("测试")
   robotgo.TypeStr("测试")
-  
+
   robotgo.TypeStr("山达尔星新星军团, galaxy. こんにちは世界.")
   robotgo.Sleep(1)
-  
+
   ustr := uint32(robotgo.CharCodeAt("测试", 0))
   robotgo.UnicodeType(ustr)
 
@@ -162,7 +162,7 @@ func main() {
   if err == nil {
     fmt.Println(text)
   }
-} 
+}
 ```
 
 #### [Screen](https://github.com/go-vgo/robotgo/blob/master/examples/screen/main.go)
@@ -181,7 +181,7 @@ func main() {
   fmt.Println("pos: ", x, y)
   color := robotgo.GetPixelColor(100, 200)
   fmt.Println("color---- ", color)
-} 
+}
 ```
 
 #### [Bitmap](https://github.com/go-vgo/robotgo/blob/master/examples/bitmap/main.go)
@@ -206,7 +206,7 @@ func main() {
   fmt.Println("FindBitmap------ ", fx, fy)
 
   robotgo.SaveBitmap(bitmap, "test.png")
-} 
+}
 ```
 
 #### [Event](https://github.com/go-vgo/robotgo/blob/master/examples/event/main.go)
@@ -230,7 +230,7 @@ func main() {
   if mleft == 0 {
     fmt.Println("you press... ", "mouse left button")
   }
-} 
+}
 ```
 
 #### [Window](https://github.com/go-vgo/robotgo/blob/master/examples/window/main.go)
@@ -272,7 +272,7 @@ func main() {
 
   title := robotgo.GetTitle()
   fmt.Println("title@@@ ", title)
-} 
+}
 ```
 
 ## CrossCompiling
@@ -289,7 +289,7 @@ go build main.go
 GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ go build -x ./
 ```
 ```
-// CC=mingw-w64\x86_64-7.2.0-win32-seh-rt_v5-rev1\mingw64\bin\gcc.exe 
+// CC=mingw-w64\x86_64-7.2.0-win32-seh-rt_v5-rev1\mingw64\bin\gcc.exe
 // CXX=mingw-w64\x86_64-7.2.0-win32-seh-rt_v5-rev1\mingw64\bin\g++.exe
 ```
 

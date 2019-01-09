@@ -7,9 +7,9 @@
 [![GoDoc](https://godoc.org/github.com/go-vgo/robotgo?status.svg)](https://godoc.org/github.com/go-vgo/robotgo)
 [![GitHub release](https://img.shields.io/github/release/go-vgo/robotgo.svg)](https://github.com/go-vgo/robotgo/releases/latest)
 [![Join the chat at https://gitter.im/go-vgo/robotgo](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/go-vgo/robotgo?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-  
+
   >Golang 跨平台自动化系统，控制键盘鼠标位图和读取屏幕，窗口句柄以及全局事件监听
-  
+
 RobotGo 支持 Mac, Windows, and Linux(X11).
 
 提 Issues 请到 [Github](https://github.com/go-vgo/robotgo), 便于统一管理和即时更新
@@ -32,14 +32,14 @@ QQ 群: 595877611
 ## Docs
 - [GoDoc](https://godoc.org/github.com/go-vgo/robotgo)
 - [中文文档](https://github.com/go-vgo/robotgo/blob/master/docs/doc_zh.md)&nbsp;&nbsp;&nbsp;
-- [English Docs](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) 
+- [English Docs](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md)
 
 ## Requirements:
 环境要求:
 
 在安装 RobotGo 之前, 请确保 `Golang、GCC` 被正确安装
 
-### ALL:  
+### ALL:
 ```
 Golang
 
@@ -49,7 +49,7 @@ GCC
 #### For Mac OS X:
 ```
 Xcode Command Line Tools
-```    
+```
 
 #### For Windows:
 ```
@@ -60,11 +60,11 @@ MinGW-w64 (推荐使用) or other GCC
 
 ```
 GCC, libpng
-    
+
 X11 with the XTest extension (also known as the Xtst library)
 
 事件:
-    
+
 xcb, xkb, libxkbcommon
 ```
 
@@ -73,7 +73,7 @@ xcb, xkb, libxkbcommon
 ```yml
 sudo apt-get install gcc libc6-dev
 
-sudo apt-get install libx11-dev xorg-dev libxtst-dev libpng++-dev   
+sudo apt-get install libx11-dev xorg-dev libxtst-dev libpng++-dev
 
 sudo apt-get install xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev
 sudo apt-get install libxkbcommon-dev
@@ -98,11 +98,11 @@ go get github.com/go-vgo/robotgo
 ```
   It's that easy!
 
-png.h: No such file or directory? Please see [issues/47](https://github.com/go-vgo/robotgo/issues/47).  
+png.h: No such file or directory? Please see [issues/47](https://github.com/go-vgo/robotgo/issues/47).
 
 ## Update:
 ```
-go get -u github.com/go-vgo/robotgo   
+go get -u github.com/go-vgo/robotgo
 ```
 
 注意 go1.10.x C 文件编译缓存问题, [golang #24355](https://github.com/golang/go/issues/24355).
@@ -124,16 +124,16 @@ func main() {
   robotgo.ScrollMouse(10, "up")
   robotgo.MouseClick("left", true)
   robotgo.MoveMouseSmooth(100, 200, 1.0, 100.0)
-} 
-``` 
+}
+```
 
 #### [键盘](https://github.com/go-vgo/robotgo/blob/master/examples/key/main.go)
 
 ```Go
 package main
 
-import ( 
-  "fmt" 
+import (
+  "fmt"
 
   "github.com/go-vgo/robotgo"
 )
@@ -142,10 +142,10 @@ func main() {
   robotgo.TypeString("Hello World")
   robotgo.TypeString("测试")
   robotgo.TypeStr("测试")
-  
+
   robotgo.TypeStr("山达尔星新星军团, galaxy. こんにちは世界.")
   robotgo.Sleep(1)
-  
+
   ustr := uint32(robotgo.CharCodeAt("测试", 0))
   robotgo.UnicodeType(ustr)
 
@@ -160,7 +160,7 @@ func main() {
   if err == nil {
     fmt.Println(text)
   }
-} 
+}
 ```
 
 #### [屏幕](https://github.com/go-vgo/robotgo/blob/master/examples/screen/main.go)
@@ -179,7 +179,7 @@ func main() {
   fmt.Println("pos: ", x, y)
   color := robotgo.GetPixelColor(100, 200)
   fmt.Println("color----", color)
-} 
+}
 ```
 
 #### [位图](https://github.com/go-vgo/robotgo/blob/master/examples/bitmap/main.go)
@@ -203,7 +203,7 @@ func main() {
   fmt.Println("FindBitmap------", fx, fy)
 
   robotgo.SaveBitmap(bitmap, "test.png")
-} 
+}
 ```
 
 #### [事件](https://github.com/go-vgo/robotgo/blob/master/examples/event/main.go)
@@ -227,7 +227,7 @@ func main() {
   if mleft == 0 {
     fmt.Println("you press... ", "mouse left button")
   }
-} 
+}
 ```
 
 #### [窗口句柄](https://github.com/go-vgo/robotgo/blob/master/examples/window/main.go)
@@ -269,7 +269,7 @@ func main() {
 
   title := robotgo.GetTitle()
   fmt.Println("title@@@ ", title)
-} 
+}
 ```
 
 ## CrossCompiling
@@ -286,7 +286,7 @@ go build main.go
 GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ go build -x ./
 ```
 ```
-// CC=mingw-w64\x86_64-7.2.0-win32-seh-rt_v5-rev1\mingw64\bin\gcc.exe 
+// CC=mingw-w64\x86_64-7.2.0-win32-seh-rt_v5-rev1\mingw64\bin\gcc.exe
 // CXX=mingw-w64\x86_64-7.2.0-win32-seh-rt_v5-rev1\mingw64\bin\g++.exe
 ```
 

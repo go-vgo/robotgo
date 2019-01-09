@@ -6,7 +6,7 @@
 
 # Caloris Montes
 
-### Add  
+### Add
 
 - [NEW] Update keyboard use sendInput not keybd_event
 - [NEW] Update mouse use sendInput not mouse_event
@@ -28,7 +28,7 @@
 - [NEW] Add color picker and getMousePos() example
 - [NEW] Use go mod not dep, add go.mod remove dep files
 - [NEW] Add GetColors func return string
-- [NEW] Optimize defer code 
+- [NEW] Optimize defer code
 <br/>
 
 - [NEW] Add more godoc
@@ -74,7 +74,7 @@ See Commits for more details, after Otc 8.
 
 ## RobotGo v0.60.0, Mount Olympus: Mytikas
 
-### Add  
+### Add
 
 - [NEW] Add GetBounds func support (add get_client and get_frame C_func)
 - [NEW] Add GetXId and GetXidFromPid func
@@ -115,7 +115,7 @@ See Commits for more details, after Otc 8.
 <br/>
 
 - [NEW] Update code style and move scale to win_sys.h
-- [NEW] Update example add more lang 
+- [NEW] Update example add more lang
 - [NEW] Update pkg to newest
 - [NEW] Remove duplicate code and old useless code
 - [NEW] Update and clean README.md
@@ -135,7 +135,7 @@ See Commits for more details, after Aug 8.
 
 ## RobotGo v0.50.0, The Appalachian Mountains
 
-## Add  
+## Add
 
 - [NEW] Add simple ocr support
 - [NEW] Add max and min window api and win32.h file
@@ -147,7 +147,7 @@ See Commits for more details, after Aug 8.
 - [NEW] Add GetForegroundWindow and FindWindow func support
 - [NEW] Add bitmap to CBitmap func, Add ToCBitmap example to examples
 - [NEW] Add get Scale and GetScaleSize func, get primary display DPI scale factor fix #129, #135
-   Add Custom DPI Scaling support, 
+   Add Custom DPI Scaling support,
    Add scale default value,
    Add scale example
 
@@ -194,7 +194,7 @@ See Commits for more details, after Apr 30.
 
 ## RobotGo v0.49.0, Olympus Mons
 
-### Add  
+### Add
 
 - [NEW] Add get image size func
 - [NEW] Add linux type string utf-8 support
@@ -237,7 +237,7 @@ See Commits for more details, after Jan 25.
 
 ## RobotGo v0.48.0, Ben Nevis
 
-### Add  
+### Add
 
 - [NEW] Add active window by name func ActiveName
 - [NEW] Add type string utf-8 support
@@ -272,7 +272,7 @@ Add func ToMMRGBHex, U32ToHex, U8ToHex, PadHex, HexToRgb, RgbToHex and examples
 - [NEW] Update godoc
 - [NEW] Update CHANGELOG.md
 - [NEW] Change TostringBitmap return string
-- [NEW] Update C language code and other naming 
+- [NEW] Update C language code and other naming
 - [NEW] Update code and code style
 - [NEW] Update move mouse smooth
 
@@ -280,7 +280,7 @@ Add func ToMMRGBHex, U32ToHex, U8ToHex, PadHex, HexToRgb, RgbToHex and examples
 ### Fix
 
 - [FIX] Fix mac set active and active by pid
-- [FIX] Fix windows active by pid #101 
+- [FIX] Fix windows active by pid #101
 - [FIX] Fix FindColor param tolerance
 - [FIX] Fix find bitmap float args
 - [FIX] Fix some range error
@@ -291,7 +291,7 @@ See Commits for more details, after Dec 13.
 
 ## RobotGo v0.47.0, Mount Cook
 
-### Add  
+### Add
 
 - [NEW] Add windows 32bit and 64bit dependency
 - [NEW] Add macOs dependency
@@ -303,7 +303,7 @@ Solve the problem of dependence, remove zlib/libpng dependencies
 - [NEW] Add kill the process
 - [NEW] Add public event and update code
 - [NEW] Add  Windows 32bit and 64bit Appveyor CI
- 
+
 
 ### Update
 - [NEW] Update png io
@@ -391,7 +391,7 @@ See Commits for more details, after Nov 10.
 ### Add
 
 - Add CHANGELOG.md
-- Format some code	
+- Format some code
 - Add fedora dependencies
 
 ### Update
@@ -406,6 +406,6 @@ See Commits for more details, after Nov 10.
 ### Fix
 
 - Fix typesetting and MD error
-- Fix fedora dependencies #55 
+- Fix fedora dependencies #55
 - Fix doc.md and README.md
 

@@ -4,12 +4,12 @@
 	"A-Z a-z 0-9"
 
 	"backspace"
-	"delete"        
-	"enter"        
+	"delete"
+	"enter"
 	"tab"
 	"esc"
 	"escape"
-	"up"		Up arrow key           
+	"up"		Up arrow key
 	"down"		Down arrow key
 	"right"		Right arrow key
 	"left"		Left arrow key
@@ -62,7 +62,7 @@
 	"space"
 	"print"
 	"printscreen"      // No Mac support
-	"insert"           
+	"insert"
 	"menu"				Windows only
 
 	"audio_mute"		Mute the volume
@@ -70,7 +70,7 @@
 	"audio_vol_up"		Increase the volume
 	"audio_play"
 	"audio_stop"
-	"audio_pause"		
+	"audio_pause"
 	"audio_prev"		Previous Track
 	"audio_next"		Next Track
 	"audio_rewind"      Linux only
@@ -80,15 +80,15 @@
 
 
 	"num0"
-	"num1"		
-	"num2"		
-	"num3"		
-	"num4"		
-	"num5"		
-	"num6"		
-	"num7"		
-	"num8"		
-	"num9"		
+	"num1"
+	"num2"
+	"num3"
+	"num4"
+	"num5"
+	"num6"
+	"num7"
+	"num8"
+	"num9"
 	"num_lock"
 
 	"num."
@@ -102,15 +102,15 @@
 
 	// "numpad_0"		No Linux support
 	"numpad_0"
-	"numpad_1"		
-	"numpad_2"		
-	"numpad_3"		
-	"numpad_4"		
-	"numpad_5"		
-	"numpad_6"		
-	"numpad_7"		
-	"numpad_8"		
-	"numpad_9"		
+	"numpad_1"
+	"numpad_2"
+	"numpad_3"
+	"numpad_4"
+	"numpad_5"
+	"numpad_6"
+	"numpad_7"
+	"numpad_8"
+	"numpad_9"
 	"numpad_lock"
 
 	"lights_mon_up"		 Turn up monitor brightness					No Windows support
@@ -118,4 +118,4 @@
 	"lights_kbd_toggle"	 Toggle keyboard backlight on/off			No Windows support
 	"lights_kbd_up"		 Turn up keyboard backlight brightness		No Windows support
 	"lights_kbd_down"	 Turn down keyboard backlight brightness	No Windows support
-```	
+```
