@@ -235,6 +235,12 @@ func Scale() int {
 	return dpi[x]
 }
 
+// Mul mul the scale
+func Mul(x int) int {
+	s := Scale()
+	return x * s / 100
+}
+
 // GetScaleSize get the screen scale size
 func GetScaleSize() (int, int) {
 	x, y := GetScreenSize()
@@ -291,13 +297,7 @@ func CaptureScreen(args ...int) C.MMBitmapRef {
 
 // GoCaptureScreen capture the screen and return bitmap(go struct)
 func GoCaptureScreen(args ...int) Bitmap {
-	var bit C.MMBitmapRef
-
-	if len(args) > 3 {
-		bit = CaptureScreen(args[0], args[1], args[2], args[3])
-	} else {
-		bit = CaptureScreen()
-	}
+	bit := CaptureScreen(args...)
 	defer FreeBitmap(bit)
 
 	return ToBitmap(bit)
@@ -411,10 +411,10 @@ func MoveSmooth(x, y int, args ...interface{}) bool {
 // GetMousePos get mouse's portion
 func GetMousePos() (int, int) {
 	pos := C.get_mouse_pos()
-	// fmt.Println("pos:###", pos, pos.x, pos.y)
+
 	x := int(pos.x)
 	y := int(pos.y)
-	// return pos.x, pos.y
+
 	return x, y
 }
 
