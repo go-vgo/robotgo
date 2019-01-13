@@ -23,14 +23,15 @@ import (
 	"errors"
 	"fmt"
 	"image"
+	"io"
+	"log"
+	"os"
+
 	"image/color"
 	"image/gif"
 	"image/jpeg"
 	"image/png"
-	"io"
 	"io/ioutil"
-	"log"
-	"os"
 
 	"golang.org/x/image/bmp"
 )
@@ -39,6 +40,7 @@ var (
 	br, bg, bb, ba = color.Black.RGBA()
 )
 
+// IsBlack color is black
 func IsBlack(c color.Color) bool {
 	r, g, b, a := c.RGBA()
 
@@ -60,6 +62,7 @@ func DecodeFile(fileName string) (image.Image, string, error) {
 	return img, fm, nil
 }
 
+// GetSize get the image's size
 func GetSize(imagePath string) (int, int) {
 	file, err := os.Open(imagePath)
 	defer file.Close()
@@ -89,6 +92,7 @@ func SaveToPNG(path string, img image.Image) {
 	png.Encode(f, img)
 }
 
+// ReadPNG read png return image.Image
 func ReadPNG(path string) image.Image {
 	f, err := os.Open(path)
 	if err != nil {
@@ -105,7 +109,8 @@ func ReadPNG(path string) image.Image {
 	return img
 }
 
-func ModifiedTime(filePath string) (int64, error) {
+// ModTime file modified time
+func ModTime(filePath string) (int64, error) {
 	f, e := os.Stat(filePath)
 	if e != nil {
 		return 0, e
@@ -114,10 +119,12 @@ func ModifiedTime(filePath string) (int64, error) {
 	return f.ModTime().Unix(), nil
 }
 
+// Rename rename file name
 func Rename(filePath, to string) error {
 	return os.Rename(filePath, to)
 }
 
+// Destroy destroy the file
 func Destroy(filePath string) error {
 	return os.Remove(filePath)
 }
@@ -138,6 +145,7 @@ func Encode(out io.Writer, subImg image.Image, fm string) error {
 	}
 }
 
+// ToString tostring image.Image
 func ToString(img image.Image) (result string) {
 	for row := img.Bounds().Min.Y; row < img.Bounds().Max.Y; row++ {
 		for col := img.Bounds().Min.X; col < img.Bounds().Max.X; col++ {
@@ -154,6 +162,7 @@ func ToString(img image.Image) (result string) {
 	return
 }
 
+// ToBytes trans image.Image to []byte
 func ToBytes(img image.Image, fm string) []byte {
 
 	buf := new(bytes.Buffer)
@@ -167,6 +176,7 @@ func ToBytes(img image.Image, fm string) []byte {
 	return buf.Bytes()
 }
 
+// ToBytesPng trans image.Image to []byte
 func ToBytesPng(img image.Image) []byte {
 
 	buf := new(bytes.Buffer)
@@ -179,6 +189,7 @@ func ToBytesPng(img image.Image) []byte {
 	return buf.Bytes()
 }
 
+// ImgToBytes trans image to []byte
 func ImgToBytes(path string) []byte {
 	img, fm, err := DecodeFile(path)
 	if err != nil {
@@ -189,13 +200,14 @@ func ImgToBytes(path string) []byte {
 	return ToBytes(img, fm)
 }
 
+// PngToBytes trans png to []byte
 func PngToBytes(path string) []byte {
 	img := ReadPNG(path)
 
 	return ToBytesPng(img)
 }
 
-// Save []byte to image
+// Save []byte to image path
 func Save(path string, dist []byte) {
 	ioutil.WriteFile(path, dist, 0666)
 }
