@@ -69,7 +69,7 @@ import (
 
 const (
 	// Version get the robotgo version
-	Version string = "v0.70.0.803, Caloris Montes!"
+	Version = "v0.70.0.809, Caloris Montes!"
 )
 
 // GetVersion get the robotgo version
