@@ -140,7 +140,7 @@ char *bitmap_save(MMBitmapRef bitmap, char *path, uint16_t type){
 		return "Could not save image to file.";
 	}
 	// destroyMMBitmap(bitmap);
-	return "ok";
+	return "";
 }
 
 char *tostring_bitmap(MMBitmapRef bitmap){
