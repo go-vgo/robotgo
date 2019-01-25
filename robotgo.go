@@ -160,7 +160,7 @@ func U8ToHex(hex *C.uint8_t) C.MMRGBHex {
 func PadHex(hex C.MMRGBHex) string {
 	color := C.pad_hex(hex)
 	gcolor := C.GoString(color)
-	defer C.free(unsafe.Pointer(color))
+	C.free(unsafe.Pointer(color))
 
 	return gcolor
 }
@@ -191,7 +191,7 @@ func GetPixelColor(x, y int) string {
 
 	color := C.get_pixel_color(cx, cy)
 	gcolor := C.GoString(color)
-	defer C.free(unsafe.Pointer(color))
+	C.free(unsafe.Pointer(color))
 
 	return gcolor
 }
@@ -253,7 +253,7 @@ func SetXDisplayName(name string) string {
 	cname := C.CString(name)
 	str := C.set_XDisplay_name(cname)
 	gstr := C.GoString(str)
-	defer C.free(unsafe.Pointer(cname))
+	C.free(unsafe.Pointer(cname))
 
 	return gstr
 }
@@ -262,7 +262,7 @@ func SetXDisplayName(name string) string {
 func GetXDisplayName() string {
 	name := C.get_XDisplay_name()
 	gname := C.GoString(name)
-	defer C.free(unsafe.Pointer(name))
+	C.free(unsafe.Pointer(name))
 
 	return gname
 }
@@ -280,7 +280,6 @@ func CaptureScreen(args ...int) C.MMBitmapRef {
 		w = C.size_t(args[2])
 		h = C.size_t(args[3])
 	} else {
-		// fmt.Println("err:::", e)
 		x = 0
 		y = 0
 		// Get screen size.
@@ -291,7 +290,6 @@ func CaptureScreen(args ...int) C.MMBitmapRef {
 	}
 
 	bit := C.capture_screen(x, y, w, h)
-	// fmt.Println("...", bit.width)
 	return bit
 }
 
@@ -469,7 +467,8 @@ func MouseToggle(togKey string, args ...interface{}) {
 
 	down := C.CString(togKey)
 	C.mouse_toggle(down, button)
-	defer C.free(unsafe.Pointer(down))
+
+	C.free(unsafe.Pointer(down))
 }
 
 // SetMouseDelay set mouse delay
@@ -484,7 +483,7 @@ func ScrollMouse(x int, direction string) {
 	cy := C.CString(direction)
 	C.scroll_mouse(cx, cy)
 
-	defer C.free(unsafe.Pointer(cy))
+	C.free(unsafe.Pointer(cy))
 }
 
 // Scroll scroll the mouse with x, y
@@ -659,7 +658,7 @@ func inputUTF(str string) {
 	cstr := C.CString(str)
 	C.input_utf(cstr)
 
-	defer C.free(unsafe.Pointer(cstr))
+	C.free(unsafe.Pointer(cstr))
 }
 
 // TypeStr send a string, support UTF-8
@@ -703,7 +702,7 @@ func TypeString(str string) {
 	cstr := C.CString(str)
 	C.type_string(cstr)
 
-	defer C.free(unsafe.Pointer(cstr))
+	C.free(unsafe.Pointer(cstr))
 }
 
 // PasteStr paste a string, support UTF-8
@@ -722,7 +721,7 @@ func TypeStrDelay(str string, delay int) {
 	cdelay := C.size_t(delay)
 	C.type_string_delayed(cstr, cdelay)
 
-	defer C.free(unsafe.Pointer(cstr))
+	C.free(unsafe.Pointer(cstr))
 }
 
 // TypeStringDelayed type string delayed, Wno-deprecated
@@ -973,10 +972,9 @@ func OpenBitmap(gpath string, args ...int) C.MMBitmapRef {
 	}
 
 	bit := C.bitmap_open(path, mtype)
-	defer C.free(unsafe.Pointer(path))
-	// fmt.Println("opening...", bit)
+	C.free(unsafe.Pointer(path))
+
 	return bit
-	// defer C.free(unsafe.Pointer(path))
 }
 
 // DecodeImg decode the image to image.Image and return
@@ -993,7 +991,7 @@ func OpenImg(path string) []byte {
 func BitmapStr(str string) C.MMBitmapRef {
 	cs := C.CString(str)
 	bit := C.bitmap_from_string(cs)
-	defer C.free(unsafe.Pointer(cs))
+	C.free(unsafe.Pointer(cs))
 
 	return bit
 }
@@ -1009,9 +1007,7 @@ func SaveBitmap(bitmap C.MMBitmapRef, gpath string, args ...int) string {
 
 	path := C.CString(gpath)
 	saveBit := C.bitmap_save(bitmap, path, mtype)
-	// fmt.Println("saved...", saveBit)
-	// return bit
-	defer C.free(unsafe.Pointer(path))
+	C.free(unsafe.Pointer(path))
 
 	return C.GoString(saveBit)
 }
