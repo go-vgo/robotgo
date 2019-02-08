@@ -96,7 +96,7 @@ func ActivePID(pid int32, args ...int) error {
 	return nil
 }
 
-// GetXId get the xid
+// GetXId get the xid return window and error
 func GetXId(xu *xgbutil.XUtil, pid int32) (xproto.Window, error) {
 	if xu == nil {
 		var err error
@@ -123,6 +123,7 @@ func GetXidFromPid(xu *xgbutil.XUtil, pid int32) (xproto.Window, error) {
 		if err != nil {
 			return 0, err
 		}
+
 		if uint(pid) == wmPid {
 			return window, nil
 		}
