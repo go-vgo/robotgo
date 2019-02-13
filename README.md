@@ -154,6 +154,7 @@ func main() {
   robotgo.KeyTap("enter")
   robotgo.TypeString("en")
   robotgo.KeyTap("i", "alt", "command")
+
   arr := []string{"alt", "command"}
   robotgo.KeyTap("i", arr)
 
@@ -179,7 +180,7 @@ import (
 func main() {
   x, y := robotgo.GetMousePos()
   fmt.Println("pos: ", x, y)
-  
+
   color := robotgo.GetPixelColor(100, 200)
   fmt.Println("color---- ", color)
 }
