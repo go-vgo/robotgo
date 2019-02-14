@@ -62,6 +62,7 @@ func ActivePIDC(pid int32, args ...int) {
 }
 
 // ActivePID active the window by PID,
+//
 // If args[0] > 0 on the Windows platform via a window handle to active,
 // If args[0] > 0 on the unix platform via a xid to active
 func ActivePID(pid int32, args ...int) error {
@@ -82,7 +83,7 @@ func ActivePID(pid int32, args ...int) error {
 		return nil
 	}
 
-	// get xid from pid
+	// get the xid from pid
 	xid, err := GetXidFromPid(xu, pid)
 	if err != nil {
 		return err
