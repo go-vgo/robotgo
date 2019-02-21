@@ -16,10 +16,13 @@ import (
 )
 
 func main() {
-	// hook.AsyncHook()
-	veve := hook.AddEvent("v")
-	if veve == 0 {
-		fmt.Println("v...")
+	EvChan := hook.Start()
+	defer hook.End()
+	
+	for ev := range EvChan {
+		fmt.Println(ev)
 	}
 }
 ```
+
+Based on [libuiohook](https://github.com/kwhat/libuiohook).

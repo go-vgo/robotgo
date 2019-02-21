@@ -293,8 +293,8 @@ unsigned short keycode_to_scancode(DWORD vk_code, DWORD flags) {
 		scancode = keycode_scancode_table[vk_code][0];
 
 		if (flags & LLKHF_EXTENDED) {
-			logger(LOG_LEVEL_WARN,	"%s [%u]: EXTD2, vk_code %li\n",
-					__FUNCTION__, __LINE__, vk_code);
+//			logger(LOG_LEVEL_WARN,	"%s [%u]: EXTD2, vk_code %li\n",
+//					__FUNCTION__, __LINE__, vk_code);
 
 			switch (vk_code) {
 				case VK_PRIOR:

@@ -33,21 +33,28 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
-#include "../hook/iohook.h"
 
+#include "../hook/iohook.h"
+#include "../chan/eb_chan.h"
+
+eb_chan events;
+bool sending = false;
 
 int vccode[100];
-int  codesz;
+int codesz;
 
 char *cevent;
-int rrevent;
 // uint16_t *cevent;
 int cstatus = 1;
 int event_status;
+int rrevent;
 
-
-int stop_event();
+int add_hook(dispatcher_t dispatch);
+void add_event_async();
 int add_event(char *key_event);
+int stop_event();
+
+void dispatch_proc_end(iohook_event * const event);
 // int allEvent(char *key_event);
 int allEvent(char *key_event, int vcode[], int size);
 

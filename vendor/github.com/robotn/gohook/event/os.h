@@ -23,7 +23,7 @@
 #endif /* USE_X11 */
 
 #if defined(IS_WINDOWS)
-	#define STRICT /* Require use of exact types. */
+//	#define STRICT /* Require use of exact types. */
 	#define WIN32_LEAN_AND_MEAN 1 /* Speed up compilation. */
 	#include <windows.h>
 #elif !defined(IS_MACOSX) && !defined(USE_X11)

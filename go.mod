@@ -7,7 +7,7 @@ require (
 	github.com/go-ole/go-ole v1.2.2 // indirect
 	github.com/lxn/win v0.0.0-20181015143721-a7f87360b10e
 	github.com/otiai10/gosseract v2.2.0+incompatible
-	github.com/robotn/gohook v0.0.0-20181215173318-e36d1aac6c1a
+	github.com/robotn/gohook v0.0.0-20190221131031-8d5c93253274
 	github.com/shirou/gopsutil v2.18.12+incompatible
 	github.com/shirou/w32 v0.0.0-20160930032740-bb4de0191aa4 // indirect
 	github.com/vcaesar/imgo v0.0.0-20181209162409-13af122cf2fa

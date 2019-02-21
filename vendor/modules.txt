@@ -17,7 +17,7 @@ github.com/go-ole/go-ole/oleutil
 github.com/lxn/win
 # github.com/otiai10/gosseract v2.2.0+incompatible
 github.com/otiai10/gosseract
-# github.com/robotn/gohook v0.0.0-20181215173318-e36d1aac6c1a
+# github.com/robotn/gohook v0.0.0-20190220150725-b5ca357c14ff
 github.com/robotn/gohook
 # github.com/shirou/gopsutil v2.18.12+incompatible
 github.com/shirou/gopsutil/process
@@ -30,7 +30,7 @@ github.com/shirou/gopsutil/net
 github.com/shirou/w32
 # github.com/vcaesar/imgo v0.0.0-20181209162409-13af122cf2fa
 github.com/vcaesar/imgo
-# golang.org/x/image v0.0.0-20181116024801-cd38e8056d9b
+# golang.org/x/image v0.0.0-20181116024801-cd38e8056d9b => github.com/golang/image v0.0.0-20181116024801-cd38e8056d9b
 golang.org/x/image/bmp
 # golang.org/x/sys v0.0.0-20190109145017-48ac38b7c8cb => github.com/golang/sys v0.0.0-20190109145017-48ac38b7c8cb
 golang.org/x/sys/unix
