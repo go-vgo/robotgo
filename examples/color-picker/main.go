@@ -8,7 +8,7 @@ import (
 
 func colorPicker() {
 	m := robotgo.AddEvent("mleft")
-	if m == 0 {
+	if m {
 		x, y := robotgo.GetMousePos()
 		fmt.Println("mouse pos: ", x, y)
 
