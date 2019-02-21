@@ -1198,33 +1198,7 @@ func GetImgSize(imgPath string) (int, int) {
 //
 // mouse arguments: mleft, mright, wheelDown, wheelUp,
 // wheelLeft, wheelRight.
-func AddEvent(key string) int {
-	keycode := Map{
-		"f1":  "59",
-		"f2":  "60",
-		"f3":  "61",
-		"f4":  "62",
-		"f5":  "63",
-		"f6":  "64",
-		"f7":  "65",
-		"f8":  "66",
-		"f9":  "67",
-		"f10": "68",
-		"f11": "69",
-		"f12": "70",
-		// more
-		"esc":     "11",
-		"tab":     "15",
-		"ctrl":    "29",
-		"control": "29",
-		"alt":     "56",
-		"space":   "57",
-		"shift":   "42",
-		"enter":   "28",
-		"cmd":     "3675",
-		"command": "3675",
-	}
-
+func AddEvent(key string) bool {
 	var (
 		// cs   *C.char
 		mArr = []string{"mleft", "mright", "wheelDown",
@@ -1239,13 +1213,17 @@ func AddEvent(key string) int {
 	}
 
 	if len(key) > 1 && !mouseBool {
-		key = keycode[key].(string)
+		key = strconv.Itoa(keycode[key].(int))
 	}
 
 	geve := hook.AddEvent(key)
 	// defer C.free(unsafe.Pointer(cs))
 
-	return geve
+	if geve == 0 {
+		return true
+	}
+
+	return false
 }
 
 // StopEvent stop event listener

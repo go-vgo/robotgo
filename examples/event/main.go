@@ -21,19 +21,19 @@ func add() {
 	fmt.Println("--- Please press v---")
 	eve := robotgo.AddEvent("v")
 
-	if eve == 0 {
+	if eve {
 		fmt.Println("--- You press v---", "v")
 	}
 
 	fmt.Println("--- Please press k---")
 	keve := robotgo.AddEvent("k")
-	if keve == 0 {
+	if keve {
 		fmt.Println("--- You press k---", "k")
 	}
 
 	fmt.Println("--- Please press f1---")
 	feve := robotgo.AddEvent("f1")
-	if feve == 0 {
+	if feve {
 		fmt.Println("You press...", "f1")
 	}
 }
@@ -47,12 +47,12 @@ func event() {
 
 	fmt.Println("--- Please press left mouse button---")
 	mleft := robotgo.AddEvent("mleft")
-	if mleft == 0 {
+	if mleft {
 		fmt.Println("--- You press left mouse button---", "mleft")
 	}
 
 	mright := robotgo.AddEvent("mright")
-	if mright == 0 {
+	if mright {
 		fmt.Println("--- You press right mouse button---", "mright")
 	}
 
