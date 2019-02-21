@@ -93,23 +93,40 @@ func (e Event) String() string {
 	case HookDisabled:
 		return fmt.Sprintf("%v - Event: {Kind: HookDisabled}", e.When)
 	case KeyUp:
-		return fmt.Sprintf("%v - Event: {Kind: KeyUp, Rawcode: %v, Keychar: %v}", e.When, e.Rawcode, e.Keychar)
+		return fmt.Sprintf("%v - Event: {Kind: KeyUp, Rawcode: %v, Keychar: %v}",
+			e.When, e.Rawcode, e.Keychar)
 	case KeyHold:
-		return fmt.Sprintf("%v - Event: {Kind: KeyHold, Rawcode: %v, Keychar: %v}", e.When, e.Rawcode, e.Keychar)
+		return fmt.Sprintf(
+			"%v - Event: {Kind: KeyHold, Rawcode: %v, Keychar: %v}",
+			e.When, e.Rawcode, e.Keychar)
 	case KeyDown:
-		return fmt.Sprintf("%v - Event: {Kind: KeyDown, Rawcode: %v, Keychar: %v}", e.When, e.Rawcode, e.Keychar)
+		return fmt.Sprintf(
+			"%v - Event: {Kind: KeyDown, Rawcode: %v, Keychar: %v}",
+			e.When, e.Rawcode, e.Keychar)
 	case MouseUp:
-		return fmt.Sprintf("%v - Event: {Kind: MouseUp, Button: %v, X: %v, Y: %v, Clicks: %v}", e.When, e.Button, e.X, e.Y, e.Clicks)
+		return fmt.Sprintf(
+			"%v - Event: {Kind: MouseUp, Button: %v, X: %v, Y: %v, Clicks: %v}",
+			e.When, e.Button, e.X, e.Y, e.Clicks)
 	case MouseHold:
-		return fmt.Sprintf("%v - Event: {Kind: MouseHold, Button: %v, X: %v, Y: %v, Clicks: %v}", e.When, e.Button, e.X, e.Y, e.Clicks)
+		return fmt.Sprintf(
+			"%v - Event: {Kind: MouseHold, Button: %v, X: %v, Y: %v, Clicks: %v}",
+			e.When, e.Button, e.X, e.Y, e.Clicks)
 	case MouseDown:
-		return fmt.Sprintf("%v - Event: {Kind: MouseDown, Button: %v, X: %v, Y: %v, Clicks: %v}", e.When, e.Button, e.X, e.Y, e.Clicks)
+		return fmt.Sprintf(
+			"%v - Event: {Kind: MouseDown, Button: %v, X: %v, Y: %v, Clicks: %v}",
+			e.When, e.Button, e.X, e.Y, e.Clicks)
 	case MouseMove:
-		return fmt.Sprintf("%v - Event: {Kind: MouseMove, Button: %v, X: %v, Y: %v, Clicks: %v}", e.When, e.Button, e.X, e.Y, e.Clicks)
+		return fmt.Sprintf(
+			"%v - Event: {Kind: MouseMove, Button: %v, X: %v, Y: %v, Clicks: %v}",
+			e.When, e.Button, e.X, e.Y, e.Clicks)
 	case MouseDrag:
-		return fmt.Sprintf("%v - Event: {Kind: MouseDrag, Button: %v, X: %v, Y: %v, Clicks: %v}", e.When, e.Button, e.X, e.Y, e.Clicks)
+		return fmt.Sprintf(
+			"%v - Event: {Kind: MouseDrag, Button: %v, X: %v, Y: %v, Clicks: %v}",
+			e.When, e.Button, e.X, e.Y, e.Clicks)
 	case MouseWheel:
-		return fmt.Sprintf("%v - Event: {Kind: MouseWheel, Amount: %v, Rotation: %v, Direction: %v}", e.When, e.Amount, e.Rotation, e.Direction)
+		return fmt.Sprintf(
+			"%v - Event: {Kind: MouseWheel, Amount: %v, Rotation: %v, Direction: %v}",
+			e.When, e.Amount, e.Rotation, e.Direction)
 	case FakeEvent:
 		return fmt.Sprintf("%v - Event: {Kind: FakeEvent}", e.When)
 	}
