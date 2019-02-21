@@ -1242,6 +1242,49 @@ func End() {
 	hook.End()
 }
 
+// AddEvents add global event hook
+func AddEvents(key string, arr ...string) bool {
+	s := hook.Start()
+	// defer hook.End()
+
+	ct := false
+	k := 0
+	for {
+		e := <-s
+
+		l := len(arr)
+		if l > 0 {
+			for i := 0; i < l; i++ {
+				ukey := uint16(keycode[arr[i]].(int))
+
+				if e.Kind == hook.KeyHold && e.Keycode == ukey {
+					k++
+				}
+
+				if k == l {
+					ct = true
+				}
+
+				if e.Kind == hook.KeyUp && e.Keycode == ukey {
+					k--
+					time.Sleep(10 * time.Microsecond)
+					ct = false
+				}
+			}
+		} else {
+			ct = true
+		}
+
+		if ct && e.Keycode == uint16(keycode[key].(int)) {
+			hook.End()
+			// k = 0
+			break
+		}
+	}
+
+	return true
+}
+
 /*
 ____    __    ____  __  .__   __.  _______   ______   ____    __    ____
 \   \  /  \  /   / |  | |  \ |  | |       \ /  __  \  \   \  /  \  /   /
@@ -1266,6 +1309,7 @@ func ShowAlert(title, msg string, args ...string) int {
 		// msg = args[1]
 		defaultButton = args[0]
 	}
+
 	if len(args) > 1 {
 		cancelButton = args[1]
 	}
