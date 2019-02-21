@@ -1231,6 +1231,17 @@ func StopEvent() {
 	hook.StopEvent()
 }
 
+// Start start global event hook
+// return event channel
+func Start() chan hook.Event {
+	return hook.Start()
+}
+
+// End removes global event hook
+func End() {
+	hook.End()
+}
+
 /*
 ____    __    ____  __  .__   __.  _______   ______   ____    __    ____
 \   \  /  \  /   / |  | |  \ |  | |       \ /  __  \  \   \  /  \  /   /
