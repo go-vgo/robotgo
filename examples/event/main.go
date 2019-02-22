@@ -17,6 +17,25 @@ import (
 	// "go-vgo/robotgo"
 )
 
+func addEvent() {
+	ok := robotgo.AddEvents("q", "ctrl", "shift")
+	if ok {
+		fmt.Println("add events...")
+	}
+
+	ok = robotgo.AddEvents("w")
+	if ok {
+		fmt.Println("add events")
+	}
+
+	s := robotgo.Start()
+	defer robotgo.End()
+
+	for ev := range s {
+		fmt.Println(ev)
+	}
+}
+
 func add() {
 	fmt.Println("--- Please press v---")
 	eve := robotgo.AddEvent("v")
@@ -61,5 +80,7 @@ func event() {
 }
 
 func main() {
+	addEvent()
+
 	event()
 }
