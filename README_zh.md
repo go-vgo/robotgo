@@ -220,6 +220,11 @@ import (
 )
 
 func main() {
+  ok := robotgo.AddEvents("q", "ctrl", "shift")
+	if ok {
+		fmt.Println("add events...")
+	}
+
   keve := robotgo.AddEvent("k")
   if keve {
     fmt.Println("you press... ", "k")
