@@ -18,11 +18,13 @@ import (
 )
 
 func addEvent() {
+	fmt.Println("--- Please press ctrl + shift + q ---")
 	ok := robotgo.AddEvents("q", "ctrl", "shift")
 	if ok {
 		fmt.Println("add events...")
 	}
 
+	fmt.Println("--- Please press w---")
 	ok = robotgo.AddEvents("w")
 	if ok {
 		fmt.Println("add events")
@@ -80,6 +82,8 @@ func event() {
 }
 
 func main() {
+	fmt.Println("test begin...")
+
 	addEvent()
 
 	event()
