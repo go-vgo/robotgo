@@ -525,7 +525,7 @@ func KeyTap(tapKey string, args ...interface{}) string {
 		keyDelay = 10
 	)
 	// var ckeyArr []*C.char
-	ckeyArr := make([](*_Ctype_char), 0)
+	ckeyArr := make([](*C.char), 0)
 
 	if len(args) > 0 {
 		if reflect.TypeOf(args[0]) == reflect.TypeOf(keyArr) {
@@ -562,7 +562,7 @@ func KeyTap(tapKey string, args ...interface{}) string {
 	defer C.free(unsafe.Pointer(zkey))
 
 	if akey == "" && len(keyArr) != 0 {
-		str := C.key_Taps(zkey, (**_Ctype_char)(unsafe.Pointer(&ckeyArr[0])),
+		str := C.key_Taps(zkey, (**C.char)(unsafe.Pointer(&ckeyArr[0])),
 			C.int(num), C.int(keyDelay))
 
 		return C.GoString(str)
