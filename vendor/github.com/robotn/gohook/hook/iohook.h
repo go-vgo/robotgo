@@ -103,7 +103,8 @@ typedef struct _mouse_wheel_event_data {
 	int16_t y;
 	uint8_t type;
 	uint16_t amount;
-	int16_t rotation;
+	int32_t rotation;
+	// int16_t rotation;
 	uint8_t direction;
 } mouse_wheel_event_data;
 

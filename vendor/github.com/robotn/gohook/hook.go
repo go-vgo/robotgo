@@ -76,7 +76,7 @@ type Event struct {
 	Y int16 `json:"y"`
 
 	Amount    uint16 `json:"amount"`
-	Rotation  int16  `json:"rotation"`
+	Rotation  int32  `json:"rotation"`
 	Direction uint8  `json:"direction"`
 }
 

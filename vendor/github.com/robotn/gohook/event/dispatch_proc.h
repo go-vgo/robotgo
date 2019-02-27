@@ -31,7 +31,7 @@ void dispatch_proc(iohook_event * const event) {
 		case EVENT_KEY_RELEASED:
 		case EVENT_KEY_TYPED:
            sprintf(buffer,
-                "{\"id\":%i,\"time\":%" PRIu64 ",\"mask\":%hu,\"reserved\":%hu,\"keycode\":%hu,\"rawcode\":%hu,\"keychar\":%hu}",
+                "{\"id\":%i,\"time\":%" PRIu64 ",\"mask\":%hu,\"reserved\":%hu,\"keycode\":%hu,\"rawcode\":%hu,\"keychar\":%d}",
                 event->type, event->time, event->mask,event->reserved,
                 event->data.keyboard.keycode,
                 event->data.keyboard.rawcode,
@@ -52,7 +52,7 @@ void dispatch_proc(iohook_event * const event) {
 			break;
 		case EVENT_MOUSE_WHEEL:
 			sprintf(buffer,
-				"{\"id\":%i,\"time\":%" PRIu64 ",\"mask\":%hu,\"reserved\":%hu,\"clicks\":%hu,\"x\":%hd,\"y\":%hd,\"type\":%hu,\"ammount\":%hu,\"rotation\":%hd,\"direction\":%hu}",
+				"{\"id\":%i,\"time\":%" PRIu64 ",\"mask\":%hu,\"reserved\":%hu,\"clicks\":%hu,\"x\":%hd,\"y\":%hd,\"type\":%d,\"ammount\":%hu,\"rotation\":%d,\"direction\":%d}",
 				event->type, event->time, event->mask, event->reserved,
 				event->data.wheel.clicks,
 				event->data.wheel.x,
