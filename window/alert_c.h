@@ -62,7 +62,7 @@ int showAlert(const char *title, const char *msg, const char *defaultButton,
 	if (defaultButtonTitle != NULL) CFRelease(defaultButtonTitle);
 	if (cancelButtonTitle != NULL) CFRelease(cancelButtonTitle);
 
-	if (err != 0) return -1;
+	if (err != 0) { return -1; }
 	return (responseFlags == kCFUserNotificationDefaultResponse) ? 0 : 1;
 #elif defined(USE_X11)
 	/* Note that args[0] is set by the xmessage() function. */
@@ -78,7 +78,7 @@ int showAlert(const char *title, const char *msg, const char *defaultButton,
 		asprintf(&buttonList, "%s:2,%s:3", defaultButton, cancelButton);
 	}
 
-	if (buttonList == NULL) return -1; /* asprintf() failed. */
+	if (buttonList == NULL) { return -1; /* asprintf() failed. */ }
 	args[5] = "-buttons";
 	args[6] = buttonList;
 	args[7] = "-default";
