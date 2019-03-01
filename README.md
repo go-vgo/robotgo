@@ -148,11 +148,11 @@ func main() {
   robotgo.TypeStr("山达尔星新星军团, galaxy. こんにちは世界.")
   robotgo.Sleep(1)
 
-  ustr := uint32(robotgo.CharCodeAt("测试", 0))
-  robotgo.UnicodeType(ustr)
+  // ustr := uint32(robotgo.CharCodeAt("测试", 0))
+  // robotgo.UnicodeType(ustr)
 
   robotgo.KeyTap("enter")
-  robotgo.TypeString("en")
+  // robotgo.TypeString("en")
   robotgo.KeyTap("i", "alt", "command")
 
   arr := []string{"alt", "command"}
