@@ -16,6 +16,8 @@ github.com/otiai10/gosseract v2.2.1+incompatible h1:Ry5ltVdpdp4LAa2bMjsSJH34XHVO
 github.com/otiai10/gosseract v2.2.1+incompatible/go.mod h1:XrzWItCzCpFRZ35n3YtVTgq5bLAhFIkascoRo8G32QE=
 github.com/robotn/gohook v0.0.0-20190227143424-9bf349ed0b6d h1:AYuqgHF+CzRt+kNH7MVXu6GL8CEScvlIkmBO7cpaMAo=
 github.com/robotn/gohook v0.0.0-20190227143424-9bf349ed0b6d/go.mod h1:YD5RyCnUEY2xqtkkgeQVZ31UAfAnVPwUxpTE5cwSXg4=
+github.com/shirou/gopsutil v0.0.0-20190131151121-071446942108 h1:XXgDK65TPH+Qbo2sdYHldM5avclwThBXVYZHxroFkTQ=
+github.com/shirou/gopsutil v0.0.0-20190131151121-071446942108/go.mod h1:5b4v6he4MtMOwMlS0TUMTu2PcXUg8+E1lC7eC3UO/RA=
 github.com/shirou/gopsutil v2.18.12+incompatible h1:1eaJvGomDnH74/5cF4CTmTbLHAriGFsTZppLXDX93OM=
 github.com/shirou/gopsutil v2.18.12+incompatible/go.mod h1:5b4v6he4MtMOwMlS0TUMTu2PcXUg8+E1lC7eC3UO/RA=
 github.com/shirou/w32 v0.0.0-20160930032740-bb4de0191aa4 h1:udFKJ0aHUL60LboW/A+DfgoHVedieIzIXE8uylPue0U=

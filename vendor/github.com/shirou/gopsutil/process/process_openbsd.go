@@ -7,6 +7,8 @@ import (
 	"bytes"
 	"context"
 	"encoding/binary"
+	"os/exec"
+	"strconv"
 	"strings"
 	"unsafe"
 
@@ -354,6 +356,14 @@ func (p *Process) MemoryInfoEx() (*MemoryInfoExStat, error) {
 }
 
 func (p *Process) MemoryInfoExWithContext(ctx context.Context) (*MemoryInfoExStat, error) {
+	return nil, common.ErrNotImplementedError
+}
+
+func (p *Process) PageFaults() (*PageFaultsStat, error) {
+	return p.PageFaultsWithContext(context.Background())
+}
+
+func (p *Process) PageFaultsWithContext(ctx context.Context) (*PageFaultsStat, error) {
 	return nil, common.ErrNotImplementedError
 }
 

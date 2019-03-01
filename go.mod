@@ -8,7 +8,7 @@ require (
 	github.com/lxn/win v0.0.0-20190226192825-50e22abd4ff9
 	github.com/otiai10/gosseract v2.2.1+incompatible
 	github.com/robotn/gohook v0.0.0-20190227143424-9bf349ed0b6d
-	github.com/shirou/gopsutil v2.18.12+incompatible
+	github.com/shirou/gopsutil v0.0.0-20190131151121-071446942108
 	github.com/shirou/w32 v0.0.0-20160930032740-bb4de0191aa4 // indirect
 	github.com/vcaesar/imgo v0.0.0-20181209162409-13af122cf2fa
 	golang.org/x/image v0.0.0-20190227222117-0694c2d4d067 // indirect
