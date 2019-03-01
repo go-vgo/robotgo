@@ -12,6 +12,7 @@ package gosseract
 import "C"
 import (
 	"fmt"
+	"image"
 	"os"
 	"strings"
 	"unsafe"
@@ -146,6 +147,10 @@ func (client *Client) SetLanguage(langs ...string) error {
 	return nil
 }
 
+func (client *Client) DisableOutput() error {
+	return client.SetVariable(DEBUG_FILE, os.DevNull)
+}
+
 // SetWhitelist sets whitelist chars.
 // See official documentation for whitelist here https://github.com/tesseract-ocr/tesseract/wiki/ImproveQuality#dictionaries-word-lists-and-patterns
 func (client *Client) SetWhitelist(whitelist string) error {
@@ -204,10 +209,12 @@ func (client *Client) init() error {
 	}
 	defer C.free(unsafe.Pointer(configfile))
 
-	res := C.Init(client.api, nil, languages, configfile)
+	errbuf := [512]C.char{}
+	res := C.Init(client.api, nil, languages, configfile, &errbuf[0])
+	msg := C.GoString(&errbuf[0])
+
 	if res != 0 {
-		// TODO: capture and vacuum stderr from Cgo
-		return fmt.Errorf("failed to initialize TessBaseAPI with code %d", res)
+		return fmt.Errorf("failed to initialize TessBaseAPI with code %d: %s", res, msg)
 	}
 
 	if err := client.setVariablesToInitializedAPI(); err != nil {
@@ -258,5 +265,38 @@ func (client *Client) HOCRText() (out string, err error) {
 		return
 	}
 	out = C.GoString(C.HOCRText(client.api))
+	return
+}
+
+// BoundingBox contains the position, confidence and UTF8 text of the recognized word
+type BoundingBox struct {
+	Box        image.Rectangle
+	Word       string
+	Confidence float64
+}
+
+// GetBoundingBoxes returns bounding boxes for each matched word
+func (client *Client) GetBoundingBoxes(level PageIteratorLevel) (out []BoundingBox, err error) {
+	if client.api == nil {
+		return out, fmt.Errorf("TessBaseAPI is not constructed, please use `gosseract.NewClient`")
+	}
+	if err = client.init(); err != nil {
+		return
+	}
+	boxArray := C.GetBoundingBoxes(client.api, C.int(level))
+	length := int(boxArray.length)
+	defer C.free(unsafe.Pointer(boxArray.boxes))
+	defer C.free(unsafe.Pointer(boxArray))
+
+	for i := 0; i < length; i++ {
+		// cast to bounding_box: boxes + i*sizeof(box)
+		box := (*C.struct_bounding_box)(unsafe.Pointer(uintptr(unsafe.Pointer(boxArray.boxes)) + uintptr(i)*unsafe.Sizeof(C.struct_bounding_box{})))
+		out = append(out, BoundingBox{
+			Box:        image.Rect(int(box.x1), int(box.y1), int(box.x2), int(box.y2)),
+			Word:       C.GoString(box.word),
+			Confidence: float64(box.confidence),
+		})
+	}
+
 	return
 }

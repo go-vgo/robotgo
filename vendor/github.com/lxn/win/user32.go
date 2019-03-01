@@ -7,6 +7,7 @@
 package win
 
 import (
+	"golang.org/x/sys/windows"
 	"syscall"
 	"unsafe"
 )
@@ -875,6 +876,54 @@ const (
 	WM_CLIPBOARDUPDATE        = 0x031D
 )
 
+// event constants
+const (
+	EVENT_OBJECT_CREATE                   = 0x8000
+	EVENT_OBJECT_DESTROY                  = 0x8001
+	EVENT_OBJECT_SHOW                     = 0x8002
+	EVENT_OBJECT_HIDE                     = 0x8003
+	EVENT_OBJECT_REORDER                  = 0x8004
+	EVENT_OBJECT_FOCUS                    = 0x8005
+	EVENT_OBJECT_SELECTION                = 0x8006
+	EVENT_OBJECT_SELECTIONADD             = 0x8007
+	EVENT_OBJECT_SELECTIONREMOVE          = 0x8008
+	EVENT_OBJECT_SELECTIONWITHIN          = 0x8009
+	EVENT_OBJECT_STATECHANGE              = 0x800A
+	EVENT_OBJECT_LOCATIONCHANGE           = 0x800B
+	EVENT_OBJECT_NAMECHANGE               = 0x800C
+	EVENT_OBJECT_DESCRIPTIONCHANGE        = 0x800D
+	EVENT_OBJECT_VALUECHANGE              = 0x800E
+	EVENT_OBJECT_PARENTCHANGE             = 0x800F
+	EVENT_OBJECT_HELPCHANGE               = 0x8010
+	EVENT_OBJECT_DEFACTIONCHANGE          = 0x8011
+	EVENT_OBJECT_ACCELERATORCHANGE        = 0x8012
+	EVENT_OBJECT_INVOKED                  = 0x8013
+	EVENT_OBJECT_TEXTSELECTIONCHANGED     = 0x8014
+	EVENT_OBJECT_CONTENTSCROLLED          = 0x8015
+	EVENT_SYSTEM_ARRANGMENTPREVIEW        = 0x8016
+	EVENT_OBJECT_CLOAKED                  = 0x8017
+	EVENT_OBJECT_UNCLOAKED                = 0x8018
+	EVENT_OBJECT_LIVEREGIONCHANGED        = 0x8019
+	EVENT_OBJECT_HOSTEDOBJECTSINVALIDATED = 0x8020
+	EVENT_OBJECT_DRAGSTART                = 0x8021
+	EVENT_OBJECT_DRAGCANCEL               = 0x8022
+	EVENT_OBJECT_DRAGCOMPLETE             = 0x8023
+	EVENT_OBJECT_DRAGENTER                = 0x8024
+	EVENT_OBJECT_DRAGLEAVE                = 0x8025
+	EVENT_OBJECT_DRAGDROPPED              = 0x8026
+	EVENT_OBJECT_IME_SHOW                 = 0x8027
+	EVENT_OBJECT_IME_HIDE                 = 0x8028
+	EVENT_OBJECT_IME_CHANGE               = 0x8029
+	EVENT_OBJECT_END                      = 0x80ff
+	EVENT_AIA_START                       = 0xa000
+	EVENT_AIA_END                         = 0xafff
+
+	WINEVENT_OUTOFCONTEXT   = 0x0000
+	WINEVENT_SKIPOWNTHREAD  = 0x0001
+	WINEVENT_SKIPOWNPROCESS = 0x0002
+	WINEVENT_INCONTEXT      = 0x0004
+)
+
 // mouse button constants
 const (
 	MK_CONTROL  = 0x0008
@@ -1552,6 +1601,7 @@ var (
 	beginDeferWindowPos        uintptr
 	beginPaint                 uintptr
 	callWindowProc             uintptr
+	checkMenuRadioItem         uintptr
 	clientToScreen             uintptr
 	closeClipboard             uintptr
 	createDialogParam          uintptr
@@ -1580,6 +1630,7 @@ var (
 	getActiveWindow            uintptr
 	getAncestor                uintptr
 	getCaretPos                uintptr
+	getClassName               uintptr
 	getClientRect              uintptr
 	getClipboardData           uintptr
 	getCursorPos               uintptr
@@ -1648,6 +1699,7 @@ var (
 	setRect                    uintptr
 	setScrollInfo              uintptr
 	setTimer                   uintptr
+	setWinEventHook            uintptr
 	setWindowLong              uintptr
 	setWindowLongPtr           uintptr
 	setWindowPlacement         uintptr
@@ -1656,6 +1708,7 @@ var (
 	systemParametersInfo       uintptr
 	trackPopupMenuEx           uintptr
 	translateMessage           uintptr
+	unhookWinEvent             uintptr
 	updateWindow               uintptr
 	windowFromDC               uintptr
 	windowFromPoint            uintptr
@@ -1674,6 +1727,7 @@ func init() {
 	beginDeferWindowPos = MustGetProcAddress(libuser32, "BeginDeferWindowPos")
 	beginPaint = MustGetProcAddress(libuser32, "BeginPaint")
 	callWindowProc = MustGetProcAddress(libuser32, "CallWindowProcW")
+	checkMenuRadioItem = MustGetProcAddress(libuser32, "CheckMenuRadioItem")
 	clientToScreen = MustGetProcAddress(libuser32, "ClientToScreen")
 	closeClipboard = MustGetProcAddress(libuser32, "CloseClipboard")
 	createDialogParam = MustGetProcAddress(libuser32, "CreateDialogParamW")
@@ -1702,6 +1756,7 @@ func init() {
 	getActiveWindow = MustGetProcAddress(libuser32, "GetActiveWindow")
 	getAncestor = MustGetProcAddress(libuser32, "GetAncestor")
 	getCaretPos = MustGetProcAddress(libuser32, "GetCaretPos")
+	getClassName = MustGetProcAddress(libuser32, "GetClassNameW")
 	getClientRect = MustGetProcAddress(libuser32, "GetClientRect")
 	getClipboardData = MustGetProcAddress(libuser32, "GetClipboardData")
 	getCursorPos = MustGetProcAddress(libuser32, "GetCursorPos")
@@ -1775,6 +1830,7 @@ func init() {
 	setParent = MustGetProcAddress(libuser32, "SetParent")
 	setScrollInfo = MustGetProcAddress(libuser32, "SetScrollInfo")
 	setTimer = MustGetProcAddress(libuser32, "SetTimer")
+	setWinEventHook = MustGetProcAddress(libuser32, "SetWinEventHook")
 	setWindowLong = MustGetProcAddress(libuser32, "SetWindowLongW")
 	// On 32 bit SetWindowLongPtrW is not available
 	if is64bit {
@@ -1788,6 +1844,7 @@ func init() {
 	systemParametersInfo = MustGetProcAddress(libuser32, "SystemParametersInfoW")
 	trackPopupMenuEx = MustGetProcAddress(libuser32, "TrackPopupMenuEx")
 	translateMessage = MustGetProcAddress(libuser32, "TranslateMessage")
+	unhookWinEvent = MustGetProcAddress(libuser32, "UnhookWinEvent")
 	updateWindow = MustGetProcAddress(libuser32, "UpdateWindow")
 	windowFromDC = MustGetProcAddress(libuser32, "WindowFromDC")
 	windowFromPoint = MustGetProcAddress(libuser32, "WindowFromPoint")
@@ -1852,6 +1909,18 @@ func CallWindowProc(lpPrevWndFunc uintptr, hWnd HWND, Msg uint32, wParam, lParam
 		0)
 
 	return ret
+}
+
+func CheckMenuRadioItem(hmenu HMENU, first, last, check, flags uint32) bool {
+	ret, _, _ := syscall.Syscall6(checkMenuRadioItem, 5,
+		uintptr(hmenu),
+		uintptr(first),
+		uintptr(last),
+		uintptr(check),
+		uintptr(flags),
+		0)
+
+	return ret != 0
 }
 
 func ClientToScreen(hwnd HWND, lpPoint *POINT) bool {
@@ -2138,6 +2207,17 @@ func GetCaretPos(lpPoint *POINT) bool {
 		0)
 
 	return ret != 0
+}
+
+func GetClassName(hWnd HWND, className *uint16, maxCount int) (int, error) {
+	ret, _, e := syscall.Syscall(getClassName, 3,
+		uintptr(hWnd),
+		uintptr(unsafe.Pointer(className)),
+		uintptr(maxCount))
+	if ret == 0 {
+		return 0, e
+	}
+	return int(ret), nil
 }
 
 func GetClientRect(hWnd HWND, rect *RECT) bool {
@@ -2810,6 +2890,26 @@ func SetTimer(hWnd HWND, nIDEvent uintptr, uElapse uint32, lpTimerFunc uintptr) 
 	return ret
 }
 
+type WINEVENTPROC func(hWinEventHook HWINEVENTHOOK, event uint32, hwnd HWND, idObject int32, idChild int32, idEventThread uint32, dwmsEventTime uint32) uintptr
+
+func SetWinEventHook(eventMin uint32, eventMax uint32, hmodWinEventProc HMODULE, callbackFunction WINEVENTPROC, idProcess uint32, idThread uint32, dwFlags uint32) (HWINEVENTHOOK, error) {
+	ret, _, err := syscall.Syscall9(setWinEventHook, 7,
+		uintptr(eventMin),
+		uintptr(eventMax),
+		uintptr(hmodWinEventProc),
+		windows.NewCallback(callbackFunction),
+		uintptr(idProcess),
+		uintptr(idThread),
+		uintptr(dwFlags),
+		0, 0)
+
+	if ret == 0 {
+		return 0, err
+	}
+
+	return HWINEVENTHOOK(ret), nil
+}
+
 func SetWindowLong(hWnd HWND, index, value int32) int32 {
 	ret, _, _ := syscall.Syscall(setWindowLong, 3,
 		uintptr(hWnd),
@@ -2891,6 +2991,11 @@ func TranslateMessage(msg *MSG) bool {
 		0,
 		0)
 
+	return ret != 0
+}
+
+func UnhookWinEvent(hWinHookEvent HWINEVENTHOOK) bool {
+	ret, _, _ := syscall.Syscall(unhookWinEvent, 1, uintptr(hWinHookEvent), 0, 0)
 	return ret != 0
 }
 
