@@ -30,7 +30,9 @@ func addEvent() {
 		fmt.Println("add events")
 	}
 
+	// start hook
 	s := robotgo.Start()
+	// end hook
 	defer robotgo.End()
 
 	for ev := range s {
