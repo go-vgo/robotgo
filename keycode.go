@@ -10,6 +10,16 @@
 
 package robotgo
 
+var mouseMap = Map{
+	"left":       1,
+	"right":      2,
+	"center":     3,
+	"wheelDown":  4,
+	"wheelUp":    5,
+	"wheelLeft":  6,
+	"wheelRight": 7,
+}
+
 var keycode = Map{
 	"`": 41,
 	"1": 2,
