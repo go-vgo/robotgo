@@ -1285,6 +1285,32 @@ func AddEvents(key string, arr ...string) bool {
 	return true
 }
 
+// AddMouse add mouse event hook
+func AddMouse(btn string, x ...int16) bool {
+	s := hook.Start()
+	ukey := mouseMap[btn]
+
+	ct := false
+	for {
+		e := <-s
+
+		if len(x) > 1 {
+			if e.Kind == hook.MouseMove && e.X == x[0] && e.Y == x[1] {
+				ct = true
+			}
+		} else {
+			ct = true
+		}
+
+		if ct && e.Kind == hook.MouseDown && e.Button == ukey {
+			hook.End()
+			break
+		}
+	}
+
+	return true
+}
+
 /*
 ____    __    ____  __  .__   __.  _______   ______   ____    __    ____
 \   \  /  \  /   / |  | |  \ |  | |       \ /  __  \  \   \  /  \  /   /
