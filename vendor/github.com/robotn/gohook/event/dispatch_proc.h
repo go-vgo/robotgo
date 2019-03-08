@@ -181,6 +181,9 @@ void dispatch_proc_end(iohook_event * const event) {
 				if (strcmp(cevent, "mright") == 0) {
 					amouse = 2;
 				}
+				if (strcmp(cevent, "center") == 0) {
+					amouse = 3;
+				}
 				if (strcmp(cevent, "wheelDown") == 0) {
 					amouse = 4;
 				}

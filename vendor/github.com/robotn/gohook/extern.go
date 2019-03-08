@@ -5,6 +5,7 @@ package hook
 // #include "event/hook_async.h"
 */
 import "C"
+
 import (
 	"log"
 	"time"
