@@ -69,7 +69,7 @@ import (
 
 const (
 	// Version get the robotgo version
-	Version = "v0.70.0.809, Caloris Montes!"
+	Version = "v0.80.0.840, Caloris Montes!"
 )
 
 // GetVersion get the robotgo version
@@ -1196,12 +1196,12 @@ func GetImgSize(imgPath string) (int, int) {
 // parameters for the string type,
 // the keyboard corresponding key parameters,
 //
-// mouse arguments: mleft, mright, wheelDown, wheelUp,
+// mouse arguments: mleft, center, mright, wheelDown, wheelUp,
 // wheelLeft, wheelRight.
 func AddEvent(key string) bool {
 	var (
 		// cs   *C.char
-		mArr = []string{"mleft", "mright", "wheelDown",
+		mArr = []string{"mleft", "center", "mright", "wheelDown",
 			"wheelUp", "wheelLeft", "wheelRight"}
 		mouseBool bool
 	)
