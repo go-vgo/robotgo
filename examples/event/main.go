@@ -40,6 +40,20 @@ func addEvent() {
 	}
 }
 
+func addMouse() {
+	fmt.Println("--- Please press left mouse button ---")
+	ok := robotgo.AddMouse("left")
+	if ok {
+		fmt.Println("add mouse...")
+	}
+
+	fmt.Println("--- Please press left mouse button and move mosue to 100,100 ---")
+	ok = robotgo.AddMouse("left", 100, 100)
+	if ok {
+		fmt.Println("add mouse and move to 100,100 ...")
+	}
+}
+
 func add() {
 	fmt.Println("--- Please press v---")
 	eve := robotgo.AddEvent("v")
@@ -87,6 +101,8 @@ func main() {
 	fmt.Println("test begin...")
 
 	addEvent()
+
+	addMouse()
 
 	event()
 }
