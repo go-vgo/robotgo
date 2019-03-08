@@ -1311,6 +1311,21 @@ func AddMouse(btn string, x ...int16) bool {
 	return true
 }
 
+// AddMousePos add listen mouse event pos hook
+func AddMousePos(x, y int16) bool {
+	s := hook.Start()
+
+	for {
+		e := <-s
+		if e.Kind == hook.MouseMove && e.X == x && e.Y == y {
+			hook.End()
+			break
+		}
+	}
+
+	return true
+}
+
 /*
 ____    __    ____  __  .__   __.  _______   ______   ____    __    ____
 \   \  /  \  /   / |  | |  \ |  | |       \ /  __  \  \   \  /  \  /   /
