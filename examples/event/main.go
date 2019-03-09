@@ -52,6 +52,12 @@ func addMouse() {
 	if ok {
 		fmt.Println("add mouse and move to 100,100 ...")
 	}
+
+	fmt.Println("--- Please move mosue to 100,100 ---")
+	ok = robotgo.AddMousePos(100, 100)
+	if ok {
+		fmt.Println(" move mouse to 100,100 ...")
+	}
 }
 
 func add() {
