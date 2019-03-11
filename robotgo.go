@@ -748,6 +748,27 @@ func SetKeyboardDelay(delay int) {
 |______/  |__|     |__|     |__|  |__| /__/     \__\ | _|
 */
 
+// GetText get the image text by tesseract ocr
+//
+// robotgo.GetText(imgPath, lang string)
+func GetText(imgPath string, args ...string) (string, error) {
+	var lang = "eng"
+
+	if len(args) > 0 {
+		lang = args[0]
+		if lang == "zh" {
+			lang = "chi_sim"
+		}
+	}
+
+	body, err := exec.Command("tesseract", imgPath,
+		"stdout", "-l", lang).Output()
+	if err != nil {
+		return "", err
+	}
+	return string(body), nil
+}
+
 // ToBitmap trans C.MMBitmapRef to Bitmap
 func ToBitmap(bit C.MMBitmapRef) Bitmap {
 	bitmap := Bitmap{
@@ -791,27 +812,6 @@ func TostringBitmap(bit C.MMBitmapRef) string {
 func TocharBitmap(bit C.MMBitmapRef) *C.char {
 	strBit := C.tostring_bitmap(bit)
 	return strBit
-}
-
-// GetText get the image text by tesseract ocr
-//
-// robotgo.GetText(imgPath, lang string)
-func GetText(imgPath string, args ...string) (string, error) {
-	var lang = "eng"
-
-	if len(args) > 0 {
-		lang = args[0]
-		if lang == "zh" {
-			lang = "chi_sim"
-		}
-	}
-
-	body, err := exec.Command("tesseract", imgPath,
-		"stdout", "-l", lang).Output()
-	if err != nil {
-		return "", err
-	}
-	return string(body), nil
 }
 
 func internalFindBitmap(bit, sbit C.MMBitmapRef, tolerance float64) (int, int) {
