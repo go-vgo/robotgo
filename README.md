@@ -22,6 +22,7 @@ RobotGo supports Mac, Windows, and Linux(X11).
 
 ## Contents
 - [Docs](#docs)
+- [Binding](#binding)
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Update](#update)
@@ -37,6 +38,10 @@ RobotGo supports Mac, Windows, and Linux(X11).
   - [GoDoc](https://godoc.org/github.com/go-vgo/robotgo)
   - [API Docs](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) &nbsp;&nbsp;&nbsp;
   - [中文文档](https://github.com/go-vgo/robotgo/blob/master/docs/doc_zh.md)
+
+## Binding:
+
+[Robotn](https://github.com/vcaesar/robotn), binding JavaScript and other, support more language.
 
 ## Requirements:
 

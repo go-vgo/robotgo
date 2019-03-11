@@ -18,6 +18,7 @@ QQ 群: 595877611
 
 ## Contents
 - [Docs](#docs)
+- [Binding](#binding)
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Update](#update)
@@ -33,6 +34,10 @@ QQ 群: 595877611
 - [GoDoc](https://godoc.org/github.com/go-vgo/robotgo)
 - [中文文档](https://github.com/go-vgo/robotgo/blob/master/docs/doc_zh.md)&nbsp;&nbsp;&nbsp;
 - [English Docs](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md)
+
+## Binding:
+
+[Robotn](https://github.com/vcaesar/robotn), binding JavaScript and other, support more language.
 
 ## Requirements:
 环境要求:
