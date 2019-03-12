@@ -2,6 +2,58 @@
 
 <!--### RobotGo-->
 
+## RobotGo v0.80.0, Sierra Nevada
+
+# Sierra Nevada
+
+### Add  
+
+- [NEW] Add asynchronous event support
+- [NEW] Add multiple keypress event listener support
+- [NEW] Add hook start and end func
+- [NEW] Add AddEvents, AddMouse, AddMousePos hook function
+- [NEW] Add mul() scale func and optimize code
+- [NEW] Refactor AddEvent() func and add keycode.go, update example
+- [NEW] Add mouse map keycode
+- [NEW] Add android null file
+- [NEW] Add AddEvent "center" support
+- [NEW] Update README.md, Add binding link
+
+ <br/>
+
+- [NEW] Format README.md and docs markdown
+- [NEW] Update bitmap_save return code
+- [NEW] Optimize code not defer and remove useless code
+- [NEW] Update code style and godoc
+- [NEW] Update go mod vendor
+- [NEW] Add more event examples
+- [NEW] add AddEvents, AddMouse, AddMousePos examples code
+
+
+### Update
+
+- [NEW] Update event example code add print hint
+- [NEW] Update godoc
+- [NEW] Update CHANGELOG.md
+- [NEW] Update .gitignore
+- [NEW] Update code style and examples
+- [NEW] Update pkg to newest
+- [NEW] Update CI add go1.12.x support
+- [NEW] Move GetText() func code
+
+### Fix
+
+- [FIX] Add AddEvents func, Fixed #98, #61, #69...
+- [FIX] Add asynchronous event support, Fixed #196, #89...
+- [FIX] add AddMouse func, Fixed #138 
+- [FIX] Update _Ctype_char to C.char, Fixed go1.12 build error #191
+- [FIX] Update hook, Fixed #195 warning and json break bug
+- [FIX] Fixed color picker, Update README.md and docs
+
+
+See Commits for more details, after Jan 7.
+
+
 ## RobotGo v0.70.0, Caloris Montes
 
 # Caloris Montes
