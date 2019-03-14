@@ -1302,7 +1302,7 @@ func AddMouse(btn string, x ...int16) bool {
 			ct = true
 		}
 
-		if ct && e.Kind == hook.MouseDown && e.Button == ukey {
+		if ct && e.Kind == hook.MouseDown && int(e.Button) == ukey {
 			hook.End()
 			break
 		}
