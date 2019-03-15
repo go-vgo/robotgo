@@ -26,6 +26,7 @@ import "C"
 
 import (
 	"fmt"
+	"sync"
 	"time"
 	"unsafe"
 )
@@ -83,6 +84,8 @@ type Event struct {
 var (
 	ev      = make(chan Event, 1024)
 	asyncon = false
+
+	lck sync.RWMutex
 )
 
 // String return hook kind string
@@ -136,6 +139,9 @@ func (e Event) String() string {
 
 // RawcodetoKeychar rawcode to keychar
 func RawcodetoKeychar(r uint16) string {
+	lck.RLock()
+	defer lck.RUnlock()
+
 	return raw2key[r]
 }
 

@@ -24,7 +24,9 @@ func go_send(s *C.char) {
 	}
 
 	if out.Keychar != CharUndefined {
+		lck.Lock()
 		raw2key[out.Rawcode] = string([]rune{out.Keychar})
+		lck.Unlock()
 	}
 
 	// todo bury this deep into the C lib so that the time is correct
