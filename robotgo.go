@@ -1275,7 +1275,7 @@ func AddEvents(key string, arr ...string) bool {
 			ct = true
 		}
 
-		if ct && e.Keycode == uint16(keycode[key].(int)) {
+		if ct && e.Kind == hook.KeyUp && e.Keycode == uint16(keycode[key].(int)) {
 			hook.End()
 			// k = 0
 			break
