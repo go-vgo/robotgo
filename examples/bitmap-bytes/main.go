@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"image/jpeg"
-	_ "image/jpeg"
 	"io/ioutil"
 
 	"github.com/go-vgo/robotgo"
@@ -24,7 +23,7 @@ func main() {
 	}
 
 	b := new(bytes.Buffer)
-	err = jpeg.Encode(b, img, &jpeg.Options{20})
+	err = jpeg.Encode(b, img, &jpeg.Options{Quality: 20})
 	if err != nil {
 		log.Println(err)
 		return
