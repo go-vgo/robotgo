@@ -320,6 +320,16 @@ int saveMMBitmapAsBMP(MMBitmapRef bitmap, const char *path)
 	return 0;
 }
 
+uint8_t *saveMMBitmapAsBytes(MMBitmapRef bitmap, size_t *dataLen)
+{
+	uint8_t *data;
+	if ((data = createBitmapData(bitmap, dataLen)) == NULL) {
+		*dataLen = -1;
+		return NULL;
+	}
+	return data;
+}
+
 static uint8_t *readImageData(FILE *fp, size_t width, size_t height,
                               uint8_t bytesPerPixel, size_t bytewidth)
 {

@@ -797,6 +797,19 @@ func ToCBitmap(bit Bitmap) C.MMBitmapRef {
 	return cbitmap
 }
 
+// ToBitmapBytes saves Bitmap to bitmap format in bytes
+func ToBitmapBytes(bit C.MMBitmapRef) []byte {
+	var len C.size_t
+	ptr := C.saveMMBitmapAsBytes(bit, &len)
+	if int(len) < 0 {
+		return nil
+	}
+	bs := C.GoBytes(unsafe.Pointer(ptr), C.int(len))
+	C.free(unsafe.Pointer(ptr))
+	return bs
+}
+
+
 // ToMMBitmapRef trans CBitmap to C.MMBitmapRef
 func ToMMBitmapRef(bit CBitmap) C.MMBitmapRef {
 	return C.MMBitmapRef(bit)
