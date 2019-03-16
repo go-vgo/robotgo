@@ -53,16 +53,8 @@ func findColor(bmp robotgo.CBitmap) {
 	fmt.Println("count...", cnt1)
 }
 
-func bitmapTool(bmp robotgo.CBitmap) {
+func bitmapString(bmp robotgo.CBitmap) {
 	bitmap := robotgo.ToMMBitmapRef(bmp)
-
-	// bitmap := robotgo.CaptureScreen(10, 20, 30, 40)
-	abool := robotgo.PointInBounds(bitmap, 1, 2)
-	fmt.Println("point in bounds...", abool)
-
-	// returns new bitmap object created from a portion of another
-	bitpos := robotgo.GetPortion(bitmap, 10, 10, 11, 10)
-	fmt.Println(bitpos)
 
 	// creates bitmap from string by bitmap
 	bitstr := robotgo.TostringBitmap(bitmap)
@@ -73,6 +65,18 @@ func bitmapTool(bmp robotgo.CBitmap) {
 	sbitmap := robotgo.BitmapStr(bitstr)
 	fmt.Println("bitmap str...", sbitmap)
 	robotgo.SaveBitmap(sbitmap, "teststr.png")
+}
+
+func bitmapTool(bmp robotgo.CBitmap) {
+	bitmap := robotgo.ToMMBitmapRef(bmp)
+
+	// bitmap := robotgo.CaptureScreen(10, 20, 30, 40)
+	abool := robotgo.PointInBounds(bitmap, 1, 2)
+	fmt.Println("point in bounds...", abool)
+
+	// returns new bitmap object created from a portion of another
+	bitpos := robotgo.GetPortion(bitmap, 10, 10, 11, 10)
+	fmt.Println(bitpos)
 
 	// saves image to absolute filepath in the given format
 	robotgo.SaveBitmap(bitmap, "test.png")
@@ -141,6 +145,7 @@ func bitmap() {
 	bitmapTest(cbit)
 	findBitmap(cbit)
 
+	bitmapString(cbit)
 	bitmapTool(cbit)
 
 	decode()
