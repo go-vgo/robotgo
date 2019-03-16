@@ -804,11 +804,11 @@ func ToBitmapBytes(bit C.MMBitmapRef) []byte {
 	if int(len) < 0 {
 		return nil
 	}
+
 	bs := C.GoBytes(unsafe.Pointer(ptr), C.int(len))
 	C.free(unsafe.Pointer(ptr))
 	return bs
 }
-
 
 // ToMMBitmapRef trans CBitmap to C.MMBitmapRef
 func ToMMBitmapRef(bit CBitmap) C.MMBitmapRef {
