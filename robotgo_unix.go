@@ -42,8 +42,8 @@ func GetBounds(pid int32, args ...int) (int, int, int, int) {
 }
 
 // internalGetTitle get the window title
-func internalGetTitle(pid int32, args ...int) string {
-	var hwnd int
+func internalGetTitle(pid int32, args ...int32) string {
+	var hwnd int32
 	if len(args) > 0 {
 		hwnd = args[0]
 
