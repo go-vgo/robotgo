@@ -41,6 +41,24 @@ func GetBounds(pid int32, args ...int) (int, int, int, int) {
 	return internalGetBounds(int32(xid), hwnd)
 }
 
+// internalGetTitle get the window title
+func internalGetTitle(pid int32, args ...int) string {
+	var hwnd int
+	if len(args) > 0 {
+		hwnd = args[0]
+
+		return cgetTitle(pid, hwnd)
+	}
+
+	xid, err := GetXId(xu, pid)
+	if err != nil {
+		log.Println("GetXidFromPid errors is: ", err)
+		return ""
+	}
+
+	return cgetTitle(int32(xid), hwnd)
+}
+
 // ActivePIDC active the window by PID,
 // If args[0] > 0 on the unix platform via a xid to active
 func ActivePIDC(pid int32, args ...int) {
