@@ -26,7 +26,7 @@ char* pad_hex(MMRGBHex color){
 	// destroyMMBitmap(bitmap);
 
 	char* str = (char*)calloc(100, sizeof(char*));
-    if(str)strcpy(str, hex);
+    if (str) { strcpy(str, hex); }
 
 	return str;
 }

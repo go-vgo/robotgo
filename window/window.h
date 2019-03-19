@@ -633,7 +633,7 @@ char* get_title_by_hand(MData m_data){
 	XDismissErrors();
 
 	// Get window title (UTF-8)
-	result = GetWindowProperty(m_data, WM_NAME,NULL);
+	result = GetWindowProperty(m_data, WM_NAME, NULL);
 
 	// Check result value
 	if (result != NULL) {
@@ -641,11 +641,11 @@ char* get_title_by_hand(MData m_data){
 		char *name = (char*)result;
 		XFree(result);
 
-		if (name != NULL) {return name;}
+		if (name != NULL) { return name; }
 	}
 
 	// Get window title (ASCII)
-	result = GetWindowProperty(m_data, XA_WM_NAME,NULL);
+	result = GetWindowProperty(m_data, XA_WM_NAME, NULL);
 
 	// Check result value
 	if (result != NULL) {
@@ -663,7 +663,7 @@ char* get_title_by_hand(MData m_data){
 		char* name = m_data.Title;
 
 		char* str = (char*)calloc(100, sizeof(char*));
-		if(str)strcpy(str, name);
+		if (str) { strcpy(str, name); }
 		return str;
 	}
 
@@ -674,7 +674,7 @@ char* get_title_by_hand(MData m_data){
 
 int32 WGetPID(void){
 	// Check window validity
-	if (!IsValid()) {return 0;}
+	if (!IsValid()) { return 0; }
 
 #if defined(IS_MACOSX)
 
@@ -695,7 +695,7 @@ int32 WGetPID(void){
 	long* result = (long*)GetWindowProperty(mData, WM_PID,NULL);
 
 	// Check result and convert it
-	if (result == NULL) {return 0;}
+	if (result == NULL) { return 0; }
 	int32 pid = (int32) *result;
 	XFree(result);
 	return pid;
