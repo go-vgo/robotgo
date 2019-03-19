@@ -57,6 +57,7 @@ int showAlert(const char *title, const char *msg, const char *defaultButton,
 	                                            cancelButtonTitle,
 	                                            NULL,
 	                                            &responseFlags);
+												
 	if (alertHeader != NULL) CFRelease(alertHeader);
 	if (alertMessage != NULL) CFRelease(alertMessage);
 	if (defaultButtonTitle != NULL) CFRelease(defaultButtonTitle);

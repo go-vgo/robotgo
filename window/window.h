@@ -560,7 +560,7 @@ void close_window_by_PId(uintptr pid, uintptr isHwnd){
 // CloseWindow
 void close_window_by_Id(MData m_data){
 	// Check window validity
-	if (!IsValid()) {return;}
+	if (!IsValid()) { return; }
 #if defined(IS_MACOSX)
 	AXUIElementRef b = NULL;
 
@@ -591,7 +591,7 @@ void close_window_by_Id(MData m_data){
 
 char* get_main_title(){
 	// Check if the window is valid
-	if (!IsValid()) {return "IsValid failed.";}
+	if (!IsValid()) { return "IsValid failed."; }
 	
 	return get_title_by_hand(mData);
 }
