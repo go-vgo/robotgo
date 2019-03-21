@@ -1256,6 +1256,10 @@ func End() {
 }
 
 // AddEvents add global event hook
+//
+// robotgo.AddEvents("q")
+// robotgo.AddEvents("q", "ctrl")
+// robotgo.AddEvents("q", "ctrl", "shift")
 func AddEvents(key string, arr ...string) bool {
 	s := hook.Start()
 	// defer hook.End()
@@ -1299,6 +1303,12 @@ func AddEvents(key string, arr ...string) bool {
 }
 
 // AddMouse add mouse event hook
+//
+// mouse arguments: left, center, right, wheelDown, wheelUp,
+// wheelLeft, wheelRight.
+//
+// robotgo.AddMouse("left")
+// robotgo.AddMouse("left", 100, 100)
 func AddMouse(btn string, x ...int16) bool {
 	s := hook.Start()
 	ukey := mouseMap[btn]
