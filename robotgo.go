@@ -528,6 +528,7 @@ func Scroll(x, y int, args ...int) {
 //
 // See keys:
 //	https://github.com/go-vgo/robotgo/blob/master/docs/keys.md
+//
 func KeyTap(tapKey string, args ...interface{}) string {
 	var (
 		akey     string
@@ -580,6 +581,18 @@ func KeyTap(tapKey string, args ...interface{}) string {
 		return C.GoString(str)
 	}
 
+	if len(args) > 2 {
+		num = len(args)
+		for i := 0; i < num; i++ {
+			s := args[i].(string)
+			ckeyArr = append(ckeyArr, (*C.char)(unsafe.Pointer(C.CString(s))))
+		}
+
+		str := C.key_Taps(zkey, (**C.char)(unsafe.Pointer(&ckeyArr[0])),
+			C.int(num), 0)
+		return C.GoString(str)
+	}
+
 	amod := C.CString(akey)
 	amodt := C.CString(keyT)
 
@@ -595,25 +608,40 @@ func KeyTap(tapKey string, args ...interface{}) string {
 //
 // See keys:
 //	https://github.com/go-vgo/robotgo/blob/master/docs/keys.md
-func KeyToggle(args ...string) string {
+//
+func KeyToggle(key string, args ...string) string {
+	ckey := C.CString(key)
+	defer C.free(unsafe.Pointer(ckey))
+
+	ckeyArr := make([](*C.char), 0)
+	if len(args) > 3 {
+		num := len(args)
+
+		for i := 0; i < num; i++ {
+			ckeyArr = append(ckeyArr, (*C.char)(unsafe.Pointer(C.CString(args[i]))))
+		}
+
+		str := C.key_Toggles(ckey, (**C.char)(unsafe.Pointer(&ckeyArr[0])), C.int(num))
+		return C.GoString(str)
+	}
+
 	var (
 		down, mKey, mKeyT = "null", "null", "null"
 		// keyDelay = 10
 	)
 
-	if len(args) > 1 {
-		down = args[1]
+	if len(args) > 0 {
+		down = args[0]
 
-		if len(args) > 2 {
-			mKey = args[2]
+		if len(args) > 1 {
+			mKey = args[1]
 
-			if len(args) > 3 {
-				mKeyT = args[3]
+			if len(args) > 2 {
+				mKeyT = args[2]
 			}
 		}
 	}
 
-	ckey := C.CString(args[0])
 	cdown := C.CString(down)
 	cmKey := C.CString(mKey)
 	cmKeyT := C.CString(mKeyT)
@@ -621,7 +649,6 @@ func KeyToggle(args ...string) string {
 	str := C.key_toggle(ckey, cdown, cmKey, cmKeyT)
 	// str := C.key_Toggle(ckey, cdown, cmKey, cmKeyT, C.int(keyDelay))
 
-	C.free(unsafe.Pointer(ckey))
 	C.free(unsafe.Pointer(cdown))
 	C.free(unsafe.Pointer(cmKey))
 	C.free(unsafe.Pointer(cmKeyT))
