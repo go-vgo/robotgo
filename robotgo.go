@@ -196,6 +196,12 @@ func GetPixelColor(x, y int) string {
 	return gcolor
 }
 
+// GetMouseColor get the mouse pos's color
+func GetMouseColor() string {
+	x, y := GetMousePos()
+	return GetPixelColor(x, y)
+}
+
 // ScaleX get primary display horizontal DPI scale factor
 func ScaleX() int {
 	return int(C.scale_x())
