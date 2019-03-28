@@ -285,7 +285,49 @@ char* key_tap(char *k, char *akey, char *keyT, int keyDelay){
 	return "";
 }
 
-char* key_toggle(char *k, char *d, char *akey, char *keyT){
+char* key_Toggles(char* k, char* keyArr[], int num) {
+	MMKeyFlags flags = (MMKeyFlags) MOD_NONE;
+	MMKeyCode key;
+
+	bool down;
+	char* d = keyArr[0];
+	if (d != 0) {
+		// char *d;
+		// d = *dstr;
+		if (strcmp(d, "down") == 0) {
+			down = true;
+		} else if (strcmp(d, "up") == 0) {
+			down = false;
+		} else {
+			return "Invalid key state specified.";
+		}
+	}
+	
+	switch (GetFlagsFromValue(keyArr, &flags, num)) {
+		case -1:
+			return "Null pointer in key flag.";
+			break;
+		case -2:
+			return "Invalid key flag specified.";
+			break;
+	}
+
+	switch(CheckKeyCodes(k, &key)) {
+		case -1:
+			return "Null pointer in key code.";
+			break;
+		case -2:
+			return "Invalid key code specified.";
+			break;
+		default:
+			toggleKeyCode(key, down, flags);
+			microsleep(keyboardDelay);
+	}
+
+	return "";
+}
+
+char* key_toggle(char* k, char* d, char* akey, char* keyT){
 	MMKeyFlags flags = (MMKeyFlags) MOD_NONE;
 	MMKeyCode key;
 
