@@ -146,6 +146,12 @@ func ToMMRGBHex(hex CHex) C.MMRGBHex {
 	return C.MMRGBHex(hex)
 }
 
+// UintToHex trans uint32 to robotgo.CHex
+func UintToHex(u uint32) CHex {
+	hex := U32ToHex(C.uint32_t(u))
+	return CHex(hex)
+}
+
 // U32ToHex trans C.uint32_t to C.MMRGBHex
 func U32ToHex(hex C.uint32_t) C.MMRGBHex {
 	return C.MMRGBHex(hex)
