@@ -540,6 +540,10 @@ func KeyTap(tapKey string, args ...interface{}) string {
 	// var ckeyArr []*C.char
 	ckeyArr := make([](*C.char), 0)
 
+	// zkey := C.CString(args[0])
+	zkey := C.CString(tapKey)
+	defer C.free(unsafe.Pointer(zkey))
+	
 	if len(args) > 2 {
 		num = len(args)
 		for i := 0; i < num; i++ {
@@ -581,10 +585,6 @@ func KeyTap(tapKey string, args ...interface{}) string {
 		akey = "null"
 		keyArr = []string{"null"}
 	}
-
-	// zkey := C.CString(args[0])
-	zkey := C.CString(tapKey)
-	defer C.free(unsafe.Pointer(zkey))
 
 	if akey == "" && len(keyArr) != 0 {
 		str := C.key_Taps(zkey, (**C.char)(unsafe.Pointer(&ckeyArr[0])),
