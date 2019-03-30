@@ -51,11 +51,13 @@ func keyTap() {
 
 	// press "i", "alt", "command" Key combination
 	robotgo.KeyTap("i", "alt", "command")
-	robotgo.KeyTap("i", "alt", "command", 11)
+	robotgo.KeyTap("i", "alt", "cmd", 11)
 
 	arr := []string{"alt", "cmd"}
 	robotgo.KeyTap("i", arr)
 	robotgo.KeyTap("i", arr, 12)
+
+	robotgo.KeyTap("i", "cmd", " alt", "shift")
 
 	// close window
 	robotgo.KeyTap("w", "cmd")
@@ -70,7 +72,8 @@ func keyTap() {
 func keyToggle() {
 	robotgo.KeyToggle("a", "down")
 	robotgo.KeyToggle("a", "down", "alt")
-	robotgo.KeyToggle("a", "down", "alt", "cmd")
+	robotgo.KeyToggle("a", "up", "alt", "cmd")
+	robotgo.KeyToggle("q", "up", "alt", "cmd", "shift")
 
 	err := robotgo.KeyToggle("enter", "down")
 	if err == "" {
