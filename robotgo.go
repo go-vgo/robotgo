@@ -1041,6 +1041,11 @@ func OpenImg(path string) []byte {
 
 // BitmapStr bitmap from string
 func BitmapStr(str string) C.MMBitmapRef {
+	return BitmapFromStr(str)
+}
+
+// BitmapFromStr bitmap from string
+func BitmapFromStr(str string) C.MMBitmapRef {
 	cs := C.CString(str)
 	bit := C.bitmap_from_string(cs)
 	C.free(unsafe.Pointer(cs))
