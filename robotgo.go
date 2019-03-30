@@ -88,11 +88,11 @@ type (
 
 // Bitmap is Bitmap struct
 type Bitmap struct {
-	ImageBuffer   *uint8
+	ImgBuf        *uint8
 	Width         int
 	Height        int
 	Bytewidth     int
-	BitsPerPixel  uint8
+	BitsPixel     uint8
 	BytesPerPixel uint8
 }
 
@@ -543,7 +543,7 @@ func KeyTap(tapKey string, args ...interface{}) string {
 	// zkey := C.CString(args[0])
 	zkey := C.CString(tapKey)
 	defer C.free(unsafe.Pointer(zkey))
-	
+
 	if len(args) > 2 {
 		num = len(args)
 		for i := 0; i < num; i++ {
@@ -811,11 +811,11 @@ func GetText(imgPath string, args ...string) (string, error) {
 // ToBitmap trans C.MMBitmapRef to Bitmap
 func ToBitmap(bit C.MMBitmapRef) Bitmap {
 	bitmap := Bitmap{
-		ImageBuffer:   (*uint8)(bit.imageBuffer),
+		ImgBuf:        (*uint8)(bit.imageBuffer),
 		Width:         int(bit.width),
 		Height:        int(bit.height),
 		Bytewidth:     int(bit.bytewidth),
-		BitsPerPixel:  uint8(bit.bitsPerPixel),
+		BitsPixel:     uint8(bit.bitsPerPixel),
 		BytesPerPixel: uint8(bit.bytesPerPixel),
 	}
 
@@ -825,11 +825,11 @@ func ToBitmap(bit C.MMBitmapRef) Bitmap {
 // ToCBitmap trans Bitmap to C.MMBitmapRef
 func ToCBitmap(bit Bitmap) C.MMBitmapRef {
 	cbitmap := C.createMMBitmap(
-		(*C.uint8_t)(bit.ImageBuffer),
+		(*C.uint8_t)(bit.ImgBuf),
 		C.size_t(bit.Width),
 		C.size_t(bit.Height),
 		C.size_t(bit.Bytewidth),
-		C.uint8_t(bit.BitsPerPixel),
+		C.uint8_t(bit.BitsPixel),
 		C.uint8_t(bit.BytesPerPixel),
 	)
 
