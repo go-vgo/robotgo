@@ -11,7 +11,7 @@ require (
 	github.com/shirou/gopsutil v0.0.0-20190131151121-071446942108
 	github.com/shirou/w32 v0.0.0-20160930032740-bb4de0191aa4 // indirect
 	github.com/vcaesar/imgo v0.0.0-20181209162409-13af122cf2fa
-	golang.org/x/image v0.0.0-20190227222117-0694c2d4d067 // indirect
+	golang.org/x/image v0.0.0-20190227222117-0694c2d4d067
 	golang.org/x/sys v0.0.0-20190228124157-a34e9553db1e // indirect
 )
 
