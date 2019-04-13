@@ -7,12 +7,12 @@ require (
 	github.com/go-ole/go-ole v1.2.4 // indirect
 	github.com/lxn/win v0.0.0-20190311093451-0040366d7450
 	github.com/otiai10/gosseract v2.2.1+incompatible
-	github.com/robotn/gohook v0.0.0-20190315174547-bc414970f3d6
+	github.com/robotn/gohook v0.0.0-20190413172657-5b9ae1915c78
 	github.com/shirou/gopsutil v2.18.12+incompatible
 	// github.com/shirou/gopsutil v0.0.0-20190131151121-071446942108 // indirect
 	github.com/shirou/w32 v0.0.0-20160930032740-bb4de0191aa4 // indirect
 	github.com/vcaesar/imgo v0.0.0-20181209162409-13af122cf2fa
-	github.com/vcaesar/tt v0.0.0-20181224161634-976c3d851647
+	github.com/vcaesar/tt v0.0.0-20190311143935-d2abd51da7af
 	golang.org/x/image v0.0.0-20190321063152-3fc05d484e9f
 	golang.org/x/sys v0.0.0-20190412213103-97732733099d // indirect
 )

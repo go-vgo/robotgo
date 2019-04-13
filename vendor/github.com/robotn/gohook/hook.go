@@ -20,7 +20,6 @@ package hook
 //#cgo windows LDFLAGS: -lgdi32 -luser32
 
 #include "event/goEvent.h"
-
 */
 import "C"
 
