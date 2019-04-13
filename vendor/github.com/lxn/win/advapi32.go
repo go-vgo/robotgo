@@ -7,6 +7,7 @@
 package win
 
 import (
+	"golang.org/x/sys/windows"
 	"syscall"
 	"unsafe"
 )
@@ -55,30 +56,30 @@ const (
 
 var (
 	// Library
-	libadvapi32 uintptr
+	libadvapi32 *windows.LazyDLL
 
 	// Functions
-	regCloseKey     uintptr
-	regOpenKeyEx    uintptr
-	regQueryValueEx uintptr
-	regEnumValue    uintptr
-	regSetValueEx   uintptr
+	regCloseKey     *windows.LazyProc
+	regOpenKeyEx    *windows.LazyProc
+	regQueryValueEx *windows.LazyProc
+	regEnumValue    *windows.LazyProc
+	regSetValueEx   *windows.LazyProc
 )
 
 func init() {
 	// Library
-	libadvapi32 = MustLoadLibrary("advapi32.dll")
+	libadvapi32 = windows.NewLazySystemDLL("advapi32.dll")
 
 	// Functions
-	regCloseKey = MustGetProcAddress(libadvapi32, "RegCloseKey")
-	regOpenKeyEx = MustGetProcAddress(libadvapi32, "RegOpenKeyExW")
-	regQueryValueEx = MustGetProcAddress(libadvapi32, "RegQueryValueExW")
-	regEnumValue = MustGetProcAddress(libadvapi32, "RegEnumValueW")
-	regSetValueEx = MustGetProcAddress(libadvapi32, "RegSetValueExW")
+	regCloseKey = libadvapi32.NewProc("RegCloseKey")
+	regOpenKeyEx = libadvapi32.NewProc("RegOpenKeyExW")
+	regQueryValueEx = libadvapi32.NewProc("RegQueryValueExW")
+	regEnumValue = libadvapi32.NewProc("RegEnumValueW")
+	regSetValueEx = libadvapi32.NewProc("RegSetValueExW")
 }
 
 func RegCloseKey(hKey HKEY) int32 {
-	ret, _, _ := syscall.Syscall(regCloseKey, 1,
+	ret, _, _ := syscall.Syscall(regCloseKey.Addr(), 1,
 		uintptr(hKey),
 		0,
 		0)
@@ -87,7 +88,7 @@ func RegCloseKey(hKey HKEY) int32 {
 }
 
 func RegOpenKeyEx(hKey HKEY, lpSubKey *uint16, ulOptions uint32, samDesired REGSAM, phkResult *HKEY) int32 {
-	ret, _, _ := syscall.Syscall6(regOpenKeyEx, 5,
+	ret, _, _ := syscall.Syscall6(regOpenKeyEx.Addr(), 5,
 		uintptr(hKey),
 		uintptr(unsafe.Pointer(lpSubKey)),
 		uintptr(ulOptions),
@@ -99,7 +100,7 @@ func RegOpenKeyEx(hKey HKEY, lpSubKey *uint16, ulOptions uint32, samDesired REGS
 }
 
 func RegQueryValueEx(hKey HKEY, lpValueName *uint16, lpReserved, lpType *uint32, lpData *byte, lpcbData *uint32) int32 {
-	ret, _, _ := syscall.Syscall6(regQueryValueEx, 6,
+	ret, _, _ := syscall.Syscall6(regQueryValueEx.Addr(), 6,
 		uintptr(hKey),
 		uintptr(unsafe.Pointer(lpValueName)),
 		uintptr(unsafe.Pointer(lpReserved)),
@@ -111,7 +112,7 @@ func RegQueryValueEx(hKey HKEY, lpValueName *uint16, lpReserved, lpType *uint32,
 }
 
 func RegEnumValue(hKey HKEY, index uint32, lpValueName *uint16, lpcchValueName *uint32, lpReserved, lpType *uint32, lpData *byte, lpcbData *uint32) int32 {
-	ret, _, _ := syscall.Syscall9(regEnumValue, 8,
+	ret, _, _ := syscall.Syscall9(regEnumValue.Addr(), 8,
 		uintptr(hKey),
 		uintptr(index),
 		uintptr(unsafe.Pointer(lpValueName)),
@@ -125,7 +126,7 @@ func RegEnumValue(hKey HKEY, index uint32, lpValueName *uint16, lpcchValueName *
 }
 
 func RegSetValueEx(hKey HKEY, lpValueName *uint16, lpReserved, lpDataType uint64, lpData *byte, cbData uint32) int32 {
-	ret, _, _ := syscall.Syscall6(regSetValueEx, 6,
+	ret, _, _ := syscall.Syscall6(regSetValueEx.Addr(), 6,
 		uintptr(hKey),
 		uintptr(unsafe.Pointer(lpValueName)),
 		uintptr(lpReserved),

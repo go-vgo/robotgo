@@ -7,6 +7,7 @@
 package win
 
 import (
+	"golang.org/x/sys/windows"
 	"syscall"
 	"unsafe"
 )
@@ -419,32 +420,32 @@ type COSERVERINFO struct {
 
 var (
 	// Library
-	libole32 uintptr
+	libole32 *windows.LazyDLL
 
 	// Functions
-	coCreateInstance      uintptr
-	coGetClassObject      uintptr
-	coTaskMemFree         uintptr
-	oleInitialize         uintptr
-	oleSetContainedObject uintptr
-	oleUninitialize       uintptr
+	coCreateInstance      *windows.LazyProc
+	coGetClassObject      *windows.LazyProc
+	coTaskMemFree         *windows.LazyProc
+	oleInitialize         *windows.LazyProc
+	oleSetContainedObject *windows.LazyProc
+	oleUninitialize       *windows.LazyProc
 )
 
 func init() {
 	// Library
-	libole32 = MustLoadLibrary("ole32.dll")
+	libole32 = windows.NewLazySystemDLL("ole32.dll")
 
 	// Functions
-	coCreateInstance = MustGetProcAddress(libole32, "CoCreateInstance")
-	coGetClassObject = MustGetProcAddress(libole32, "CoGetClassObject")
-	coTaskMemFree = MustGetProcAddress(libole32, "CoTaskMemFree")
-	oleInitialize = MustGetProcAddress(libole32, "OleInitialize")
-	oleSetContainedObject = MustGetProcAddress(libole32, "OleSetContainedObject")
-	oleUninitialize = MustGetProcAddress(libole32, "OleUninitialize")
+	coCreateInstance = libole32.NewProc("CoCreateInstance")
+	coGetClassObject = libole32.NewProc("CoGetClassObject")
+	coTaskMemFree = libole32.NewProc("CoTaskMemFree")
+	oleInitialize = libole32.NewProc("OleInitialize")
+	oleSetContainedObject = libole32.NewProc("OleSetContainedObject")
+	oleUninitialize = libole32.NewProc("OleUninitialize")
 }
 
 func CoCreateInstance(rclsid REFCLSID, pUnkOuter *IUnknown, dwClsContext uint32, riid REFIID, ppv *unsafe.Pointer) HRESULT {
-	ret, _, _ := syscall.Syscall6(coCreateInstance, 5,
+	ret, _, _ := syscall.Syscall6(coCreateInstance.Addr(), 5,
 		uintptr(unsafe.Pointer(rclsid)),
 		uintptr(unsafe.Pointer(pUnkOuter)),
 		uintptr(dwClsContext),
@@ -456,7 +457,7 @@ func CoCreateInstance(rclsid REFCLSID, pUnkOuter *IUnknown, dwClsContext uint32,
 }
 
 func CoGetClassObject(rclsid REFCLSID, dwClsContext uint32, pServerInfo *COSERVERINFO, riid REFIID, ppv *unsafe.Pointer) HRESULT {
-	ret, _, _ := syscall.Syscall6(coGetClassObject, 5,
+	ret, _, _ := syscall.Syscall6(coGetClassObject.Addr(), 5,
 		uintptr(unsafe.Pointer(rclsid)),
 		uintptr(dwClsContext),
 		uintptr(unsafe.Pointer(pServerInfo)),
@@ -468,14 +469,14 @@ func CoGetClassObject(rclsid REFCLSID, dwClsContext uint32, pServerInfo *COSERVE
 }
 
 func CoTaskMemFree(pv uintptr) {
-	syscall.Syscall(coTaskMemFree, 1,
+	syscall.Syscall(coTaskMemFree.Addr(), 1,
 		pv,
 		0,
 		0)
 }
 
 func OleInitialize() HRESULT {
-	ret, _, _ := syscall.Syscall(oleInitialize, 1, // WTF, why does 0 not work here?
+	ret, _, _ := syscall.Syscall(oleInitialize.Addr(), 1, // WTF, why does 0 not work here?
 		0,
 		0,
 		0)
@@ -484,7 +485,7 @@ func OleInitialize() HRESULT {
 }
 
 func OleSetContainedObject(pUnknown *IUnknown, fContained bool) HRESULT {
-	ret, _, _ := syscall.Syscall(oleSetContainedObject, 2,
+	ret, _, _ := syscall.Syscall(oleSetContainedObject.Addr(), 2,
 		uintptr(unsafe.Pointer(pUnknown)),
 		uintptr(BoolToBOOL(fContained)),
 		0)
@@ -493,7 +494,7 @@ func OleSetContainedObject(pUnknown *IUnknown, fContained bool) HRESULT {
 }
 
 func OleUninitialize() {
-	syscall.Syscall(oleUninitialize, 0,
+	syscall.Syscall(oleUninitialize.Addr(), 0,
 		0,
 		0,
 		0)

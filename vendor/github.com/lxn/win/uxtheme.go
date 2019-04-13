@@ -7,6 +7,7 @@
 package win
 
 import (
+	"golang.org/x/sys/windows"
 	"syscall"
 	"unsafe"
 )
@@ -138,36 +139,36 @@ type DTTOPTS struct {
 
 var (
 	// Library
-	libuxtheme uintptr
+	libuxtheme *windows.LazyDLL
 
 	// Functions
-	closeThemeData      uintptr
-	drawThemeBackground uintptr
-	drawThemeTextEx     uintptr
-	getThemePartSize    uintptr
-	getThemeTextExtent  uintptr
-	isAppThemed         uintptr
-	openThemeData       uintptr
-	setWindowTheme      uintptr
+	closeThemeData      *windows.LazyProc
+	drawThemeBackground *windows.LazyProc
+	drawThemeTextEx     *windows.LazyProc
+	getThemePartSize    *windows.LazyProc
+	getThemeTextExtent  *windows.LazyProc
+	isAppThemed         *windows.LazyProc
+	openThemeData       *windows.LazyProc
+	setWindowTheme      *windows.LazyProc
 )
 
 func init() {
 	// Library
-	libuxtheme = MustLoadLibrary("uxtheme.dll")
+	libuxtheme = windows.NewLazySystemDLL("uxtheme.dll")
 
 	// Functions
-	closeThemeData = MustGetProcAddress(libuxtheme, "CloseThemeData")
-	drawThemeBackground = MustGetProcAddress(libuxtheme, "DrawThemeBackground")
-	drawThemeTextEx, _ = syscall.GetProcAddress(syscall.Handle(libuxtheme), "DrawThemeTextEx")
-	getThemePartSize = MustGetProcAddress(libuxtheme, "GetThemePartSize")
-	getThemeTextExtent = MustGetProcAddress(libuxtheme, "GetThemeTextExtent")
-	isAppThemed = MustGetProcAddress(libuxtheme, "IsAppThemed")
-	openThemeData = MustGetProcAddress(libuxtheme, "OpenThemeData")
-	setWindowTheme = MustGetProcAddress(libuxtheme, "SetWindowTheme")
+	closeThemeData = libuxtheme.NewProc("CloseThemeData")
+	drawThemeBackground = libuxtheme.NewProc("DrawThemeBackground")
+	drawThemeTextEx = libuxtheme.NewProc("DrawThemeTextEx")
+	getThemePartSize = libuxtheme.NewProc("GetThemePartSize")
+	getThemeTextExtent = libuxtheme.NewProc("GetThemeTextExtent")
+	isAppThemed = libuxtheme.NewProc("IsAppThemed")
+	openThemeData = libuxtheme.NewProc("OpenThemeData")
+	setWindowTheme = libuxtheme.NewProc("SetWindowTheme")
 }
 
 func CloseThemeData(hTheme HTHEME) HRESULT {
-	ret, _, _ := syscall.Syscall(closeThemeData, 1,
+	ret, _, _ := syscall.Syscall(closeThemeData.Addr(), 1,
 		uintptr(hTheme),
 		0,
 		0)
@@ -176,7 +177,7 @@ func CloseThemeData(hTheme HTHEME) HRESULT {
 }
 
 func DrawThemeBackground(hTheme HTHEME, hdc HDC, iPartId, iStateId int32, pRect, pClipRect *RECT) HRESULT {
-	ret, _, _ := syscall.Syscall6(drawThemeBackground, 6,
+	ret, _, _ := syscall.Syscall6(drawThemeBackground.Addr(), 6,
 		uintptr(hTheme),
 		uintptr(hdc),
 		uintptr(iPartId),
@@ -188,7 +189,10 @@ func DrawThemeBackground(hTheme HTHEME, hdc HDC, iPartId, iStateId int32, pRect,
 }
 
 func DrawThemeTextEx(hTheme HTHEME, hdc HDC, iPartId, iStateId int32, pszText *uint16, iCharCount int32, dwFlags uint32, pRect *RECT, pOptions *DTTOPTS) HRESULT {
-	ret, _, _ := syscall.Syscall9(drawThemeTextEx, 9,
+	if drawThemeTextEx.Find() != nil {
+		return HRESULT(0)
+	}
+	ret, _, _ := syscall.Syscall9(drawThemeTextEx.Addr(), 9,
 		uintptr(hTheme),
 		uintptr(hdc),
 		uintptr(iPartId),
@@ -203,7 +207,7 @@ func DrawThemeTextEx(hTheme HTHEME, hdc HDC, iPartId, iStateId int32, pszText *u
 }
 
 func GetThemePartSize(hTheme HTHEME, hdc HDC, iPartId, iStateId int32, prc *RECT, eSize THEMESIZE, psz *SIZE) HRESULT {
-	ret, _, _ := syscall.Syscall9(getThemePartSize, 7,
+	ret, _, _ := syscall.Syscall9(getThemePartSize.Addr(), 7,
 		uintptr(hTheme),
 		uintptr(hdc),
 		uintptr(iPartId),
@@ -218,7 +222,7 @@ func GetThemePartSize(hTheme HTHEME, hdc HDC, iPartId, iStateId int32, prc *RECT
 }
 
 func GetThemeTextExtent(hTheme HTHEME, hdc HDC, iPartId, iStateId int32, pszText *uint16, iCharCount int32, dwTextFlags uint32, pBoundingRect, pExtentRect *RECT) HRESULT {
-	ret, _, _ := syscall.Syscall9(getThemeTextExtent, 9,
+	ret, _, _ := syscall.Syscall9(getThemeTextExtent.Addr(), 9,
 		uintptr(hTheme),
 		uintptr(hdc),
 		uintptr(iPartId),
@@ -233,7 +237,7 @@ func GetThemeTextExtent(hTheme HTHEME, hdc HDC, iPartId, iStateId int32, pszText
 }
 
 func IsAppThemed() bool {
-	ret, _, _ := syscall.Syscall(isAppThemed, 0,
+	ret, _, _ := syscall.Syscall(isAppThemed.Addr(), 0,
 		0,
 		0,
 		0)
@@ -242,7 +246,7 @@ func IsAppThemed() bool {
 }
 
 func OpenThemeData(hwnd HWND, pszClassList *uint16) HTHEME {
-	ret, _, _ := syscall.Syscall(openThemeData, 2,
+	ret, _, _ := syscall.Syscall(openThemeData.Addr(), 2,
 		uintptr(hwnd),
 		uintptr(unsafe.Pointer(pszClassList)),
 		0)
@@ -251,7 +255,7 @@ func OpenThemeData(hwnd HWND, pszClassList *uint16) HTHEME {
 }
 
 func SetWindowTheme(hwnd HWND, pszSubAppName, pszSubIdList *uint16) HRESULT {
-	ret, _, _ := syscall.Syscall(setWindowTheme, 3,
+	ret, _, _ := syscall.Syscall(setWindowTheme.Addr(), 3,
 		uintptr(hwnd),
 		uintptr(unsafe.Pointer(pszSubAppName)),
 		uintptr(unsafe.Pointer(pszSubIdList)))

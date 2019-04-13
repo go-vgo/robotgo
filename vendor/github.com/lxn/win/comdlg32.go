@@ -7,6 +7,7 @@
 package win
 
 import (
+	"golang.org/x/sys/windows"
 	"syscall"
 	"unsafe"
 )
@@ -231,30 +232,30 @@ type PRINTDLGEX struct {
 
 var (
 	// Library
-	libcomdlg32 uintptr
+	libcomdlg32 *windows.LazyDLL
 
 	// Functions
-	chooseColor          uintptr
-	commDlgExtendedError uintptr
-	getOpenFileName      uintptr
-	getSaveFileName      uintptr
-	printDlgEx           uintptr
+	chooseColor          *windows.LazyProc
+	commDlgExtendedError *windows.LazyProc
+	getOpenFileName      *windows.LazyProc
+	getSaveFileName      *windows.LazyProc
+	printDlgEx           *windows.LazyProc
 )
 
 func init() {
 	// Library
-	libcomdlg32 = MustLoadLibrary("comdlg32.dll")
+	libcomdlg32 = windows.NewLazySystemDLL("comdlg32.dll")
 
 	// Functions
-	chooseColor = MustGetProcAddress(libcomdlg32, "ChooseColorW")
-	commDlgExtendedError = MustGetProcAddress(libcomdlg32, "CommDlgExtendedError")
-	getOpenFileName = MustGetProcAddress(libcomdlg32, "GetOpenFileNameW")
-	getSaveFileName = MustGetProcAddress(libcomdlg32, "GetSaveFileNameW")
-	printDlgEx = MustGetProcAddress(libcomdlg32, "PrintDlgExW")
+	chooseColor = libcomdlg32.NewProc("ChooseColorW")
+	commDlgExtendedError = libcomdlg32.NewProc("CommDlgExtendedError")
+	getOpenFileName = libcomdlg32.NewProc("GetOpenFileNameW")
+	getSaveFileName = libcomdlg32.NewProc("GetSaveFileNameW")
+	printDlgEx = libcomdlg32.NewProc("PrintDlgExW")
 }
 
 func ChooseColor(lpcc *CHOOSECOLOR) bool {
-	ret, _, _ := syscall.Syscall(chooseColor, 1,
+	ret, _, _ := syscall.Syscall(chooseColor.Addr(), 1,
 		uintptr(unsafe.Pointer(lpcc)),
 		0,
 		0)
@@ -263,7 +264,7 @@ func ChooseColor(lpcc *CHOOSECOLOR) bool {
 }
 
 func CommDlgExtendedError() uint32 {
-	ret, _, _ := syscall.Syscall(commDlgExtendedError, 0,
+	ret, _, _ := syscall.Syscall(commDlgExtendedError.Addr(), 0,
 		0,
 		0,
 		0)
@@ -272,7 +273,7 @@ func CommDlgExtendedError() uint32 {
 }
 
 func GetOpenFileName(lpofn *OPENFILENAME) bool {
-	ret, _, _ := syscall.Syscall(getOpenFileName, 1,
+	ret, _, _ := syscall.Syscall(getOpenFileName.Addr(), 1,
 		uintptr(unsafe.Pointer(lpofn)),
 		0,
 		0)
@@ -281,7 +282,7 @@ func GetOpenFileName(lpofn *OPENFILENAME) bool {
 }
 
 func GetSaveFileName(lpofn *OPENFILENAME) bool {
-	ret, _, _ := syscall.Syscall(getSaveFileName, 1,
+	ret, _, _ := syscall.Syscall(getSaveFileName.Addr(), 1,
 		uintptr(unsafe.Pointer(lpofn)),
 		0,
 		0)
@@ -290,7 +291,7 @@ func GetSaveFileName(lpofn *OPENFILENAME) bool {
 }
 
 func PrintDlgEx(lppd *PRINTDLGEX) HRESULT {
-	ret, _, _ := syscall.Syscall(printDlgEx, 1,
+	ret, _, _ := syscall.Syscall(printDlgEx.Addr(), 1,
 		uintptr(unsafe.Pointer(lppd)),
 		0,
 		0)

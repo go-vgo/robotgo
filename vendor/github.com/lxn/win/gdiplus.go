@@ -7,6 +7,7 @@
 package win
 
 import (
+	"golang.org/x/sys/windows"
 	"syscall"
 	"unsafe"
 )
@@ -130,15 +131,15 @@ type ARGB uint32
 
 var (
 	// Library
-	libgdiplus uintptr
+	libgdiplus *windows.LazyDLL
 
 	// Functions
-	gdipCreateBitmapFromFile    uintptr
-	gdipCreateBitmapFromHBITMAP uintptr
-	gdipCreateHBITMAPFromBitmap uintptr
-	gdipDisposeImage            uintptr
-	gdiplusShutdown             uintptr
-	gdiplusStartup              uintptr
+	gdipCreateBitmapFromFile    *windows.LazyProc
+	gdipCreateBitmapFromHBITMAP *windows.LazyProc
+	gdipCreateHBITMAPFromBitmap *windows.LazyProc
+	gdipDisposeImage            *windows.LazyProc
+	gdiplusShutdown             *windows.LazyProc
+	gdiplusStartup              *windows.LazyProc
 )
 
 var (
@@ -147,19 +148,19 @@ var (
 
 func init() {
 	// Library
-	libgdiplus = MustLoadLibrary("gdiplus.dll")
+	libgdiplus = windows.NewLazySystemDLL("gdiplus.dll")
 
 	// Functions
-	gdipCreateBitmapFromFile = MustGetProcAddress(libgdiplus, "GdipCreateBitmapFromFile")
-	gdipCreateBitmapFromHBITMAP = MustGetProcAddress(libgdiplus, "GdipCreateBitmapFromHBITMAP")
-	gdipCreateHBITMAPFromBitmap = MustGetProcAddress(libgdiplus, "GdipCreateHBITMAPFromBitmap")
-	gdipDisposeImage = MustGetProcAddress(libgdiplus, "GdipDisposeImage")
-	gdiplusShutdown = MustGetProcAddress(libgdiplus, "GdiplusShutdown")
-	gdiplusStartup = MustGetProcAddress(libgdiplus, "GdiplusStartup")
+	gdipCreateBitmapFromFile = libgdiplus.NewProc("GdipCreateBitmapFromFile")
+	gdipCreateBitmapFromHBITMAP = libgdiplus.NewProc("GdipCreateBitmapFromHBITMAP")
+	gdipCreateHBITMAPFromBitmap = libgdiplus.NewProc("GdipCreateHBITMAPFromBitmap")
+	gdipDisposeImage = libgdiplus.NewProc("GdipDisposeImage")
+	gdiplusShutdown = libgdiplus.NewProc("GdiplusShutdown")
+	gdiplusStartup = libgdiplus.NewProc("GdiplusStartup")
 }
 
 func GdipCreateBitmapFromFile(filename *uint16, bitmap **GpBitmap) GpStatus {
-	ret, _, _ := syscall.Syscall(gdipCreateBitmapFromFile, 2,
+	ret, _, _ := syscall.Syscall(gdipCreateBitmapFromFile.Addr(), 2,
 		uintptr(unsafe.Pointer(filename)),
 		uintptr(unsafe.Pointer(bitmap)),
 		0)
@@ -168,7 +169,7 @@ func GdipCreateBitmapFromFile(filename *uint16, bitmap **GpBitmap) GpStatus {
 }
 
 func GdipCreateBitmapFromHBITMAP(hbm HBITMAP, hpal HPALETTE, bitmap **GpBitmap) GpStatus {
-	ret, _, _ := syscall.Syscall(gdipCreateBitmapFromHBITMAP, 3,
+	ret, _, _ := syscall.Syscall(gdipCreateBitmapFromHBITMAP.Addr(), 3,
 		uintptr(hbm),
 		uintptr(hpal),
 		uintptr(unsafe.Pointer(bitmap)))
@@ -177,7 +178,7 @@ func GdipCreateBitmapFromHBITMAP(hbm HBITMAP, hpal HPALETTE, bitmap **GpBitmap) 
 }
 
 func GdipCreateHBITMAPFromBitmap(bitmap *GpBitmap, hbmReturn *HBITMAP, background ARGB) GpStatus {
-	ret, _, _ := syscall.Syscall(gdipCreateHBITMAPFromBitmap, 3,
+	ret, _, _ := syscall.Syscall(gdipCreateHBITMAPFromBitmap.Addr(), 3,
 		uintptr(unsafe.Pointer(bitmap)),
 		uintptr(unsafe.Pointer(hbmReturn)),
 		uintptr(background))
@@ -186,7 +187,7 @@ func GdipCreateHBITMAPFromBitmap(bitmap *GpBitmap, hbmReturn *HBITMAP, backgroun
 }
 
 func GdipDisposeImage(image *GpImage) GpStatus {
-	ret, _, _ := syscall.Syscall(gdipDisposeImage, 1,
+	ret, _, _ := syscall.Syscall(gdipDisposeImage.Addr(), 1,
 		uintptr(unsafe.Pointer(image)),
 		0,
 		0)
@@ -195,14 +196,14 @@ func GdipDisposeImage(image *GpImage) GpStatus {
 }
 
 func GdiplusShutdown() {
-	syscall.Syscall(gdiplusShutdown, 1,
+	syscall.Syscall(gdiplusShutdown.Addr(), 1,
 		token,
 		0,
 		0)
 }
 
 func GdiplusStartup(input *GdiplusStartupInput, output *GdiplusStartupOutput) GpStatus {
-	ret, _, _ := syscall.Syscall(gdiplusStartup, 3,
+	ret, _, _ := syscall.Syscall(gdiplusStartup.Addr(), 3,
 		uintptr(unsafe.Pointer(&token)),
 		uintptr(unsafe.Pointer(input)),
 		uintptr(unsafe.Pointer(output)))
@@ -211,7 +212,7 @@ func GdiplusStartup(input *GdiplusStartupInput, output *GdiplusStartupOutput) Gp
 }
 
 /*GdipSaveImageToFile(image *GpImage, filename *uint16, clsidEncoder *CLSID, encoderParams *EncoderParameters) GpStatus {
-	ret, _, _ := syscall.Syscall6(gdipSaveImageToFile, 4,
+	ret, _, _ := syscall.Syscall6(gdipSaveImageToFile.Addr(), 4,
 		uintptr(unsafe.Pointer(image)),
 		uintptr(unsafe.Pointer(filename)),
 		uintptr(unsafe.Pointer(clsidEncoder)),

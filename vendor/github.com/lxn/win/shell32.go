@@ -7,6 +7,7 @@
 package win
 
 import (
+	"golang.org/x/sys/windows"
 	"syscall"
 	"unsafe"
 )
@@ -293,40 +294,42 @@ type SHSTOCKICONINFO struct {
 
 var (
 	// Library
-	libshell32 uintptr
+	libshell32 *windows.LazyDLL
 
 	// Functions
-	dragAcceptFiles        uintptr
-	dragFinish             uintptr
-	dragQueryFile          uintptr
-	shBrowseForFolder      uintptr
-	shGetFileInfo          uintptr
-	shGetPathFromIDList    uintptr
-	shGetSpecialFolderPath uintptr
-	shParseDisplayName     uintptr
-	shGetStockIconInfo     uintptr
-	shell_NotifyIcon       uintptr
+	dragAcceptFiles        *windows.LazyProc
+	dragFinish             *windows.LazyProc
+	dragQueryFile          *windows.LazyProc
+	extractIcon            *windows.LazyProc
+	shBrowseForFolder      *windows.LazyProc
+	shGetFileInfo          *windows.LazyProc
+	shGetPathFromIDList    *windows.LazyProc
+	shGetSpecialFolderPath *windows.LazyProc
+	shParseDisplayName     *windows.LazyProc
+	shGetStockIconInfo     *windows.LazyProc
+	shell_NotifyIcon       *windows.LazyProc
 )
 
 func init() {
 	// Library
-	libshell32 = MustLoadLibrary("shell32.dll")
+	libshell32 = windows.NewLazySystemDLL("shell32.dll")
 
 	// Functions
-	dragAcceptFiles = MustGetProcAddress(libshell32, "DragAcceptFiles")
-	dragFinish = MustGetProcAddress(libshell32, "DragFinish")
-	dragQueryFile = MustGetProcAddress(libshell32, "DragQueryFileW")
-	shBrowseForFolder = MustGetProcAddress(libshell32, "SHBrowseForFolderW")
-	shGetFileInfo = MustGetProcAddress(libshell32, "SHGetFileInfoW")
-	shGetPathFromIDList = MustGetProcAddress(libshell32, "SHGetPathFromIDListW")
-	shGetSpecialFolderPath = MustGetProcAddress(libshell32, "SHGetSpecialFolderPathW")
-	shGetStockIconInfo = MaybeGetProcAddress(libshell32, "SHGetStockIconInfo")
-	shell_NotifyIcon = MustGetProcAddress(libshell32, "Shell_NotifyIconW")
-	shParseDisplayName = MustGetProcAddress(libshell32, "SHParseDisplayName")
+	dragAcceptFiles = libshell32.NewProc("DragAcceptFiles")
+	dragFinish = libshell32.NewProc("DragFinish")
+	dragQueryFile = libshell32.NewProc("DragQueryFileW")
+	extractIcon = libshell32.NewProc("ExtractIconW")
+	shBrowseForFolder = libshell32.NewProc("SHBrowseForFolderW")
+	shGetFileInfo = libshell32.NewProc("SHGetFileInfoW")
+	shGetPathFromIDList = libshell32.NewProc("SHGetPathFromIDListW")
+	shGetSpecialFolderPath = libshell32.NewProc("SHGetSpecialFolderPathW")
+	shGetStockIconInfo = libshell32.NewProc("SHGetStockIconInfo")
+	shell_NotifyIcon = libshell32.NewProc("Shell_NotifyIconW")
+	shParseDisplayName = libshell32.NewProc("SHParseDisplayName")
 }
 
 func DragAcceptFiles(hWnd HWND, fAccept bool) bool {
-	ret, _, _ := syscall.Syscall(dragAcceptFiles, 2,
+	ret, _, _ := syscall.Syscall(dragAcceptFiles.Addr(), 2,
 		uintptr(hWnd),
 		uintptr(BoolToBOOL(fAccept)),
 		0)
@@ -335,7 +338,7 @@ func DragAcceptFiles(hWnd HWND, fAccept bool) bool {
 }
 
 func DragQueryFile(hDrop HDROP, iFile uint, lpszFile *uint16, cch uint) uint {
-	ret, _, _ := syscall.Syscall6(dragQueryFile, 4,
+	ret, _, _ := syscall.Syscall6(dragQueryFile.Addr(), 4,
 		uintptr(hDrop),
 		uintptr(iFile),
 		uintptr(unsafe.Pointer(lpszFile)),
@@ -347,14 +350,23 @@ func DragQueryFile(hDrop HDROP, iFile uint, lpszFile *uint16, cch uint) uint {
 }
 
 func DragFinish(hDrop HDROP) {
-	syscall.Syscall(dragAcceptFiles, 1,
+	syscall.Syscall(dragAcceptFiles.Addr(), 1,
 		uintptr(hDrop),
 		0,
 		0)
 }
 
+func ExtractIcon(hInst HINSTANCE, exeFileName *uint16, iconIndex int32) HICON {
+	ret, _, _ := syscall.Syscall(extractIcon.Addr(), 3,
+		uintptr(hInst),
+		uintptr(unsafe.Pointer(exeFileName)),
+		uintptr(iconIndex))
+
+	return HICON(ret)
+}
+
 func SHBrowseForFolder(lpbi *BROWSEINFO) uintptr {
-	ret, _, _ := syscall.Syscall(shBrowseForFolder, 1,
+	ret, _, _ := syscall.Syscall(shBrowseForFolder.Addr(), 1,
 		uintptr(unsafe.Pointer(lpbi)),
 		0,
 		0)
@@ -363,7 +375,7 @@ func SHBrowseForFolder(lpbi *BROWSEINFO) uintptr {
 }
 
 func SHGetFileInfo(pszPath *uint16, dwFileAttributes uint32, psfi *SHFILEINFO, cbFileInfo, uFlags uint32) uintptr {
-	ret, _, _ := syscall.Syscall6(shGetFileInfo, 5,
+	ret, _, _ := syscall.Syscall6(shGetFileInfo.Addr(), 5,
 		uintptr(unsafe.Pointer(pszPath)),
 		uintptr(dwFileAttributes),
 		uintptr(unsafe.Pointer(psfi)),
@@ -375,7 +387,7 @@ func SHGetFileInfo(pszPath *uint16, dwFileAttributes uint32, psfi *SHFILEINFO, c
 }
 
 func SHGetPathFromIDList(pidl uintptr, pszPath *uint16) bool {
-	ret, _, _ := syscall.Syscall(shGetPathFromIDList, 2,
+	ret, _, _ := syscall.Syscall(shGetPathFromIDList.Addr(), 2,
 		pidl,
 		uintptr(unsafe.Pointer(pszPath)),
 		0)
@@ -384,7 +396,7 @@ func SHGetPathFromIDList(pidl uintptr, pszPath *uint16) bool {
 }
 
 func SHGetSpecialFolderPath(hwndOwner HWND, lpszPath *uint16, csidl CSIDL, fCreate bool) bool {
-	ret, _, _ := syscall.Syscall6(shGetSpecialFolderPath, 4,
+	ret, _, _ := syscall.Syscall6(shGetSpecialFolderPath.Addr(), 4,
 		uintptr(hwndOwner),
 		uintptr(unsafe.Pointer(lpszPath)),
 		uintptr(csidl),
@@ -396,7 +408,7 @@ func SHGetSpecialFolderPath(hwndOwner HWND, lpszPath *uint16, csidl CSIDL, fCrea
 }
 
 func SHParseDisplayName(pszName *uint16, pbc uintptr, ppidl *uintptr, sfgaoIn uint32, psfgaoOut *uint32) HRESULT {
-	ret, _, _ := syscall.Syscall6(shParseDisplayName, 5,
+	ret, _, _ := syscall.Syscall6(shParseDisplayName.Addr(), 5,
 		uintptr(unsafe.Pointer(pszName)),
 		pbc,
 		uintptr(unsafe.Pointer(ppidl)),
@@ -408,7 +420,10 @@ func SHParseDisplayName(pszName *uint16, pbc uintptr, ppidl *uintptr, sfgaoIn ui
 }
 
 func SHGetStockIconInfo(stockIconId int32, uFlags uint32, stockIcon *SHSTOCKICONINFO) HRESULT {
-	ret, _, _ := syscall.Syscall6(shGetStockIconInfo, 3,
+	if shGetStockIconInfo.Find() != nil {
+		return HRESULT(0)
+	}
+	ret, _, _ := syscall.Syscall6(shGetStockIconInfo.Addr(), 3,
 		uintptr(stockIconId),
 		uintptr(uFlags),
 		uintptr(unsafe.Pointer(stockIcon)),
@@ -420,7 +435,7 @@ func SHGetStockIconInfo(stockIconId int32, uFlags uint32, stockIcon *SHSTOCKICON
 }
 
 func Shell_NotifyIcon(dwMessage uint32, lpdata *NOTIFYICONDATA) bool {
-	ret, _, _ := syscall.Syscall(shell_NotifyIcon, 2,
+	ret, _, _ := syscall.Syscall(shell_NotifyIcon.Addr(), 2,
 		uintptr(dwMessage),
 		uintptr(unsafe.Pointer(lpdata)),
 		0)

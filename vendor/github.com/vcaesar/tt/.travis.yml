@@ -1,0 +1,15 @@
+language: go
+
+go_import_path: github.com/vcaesar/tt
+
+go:
+  # - 1.8.x
+  - 1.9.x
+  - 1.10.x
+  - 1.11.x
+  # - tip
+
+install:
+  - export PATH=$PATH:$HOME/gopath/bin
+  # - go get -u github.com/shirou/gopsutil
+  - go get -v -t ./...

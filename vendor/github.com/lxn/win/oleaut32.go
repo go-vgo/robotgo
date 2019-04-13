@@ -8,6 +8,7 @@ package win
 
 import (
 	"fmt"
+	"golang.org/x/sys/windows"
 	"syscall"
 	"unsafe"
 )
@@ -418,26 +419,26 @@ type DISPPARAMS struct {
 
 var (
 	// Library
-	liboleaut32 uintptr
+	liboleaut32 *windows.LazyDLL
 
 	// Functions
-	sysAllocString uintptr
-	sysFreeString  uintptr
-	sysStringLen   uintptr
+	sysAllocString *windows.LazyProc
+	sysFreeString  *windows.LazyProc
+	sysStringLen   *windows.LazyProc
 )
 
 func init() {
 	// Library
-	liboleaut32 = MustLoadLibrary("oleaut32.dll")
+	liboleaut32 = windows.NewLazySystemDLL("oleaut32.dll")
 
 	// Functions
-	sysAllocString = MustGetProcAddress(liboleaut32, "SysAllocString")
-	sysFreeString = MustGetProcAddress(liboleaut32, "SysFreeString")
-	sysStringLen = MustGetProcAddress(liboleaut32, "SysStringLen")
+	sysAllocString = liboleaut32.NewProc("SysAllocString")
+	sysFreeString = liboleaut32.NewProc("SysFreeString")
+	sysStringLen = liboleaut32.NewProc("SysStringLen")
 }
 
 func SysAllocString(s string) *uint16 /*BSTR*/ {
-	ret, _, _ := syscall.Syscall(sysAllocString, 1,
+	ret, _, _ := syscall.Syscall(sysAllocString.Addr(), 1,
 		uintptr(unsafe.Pointer(syscall.StringToUTF16Ptr(s))),
 		0,
 		0)
@@ -446,14 +447,14 @@ func SysAllocString(s string) *uint16 /*BSTR*/ {
 }
 
 func SysFreeString(bstr *uint16 /*BSTR*/) {
-	syscall.Syscall(sysFreeString, 1,
+	syscall.Syscall(sysFreeString.Addr(), 1,
 		uintptr(unsafe.Pointer(bstr)),
 		0,
 		0)
 }
 
 func SysStringLen(bstr *uint16 /*BSTR*/) uint32 {
-	ret, _, _ := syscall.Syscall(sysStringLen, 1,
+	ret, _, _ := syscall.Syscall(sysStringLen.Addr(), 1,
 		uintptr(unsafe.Pointer(bstr)),
 		0,
 		0)

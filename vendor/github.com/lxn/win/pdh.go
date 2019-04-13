@@ -7,6 +7,7 @@
 package win
 
 import (
+	"golang.org/x/sys/windows"
 	"syscall"
 	"unsafe"
 )
@@ -161,32 +162,32 @@ type PDH_FMT_COUNTERVALUE_ITEM_LONG struct {
 
 var (
 	// Library
-	libpdhDll *syscall.DLL
+	libpdhDll *windows.LazyDLL
 
 	// Functions
-	pdh_AddCounterW               *syscall.Proc
-	pdh_AddEnglishCounterW        *syscall.Proc
-	pdh_CloseQuery                *syscall.Proc
-	pdh_CollectQueryData          *syscall.Proc
-	pdh_GetFormattedCounterValue  *syscall.Proc
-	pdh_GetFormattedCounterArrayW *syscall.Proc
-	pdh_OpenQuery                 *syscall.Proc
-	pdh_ValidatePathW             *syscall.Proc
+	pdh_AddCounterW               *windows.LazyProc
+	pdh_AddEnglishCounterW        *windows.LazyProc
+	pdh_CloseQuery                *windows.LazyProc
+	pdh_CollectQueryData          *windows.LazyProc
+	pdh_GetFormattedCounterValue  *windows.LazyProc
+	pdh_GetFormattedCounterArrayW *windows.LazyProc
+	pdh_OpenQuery                 *windows.LazyProc
+	pdh_ValidatePathW             *windows.LazyProc
 )
 
 func init() {
 	// Library
-	libpdhDll = syscall.MustLoadDLL("pdh.dll")
+	libpdhDll = windows.NewLazySystemDLL("pdh.dll")
 
 	// Functions
-	pdh_AddCounterW = libpdhDll.MustFindProc("PdhAddCounterW")
-	pdh_AddEnglishCounterW, _ = libpdhDll.FindProc("PdhAddEnglishCounterW") // XXX: only supported on versions > Vista.
-	pdh_CloseQuery = libpdhDll.MustFindProc("PdhCloseQuery")
-	pdh_CollectQueryData = libpdhDll.MustFindProc("PdhCollectQueryData")
-	pdh_GetFormattedCounterValue = libpdhDll.MustFindProc("PdhGetFormattedCounterValue")
-	pdh_GetFormattedCounterArrayW = libpdhDll.MustFindProc("PdhGetFormattedCounterArrayW")
-	pdh_OpenQuery = libpdhDll.MustFindProc("PdhOpenQuery")
-	pdh_ValidatePathW = libpdhDll.MustFindProc("PdhValidatePathW")
+	pdh_AddCounterW = libpdhDll.NewProc("PdhAddCounterW")
+	pdh_AddEnglishCounterW = libpdhDll.NewProc("PdhAddEnglishCounterW")
+	pdh_CloseQuery = libpdhDll.NewProc("PdhCloseQuery")
+	pdh_CollectQueryData = libpdhDll.NewProc("PdhCollectQueryData")
+	pdh_GetFormattedCounterValue = libpdhDll.NewProc("PdhGetFormattedCounterValue")
+	pdh_GetFormattedCounterArrayW = libpdhDll.NewProc("PdhGetFormattedCounterArrayW")
+	pdh_OpenQuery = libpdhDll.NewProc("PdhOpenQuery")
+	pdh_ValidatePathW = libpdhDll.NewProc("PdhValidatePathW")
 }
 
 // Adds the specified counter to the query. This is the internationalized version. Preferably, use the
@@ -241,7 +242,7 @@ func PdhAddCounter(hQuery PDH_HQUERY, szFullCounterPath string, dwUserData uintp
 // Adds the specified language-neutral counter to the query. See the PdhAddCounter function. This function only exists on
 // Windows versions higher than Vista.
 func PdhAddEnglishCounter(hQuery PDH_HQUERY, szFullCounterPath string, dwUserData uintptr, phCounter *PDH_HCOUNTER) uint32 {
-	if pdh_AddEnglishCounterW == nil {
+	if pdh_AddEnglishCounterW.Find() != nil {
 		return ERROR_INVALID_FUNCTION
 	}
 

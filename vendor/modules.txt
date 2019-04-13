@@ -1,4 +1,4 @@
-# github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802
+# github.com/BurntSushi/xgb v0.0.0-20160522221800-27f122750802
 github.com/BurntSushi/xgb/xproto
 github.com/BurntSushi/xgb
 github.com/BurntSushi/xgb/xinerama
@@ -13,13 +13,13 @@ github.com/StackExchange/wmi
 # github.com/go-ole/go-ole v1.2.4
 github.com/go-ole/go-ole
 github.com/go-ole/go-ole/oleutil
-# github.com/lxn/win v0.0.0-20190226192825-50e22abd4ff9
+# github.com/lxn/win v0.0.0-20190311093451-0040366d7450
 github.com/lxn/win
 # github.com/otiai10/gosseract v2.2.1+incompatible
 github.com/otiai10/gosseract
 # github.com/robotn/gohook v0.0.0-20190315174547-bc414970f3d6
 github.com/robotn/gohook
-# github.com/shirou/gopsutil v0.0.0-20190131151121-071446942108
+# github.com/shirou/gopsutil v2.18.12+incompatible
 github.com/shirou/gopsutil/process
 github.com/shirou/gopsutil/cpu
 github.com/shirou/gopsutil/host
@@ -30,8 +30,10 @@ github.com/shirou/gopsutil/net
 github.com/shirou/w32
 # github.com/vcaesar/imgo v0.0.0-20181209162409-13af122cf2fa
 github.com/vcaesar/imgo
-# golang.org/x/image v0.0.0-20190227222117-0694c2d4d067 => github.com/golang/image v0.0.0-20181116024801-cd38e8056d9b
+# github.com/vcaesar/tt v0.0.0-20181224161634-976c3d851647
+github.com/vcaesar/tt
+# golang.org/x/image v0.0.0-20190321063152-3fc05d484e9f
 golang.org/x/image/bmp
-# golang.org/x/sys v0.0.0-20190228124157-a34e9553db1e => github.com/golang/sys v0.0.0-20190109145017-48ac38b7c8cb
+# golang.org/x/sys v0.0.0-20190412213103-97732733099d
 golang.org/x/sys/windows
 golang.org/x/sys/unix

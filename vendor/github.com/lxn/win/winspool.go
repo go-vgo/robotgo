@@ -7,6 +7,7 @@
 package win
 
 import (
+	"golang.org/x/sys/windows"
 	"syscall"
 	"unsafe"
 )
@@ -31,28 +32,28 @@ type PRINTER_INFO_4 struct {
 
 var (
 	// Library
-	libwinspool uintptr
+	libwinspool *windows.LazyDLL
 
 	// Functions
-	deviceCapabilities uintptr
-	documentProperties uintptr
-	enumPrinters       uintptr
-	getDefaultPrinter  uintptr
+	deviceCapabilities *windows.LazyProc
+	documentProperties *windows.LazyProc
+	enumPrinters       *windows.LazyProc
+	getDefaultPrinter  *windows.LazyProc
 )
 
 func init() {
 	// Library
-	libwinspool = MustLoadLibrary("winspool.drv")
+	libwinspool = windows.NewLazySystemDLL("winspool.drv")
 
 	// Functions
-	deviceCapabilities = MustGetProcAddress(libwinspool, "DeviceCapabilitiesW")
-	documentProperties = MustGetProcAddress(libwinspool, "DocumentPropertiesW")
-	enumPrinters = MustGetProcAddress(libwinspool, "EnumPrintersW")
-	getDefaultPrinter = MustGetProcAddress(libwinspool, "GetDefaultPrinterW")
+	deviceCapabilities = libwinspool.NewProc("DeviceCapabilitiesW")
+	documentProperties = libwinspool.NewProc("DocumentPropertiesW")
+	enumPrinters = libwinspool.NewProc("EnumPrintersW")
+	getDefaultPrinter = libwinspool.NewProc("GetDefaultPrinterW")
 }
 
 func DeviceCapabilities(pDevice, pPort *uint16, fwCapability uint16, pOutput *uint16, pDevMode *DEVMODE) uint32 {
-	ret, _, _ := syscall.Syscall6(deviceCapabilities, 5,
+	ret, _, _ := syscall.Syscall6(deviceCapabilities.Addr(), 5,
 		uintptr(unsafe.Pointer(pDevice)),
 		uintptr(unsafe.Pointer(pPort)),
 		uintptr(fwCapability),
@@ -64,7 +65,7 @@ func DeviceCapabilities(pDevice, pPort *uint16, fwCapability uint16, pOutput *ui
 }
 
 func DocumentProperties(hWnd HWND, hPrinter HANDLE, pDeviceName *uint16, pDevModeOutput, pDevModeInput *DEVMODE, fMode uint32) int32 {
-	ret, _, _ := syscall.Syscall6(documentProperties, 6,
+	ret, _, _ := syscall.Syscall6(documentProperties.Addr(), 6,
 		uintptr(hWnd),
 		uintptr(hPrinter),
 		uintptr(unsafe.Pointer(pDeviceName)),
@@ -76,7 +77,7 @@ func DocumentProperties(hWnd HWND, hPrinter HANDLE, pDeviceName *uint16, pDevMod
 }
 
 func EnumPrinters(Flags uint32, Name *uint16, Level uint32, pPrinterEnum *byte, cbBuf uint32, pcbNeeded, pcReturned *uint32) bool {
-	ret, _, _ := syscall.Syscall9(enumPrinters, 7,
+	ret, _, _ := syscall.Syscall9(enumPrinters.Addr(), 7,
 		uintptr(Flags),
 		uintptr(unsafe.Pointer(Name)),
 		uintptr(Level),
@@ -91,7 +92,7 @@ func EnumPrinters(Flags uint32, Name *uint16, Level uint32, pPrinterEnum *byte, 
 }
 
 func GetDefaultPrinter(pszBuffer *uint16, pcchBuffer *uint32) bool {
-	ret, _, _ := syscall.Syscall(getDefaultPrinter, 2,
+	ret, _, _ := syscall.Syscall(getDefaultPrinter.Addr(), 2,
 		uintptr(unsafe.Pointer(pszBuffer)),
 		uintptr(unsafe.Pointer(pcchBuffer)),
 		0)
