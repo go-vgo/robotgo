@@ -1327,8 +1327,10 @@ func AddEvents(key string, arr ...string) bool {
 				}
 
 				if e.Kind == hook.KeyUp && e.Keycode == ukey {
-					k--
-					time.Sleep(10 * time.Microsecond)
+					if k > 0 {
+						k--
+					}
+					// time.Sleep(10 * time.Microsecond)
 					ct = false
 				}
 			}
