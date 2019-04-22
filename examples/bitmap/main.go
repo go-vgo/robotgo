@@ -62,7 +62,9 @@ func bitmapString(bmp robotgo.CBitmap) {
 
 	// sbitmap := robotgo.BitmapFromstring(bitstr, 2)
 	// fmt.Println("...", sbitmap)
-	sbitmap := robotgo.BitmapStr(bitstr)
+
+	// sbitmap := robotgo.BitmapStr(bitstr)
+	sbitmap := robotgo.BitmapFromStr(bitstr)
 	fmt.Println("bitmap str...", sbitmap)
 	robotgo.SaveBitmap(sbitmap, "teststr.png")
 }
