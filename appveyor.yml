@@ -67,7 +67,7 @@ build_script:
 test_script:
   # Unit tests
   - ps: Add-AppveyorTest "Unit Tests" -Outcome Running
-  - go test -u github.com/go-vgo/robotgo/...
+  - go test -v github.com/go-vgo/robotgo/...
   - ps: Update-AppveyorTest "Unit Tests" -Outcome Passed
 
 # notifications:
