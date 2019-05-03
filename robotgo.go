@@ -69,7 +69,7 @@ import (
 
 const (
 	// Version get the robotgo version
-	Version = "v0.80.0.845, Sierra Nevada!"
+	Version = "v0.80.0.881, Sierra Nevada!"
 )
 
 // GetVersion get the robotgo version
@@ -1617,7 +1617,6 @@ func Process() ([]Nps, error) {
 	var npsArr []Nps
 
 	pid, err := process.Pids()
-
 	if err != nil {
 		return npsArr, err
 	}
@@ -1627,6 +1626,7 @@ func Process() ([]Nps, error) {
 		if err != nil {
 			return npsArr, err
 		}
+
 		names, err := nps.Name()
 		if err != nil {
 			return npsArr, err
@@ -1672,6 +1672,7 @@ func FindNames() ([]string, error) {
 		if err != nil {
 			return strArr, err
 		}
+
 		names, err := nps.Name()
 		if err != nil {
 			return strArr, err
@@ -1679,7 +1680,6 @@ func FindNames() ([]string, error) {
 
 		strArr = append(strArr, names)
 		return strArr, err
-
 	}
 
 	return strArr, err
