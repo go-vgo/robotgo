@@ -1714,6 +1714,21 @@ func FindIds(name string) ([]int32, error) {
 	return pids, err
 }
 
+// FindPath find the process path by the process pid
+func FindPath(pid int32) (string, error) {
+	nps, err := process.NewProcess(pid)
+	if err != nil {
+		return "", err
+	}
+
+	f, err := nps.Exe()
+	if err != nil {
+		return "", err
+	}
+
+	return f, err
+}
+
 func internalActive(pid int32, hwnd int) {
 	C.active_PID(C.uintptr(pid), C.uintptr(hwnd))
 }
