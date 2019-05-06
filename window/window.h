@@ -49,6 +49,14 @@ void initWindow(uintptr handle){
 	setHandle(handle);
 }
 
+bool Is64Bit() {
+	#ifdef RobotGo_64
+		return true;
+	#endif
+
+	return false;
+}
+
 MData set_handle_pid(uintptr pid, uintptr isHwnd){
 	MData win;
 
