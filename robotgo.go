@@ -58,11 +58,12 @@ import (
 	"strings"
 	"time"
 	"unsafe"
+
 	// "syscall"
 	"os/exec"
 
 	"github.com/go-vgo/robotgo/clipboard"
-	"github.com/robotn/gohook"
+	hook "github.com/robotn/gohook"
 	"github.com/shirou/gopsutil/process"
 	"github.com/vcaesar/imgo"
 )
@@ -1604,6 +1605,12 @@ func PidExists(pid int32) (bool, error) {
 	abool, err := process.PidExists(pid)
 
 	return abool, err
+}
+
+// Is64Bit determine whether the sys is 64bit
+func Is64Bit() bool {
+	b := C.Is64Bit()
+	return bool(b)
 }
 
 // Nps process struct
