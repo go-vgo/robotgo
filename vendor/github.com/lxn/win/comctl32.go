@@ -7,9 +7,10 @@
 package win
 
 import (
-	"golang.org/x/sys/windows"
 	"syscall"
 	"unsafe"
+
+	"golang.org/x/sys/windows"
 )
 
 // Button control messages
@@ -211,6 +212,8 @@ const (
 const (
 	LPSTR_TEXTCALLBACK = ^uintptr(0)
 	I_CHILDRENCALLBACK = -1
+	I_IMAGECALLBACK    = -1
+	I_IMAGENONE        = -2
 )
 
 type HIMAGELIST HANDLE

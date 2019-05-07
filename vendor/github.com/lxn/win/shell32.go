@@ -307,6 +307,7 @@ var (
 	shGetSpecialFolderPath *windows.LazyProc
 	shParseDisplayName     *windows.LazyProc
 	shGetStockIconInfo     *windows.LazyProc
+	shellExecute           *windows.LazyProc
 	shell_NotifyIcon       *windows.LazyProc
 )
 
@@ -324,6 +325,7 @@ func init() {
 	shGetPathFromIDList = libshell32.NewProc("SHGetPathFromIDListW")
 	shGetSpecialFolderPath = libshell32.NewProc("SHGetSpecialFolderPathW")
 	shGetStockIconInfo = libshell32.NewProc("SHGetStockIconInfo")
+	shellExecute = libshell32.NewProc("ShellExecuteW")
 	shell_NotifyIcon = libshell32.NewProc("Shell_NotifyIconW")
 	shParseDisplayName = libshell32.NewProc("SHParseDisplayName")
 }
@@ -432,6 +434,18 @@ func SHGetStockIconInfo(stockIconId int32, uFlags uint32, stockIcon *SHSTOCKICON
 		0,
 	)
 	return HRESULT(ret)
+}
+
+func ShellExecute(hWnd HWND, verb *uint16, file *uint16, args *uint16, cwd *uint16, showCmd int) bool {
+	ret, _, _ := syscall.Syscall6(shellExecute.Addr(), 6,
+		uintptr(hWnd),
+		uintptr(unsafe.Pointer(verb)),
+		uintptr(unsafe.Pointer(file)),
+		uintptr(unsafe.Pointer(args)),
+		uintptr(unsafe.Pointer(cwd)),
+		uintptr(showCmd),
+	)
+	return ret != 0
 }
 
 func Shell_NotifyIcon(dwMessage uint32, lpdata *NOTIFYICONDATA) bool {

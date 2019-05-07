@@ -34,7 +34,7 @@ environment:
       PATH: C:\msys64\mingw32\bin\;C:\Program Files (x86)\NSIS\;%PATH%
   # - COMPILER: MINGW_W64
   #   ARCHITECTURE: x64
-  GOVERSION: 1.12.1
+  GOVERSION: 1.12.4
   # GOPATH: c:\gopath
 
 # scripts that run after cloning repository

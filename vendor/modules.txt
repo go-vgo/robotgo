@@ -13,11 +13,11 @@ github.com/StackExchange/wmi
 # github.com/go-ole/go-ole v1.2.4
 github.com/go-ole/go-ole
 github.com/go-ole/go-ole/oleutil
-# github.com/lxn/win v0.0.0-20190311093451-0040366d7450
+# github.com/lxn/win v0.0.0-20190502150424-4a44be4873a6
 github.com/lxn/win
 # github.com/otiai10/gosseract v2.2.1+incompatible
 github.com/otiai10/gosseract
-# github.com/robotn/gohook v0.0.0-20190413172657-5b9ae1915c78
+# github.com/robotn/gohook v0.0.0-20190414171059-39135b21e438
 github.com/robotn/gohook
 # github.com/shirou/gopsutil v2.18.12+incompatible
 github.com/shirou/gopsutil/process
@@ -28,12 +28,14 @@ github.com/shirou/gopsutil/mem
 github.com/shirou/gopsutil/net
 # github.com/shirou/w32 v0.0.0-20160930032740-bb4de0191aa4
 github.com/shirou/w32
+# github.com/vcaesar/gops v0.0.0-20190507132250-5fc24a63c55a
+github.com/vcaesar/gops
 # github.com/vcaesar/imgo v0.0.0-20181209162409-13af122cf2fa
 github.com/vcaesar/imgo
-# github.com/vcaesar/tt v0.0.0-20190311143935-d2abd51da7af
+# github.com/vcaesar/tt v0.0.0-20190414175154-71a843cbe853
 github.com/vcaesar/tt
-# golang.org/x/image v0.0.0-20190321063152-3fc05d484e9f
+# golang.org/x/image v0.0.0-20190501045829-6d32002ffd75
 golang.org/x/image/bmp
-# golang.org/x/sys v0.0.0-20190412213103-97732733099d
+# golang.org/x/sys v0.0.0-20190429190828-d89cdac9e872
 golang.org/x/sys/windows
 golang.org/x/sys/unix
