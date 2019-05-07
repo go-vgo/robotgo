@@ -51,7 +51,7 @@ import "C"
 import (
 	// "fmt"
 	"image"
-	"os"
+	// "os"
 	"reflect"
 	"runtime"
 	"strconv"
@@ -64,7 +64,7 @@ import (
 
 	"github.com/go-vgo/robotgo/clipboard"
 	hook "github.com/robotn/gohook"
-	"github.com/shirou/gopsutil/process"
+	ps "github.com/vcaesar/gops"
 	"github.com/vcaesar/imgo"
 )
 
@@ -1591,20 +1591,12 @@ func internalGetBounds(pid int32, hwnd int) (int, int, int, int) {
 
 // Pids get the all process id
 func Pids() ([]int32, error) {
-	var ret []int32
-	pid, err := process.Pids()
-	if err != nil {
-		return ret, err
-	}
-
-	return pid, err
+	return ps.Pids()
 }
 
 // PidExists determine whether the process exists
 func PidExists(pid int32) (bool, error) {
-	abool, err := process.PidExists(pid)
-
-	return abool, err
+	return ps.PidExists(pid)
 }
 
 // Is64Bit determine whether the sys is 64bit
@@ -1622,26 +1614,11 @@ type Nps struct {
 // Process get the all process struct
 func Process() ([]Nps, error) {
 	var npsArr []Nps
-
-	pid, err := process.Pids()
-	if err != nil {
-		return npsArr, err
-	}
-
-	for i := 0; i < len(pid); i++ {
-		nps, err := process.NewProcess(pid[i])
-		if err != nil {
-			return npsArr, err
-		}
-
-		names, err := nps.Name()
-		if err != nil {
-			return npsArr, err
-		}
-
+	nps, err := ps.Process()
+	for i := 0; i < len(nps); i++ {
 		np := Nps{
-			pid[i],
-			names,
+			nps[i].Pid,
+			nps[i].Name,
 		}
 
 		npsArr = append(npsArr, np)
@@ -1652,81 +1629,24 @@ func Process() ([]Nps, error) {
 
 // FindName find the process name by the process id
 func FindName(pid int32) (string, error) {
-	nps, err := process.NewProcess(pid)
-	if err != nil {
-		return "", err
-	}
-
-	names, err := nps.Name()
-	if err != nil {
-		return "", err
-	}
-
-	return names, err
+	return ps.FindName(pid)
 }
 
 // FindNames find the all process name
 func FindNames() ([]string, error) {
-	var strArr []string
-	pid, err := process.Pids()
-
-	if err != nil {
-		return strArr, err
-	}
-
-	for i := 0; i < len(pid); i++ {
-		nps, err := process.NewProcess(pid[i])
-		if err != nil {
-			return strArr, err
-		}
-
-		names, err := nps.Name()
-		if err != nil {
-			return strArr, err
-		}
-
-		strArr = append(strArr, names)
-		return strArr, err
-	}
-
-	return strArr, err
+	return ps.FindNames()
 }
 
 // FindIds finds the all processes named with a subset
 // of "name" (case insensitive),
 // return matched IDs.
 func FindIds(name string) ([]int32, error) {
-	var pids []int32
-	nps, err := Process()
-	if err != nil {
-		return pids, err
-	}
-
-	name = strings.ToLower(name)
-	for i := 0; i < len(nps); i++ {
-		psname := strings.ToLower(nps[i].Name)
-		abool := strings.Contains(psname, name)
-		if abool {
-			pids = append(pids, nps[i].Pid)
-		}
-	}
-
-	return pids, err
+	return ps.FindIds(name)
 }
 
 // FindPath find the process path by the process pid
 func FindPath(pid int32) (string, error) {
-	nps, err := process.NewProcess(pid)
-	if err != nil {
-		return "", err
-	}
-
-	f, err := nps.Exe()
-	if err != nil {
-		return "", err
-	}
-
-	return f, err
+	return ps.FindPath(pid)
 }
 
 func internalActive(pid int32, hwnd int) {
@@ -1756,6 +1676,5 @@ func ActiveName(name string) error {
 
 // Kill kill the process by PID
 func Kill(pid int32) error {
-	ps := os.Process{Pid: int(pid)}
-	return ps.Kill()
+	return ps.Kill(pid)
 }
