@@ -99,6 +99,7 @@ func writeAll(text string) error {
 	if h == 0 {
 		return err
 	}
+
 	defer func() {
 		if h != 0 {
 			globalFree.Call(h)
@@ -117,14 +118,14 @@ func writeAll(text string) error {
 
 	r, _, err = globalUnlock.Call(h)
 	if r == 0 {
-		return err
+		if err.(syscall.Errno) != 0 {
+			return err
+		}
 	}
 
 	r, _, err = setClipboardData.Call(cfUnicodetext, h)
 	if r == 0 {
-		if err.(syscall.Errno) != 0 {
-			return err
-		}
+		return err
 	}
 
 	h = 0 // suppress deferred cleanup
