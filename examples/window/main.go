@@ -89,6 +89,11 @@ func findName() {
 	if err == nil {
 		fmt.Println("name: ", names)
 	}
+
+	p, err := robotgo.FindPath(100)
+	if err == nil {
+		fmt.Println("path: ", p)
+	}
 }
 
 func ps() {
