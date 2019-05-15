@@ -1155,7 +1155,7 @@ func FindColor(color CHex, args ...interface{}) (int, int) {
 		bitmap    C.MMBitmapRef
 	)
 
-	if len(args) > 0 {
+	if len(args) > 0 && args[0] != nil {
 		bitmap = args[0].(C.MMBitmapRef)
 	} else {
 		bitmap = CaptureScreen()
@@ -1198,7 +1198,7 @@ func CountColor(color CHex, args ...interface{}) int {
 		bitmap    C.MMBitmapRef
 	)
 
-	if len(args) > 0 {
+	if len(args) > 0 && args[0] != nil {
 		bitmap = args[0].(C.MMBitmapRef)
 	} else {
 		bitmap = CaptureScreen()
