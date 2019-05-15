@@ -896,7 +896,7 @@ func FindBitmap(bit C.MMBitmapRef, args ...interface{}) (int, int) {
 		tolerance = 0.01
 	)
 
-	if len(args) > 0 {
+	if len(args) > 0 && args[0] != nil {
 		sbit = args[0].(C.MMBitmapRef)
 	} else {
 		sbit = CaptureScreen()
@@ -929,7 +929,7 @@ func FindPic(path string, args ...interface{}) (int, int) {
 
 	openbit := OpenBitmap(path)
 
-	if len(args) > 0 {
+	if len(args) > 0 && args[0] != nil {
 		sbit = args[0].(C.MMBitmapRef)
 	} else {
 		sbit = CaptureScreen()
@@ -956,7 +956,7 @@ func FindEveryBitmap(bit C.MMBitmapRef, args ...interface{}) (int, int) {
 		lpos      C.MMPoint
 	)
 
-	if len(args) > 0 {
+	if len(args) > 0 && args[0] != nil {
 		sbit = args[0].(C.MMBitmapRef)
 	} else {
 		sbit = CaptureScreen()
