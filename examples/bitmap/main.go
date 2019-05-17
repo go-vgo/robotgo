@@ -122,6 +122,26 @@ func bitmapTest(bmp robotgo.CBitmap) {
 	fmt.Println("FindBitmap------", fx, fy)
 }
 
+func findBitmap(bmp robotgo.CBitmap) {
+	fx, fy := robotgo.FindBitmap(robotgo.ToMMBitmapRef(bmp))
+	fmt.Println("findBitmap: ", fx, fy)
+
+	fx, fy = robotgo.FindCBitmap(bmp)
+	fmt.Println("findCBitmap: ", fx, fy)
+	fx, fy = robotgo.FindCBitmap(bmp, nil, 0.1)
+	fmt.Println("findCBitmap: ", fx, fy)
+
+	// open image bitmap
+	openbit := robotgo.OpenBitmap("test.tif")
+	fmt.Println("openBitmap...", openbit)
+
+	fx, fy = robotgo.FindBitmap(openbit)
+	fmt.Println("FindBitmap------", fx, fy)
+
+	fx, fy = robotgo.FindPic("test.tif")
+	fmt.Println("FindPic------", fx, fy)
+}
+
 func bitmap() {
 	////////////////////////////////////////////////////////////////////////////////
 	// Bitmap
@@ -155,24 +175,6 @@ func bitmap() {
 	// free the bitmap
 	robotgo.FreeBitmap(abitMap)
 	// robotgo.FreeBitmap(bitmap)
-}
-
-func findBitmap(bmp robotgo.CBitmap) {
-	fx, fy := robotgo.FindBitmap(robotgo.ToMMBitmapRef(bmp))
-	fmt.Println("findBitmap: ", fx, fy)
-
-	fx, fy = robotgo.FindCBitmap(bmp)
-	fmt.Println("findCBitmap: ", fx, fy)
-
-	// open image bitmap
-	openbit := robotgo.OpenBitmap("test.tif")
-	fmt.Println("openBitmap...", openbit)
-
-	fx, fy = robotgo.FindBitmap(openbit)
-	fmt.Println("FindBitmap------", fx, fy)
-
-	fx, fy = robotgo.FindPic("test.tif")
-	fmt.Println("FindPic------", fx, fy)
 }
 
 func main() {
