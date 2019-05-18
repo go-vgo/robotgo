@@ -14,6 +14,9 @@ func colorPicker() {
 
 		clo := robotgo.GetPixelColor(x, y)
 		fmt.Println("color: #", clo)
+
+		// clipboard
+		robotgo.WriteAll("#" + clo)
 	}
 }
 

@@ -44,6 +44,9 @@ func findColor(bmp robotgo.CBitmap) {
 
 	cx, cy = robotgo.FindColor(0xAADCDC, bitmap)
 	fmt.Println("pos...", cx, cy)
+	cx, cy = robotgo.FindColor(0xAADCDC, nil, 0.1)
+	fmt.Println("pos...", cx, cy)
+
 	cx, cy = robotgo.FindColorCS(0xAADCDC, 388, 179, 300, 300)
 	fmt.Println("pos...", cx, cy)
 
