@@ -14,7 +14,7 @@ RobotGo 支持 Mac, Windows, and Linux(X11).
 
 提 Issues 请到 [Github](https://github.com/go-vgo/robotgo), 便于统一管理和即时更新
 
-QQ 群: 595877611
+QQ 讨论群: 595877611 (仅用于讨论)
 
 ## Contents
 - [Docs](#docs)
