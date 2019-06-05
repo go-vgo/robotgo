@@ -382,6 +382,13 @@ func Drag(x, y int, args ...string) {
 	C.drag_mouse(cx, cy, button)
 }
 
+// DragSmooth drag the mouse smooth
+func DragSmooth(x, y int, args ...interface{}) {
+	MouseToggle("down")
+	MoveSmooth(x, y, args...)
+	MouseToggle("up")
+}
+
 // MoveMouseSmooth move the mouse smooth,
 // moves mouse to x, y human like, with the mouse button up.
 func MoveMouseSmooth(x, y int, args ...interface{}) bool {
