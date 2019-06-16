@@ -47,7 +47,7 @@ var keycode = Map{
 	"p":  25,
 	"[":  26,
 	"]":  27,
-	"\\": 28,
+	"\\": 43,
 	//
 	"a": 30,
 	"s": 31,
@@ -86,6 +86,7 @@ var keycode = Map{
 	"f12": 70,
 	// more
 	"esc":     1,
+	"delete":  14,
 	"tab":     15,
 	"ctrl":    29,
 	"control": 29,
