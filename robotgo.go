@@ -1281,7 +1281,7 @@ func AddEvent(key string) bool {
 	}
 
 	if len(key) > 1 && !mouseBool {
-		key = strconv.Itoa(keycode[key].(int))
+		key = strconv.Itoa(Keycode[key].(int))
 	}
 
 	geve := hook.AddEvent(key)
@@ -1327,7 +1327,7 @@ func AddEvents(key string, arr ...string) bool {
 		l := len(arr)
 		if l > 0 {
 			for i := 0; i < l; i++ {
-				ukey := uint16(keycode[arr[i]].(int))
+				ukey := uint16(Keycode[arr[i]].(int))
 
 				if e.Kind == hook.KeyHold && e.Keycode == ukey {
 					k++
@@ -1349,7 +1349,7 @@ func AddEvents(key string, arr ...string) bool {
 			ct = true
 		}
 
-		if ct && e.Kind == hook.KeyUp && e.Keycode == uint16(keycode[key].(int)) {
+		if ct && e.Kind == hook.KeyUp && e.Keycode == uint16(Keycode[key].(int)) {
 			hook.End()
 			// k = 0
 			break
@@ -1368,7 +1368,7 @@ func AddEvents(key string, arr ...string) bool {
 // robotgo.AddMouse("left", 100, 100)
 func AddMouse(btn string, x ...int16) bool {
 	s := hook.Start()
-	ukey := mouseMap[btn]
+	ukey := MouseMap[btn]
 
 	ct := false
 	for {

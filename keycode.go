@@ -10,7 +10,8 @@
 
 package robotgo
 
-var mouseMap = Map{
+// MouseMap robotgo hook mouse's code map
+var MouseMap = Map{
 	"left":       1,
 	"right":      2,
 	"center":     3,
@@ -20,7 +21,8 @@ var mouseMap = Map{
 	"wheelRight": 7,
 }
 
-var keycode = Map{
+// Keycode robotgo hook key's code map
+var Keycode = Map{
 	"`": 41,
 	"1": 2,
 	"2": 3,
