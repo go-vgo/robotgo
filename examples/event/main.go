@@ -36,7 +36,7 @@ func addEvent() {
 	defer robotgo.End()
 
 	for ev := range s {
-		fmt.Println(ev)
+		fmt.Println("hook: ", ev)
 	}
 }
 
