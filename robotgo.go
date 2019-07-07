@@ -261,17 +261,18 @@ func GetScaleSize() (int, int) {
 	return x * s / 100, y * s / 100
 }
 
-// SetXDisplayName set XDisplay name
+// SetXDisplayName set XDisplay name (Linux)
 func SetXDisplayName(name string) string {
 	cname := C.CString(name)
 	str := C.set_XDisplay_name(cname)
+
 	gstr := C.GoString(str)
 	C.free(unsafe.Pointer(cname))
 
 	return gstr
 }
 
-// GetXDisplayName get XDisplay name
+// GetXDisplayName get XDisplay name (Linux)
 func GetXDisplayName() string {
 	name := C.get_XDisplay_name()
 	gname := C.GoString(name)
