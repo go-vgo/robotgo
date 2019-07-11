@@ -147,13 +147,13 @@ import (
 
 func main() {
   robotgo.TypeStr("Hello World")
-  robotgo.TypeStr("测试")
-  robotgo.TypeString("测试")
+  robotgo.TypeStr("テストする")
+  robotgo.TypeString("テストする")
 
-  robotgo.TypeStr("山达尔星新星军团, galaxy. こんにちは世界.")
+  robotgo.TypeStr("galaxy. こんにちは世界.")
   robotgo.Sleep(1)
 
-  // ustr := uint32(robotgo.CharCodeAt("测试", 0))
+  // ustr := uint32(robotgo.CharCodeAt("Test", 0))
   // robotgo.UnicodeType(ustr)
 
   robotgo.KeyTap("enter")
