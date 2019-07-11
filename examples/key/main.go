@@ -19,20 +19,20 @@ import (
 
 func typeStr() {
 	// importing "Hello World"
-	robotgo.TypeStr("Hello World")
+	robotgo.TypeStr("Hello World!")
 
-	robotgo.TypeStr("留给真爱你的人")
+	robotgo.TypeStr("だんしゃり")
 	robotgo.MicroSleep(10.2)
 
-	robotgo.TypeStr("山达尔星新星军团, galaxy. こんにちは世界.")
+	robotgo.TypeStr("Hi galaxy. こんにちは世界.")
 	robotgo.Sleep(2)
-	robotgo.TypeString("所以, 你好, 再见")
+	robotgo.TypeString("So, hi, bye!")
 	robotgo.MilliSleep(100)
 
-	ustr := uint32(robotgo.CharCodeAt("所以, 你好, 再见", 0))
+	ustr := uint32(robotgo.CharCodeAt("So, hi, bye!", 0))
 	robotgo.UnicodeType(ustr)
 
-	robotgo.PasteStr(" 粘贴字符串, paste")
+	robotgo.PasteStr("paste string")
 }
 
 func keyTap() {
@@ -85,7 +85,7 @@ func cilp() {
 	robotgo.TypeString("en")
 
 	// write string to clipboard
-	robotgo.WriteAll("测试")
+	robotgo.WriteAll("テストする")
 	// read string from clipboard
 	text, err := robotgo.ReadAll()
 	if err != nil {
