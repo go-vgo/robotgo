@@ -18,7 +18,7 @@
 
 RobotGo supports Mac, Windows, and Linux(X11).
 
-[Chinese](https://github.com/go-vgo/robotgo/blob/master/README_zh.md)
+[Chinese Simplified](https://github.com/go-vgo/robotgo/blob/master/README_zh.md)
 
 ## Contents
 - [Docs](#docs)
@@ -147,10 +147,10 @@ import (
 
 func main() {
   robotgo.TypeStr("Hello World")
-  robotgo.TypeStr("テストする")
+  robotgo.TypeStr("だんしゃり")
   robotgo.TypeString("テストする")
 
-  robotgo.TypeStr("galaxy. こんにちは世界.")
+  robotgo.TypeStr("Hi galaxy. こんにちは世界.")
   robotgo.Sleep(1)
 
   // ustr := uint32(robotgo.CharCodeAt("Test", 0))
