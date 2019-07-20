@@ -87,8 +87,8 @@ char* get_XDisplay_name(){
 	#if defined(USE_X11)
 		const char* display = getXDisplay();
 		char* sd = (char*)calloc(100, sizeof(char*));
-		if(sd)strcpy(sd, display);
 
+		if (sd) { strcpy(sd, display); }
 		return sd;
 	#else
 		return "GetXDisplayName is only supported on Linux";

@@ -14,8 +14,8 @@
 
 int show_alert(const char *title, const char *msg,
 	const char *defaultButton, const char *cancelButton){
+		
 	int alert = showAlert(title, msg, defaultButton, cancelButton);
-
 	return alert;
 }
 
