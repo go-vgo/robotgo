@@ -20,7 +20,7 @@ func go_send(s *C.char) {
 
 	err := json.Unmarshal(str, &out)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("json.Unmarshal error is: ", err)
 	}
 
 	if out.Keychar != CharUndefined {
@@ -32,7 +32,7 @@ func go_send(s *C.char) {
 	// todo bury this deep into the C lib so that the time is correct
 	out.When = time.Now() // at least it's consistent
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("json.Unmarshal error is: ", err)
 	}
 
 	// todo: maybe make non-bloking

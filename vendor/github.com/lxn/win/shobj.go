@@ -60,3 +60,14 @@ func (obj *ITaskbarList3) SetProgressState(hwnd HWND, state int) HRESULT {
 		uintptr(state))
 	return HRESULT(ret)
 }
+
+func (obj *ITaskbarList3) SetOverlayIcon(hwnd HWND, icon HICON, description *uint16) HRESULT {
+	ret, _, _ := syscall.Syscall6(obj.LpVtbl.SetOverlayIcon, 4,
+		uintptr(unsafe.Pointer(obj)),
+		uintptr(hwnd),
+		uintptr(icon),
+		uintptr(unsafe.Pointer(description)),
+		0,
+		0)
+	return HRESULT(ret)
+}

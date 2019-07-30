@@ -1026,6 +1026,7 @@ const (
 // SystemParametersInfo actions
 const (
 	SPI_GETNONCLIENTMETRICS = 0x0029
+	SPI_GETHIGHCONTRAST     = 0x0042
 )
 
 // Dialog styles
@@ -1068,6 +1069,13 @@ const (
 	WA_ACTIVE      = 1
 	WA_CLICKACTIVE = 2
 	WA_INACTIVE    = 0
+)
+
+// Owner drawing actions
+const (
+	ODA_DRAWENTIRE = 0x0001
+	ODA_FOCUS      = 0x0002
+	ODA_SELECT     = 0x0004
 )
 
 // Owner drawing states
@@ -1327,6 +1335,52 @@ const (
 	AW_VER_NEGATIVE = 0x00000008
 )
 
+// Session ending constants
+const (
+	ENDSESSION_CLOSEAPP = 0x00000001
+	ENDSESSION_CRITICAL = 0x40000000
+	ENDSESSION_LOGOFF   = 0x80000000
+)
+
+// ChangeWindowMessageFilterEx constants
+const (
+	MSGFLT_RESET    = 0
+	MSGFLT_ALLOW    = 1
+	MSGFLT_DISALLOW = 2
+
+	MSGFLTINFO_NONE                     = 0
+	MSGFLTINFO_ALREADYALLOWED_FORWND    = 1
+	MSGFLTINFO_ALREADYDISALLOWED_FORWND = 2
+	MSGFLTINFO_ALLOWED_HIGHER           = 3
+)
+
+// TRACKMOUSEEVENT flags
+const (
+	TME_CANCEL    = 0x80000000
+	TME_HOVER     = 0x00000001
+	TME_LEAVE     = 0x00000002
+	TME_NONCLIENT = 0x00000010
+	TME_QUERY     = 0x40000000
+)
+
+// HIGHCONTRAST flags
+const (
+	HCF_HIGHCONTRASTON  = 0x00000001
+	HCF_AVAILABLE       = 0x00000002
+	HCF_HOTKEYACTIVE    = 0x00000004
+	HCF_CONFIRMHOTKEY   = 0x00000008
+	HCF_HOTKEYSOUND     = 0x00000010
+	HCF_INDICATOR       = 0x00000020
+	HCF_HOTKEYAVAILABLE = 0x00000040
+)
+
+// EDITWORDBREAKPROC codes
+const (
+	WB_LEFT        = 0
+	WB_RIGHT       = 1
+	WB_ISDELIMITER = 2
+)
+
 type NMBCDROPDOWN struct {
 	Hdr      NMHDR
 	RcButton RECT
@@ -1432,6 +1486,11 @@ type CREATESTRUCT struct {
 	Style           int32
 	Name, ClassName uintptr
 	ExStyle         uint32
+}
+
+type CHANGEFILTERSTRUCT struct {
+	size      uint32
+	extStatus uint32
 }
 
 type WNDCLASSEX struct {
@@ -1595,6 +1654,19 @@ type WINDOWPOS struct {
 	Flags           uint32
 }
 
+type TRACKMOUSEEVENT struct {
+	CbSize      uint32
+	DwFlags     uint32
+	HwndTrack   HWND
+	DwHoverTime uint32
+}
+
+type HIGHCONTRAST struct {
+	CbSize            uint32
+	DwFlags           uint32
+	LpszDefaultScheme *uint16
+}
+
 func GET_X_LPARAM(lp uintptr) int32 {
 	return int32(int16(LOWORD(uint32(lp))))
 }
@@ -1608,126 +1680,136 @@ var (
 	libuser32 *windows.LazyDLL
 
 	// Functions
-	addClipboardFormatListener *windows.LazyProc
-	adjustWindowRect           *windows.LazyProc
-	animateWindow              *windows.LazyProc
-	beginDeferWindowPos        *windows.LazyProc
-	beginPaint                 *windows.LazyProc
-	bringWindowToTop           *windows.LazyProc
-	callWindowProc             *windows.LazyProc
-	checkMenuRadioItem         *windows.LazyProc
-	clientToScreen             *windows.LazyProc
-	closeClipboard             *windows.LazyProc
-	createDialogParam          *windows.LazyProc
-	createIconIndirect         *windows.LazyProc
-	createMenu                 *windows.LazyProc
-	createPopupMenu            *windows.LazyProc
-	createWindowEx             *windows.LazyProc
-	deferWindowPos             *windows.LazyProc
-	defWindowProc              *windows.LazyProc
-	destroyIcon                *windows.LazyProc
-	destroyMenu                *windows.LazyProc
-	destroyWindow              *windows.LazyProc
-	dialogBoxParam             *windows.LazyProc
-	dispatchMessage            *windows.LazyProc
-	drawIconEx                 *windows.LazyProc
-	drawMenuBar                *windows.LazyProc
-	drawFocusRect              *windows.LazyProc
-	drawTextEx                 *windows.LazyProc
-	emptyClipboard             *windows.LazyProc
-	enableWindow               *windows.LazyProc
-	endDeferWindowPos          *windows.LazyProc
-	endDialog                  *windows.LazyProc
-	endPaint                   *windows.LazyProc
-	enumChildWindows           *windows.LazyProc
-	findWindow                 *windows.LazyProc
-	getActiveWindow            *windows.LazyProc
-	getAncestor                *windows.LazyProc
-	getCaretPos                *windows.LazyProc
-	getClassName               *windows.LazyProc
-	getClientRect              *windows.LazyProc
-	getClipboardData           *windows.LazyProc
-	getCursorPos               *windows.LazyProc
-	getDC                      *windows.LazyProc
-	getDesktopWindow           *windows.LazyProc
-	getDpiForWindow            *windows.LazyProc
-	getFocus                   *windows.LazyProc
-	getForegroundWindow        *windows.LazyProc
-	getKeyState                *windows.LazyProc
-	getMenuInfo                *windows.LazyProc
-	getMessage                 *windows.LazyProc
-	getMonitorInfo             *windows.LazyProc
-	getParent                  *windows.LazyProc
-	getRawInputData            *windows.LazyProc
-	getScrollInfo              *windows.LazyProc
-	getSysColor                *windows.LazyProc
-	getSysColorBrush           *windows.LazyProc
-	getSystemMetrics           *windows.LazyProc
-	getSystemMetricsForDpi     *windows.LazyProc
-	getWindow                  *windows.LazyProc
-	getWindowLong              *windows.LazyProc
-	getWindowLongPtr           *windows.LazyProc
-	getWindowPlacement         *windows.LazyProc
-	getWindowRect              *windows.LazyProc
-	insertMenuItem             *windows.LazyProc
-	invalidateRect             *windows.LazyProc
-	isChild                    *windows.LazyProc
-	isClipboardFormatAvailable *windows.LazyProc
-	isDialogMessage            *windows.LazyProc
-	isWindowEnabled            *windows.LazyProc
-	isWindowVisible            *windows.LazyProc
-	killTimer                  *windows.LazyProc
-	loadCursor                 *windows.LazyProc
-	loadIcon                   *windows.LazyProc
-	loadImage                  *windows.LazyProc
-	loadMenu                   *windows.LazyProc
-	loadString                 *windows.LazyProc
-	messageBeep                *windows.LazyProc
-	messageBox                 *windows.LazyProc
-	monitorFromWindow          *windows.LazyProc
-	moveWindow                 *windows.LazyProc
-	unregisterClass            *windows.LazyProc
-	openClipboard              *windows.LazyProc
-	peekMessage                *windows.LazyProc
-	postMessage                *windows.LazyProc
-	postQuitMessage            *windows.LazyProc
-	registerClassEx            *windows.LazyProc
-	registerRawInputDevices    *windows.LazyProc
-	registerWindowMessage      *windows.LazyProc
-	releaseCapture             *windows.LazyProc
-	releaseDC                  *windows.LazyProc
-	removeMenu                 *windows.LazyProc
-	screenToClient             *windows.LazyProc
-	sendDlgItemMessage         *windows.LazyProc
-	sendInput                  *windows.LazyProc
-	sendMessage                *windows.LazyProc
-	setActiveWindow            *windows.LazyProc
-	setCapture                 *windows.LazyProc
-	setClipboardData           *windows.LazyProc
-	setCursor                  *windows.LazyProc
-	setCursorPos               *windows.LazyProc
-	setFocus                   *windows.LazyProc
-	setForegroundWindow        *windows.LazyProc
-	setMenu                    *windows.LazyProc
-	setMenuInfo                *windows.LazyProc
-	setMenuItemInfo            *windows.LazyProc
-	setParent                  *windows.LazyProc
-	setRect                    *windows.LazyProc
-	setScrollInfo              *windows.LazyProc
-	setTimer                   *windows.LazyProc
-	setWinEventHook            *windows.LazyProc
-	setWindowLong              *windows.LazyProc
-	setWindowLongPtr           *windows.LazyProc
-	setWindowPlacement         *windows.LazyProc
-	setWindowPos               *windows.LazyProc
-	showWindow                 *windows.LazyProc
-	systemParametersInfo       *windows.LazyProc
-	trackPopupMenuEx           *windows.LazyProc
-	translateMessage           *windows.LazyProc
-	unhookWinEvent             *windows.LazyProc
-	updateWindow               *windows.LazyProc
-	windowFromDC               *windows.LazyProc
-	windowFromPoint            *windows.LazyProc
+	addClipboardFormatListener  *windows.LazyProc
+	adjustWindowRect            *windows.LazyProc
+	attachThreadInput           *windows.LazyProc
+	animateWindow               *windows.LazyProc
+	beginDeferWindowPos         *windows.LazyProc
+	beginPaint                  *windows.LazyProc
+	bringWindowToTop            *windows.LazyProc
+	callWindowProc              *windows.LazyProc
+	changeWindowMessageFilterEx *windows.LazyProc
+	checkMenuRadioItem          *windows.LazyProc
+	clientToScreen              *windows.LazyProc
+	closeClipboard              *windows.LazyProc
+	createDialogParam           *windows.LazyProc
+	createIconIndirect          *windows.LazyProc
+	createMenu                  *windows.LazyProc
+	createPopupMenu             *windows.LazyProc
+	createWindowEx              *windows.LazyProc
+	deferWindowPos              *windows.LazyProc
+	defWindowProc               *windows.LazyProc
+	destroyIcon                 *windows.LazyProc
+	destroyMenu                 *windows.LazyProc
+	destroyWindow               *windows.LazyProc
+	dialogBoxParam              *windows.LazyProc
+	dispatchMessage             *windows.LazyProc
+	drawIconEx                  *windows.LazyProc
+	drawMenuBar                 *windows.LazyProc
+	drawFocusRect               *windows.LazyProc
+	drawTextEx                  *windows.LazyProc
+	emptyClipboard              *windows.LazyProc
+	enableWindow                *windows.LazyProc
+	endDeferWindowPos           *windows.LazyProc
+	endDialog                   *windows.LazyProc
+	endPaint                    *windows.LazyProc
+	enumChildWindows            *windows.LazyProc
+	findWindow                  *windows.LazyProc
+	getActiveWindow             *windows.LazyProc
+	getAncestor                 *windows.LazyProc
+	getCaretPos                 *windows.LazyProc
+	getClassName                *windows.LazyProc
+	getClientRect               *windows.LazyProc
+	getClipboardData            *windows.LazyProc
+	getCursorPos                *windows.LazyProc
+	getDC                       *windows.LazyProc
+	getDesktopWindow            *windows.LazyProc
+	getDlgItem                  *windows.LazyProc
+	getDpiForWindow             *windows.LazyProc
+	getFocus                    *windows.LazyProc
+	getForegroundWindow         *windows.LazyProc
+	getIconInfo                 *windows.LazyProc
+	getKeyState                 *windows.LazyProc
+	getMenuInfo                 *windows.LazyProc
+	getMessage                  *windows.LazyProc
+	getMonitorInfo              *windows.LazyProc
+	getParent                   *windows.LazyProc
+	getRawInputData             *windows.LazyProc
+	getScrollInfo               *windows.LazyProc
+	getSysColor                 *windows.LazyProc
+	getSysColorBrush            *windows.LazyProc
+	getSystemMenu               *windows.LazyProc
+	getSystemMetrics            *windows.LazyProc
+	getSystemMetricsForDpi      *windows.LazyProc
+	getWindow                   *windows.LazyProc
+	getWindowLong               *windows.LazyProc
+	getWindowLongPtr            *windows.LazyProc
+	getWindowPlacement          *windows.LazyProc
+	getWindowRect               *windows.LazyProc
+	getWindowThreadProcessId    *windows.LazyProc
+	insertMenuItem              *windows.LazyProc
+	invalidateRect              *windows.LazyProc
+	isChild                     *windows.LazyProc
+	isClipboardFormatAvailable  *windows.LazyProc
+	isDialogMessage             *windows.LazyProc
+	isIconic                    *windows.LazyProc
+	isWindowEnabled             *windows.LazyProc
+	isWindowVisible             *windows.LazyProc
+	isZoomed                    *windows.LazyProc
+	killTimer                   *windows.LazyProc
+	loadCursor                  *windows.LazyProc
+	loadIcon                    *windows.LazyProc
+	loadImage                   *windows.LazyProc
+	loadMenu                    *windows.LazyProc
+	loadString                  *windows.LazyProc
+	messageBeep                 *windows.LazyProc
+	messageBox                  *windows.LazyProc
+	monitorFromWindow           *windows.LazyProc
+	moveWindow                  *windows.LazyProc
+	unregisterClass             *windows.LazyProc
+	openClipboard               *windows.LazyProc
+	peekMessage                 *windows.LazyProc
+	postMessage                 *windows.LazyProc
+	postQuitMessage             *windows.LazyProc
+	registerClassEx             *windows.LazyProc
+	registerRawInputDevices     *windows.LazyProc
+	registerWindowMessage       *windows.LazyProc
+	releaseCapture              *windows.LazyProc
+	releaseDC                   *windows.LazyProc
+	removeMenu                  *windows.LazyProc
+	screenToClient              *windows.LazyProc
+	sendDlgItemMessage          *windows.LazyProc
+	sendInput                   *windows.LazyProc
+	sendMessage                 *windows.LazyProc
+	setActiveWindow             *windows.LazyProc
+	setCapture                  *windows.LazyProc
+	setClipboardData            *windows.LazyProc
+	setCursor                   *windows.LazyProc
+	setCursorPos                *windows.LazyProc
+	setFocus                    *windows.LazyProc
+	setForegroundWindow         *windows.LazyProc
+	setMenu                     *windows.LazyProc
+	setMenuDefaultItem          *windows.LazyProc
+	setMenuInfo                 *windows.LazyProc
+	setMenuItemInfo             *windows.LazyProc
+	setParent                   *windows.LazyProc
+	setRect                     *windows.LazyProc
+	setScrollInfo               *windows.LazyProc
+	setTimer                    *windows.LazyProc
+	setWinEventHook             *windows.LazyProc
+	setWindowLong               *windows.LazyProc
+	setWindowLongPtr            *windows.LazyProc
+	setWindowPlacement          *windows.LazyProc
+	setWindowPos                *windows.LazyProc
+	showWindow                  *windows.LazyProc
+	systemParametersInfo        *windows.LazyProc
+	trackMouseEvent             *windows.LazyProc
+	trackPopupMenuEx            *windows.LazyProc
+	translateMessage            *windows.LazyProc
+	unhookWinEvent              *windows.LazyProc
+	updateWindow                *windows.LazyProc
+	windowFromDC                *windows.LazyProc
+	windowFromPoint             *windows.LazyProc
 )
 
 func init() {
@@ -1739,11 +1821,13 @@ func init() {
 	// Functions
 	addClipboardFormatListener = libuser32.NewProc("AddClipboardFormatListener")
 	adjustWindowRect = libuser32.NewProc("AdjustWindowRect")
+	attachThreadInput = libuser32.NewProc("AttachThreadInput")
 	animateWindow = libuser32.NewProc("AnimateWindow")
 	beginDeferWindowPos = libuser32.NewProc("BeginDeferWindowPos")
 	beginPaint = libuser32.NewProc("BeginPaint")
 	bringWindowToTop = libuser32.NewProc("BringWindowToTop")
 	callWindowProc = libuser32.NewProc("CallWindowProcW")
+	changeWindowMessageFilterEx = libuser32.NewProc("ChangeWindowMessageFilterEx")
 	checkMenuRadioItem = libuser32.NewProc("CheckMenuRadioItem")
 	clientToScreen = libuser32.NewProc("ClientToScreen")
 	closeClipboard = libuser32.NewProc("CloseClipboard")
@@ -1779,9 +1863,11 @@ func init() {
 	getCursorPos = libuser32.NewProc("GetCursorPos")
 	getDC = libuser32.NewProc("GetDC")
 	getDesktopWindow = libuser32.NewProc("GetDesktopWindow")
+	getDlgItem = libuser32.NewProc("GetDlgItem")
 	getDpiForWindow = libuser32.NewProc("GetDpiForWindow")
 	getFocus = libuser32.NewProc("GetFocus")
 	getForegroundWindow = libuser32.NewProc("GetForegroundWindow")
+	getIconInfo = libuser32.NewProc("GetIconInfo")
 	getKeyState = libuser32.NewProc("GetKeyState")
 	getMenuInfo = libuser32.NewProc("GetMenuInfo")
 	getMessage = libuser32.NewProc("GetMessageW")
@@ -1791,6 +1877,7 @@ func init() {
 	getScrollInfo = libuser32.NewProc("GetScrollInfo")
 	getSysColor = libuser32.NewProc("GetSysColor")
 	getSysColorBrush = libuser32.NewProc("GetSysColorBrush")
+	getSystemMenu = libuser32.NewProc("GetSystemMenu")
 	getSystemMetrics = libuser32.NewProc("GetSystemMetrics")
 	getSystemMetricsForDpi = libuser32.NewProc("GetSystemMetricsForDpi")
 	getWindow = libuser32.NewProc("GetWindow")
@@ -1803,13 +1890,16 @@ func init() {
 	}
 	getWindowPlacement = libuser32.NewProc("GetWindowPlacement")
 	getWindowRect = libuser32.NewProc("GetWindowRect")
+	getWindowThreadProcessId = libuser32.NewProc("GetWindowThreadProcessId")
 	insertMenuItem = libuser32.NewProc("InsertMenuItemW")
 	invalidateRect = libuser32.NewProc("InvalidateRect")
 	isChild = libuser32.NewProc("IsChild")
 	isClipboardFormatAvailable = libuser32.NewProc("IsClipboardFormatAvailable")
 	isDialogMessage = libuser32.NewProc("IsDialogMessageW")
+	isIconic = libuser32.NewProc("IsIconic")
 	isWindowEnabled = libuser32.NewProc("IsWindowEnabled")
 	isWindowVisible = libuser32.NewProc("IsWindowVisible")
+	isZoomed = libuser32.NewProc("IsZoomed")
 	killTimer = libuser32.NewProc("KillTimer")
 	loadCursor = libuser32.NewProc("LoadCursorW")
 	loadIcon = libuser32.NewProc("LoadIconW")
@@ -1843,6 +1933,7 @@ func init() {
 	setFocus = libuser32.NewProc("SetFocus")
 	setForegroundWindow = libuser32.NewProc("SetForegroundWindow")
 	setMenu = libuser32.NewProc("SetMenu")
+	setMenuDefaultItem = libuser32.NewProc("SetMenuDefaultItem")
 	setMenuInfo = libuser32.NewProc("SetMenuInfo")
 	setMenuItemInfo = libuser32.NewProc("SetMenuItemInfoW")
 	setRect = libuser32.NewProc("SetRect")
@@ -1861,6 +1952,7 @@ func init() {
 	setWindowPos = libuser32.NewProc("SetWindowPos")
 	showWindow = libuser32.NewProc("ShowWindow")
 	systemParametersInfo = libuser32.NewProc("SystemParametersInfoW")
+	trackMouseEvent = libuser32.NewProc("TrackMouseEvent")
 	trackPopupMenuEx = libuser32.NewProc("TrackPopupMenuEx")
 	translateMessage = libuser32.NewProc("TranslateMessage")
 	unhookWinEvent = libuser32.NewProc("UnhookWinEvent")
@@ -1891,6 +1983,15 @@ func AdjustWindowRect(lpRect *RECT, dwStyle uint32, bMenu bool) bool {
 	return ret != 0
 }
 
+func AttachThreadInput(idAttach int32, idAttachTo int32, fAttach bool) bool {
+	ret, _, _ := syscall.Syscall(attachThreadInput.Addr(), 3,
+		uintptr(idAttach),
+		uintptr(idAttachTo),
+		uintptr(BoolToBOOL(fAttach)))
+
+	return ret != 0
+}
+
 func AnimateWindow(hwnd HWND, dwTime, dwFlags uint32) bool {
 	ret, _, _ := syscall.Syscall(animateWindow.Addr(), 3,
 		uintptr(hwnd),
@@ -1907,6 +2008,15 @@ func BeginDeferWindowPos(nNumWindows int32) HDWP {
 		0)
 
 	return HDWP(ret)
+}
+
+func GetWindowThreadProcessId(hwnd HWND, processId *uint32) uint32 {
+	ret, _, _ := syscall.Syscall(getWindowThreadProcessId.Addr(), 2,
+		uintptr(hwnd),
+		uintptr(unsafe.Pointer(processId)),
+		0)
+
+	return uint32(ret)
 }
 
 func BeginPaint(hwnd HWND, lpPaint *PAINTSTRUCT) HDC {
@@ -1936,6 +2046,17 @@ func CallWindowProc(lpPrevWndFunc uintptr, hWnd HWND, Msg uint32, wParam, lParam
 		0)
 
 	return ret
+}
+
+func ChangeWindowMessageFilterEx(hwnd HWND, msg uint32, action uint32, changeFilterStruct *CHANGEFILTERSTRUCT) bool {
+	ret, _, _ := syscall.Syscall6(changeWindowMessageFilterEx.Addr(), 4,
+		uintptr(hwnd),
+		uintptr(msg),
+		uintptr(action),
+		uintptr(unsafe.Pointer(changeFilterStruct)),
+		0,
+		0)
+	return ret != 0
 }
 
 func CheckMenuRadioItem(hmenu HMENU, first, last, check, flags uint32) bool {
@@ -2292,6 +2413,15 @@ func GetDC(hWnd HWND) HDC {
 	return HDC(ret)
 }
 
+func GetDlgItem(hDlg HWND, nIDDlgItem int32) HWND {
+	ret, _, _ := syscall.Syscall(getDlgItem.Addr(), 2,
+		uintptr(hDlg),
+		uintptr(nIDDlgItem),
+		0)
+
+	return HWND(ret)
+}
+
 func GetDpiForWindow(hwnd HWND) uint32 {
 	if getDpiForWindow.Find() != nil {
 		hdc := GetDC(hwnd)
@@ -2324,6 +2454,15 @@ func GetForegroundWindow() HWND {
 		0)
 
 	return HWND(ret)
+}
+
+func GetIconInfo(hicon HICON, piconinfo *ICONINFO) bool {
+	ret, _, _ := syscall.Syscall(getIconInfo.Addr(), 2,
+		uintptr(hicon),
+		uintptr(unsafe.Pointer(piconinfo)),
+		0)
+
+	return ret != 0
 }
 
 func GetKeyState(nVirtKey int32) int16 {
@@ -2411,6 +2550,14 @@ func GetSysColorBrush(nIndex int) HBRUSH {
 		0)
 
 	return HBRUSH(ret)
+}
+
+func GetSystemMenu(hWnd HWND, revert bool) HMENU {
+	ret, _, _ := syscall.Syscall(getSystemMenu.Addr(), 2,
+		uintptr(hWnd),
+		uintptr(BoolToBOOL(revert)),
+		0)
+	return HMENU(ret)
 }
 
 func GetSystemMetrics(nIndex int32) int32 {
@@ -2528,6 +2675,15 @@ func IsDialogMessage(hWnd HWND, msg *MSG) bool {
 	return ret != 0
 }
 
+func IsIconic(hWnd HWND) bool {
+	ret, _, _ := syscall.Syscall(isIconic.Addr(), 1,
+		uintptr(hWnd),
+		0,
+		0)
+
+	return ret != 0
+}
+
 func IsWindowEnabled(hWnd HWND) bool {
 	ret, _, _ := syscall.Syscall(isWindowEnabled.Addr(), 1,
 		uintptr(hWnd),
@@ -2539,6 +2695,15 @@ func IsWindowEnabled(hWnd HWND) bool {
 
 func IsWindowVisible(hWnd HWND) bool {
 	ret, _, _ := syscall.Syscall(isWindowVisible.Addr(), 1,
+		uintptr(hWnd),
+		0,
+		0)
+
+	return ret != 0
+}
+
+func IsZoomed(hWnd HWND) bool {
+	ret, _, _ := syscall.Syscall(isZoomed.Addr(), 1,
 		uintptr(hWnd),
 		0,
 		0)
@@ -2880,6 +3045,15 @@ func SetMenu(hWnd HWND, hMenu HMENU) bool {
 	return ret != 0
 }
 
+func SetMenuDefaultItem(hMenu HMENU, uItem uint32, fByPosition bool) bool {
+	ret, _, _ := syscall.Syscall(setMenuDefaultItem.Addr(), 3,
+		uintptr(hMenu),
+		uintptr(uItem),
+		uintptr(BoolToBOOL(fByPosition)))
+
+	return ret != 0
+}
+
 func SetMenuInfo(hmenu HMENU, lpcmi *MENUINFO) bool {
 	ret, _, _ := syscall.Syscall(setMenuInfo.Addr(), 2,
 		uintptr(hmenu),
@@ -3023,6 +3197,15 @@ func SystemParametersInfo(uiAction, uiParam uint32, pvParam unsafe.Pointer, fWin
 		uintptr(uiParam),
 		uintptr(pvParam),
 		uintptr(fWinIni),
+		0,
+		0)
+
+	return ret != 0
+}
+
+func TrackMouseEvent(lpEventTrack *TRACKMOUSEEVENT) bool {
+	ret, _, _ := syscall.Syscall(trackMouseEvent.Addr(), 1,
+		uintptr(unsafe.Pointer(lpEventTrack)),
 		0,
 		0)
 

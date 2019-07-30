@@ -7,9 +7,10 @@
 package win
 
 import (
-	"golang.org/x/sys/windows"
 	"syscall"
 	"unsafe"
+
+	"golang.org/x/sys/windows"
 )
 
 // GetDeviceCaps index constants
@@ -1033,77 +1034,79 @@ var (
 	libmsimg32 *windows.LazyDLL
 
 	// Functions
-	abortDoc               *windows.LazyProc
-	addFontResourceEx      *windows.LazyProc
-	alphaBlend             *windows.LazyProc
-	bitBlt                 *windows.LazyProc
-	choosePixelFormat      *windows.LazyProc
-	closeEnhMetaFile       *windows.LazyProc
-	combineRgn             *windows.LazyProc
-	copyEnhMetaFile        *windows.LazyProc
-	createBitmap           *windows.LazyProc
-	createCompatibleBitmap *windows.LazyProc
-	createBrushIndirect    *windows.LazyProc
-	createCompatibleDC     *windows.LazyProc
-	createDC               *windows.LazyProc
-	createDIBSection       *windows.LazyProc
-	createFontIndirect     *windows.LazyProc
-	createEnhMetaFile      *windows.LazyProc
-	createIC               *windows.LazyProc
-	createPatternBrush     *windows.LazyProc
-	createRectRgn          *windows.LazyProc
-	deleteDC               *windows.LazyProc
-	deleteEnhMetaFile      *windows.LazyProc
-	deleteObject           *windows.LazyProc
-	ellipse                *windows.LazyProc
-	endDoc                 *windows.LazyProc
-	endPage                *windows.LazyProc
-	excludeClipRect        *windows.LazyProc
-	extCreatePen           *windows.LazyProc
-	fillRgn                *windows.LazyProc
-	gdiFlush               *windows.LazyProc
-	getBkColor             *windows.LazyProc
-	getDeviceCaps          *windows.LazyProc
-	getDIBits              *windows.LazyProc
-	getEnhMetaFile         *windows.LazyProc
-	getEnhMetaFileHeader   *windows.LazyProc
-	getObject              *windows.LazyProc
-	getPixel               *windows.LazyProc
-	getRgnBox              *windows.LazyProc
-	getStockObject         *windows.LazyProc
-	getTextColor           *windows.LazyProc
-	getTextExtentExPoint   *windows.LazyProc
-	getTextExtentPoint32   *windows.LazyProc
-	getTextMetrics         *windows.LazyProc
-	getViewportOrgEx       *windows.LazyProc
-	gradientFill           *windows.LazyProc
-	intersectClipRect      *windows.LazyProc
-	lineTo                 *windows.LazyProc
-	moveToEx               *windows.LazyProc
-	playEnhMetaFile        *windows.LazyProc
-	polyline               *windows.LazyProc
-	rectangle              *windows.LazyProc
-	removeFontResourceEx   *windows.LazyProc
-	resetDC                *windows.LazyProc
-	restoreDC              *windows.LazyProc
-	roundRect              *windows.LazyProc
-	selectObject           *windows.LazyProc
-	setBkColor             *windows.LazyProc
-	setBkMode              *windows.LazyProc
-	setBrushOrgEx          *windows.LazyProc
-	setDIBits              *windows.LazyProc
-	setPixel               *windows.LazyProc
-	setPixelFormat         *windows.LazyProc
-	setStretchBltMode      *windows.LazyProc
-	setTextColor           *windows.LazyProc
-	setViewportOrgEx       *windows.LazyProc
-	saveDC                 *windows.LazyProc
-	startDoc               *windows.LazyProc
-	startPage              *windows.LazyProc
-	stretchBlt             *windows.LazyProc
-	swapBuffers            *windows.LazyProc
-	textOut                *windows.LazyProc
-	transparentBlt         *windows.LazyProc
+	abortDoc                *windows.LazyProc
+	addFontResourceEx       *windows.LazyProc
+	addFontMemResourceEx    *windows.LazyProc
+	alphaBlend              *windows.LazyProc
+	bitBlt                  *windows.LazyProc
+	choosePixelFormat       *windows.LazyProc
+	closeEnhMetaFile        *windows.LazyProc
+	combineRgn              *windows.LazyProc
+	copyEnhMetaFile         *windows.LazyProc
+	createBitmap            *windows.LazyProc
+	createCompatibleBitmap  *windows.LazyProc
+	createBrushIndirect     *windows.LazyProc
+	createCompatibleDC      *windows.LazyProc
+	createDC                *windows.LazyProc
+	createDIBSection        *windows.LazyProc
+	createFontIndirect      *windows.LazyProc
+	createEnhMetaFile       *windows.LazyProc
+	createIC                *windows.LazyProc
+	createPatternBrush      *windows.LazyProc
+	createRectRgn           *windows.LazyProc
+	deleteDC                *windows.LazyProc
+	deleteEnhMetaFile       *windows.LazyProc
+	deleteObject            *windows.LazyProc
+	ellipse                 *windows.LazyProc
+	endDoc                  *windows.LazyProc
+	endPage                 *windows.LazyProc
+	excludeClipRect         *windows.LazyProc
+	extCreatePen            *windows.LazyProc
+	fillRgn                 *windows.LazyProc
+	gdiFlush                *windows.LazyProc
+	getBkColor              *windows.LazyProc
+	getDeviceCaps           *windows.LazyProc
+	getDIBits               *windows.LazyProc
+	getEnhMetaFile          *windows.LazyProc
+	getEnhMetaFileHeader    *windows.LazyProc
+	getObject               *windows.LazyProc
+	getPixel                *windows.LazyProc
+	getRgnBox               *windows.LazyProc
+	getStockObject          *windows.LazyProc
+	getTextColor            *windows.LazyProc
+	getTextExtentExPoint    *windows.LazyProc
+	getTextExtentPoint32    *windows.LazyProc
+	getTextMetrics          *windows.LazyProc
+	getViewportOrgEx        *windows.LazyProc
+	gradientFill            *windows.LazyProc
+	intersectClipRect       *windows.LazyProc
+	lineTo                  *windows.LazyProc
+	moveToEx                *windows.LazyProc
+	playEnhMetaFile         *windows.LazyProc
+	polyline                *windows.LazyProc
+	rectangle               *windows.LazyProc
+	removeFontResourceEx    *windows.LazyProc
+	removeFontMemResourceEx *windows.LazyProc
+	resetDC                 *windows.LazyProc
+	restoreDC               *windows.LazyProc
+	roundRect               *windows.LazyProc
+	selectObject            *windows.LazyProc
+	setBkColor              *windows.LazyProc
+	setBkMode               *windows.LazyProc
+	setBrushOrgEx           *windows.LazyProc
+	setDIBits               *windows.LazyProc
+	setPixel                *windows.LazyProc
+	setPixelFormat          *windows.LazyProc
+	setStretchBltMode       *windows.LazyProc
+	setTextColor            *windows.LazyProc
+	setViewportOrgEx        *windows.LazyProc
+	saveDC                  *windows.LazyProc
+	startDoc                *windows.LazyProc
+	startPage               *windows.LazyProc
+	stretchBlt              *windows.LazyProc
+	swapBuffers             *windows.LazyProc
+	textOut                 *windows.LazyProc
+	transparentBlt          *windows.LazyProc
 )
 
 func init() {
@@ -1114,6 +1117,7 @@ func init() {
 	// Functions
 	abortDoc = libgdi32.NewProc("AbortDoc")
 	addFontResourceEx = libgdi32.NewProc("AddFontResourceExW")
+	addFontMemResourceEx = libgdi32.NewProc("AddFontMemResourceEx")
 	bitBlt = libgdi32.NewProc("BitBlt")
 	choosePixelFormat = libgdi32.NewProc("ChoosePixelFormat")
 	closeEnhMetaFile = libgdi32.NewProc("CloseEnhMetaFile")
@@ -1161,6 +1165,7 @@ func init() {
 	polyline = libgdi32.NewProc("Polyline")
 	rectangle = libgdi32.NewProc("Rectangle")
 	removeFontResourceEx = libgdi32.NewProc("RemoveFontResourceExW")
+	removeFontMemResourceEx = libgdi32.NewProc("RemoveFontMemResourceEx")
 	resetDC = libgdi32.NewProc("ResetDCW")
 	restoreDC = libgdi32.NewProc("RestoreDC")
 	roundRect = libgdi32.NewProc("RoundRect")
@@ -1202,6 +1207,18 @@ func AddFontResourceEx(lpszFilename *uint16, fl uint32, pdv unsafe.Pointer) int3
 		uintptr(pdv))
 
 	return int32(ret)
+}
+
+func AddFontMemResourceEx(pFileView uintptr, cjSize uint32, pvReserved unsafe.Pointer, pNumFonts *uint32) HANDLE {
+	ret, _, _ := syscall.Syscall6(addFontMemResourceEx.Addr(), 4,
+		pFileView,
+		uintptr(cjSize),
+		uintptr(pvReserved),
+		uintptr(unsafe.Pointer(pNumFonts)),
+		0,
+		0)
+
+	return HANDLE(ret)
 }
 
 func AlphaBlend(hdcDest HDC, nXOriginDest, nYOriginDest, nWidthDest, nHeightDest int32, hdcSrc HDC, nXOriginSrc, nYOriginSrc, nWidthSrc, nHeightSrc int32, ftn BLENDFUNCTION) bool {
@@ -1712,6 +1729,15 @@ func RemoveFontResourceEx(lpszFilename *uint16, fl uint32, pdv unsafe.Pointer) b
 		uintptr(unsafe.Pointer(lpszFilename)),
 		uintptr(fl),
 		uintptr(pdv))
+
+	return ret != 0
+}
+
+func RemoveFontMemResourceEx(h HANDLE) bool {
+	ret, _, _ := syscall.Syscall(removeFontMemResourceEx.Addr(), 1,
+		uintptr(h),
+		0,
+		0)
 
 	return ret != 0
 }

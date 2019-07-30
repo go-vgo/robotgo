@@ -20,6 +20,7 @@ const (
 // ListView messages
 const (
 	LVM_FIRST                    = 0x1000
+	LVM_SETBKCOLOR               = LVM_FIRST + 1
 	LVM_SETIMAGELIST             = LVM_FIRST + 3
 	LVM_GETITEM                  = LVM_FIRST + 75
 	LVM_SETITEM                  = LVM_FIRST + 76

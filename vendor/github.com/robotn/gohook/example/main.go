@@ -29,7 +29,7 @@ func base() {
 	defer hook.End()
 
 	for ev := range EvChan {
-		fmt.Println(ev)
+		fmt.Println("hook: ", ev)
 	}
 }
 
