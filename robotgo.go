@@ -785,9 +785,10 @@ func SetKeyDelay(delay int) {
 	C.set_keyboard_delay(C.size_t(delay))
 }
 
-// SetKeyboardDelay set keyboard delay, Wno-deprecated
+// SetKeyboardDelay set keyboard delay, Wno-deprecated,
+// this function will be removed in version v1.0.0
 func SetKeyboardDelay(delay int) {
-	C.set_keyboard_delay(C.size_t(delay))
+	SetKeyDelay(delay)
 }
 
 /*
