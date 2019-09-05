@@ -260,13 +260,6 @@ func init() {
 	initCommonControlsEx = libcomctl32.NewProc("InitCommonControlsEx")
 	loadIconMetric = libcomctl32.NewProc("LoadIconMetric")
 	loadIconWithScaleDown = libcomctl32.NewProc("LoadIconWithScaleDown")
-
-	// Initialize the common controls we support
-	var initCtrls INITCOMMONCONTROLSEX
-	initCtrls.DwSize = uint32(unsafe.Sizeof(initCtrls))
-	initCtrls.DwICC = ICC_LINK_CLASS | ICC_LISTVIEW_CLASSES | ICC_PROGRESS_CLASS | ICC_TAB_CLASSES | ICC_TREEVIEW_CLASSES
-
-	InitCommonControlsEx(&initCtrls)
 }
 
 func ImageList_Add(himl HIMAGELIST, hbmImage, hbmMask HBITMAP) int32 {
