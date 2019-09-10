@@ -20,5 +20,6 @@ require (
 
 //golang.org/x/image => github.com/golang/image v0.0.0-20181116024801-cd38e8056d9b
 //replace golang.org/x/sys => github.com/golang/sys v0.0.0-20190109145017-48ac38b7c8cb
+replace github.com/BurntSushi/xgb v0.0.0-20160522221800-27f122750802 => github.com/BurntSushi/xgb 27f122750802
 
 go 1.13
