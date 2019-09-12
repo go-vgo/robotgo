@@ -1,3 +1,0 @@
-# gops
-
-Go process tools
