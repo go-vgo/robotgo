@@ -44,6 +44,7 @@ _testmain.go
 #
 cdeps/hook
 event/hook
+vendor
 
 # Libraries
 *.lib
