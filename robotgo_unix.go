@@ -52,7 +52,7 @@ func internalGetTitle(pid int32, args ...int32) string {
 
 	xid, err := GetXId(xu, pid)
 	if err != nil {
-		log.Println("GetXidFromPid errors is: ", err)
+		log.Println("GetXid from Pid errors is: ", err)
 		return ""
 	}
 
@@ -72,7 +72,7 @@ func ActivePIDC(pid int32, args ...int) {
 
 	xid, err := GetXId(xu, pid)
 	if err != nil {
-		log.Println("GetXidFromPid errors is: ", err)
+		log.Println("GetXid from Pid errors is: ", err)
 		return
 	}
 
