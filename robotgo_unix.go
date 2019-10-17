@@ -34,7 +34,7 @@ func GetBounds(pid int32, args ...int) (int, int, int, int) {
 
 	xid, err := GetXId(xu, pid)
 	if err != nil {
-		log.Println("GetXidFromPid errors is: ", err)
+		log.Println("GetXid from Pid errors is: ", err)
 		return 0, 0, 0, 0
 	}
 
