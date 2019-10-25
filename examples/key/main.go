@@ -39,6 +39,7 @@ func keyTap() {
 	// press "enter"
 	robotgo.KeyTap("enter")
 	robotgo.KeyTap("a")
+	robotgo.MilliSleep(100)
 	robotgo.KeyTap("a", "ctrl")
 
 	// hide window
@@ -72,7 +73,9 @@ func keyTap() {
 func keyToggle() {
 	robotgo.KeyToggle("a", "down")
 	robotgo.KeyToggle("a", "down", "alt")
+	robotgo.Sleep(1)
 	robotgo.KeyToggle("a", "up", "alt", "cmd")
+	robotgo.MilliSleep(100)
 	robotgo.KeyToggle("q", "up", "alt", "cmd", "shift")
 
 	err := robotgo.KeyToggle("enter", "down")
