@@ -24,7 +24,7 @@ package robotgo
 
 /*
 //#if defined(IS_MACOSX)
-	#cgo darwin CFLAGS: -x objective-c  -Wno-deprecated-declarations
+	#cgo darwin CFLAGS: -x objective-c -Wno-deprecated-declarations
 	#cgo darwin LDFLAGS: -framework Cocoa -framework OpenGL -framework IOKit
 	#cgo darwin LDFLAGS: -framework Carbon -framework CoreFoundation
 	#cgo darwin LDFLAGS:-L${SRCDIR}/cdeps/mac -lpng -lz
@@ -70,7 +70,7 @@ import (
 
 const (
 	// Version get the robotgo version
-	Version = "v0.90.0.930, Sierra Nevada!"
+	Version = "v0.90.0.940, Sierra Nevada!"
 )
 
 // GetVersion get the robotgo version
