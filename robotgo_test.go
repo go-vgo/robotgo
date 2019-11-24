@@ -27,10 +27,20 @@ func TestGetVer(t *testing.T) {
 	tt.Expect(t, Version, ver)
 }
 
-func TestMouse(t *testing.T) {
+func TestMoveMouse(t *testing.T) {
 	MoveMouse(10, 10)
+	Sleep(1)
 	x, y := GetMousePos()
 
 	tt.Equal(t, 10, x)
 	tt.Equal(t, 10, y)
+}
+
+func TestMoveMouseSmooth(t *testing.T) {
+	MoveMouseSmooth(100, 100)
+	Sleep(1)
+	x, y := GetMousePos()
+
+	tt.Equal(t, 100, x)
+	tt.Equal(t, 100, y)
 }
