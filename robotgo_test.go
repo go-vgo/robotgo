@@ -29,7 +29,7 @@ func TestGetVer(t *testing.T) {
 
 func TestMoveMouse(t *testing.T) {
 	MoveMouse(10, 10)
-	Sleep(1)
+	MilliSleep(10)
 	x, y := GetMousePos()
 
 	tt.Equal(t, 10, x)
@@ -38,9 +38,18 @@ func TestMoveMouse(t *testing.T) {
 
 func TestMoveMouseSmooth(t *testing.T) {
 	MoveMouseSmooth(100, 100)
-	Sleep(1)
+	MilliSleep(10)
 	x, y := GetMousePos()
 
 	tt.Equal(t, 100, x)
 	tt.Equal(t, 100, y)
+}
+
+func TestDragMouse(t *testing.T) {
+	DragMouse(20, 20)
+	MilliSleep(10)
+	x, y := GetMousePos()
+
+	tt.Equal(t, 20, x)
+	tt.Equal(t, 20, y)
 }
