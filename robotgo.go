@@ -359,8 +359,8 @@ func MoveMouse(x, y int) {
 
 // Move move the mouse
 func Move(x, y int) {
-	cx := C.size_t(x)
-	cy := C.size_t(y)
+	cx := C.int32_t(x)
+	cy := C.int32_t(y)
 	C.move_mouse(cx, cy)
 }
 
@@ -373,8 +373,8 @@ func DragMouse(x, y int, args ...string) {
 func Drag(x, y int, args ...string) {
 	var button C.MMMouseButton = C.LEFT_BUTTON
 
-	cx := C.size_t(x)
-	cy := C.size_t(y)
+	cx := C.int32_t(x)
+	cy := C.int32_t(y)
 
 	if len(args) > 0 {
 		button = CheckMouse(args[0])
