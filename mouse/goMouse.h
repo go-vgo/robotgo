@@ -36,10 +36,10 @@ int mouseDelay = 10;
 // }
 
 int move_mouse(int32_t x, int32_t y){
-	MMSignedPoint point;
+	MMPointInt32 point;
 	// int x = 103;
 	// int y = 104;
-	point = MMSignedPointMake(x, y);
+	point = MMPointInt32Make(x, y);
 	moveMouse(point);
 
 	return 0;
@@ -51,8 +51,8 @@ int drag_mouse(int32_t x, int32_t y, MMMouseButton button){
 	// const size_t y = 20;
 	// MMMouseButton button = LEFT_BUTTON;
 
-	MMSignedPoint point;
-	point = MMSignedPointMake(x, y);
+	MMPointInt32 point;
+	point = MMPointInt32Make(x, y);
 	dragMouse(point, button);
 	microsleep(mouseDelay);
 

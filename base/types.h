@@ -16,12 +16,12 @@ struct _MMPoint {
 
 typedef struct _MMPoint MMPoint;
 
-struct _MMSignedPoint {
+struct _MMPointInt32 {
 	int32_t x;
 	int32_t y;
 };
 
-typedef struct _MMSignedPoint MMSignedPoint;
+typedef struct _MMPointInt32 MMPointInt32;
 
 struct _MMSize {
 	size_t width;
@@ -30,12 +30,12 @@ struct _MMSize {
 
 typedef struct _MMSize MMSize;
 
-struct _MMSignedSize {
+struct _MMSizeInt32 {
 	int32_t w;
 	int32_t h;
 };
 
-typedef struct _MMSignedSize MMSignedSize;
+typedef struct _MMSizeInt32 MMSizeInt32;
 
 
 struct _MMRect {
@@ -45,12 +45,12 @@ struct _MMRect {
 
 typedef struct _MMRect MMRect;
 
-struct _MMSignedRect {
-	MMSignedPoint origin;
-	MMSignedSize size;
+struct _MMRectInt32 {
+	MMPointInt32 origin;
+	MMSizeInt32 size;
 };
 
-typedef struct _MMSignedRect MMSignedRect;
+typedef struct _MMRectInt32 MMRectInt32;
 
 H_INLINE MMPoint MMPointMake(size_t x, size_t y)
 {
@@ -60,9 +60,9 @@ H_INLINE MMPoint MMPointMake(size_t x, size_t y)
 	return point;
 }
 
-H_INLINE MMSignedPoint MMSignedPointMake(int32_t x, int32_t y)
+H_INLINE MMPointInt32 MMPointInt32Make(int32_t x, int32_t y)
 {
-	MMSignedPoint point;
+	MMPointInt32 point;
 	point.x = x;
 	point.y = y;
 	return point;
@@ -76,9 +76,9 @@ H_INLINE MMSize MMSizeMake(size_t width, size_t height)
 	return size;
 }
 
-H_INLINE MMSignedSize MMSignedSizeMake(int32_t w, int32_t h)
+H_INLINE MMSizeInt32 MMSizeInt32Make(int32_t w, int32_t h)
 {
-	MMSignedSize size;
+	MMSizeInt32 size;
 	size.w = w;
 	size.h = h;
 	return size;
@@ -92,11 +92,11 @@ H_INLINE MMRect MMRectMake(size_t x, size_t y, size_t width, size_t height)
 	return rect;
 }
 
-H_INLINE MMSignedRect MMSignedRectMake(int32_t x, int32_t y, int32_t w, int32_t h)
+H_INLINE MMRectInt32 MMRectInt32Make(int32_t x, int32_t y, int32_t w, int32_t h)
 {
-	MMSignedRect rect;
-	rect.origin = MMSignedPointMake(x, y);
-	rect.size = MMSignedSizeMake(w, h);
+	MMRectInt32 rect;
+	rect.origin = MMPointInt32Make(x, y);
+	rect.size = MMSizeInt32Make(w, h);
 	return rect;
 }
 
@@ -108,8 +108,8 @@ H_INLINE MMSignedRect MMSignedRectMake(int32_t x, int32_t y, int32_t w, int32_t 
 #define CGPointFromMMPoint(p) CGPointMake((CGFloat)(p).x, (CGFloat)(p).y)
 #define MMPointFromCGPoint(p) MMPointMake((size_t)(p).x, (size_t)(p).y)
 
-#define CGPointFromMMSignedPoint(p) CGPointMake((CGFloat)(p).x, (CGFloat)(p).y)
-#define MMSignedPointFromCGPoint(p) MMPointMake((int32_t)(p).x, (int32_t)(p).y)
+#define CGPointFromMMPointInt32(p) CGPointMake((CGFloat)(p).x, (CGFloat)(p).y)
+#define MMPointInt32FromCGPoint(p) MMPointMake((int32_t)(p).x, (int32_t)(p).y)
 
 #elif defined(IS_WINDOWS)
 

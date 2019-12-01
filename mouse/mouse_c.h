@@ -66,7 +66,7 @@
  * @param event The mouse move event (by ref).
  * @param point The new mouse x and y.
  */
-void calculateDeltas(CGEventRef *event, MMSignedPoint point){
+void calculateDeltas(CGEventRef *event, MMPointInt32 point){
 	/**
 	 * The next few lines are a workaround for games not detecting mouse moves.
 	 * See this issue for more information:
@@ -91,10 +91,10 @@ void calculateDeltas(CGEventRef *event, MMSignedPoint point){
  * Move the mouse to a specific point.
  * @param point The coordinates to move the mouse to (x, y).
  */
-void moveMouse(MMSignedPoint point){
+void moveMouse(MMPointInt32 point){
 	#if defined(IS_MACOSX)
 		CGEventRef move = CGEventCreateMouseEvent(NULL, kCGEventMouseMoved,
-												CGPointFromMMSignedPoint(point),
+												CGPointFromMMPointInt32(point),
 												kCGMouseButtonLeft);
 
 		calculateDeltas(&move, point);
@@ -129,7 +129,7 @@ void moveMouse(MMSignedPoint point){
 	#endif
 }
 
-void dragMouse(MMSignedPoint point, const MMMouseButton button){
+void dragMouse(MMPointInt32 point, const MMMouseButton button){
 	#if defined(IS_MACOSX)
 		const CGEventType dragType = MMMouseDragToCGEventType(button);
 		CGEventRef drag = CGEventCreateMouseEvent(NULL, dragType,
@@ -432,7 +432,7 @@ bool smoothlyMoveMouse(MMPoint endPoint, double lowSpeed, double highSpeed){
 			return false;
 		}
 
-		moveMouse(MMSignedPointMake((int32_t)pos.x, (int32_t)pos.y));
+		moveMouse(MMPointInt32Make((int32_t)pos.x, (int32_t)pos.y));
 
 		/* Wait 1 - 3 milliseconds. */
 		microsleep(DEADBEEF_UNIFORM(lowSpeed, highSpeed));
