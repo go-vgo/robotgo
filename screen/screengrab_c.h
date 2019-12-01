@@ -17,7 +17,7 @@
 	#include <string.h>
 #endif
 
-MMBitmapRef copyMMBitmapFromDisplayInRect(MMRect rect){
+MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect){
 #if defined(IS_MACOSX)
 
 	MMBitmapRef bitmap = NULL;
@@ -29,8 +29,8 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRect rect){
 	CGImageRef image = CGDisplayCreateImageForRect(displayID,
 		CGRectMake(rect.origin.x,
 			rect.origin.y,
-			rect.size.width,
-			rect.size.height));
+			rect.size.w,
+			rect.size.h));
 
 	if (!image) { return NULL; }
 
@@ -63,15 +63,15 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRect rect){
 	                          XDefaultRootWindow(display),
 	                          (int)rect.origin.x,
 	                          (int)rect.origin.y,
-	                          (unsigned int)rect.size.width,
-	                          (unsigned int)rect.size.height,
+	                          (unsigned int)rect.size.w,
+	                          (unsigned int)rect.size.h,
 	                          AllPlanes, ZPixmap);
 	XCloseDisplay(display);
 	if (image == NULL) return NULL;
 
 	bitmap = createMMBitmap((uint8_t *)image->data,
-	                        rect.size.width,
-	                        rect.size.height,
+	                        rect.size.w,
+	                        rect.size.h,
 	                        (size_t)image->bytes_per_line,
 	                        (uint8_t)image->bits_per_pixel,
 	                        (uint8_t)image->bits_per_pixel / 8);
@@ -89,12 +89,12 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRect rect){
 
 	/* Initialize bitmap info. */
 	bi.bmiHeader.biSize = sizeof(bi.bmiHeader);
-   	bi.bmiHeader.biWidth = (long)rect.size.width;
-   	bi.bmiHeader.biHeight = -(long)rect.size.height; /* Non-cartesian, please */
+   	bi.bmiHeader.biWidth = (long)rect.size.w;
+   	bi.bmiHeader.biHeight = -(long)rect.size.h; /* Non-cartesian, please */
    	bi.bmiHeader.biPlanes = 1;
    	bi.bmiHeader.biBitCount = 32;
    	bi.bmiHeader.biCompression = BI_RGB;
-   	bi.bmiHeader.biSizeImage = (DWORD)(4 * rect.size.width * rect.size.height);
+   	bi.bmiHeader.biSizeImage = (DWORD)(4 * rect.size.w * rect.size.h);
 	bi.bmiHeader.biXPelsPerMeter = 0;
 	bi.bmiHeader.biYPelsPerMeter = 0;
 	bi.bmiHeader.biClrUsed = 0;
@@ -112,8 +112,8 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRect rect){
 	    !BitBlt(screenMem,
 	            (int)0,
 	            (int)0,
-	            (int)rect.size.width,
-	            (int)rect.size.height,
+	            (int)rect.size.w,
+	            (int)rect.size.h,
 				screen,
 				rect.origin.x,
 				rect.origin.y,
@@ -128,9 +128,9 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRect rect){
 	}
 
 	bitmap = createMMBitmap(NULL,
-	                        rect.size.width,
-	                        rect.size.height,
-	                        4 * rect.size.width,
+	                        rect.size.w,
+	                        rect.size.h,
+	                        4 * rect.size.w,
 	                        (uint8_t)bi.bmiHeader.biBitCount,
 	                        4);
 

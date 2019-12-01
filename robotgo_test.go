@@ -14,6 +14,7 @@ package robotgo
 
 import (
 	"fmt"
+	"log"
 	"runtime"
 	"testing"
 
@@ -59,4 +60,9 @@ func TestScrollMouse(t *testing.T) {
 	MilliSleep(100)
 
 	Scroll(210, 210)
+}
+
+func TestGetScreenSize(t *testing.T) {
+	x, y := GetScreenSize()
+	log.Println("GetScreenSize: ", x, y)
 }

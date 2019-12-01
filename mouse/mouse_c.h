@@ -66,7 +66,7 @@
  * @param event The mouse move event (by ref).
  * @param point The new mouse x and y.
  */
-void calculateDeltas(CGEventRef *event, MMPoint point){
+void calculateDeltas(CGEventRef *event, MMPointInt32 point){
 	/**
 	 * The next few lines are a workaround for games not detecting mouse moves.
 	 * See this issue for more information:
@@ -91,10 +91,10 @@ void calculateDeltas(CGEventRef *event, MMPoint point){
  * Move the mouse to a specific point.
  * @param point The coordinates to move the mouse to (x, y).
  */
-void moveMouse(MMPoint point){
+void moveMouse(MMPointInt32 point){
 	#if defined(IS_MACOSX)
 		CGEventRef move = CGEventCreateMouseEvent(NULL, kCGEventMouseMoved,
-												CGPointFromMMPoint(point),
+												CGPointFromMMPointInt32(point),
 												kCGMouseButtonLeft);
 
 		calculateDeltas(&move, point);
@@ -108,7 +108,7 @@ void moveMouse(MMPoint point){
 
 		XSync(display, false);
 	#elif defined(IS_WINDOWS)
-		// Mouse motion is now done using SendInput with MOUSEINPUT. 
+		// Mouse motion is now done using SendInput with MOUSEINPUT.
 		// We use Absolute mouse positioning
 		#define MOUSE_COORD_TO_ABS(coord, width_or_height) ( \
 			((65536 * coord) / width_or_height) + (coord < 0 ? -1 : 1))
@@ -129,7 +129,7 @@ void moveMouse(MMPoint point){
 	#endif
 }
 
-void dragMouse(MMPoint point, const MMMouseButton button){
+void dragMouse(MMPointInt32 point, const MMMouseButton button){
 	#if defined(IS_MACOSX)
 		const CGEventType dragType = MMMouseDragToCGEventType(button);
 		CGEventRef drag = CGEventCreateMouseEvent(NULL, dragType,
@@ -144,13 +144,13 @@ void dragMouse(MMPoint point, const MMMouseButton button){
 	#endif
 }
 
-MMPoint getMousePos(){
+MMPointInt32 getMousePos(){
 	#if defined(IS_MACOSX)
 		CGEventRef event = CGEventCreate(NULL);
 		CGPoint point = CGEventGetLocation(event);
 		CFRelease(event);
 
-		return MMPointFromCGPoint(point);
+		return MMPointInt32FromCGPoint(point);
 	#elif defined(USE_X11)
 		int x, y; /* This is all we care about. Seriously. */
 		Window garb1, garb2; /* Why you can't specify NULL as a parameter */
@@ -161,12 +161,12 @@ MMPoint getMousePos(){
 		XQueryPointer(display, XDefaultRootWindow(display), &garb1, &garb2,
 					&x, &y, &garb_x, &garb_y, &more_garbage);
 
-		return MMPointMake(x, y);
+		return MMPointInt32Make(x, y);
 	#elif defined(IS_WINDOWS)
 		POINT point;
 		GetCursorPos(&point);
 
-		return MMPointFromPOINT(point);
+		return MMPointInt32FromPOINT(point);
 	#endif
 }
 
@@ -181,7 +181,7 @@ void toggleMouse(bool down, MMMouseButton button){
 		const CGEventType mouseType = MMMouseToCGEventType(down, button);
 		CGEventRef event = CGEventCreateMouseEvent(NULL,
 							mouseType, currentPos, (CGMouseButton)button);
-							
+
 		CGEventPost(kCGSessionEventTap, event);
 		CFRelease(event);
 	#elif defined(USE_X11)
@@ -192,7 +192,7 @@ void toggleMouse(bool down, MMMouseButton button){
 		// mouse_event(MMMouseToMEventF(down, button), 0, 0, 0, 0);
 
 		INPUT mouseInput;
-		
+
 		mouseInput.type = INPUT_MOUSE;
 		mouseInput.mi.dx = 0;
 		mouseInput.mi.dy = 0;
@@ -272,7 +272,7 @@ void scrollMouse(int scrollMagnitude, MMMouseWheelDirection scrollDirection){
 		/* Make scroll magnitude negative if we're scrolling down. */
 		cleanScrollMagnitude = cleanScrollMagnitude * scrollDirection;
 
-		event = CGEventCreateScrollWheelEvent(NULL, 
+		event = CGEventCreateScrollWheelEvent(NULL,
 				kCGScrollEventUnitLine, wheel, cleanScrollMagnitude, 0);
 
 		CGEventPost(kCGHIDEventTap, event);
@@ -403,15 +403,15 @@ static double crude_hypot(double x, double y){
 }
 
 bool smoothlyMoveMouse(MMPoint endPoint, double lowSpeed, double highSpeed){
-	MMPoint pos = getMousePos();
-	MMSize screenSize = getMainDisplaySize();
+	MMPointInt32 pos = getMousePos();
+	MMSizeInt32 screenSize = getMainDisplaySize();
 	double velo_x = 0.0, velo_y = 0.0;
 	double distance;
 
-	while ((distance = 
+	while ((distance =
 			crude_hypot((double)pos.x - endPoint.x, (double)pos.y - endPoint.y)
 		) > 1.0) {
-			
+
 		double gravity = DEADBEEF_UNIFORM(5.0, 500.0);
 		// double gravity = DEADBEEF_UNIFORM(lowSpeed, highSpeed);
 		double veloDistance;
@@ -428,11 +428,11 @@ bool smoothlyMoveMouse(MMPoint endPoint, double lowSpeed, double highSpeed){
 
 		/* Make sure we are in the screen boundaries!
 		 * (Strange things will happen if we are not.) */
-		if (pos.x >= screenSize.width || pos.y >= screenSize.height) {
+		if (pos.x >= screenSize.w || pos.y >= screenSize.h) {
 			return false;
 		}
 
-		moveMouse(pos);
+		moveMouse(MMPointInt32Make((int32_t)pos.x, (int32_t)pos.y));
 
 		/* Wait 1 - 3 milliseconds. */
 		microsleep(DEADBEEF_UNIFORM(lowSpeed, highSpeed));
