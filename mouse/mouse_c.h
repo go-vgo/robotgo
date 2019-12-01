@@ -404,7 +404,7 @@ static double crude_hypot(double x, double y){
 
 bool smoothlyMoveMouse(MMPoint endPoint, double lowSpeed, double highSpeed){
 	MMPoint pos = getMousePos();
-	MMSize screenSize = getMainDisplaySize();
+	MMSizeInt32 screenSize = getMainDisplaySize();
 	double velo_x = 0.0, velo_y = 0.0;
 	double distance;
 
@@ -428,7 +428,7 @@ bool smoothlyMoveMouse(MMPoint endPoint, double lowSpeed, double highSpeed){
 
 		/* Make sure we are in the screen boundaries!
 		 * (Strange things will happen if we are not.) */
-		if (pos.x >= screenSize.width || pos.y >= screenSize.height) {
+		if (pos.x >= screenSize.w || pos.y >= screenSize.h) {
 			return false;
 		}
 

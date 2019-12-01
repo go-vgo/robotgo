@@ -8,24 +8,29 @@
 	// #include "../base/xdisplay_c.h"
 #endif
 
-MMSize getMainDisplaySize(void){
+MMSizeInt32 getMainDisplaySize(void){
 #if defined(IS_MACOSX)
 	CGDirectDisplayID displayID = CGMainDisplayID();
-	return MMSizeMake(CGDisplayPixelsWide(displayID),
-	                  CGDisplayPixelsHigh(displayID));
+	return MMSizeInt32Make((int32_t)CGDisplayPixelsWide(displayID),
+	                  (int32_t)CGDisplayPixelsHigh(displayID));
 #elif defined(USE_X11)
 	Display *display = XGetMainDisplay();
 	const int screen = DefaultScreen(display);
 
-	return MMSizeMake((size_t)DisplayWidth(display, screen),
-	                  (size_t)DisplayHeight(display, screen));
+	return MMSizeInt32Make((int32_t)DisplayWidth(display, screen),
+	                  (int32_t)DisplayHeight(display, screen));
 #elif defined(IS_WINDOWS)
-	return MMSizeMake((size_t)GetSystemMetrics(SM_CXSCREEN),
-	                  (size_t)GetSystemMetrics(SM_CYSCREEN));
+	if (GetSystemMetrics(SM_CMONITORS) == 1) {
+ 		return MMSizeInt32Make((int32_t)GetSystemMetrics(SM_CXSCREEN),
+ 		                  (int32_t)GetSystemMetrics(SM_CYSCREEN));
+ 	} else 	{
+ 		return MMSizeInt32Make((int32_t)GetSystemMetrics(SM_CXVIRTUALSCREEN),
+ 		                  (int32_t)GetSystemMetrics(SM_CYVIRTUALSCREEN));
+ 	}
 #endif
 }
 
-bool pointVisibleOnMainDisplay(MMPoint point){
-	MMSize displaySize = getMainDisplaySize();
-	return point.x < displaySize.width && point.y < displaySize.height;
+bool pointVisibleOnMainDisplay(MMPointInt32 point){
+	MMSizeInt32 displaySize = getMainDisplaySize();
+	return point.x < displaySize.w && point.y < displaySize.h;
 }

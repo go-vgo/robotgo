@@ -184,8 +184,8 @@ func RgbToHex(r, g, b uint8) C.uint32_t {
 
 // GetPxColor get pixel color return C.MMRGBHex
 func GetPxColor(x, y int) C.MMRGBHex {
-	cx := C.size_t(x)
-	cy := C.size_t(y)
+	cx := C.int32_t(x)
+	cy := C.int32_t(y)
 
 	color := C.get_px_color(cx, cy)
 	return color
@@ -193,8 +193,8 @@ func GetPxColor(x, y int) C.MMRGBHex {
 
 // GetPixelColor get pixel color return string
 func GetPixelColor(x, y int) string {
-	cx := C.size_t(x)
-	cy := C.size_t(y)
+	cx := C.int32_t(x)
+	cy := C.int32_t(y)
 
 	color := C.get_pixel_color(cx, cy)
 	gcolor := C.GoString(color)
@@ -223,7 +223,7 @@ func ScaleY() int {
 func GetScreenSize() (int, int) {
 	size := C.get_screen_size()
 	// fmt.Println("...", size, size.width)
-	return int(size.width), int(size.height)
+	return int(size.w), int(size.h)
 }
 
 // Scale get the screen scale
@@ -286,21 +286,21 @@ func GetXDisplayName() string {
 //
 // robotgo.CaptureScreen(x, y, w, h int)
 func CaptureScreen(args ...int) C.MMBitmapRef {
-	var x, y, w, h C.size_t
+	var x, y, w, h C.int32_t
 
 	if len(args) > 3 {
-		x = C.size_t(args[0])
-		y = C.size_t(args[1])
-		w = C.size_t(args[2])
-		h = C.size_t(args[3])
+		x = C.int32_t(args[0])
+		y = C.int32_t(args[1])
+		w = C.int32_t(args[2])
+		h = C.int32_t(args[3])
 	} else {
 		x = 0
 		y = 0
 		// Get screen size.
-		var displaySize C.MMSize
+		var displaySize C.MMSizeInt32
 		displaySize = C.getMainDisplaySize()
-		w = displaySize.width
-		h = displaySize.height
+		w = displaySize.w
+		h = displaySize.h
 	}
 
 	bit := C.capture_screen(x, y, w, h)

@@ -16,11 +16,11 @@ extern "C"
 #endif
 
 /* Returns the size of the main display. */
-MMSize getMainDisplaySize(void);
+MMSizeInt32 getMainDisplaySize(void);
 
 /* Convenience function that returns whether the given point is in the bounds
  * of the main screen. */
-bool pointVisibleOnMainDisplay(MMPoint point);
+bool pointVisibleOnMainDisplay(MMPointInt32 point);
 
 #ifdef __cplusplus
 }
