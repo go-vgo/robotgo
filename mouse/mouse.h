@@ -82,7 +82,7 @@ bool smoothlyMoveMouse(MMPoint endPoint, double lowSpeed, double highSpeed);
 // bool smoothlyMoveMouse(MMPoint point);
 
 /* Returns the coordinates of the mouse on the current screen. */
-MMPoint getMousePos(void);
+MMPointInt32 getMousePos(void);
 
 /* Holds down or releases the mouse with the given button in the current
  * position. */

@@ -70,8 +70,8 @@ bool move_mouse_smooth(size_t x, size_t y, double lowSpeed,
 	return cbool;
 }
 
-MMPoint get_mouse_pos(){
-	MMPoint pos = getMousePos();
+MMPointInt32 get_mouse_pos(){
+	MMPointInt32 pos = getMousePos();
 
 	// Return object with .x and .y.
 	// printf("%zu\n%zu\n", pos.x, pos.y );

@@ -144,13 +144,13 @@ void dragMouse(MMPointInt32 point, const MMMouseButton button){
 	#endif
 }
 
-MMPoint getMousePos(){
+MMPointInt32 getMousePos(){
 	#if defined(IS_MACOSX)
 		CGEventRef event = CGEventCreate(NULL);
 		CGPoint point = CGEventGetLocation(event);
 		CFRelease(event);
 
-		return MMPointFromCGPoint(point);
+		return MMPointInt32FromCGPoint(point);
 	#elif defined(USE_X11)
 		int x, y; /* This is all we care about. Seriously. */
 		Window garb1, garb2; /* Why you can't specify NULL as a parameter */
@@ -161,12 +161,12 @@ MMPoint getMousePos(){
 		XQueryPointer(display, XDefaultRootWindow(display), &garb1, &garb2,
 					&x, &y, &garb_x, &garb_y, &more_garbage);
 
-		return MMPointMake(x, y);
+		return MMPointInt32Make(x, y);
 	#elif defined(IS_WINDOWS)
 		POINT point;
 		GetCursorPos(&point);
 
-		return MMPointFromPOINT(point);
+		return MMPointInt32FromPOINT(point);
 	#endif
 }
 
@@ -403,7 +403,7 @@ static double crude_hypot(double x, double y){
 }
 
 bool smoothlyMoveMouse(MMPoint endPoint, double lowSpeed, double highSpeed){
-	MMPoint pos = getMousePos();
+	MMPointInt32 pos = getMousePos();
 	MMSizeInt32 screenSize = getMainDisplaySize();
 	double velo_x = 0.0, velo_y = 0.0;
 	double distance;
