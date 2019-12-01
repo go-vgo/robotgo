@@ -109,11 +109,12 @@ H_INLINE MMRectInt32 MMRectInt32Make(int32_t x, int32_t y, int32_t w, int32_t h)
 #define MMPointFromCGPoint(p) MMPointMake((size_t)(p).x, (size_t)(p).y)
 
 #define CGPointFromMMPointInt32(p) CGPointMake((CGFloat)(p).x, (CGFloat)(p).y)
-#define MMPointInt32FromCGPoint(p) MMPointMake((int32_t)(p).x, (int32_t)(p).y)
+#define MMPointInt32FromCGPoint(p) MMPointInt32Make((int32_t)(p).x, (int32_t)(p).y)
 
 #elif defined(IS_WINDOWS)
 
 #define MMPointFromPOINT(p) MMPointMake((size_t)p.x, (size_t)p.y)
+#define MMPointInt32FromPOINT(p) MMPointInt32Make((int32_t)p.x, (int32_t)p.y)
 
 #endif
 
