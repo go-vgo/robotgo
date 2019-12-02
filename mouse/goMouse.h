@@ -60,10 +60,11 @@ int drag_mouse(int32_t x, int32_t y, MMMouseButton button){
 	return 0;
 }
 
-bool move_mouse_smooth(size_t x, size_t y, double lowSpeed,
+bool move_mouse_smooth(int32_t x, int32_t y, double lowSpeed,
 	double highSpeed, int msDelay){
-	MMPoint point;
-	point = MMPointMake(x, y);
+	MMPointInt32 point;
+	point = MMPointInt32Make(x, y);
+	
 	bool cbool = smoothlyMoveMouse(point, lowSpeed, highSpeed);
 	microsleep(msDelay);
 

@@ -401,8 +401,8 @@ func MoveMouseSmooth(x, y int, args ...interface{}) bool {
 //
 // robotgo.MoveSmooth(x, y int, low, high float64, mouseDelay int)
 func MoveSmooth(x, y int, args ...interface{}) bool {
-	cx := C.size_t(x)
-	cy := C.size_t(y)
+	cx := C.int32_t(x)
+	cy := C.int32_t(y)
 
 	var (
 		mouseDelay = 10
