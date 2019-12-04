@@ -45,8 +45,6 @@ double sys_scale() {
 		char *displayname = NULL;
 		int scr = 0; /* Screen number */
 
-		if( (NULL == x) || (NULL == y)){ return ; }
-
 		dpy = XOpenDisplay (displayname);
 		xres = ((((double) DisplayWidth(dpy, scr)) * 25.4) /
 			((double) DisplayWidthMM(dpy, scr)));
