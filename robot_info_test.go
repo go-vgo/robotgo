@@ -8,46 +8,30 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-// +build darwin windows
-
 package robotgo
 
 import (
+	"fmt"
+	"log"
+	"runtime"
 	"testing"
 
 	"github.com/vcaesar/tt"
 )
 
-func TestMoveMouse(t *testing.T) {
-	MoveMouse(20, 20)
-	MilliSleep(10)
-	x, y := GetMousePos()
+func TestGetVer(t *testing.T) {
+	fmt.Println("go version: ", runtime.Version())
+	ver := GetVersion()
 
-	tt.Equal(t, 20, x)
-	tt.Equal(t, 20, y)
+	tt.Expect(t, Version, ver)
 }
 
-func TestMoveMouseSmooth(t *testing.T) {
-	MoveMouseSmooth(100, 100)
-	MilliSleep(10)
-	x, y := GetMousePos()
-
-	tt.Equal(t, 100, x)
-	tt.Equal(t, 100, y)
+func TestGetScreenSize(t *testing.T) {
+	x, y := GetScreenSize()
+	log.Println("GetScreenSize: ", x, y)
 }
 
-func TestDragMouse(t *testing.T) {
-	DragMouse(500, 500)
-	MilliSleep(10)
-	x, y := GetMousePos()
-
-	tt.Equal(t, 500, x)
-	tt.Equal(t, 500, y)
-}
-
-func TestScrollMouse(t *testing.T) {
-	ScrollMouse(120, "up")
-	MilliSleep(100)
-
-	Scroll(210, 210)
+func TestGetSysScale(t *testing.T) {
+	s := SysScale()
+	log.Println("SysScale: ", s)
 }
