@@ -27,6 +27,37 @@ intptr scaleX(){
 	#endif
 }
 
+double sys_scale() {
+	#if defined(IS_MACOSX)
+	
+		CGDirectDisplayID displayID = CGMainDisplayID();
+		CGDisplayModeRef modeRef = CGDisplayCopyDisplayMode(displayID);
+
+		double pixelWidth = CGDisplayModeGetPixelWidth(modeRef);
+		double targetWidth = CGDisplayModeGetWidth(modeRef);
+		
+		return pixelWidth / targetWidth;
+	#elif defined(USE_X11)
+		
+		double xres;
+		Display *dpy;
+
+		char *displayname = NULL;
+		int scr = 0; /* Screen number */
+
+		dpy = XOpenDisplay (displayname);
+		xres = ((((double) DisplayWidth(dpy, scr)) * 25.4) /
+			((double) DisplayWidthMM(dpy, scr)));
+
+   		XCloseDisplay (dpy);
+
+   		return xres + 0.5;
+   	#elif defined(IS_WINDOWS)
+   		double s = scaleX() / 96.0;
+   		return s;
+   	#endif
+}
+
 intptr scaleY(){
 	#if defined(IS_MACOSX)
 		return 0;
