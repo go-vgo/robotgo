@@ -8,8 +8,6 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-// +build darwin windows
-
 package robotgo
 
 import (

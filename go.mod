@@ -4,7 +4,7 @@ require (
 	github.com/lxn/win v0.0.0-20191024121223-cc00c7492fe1
 	github.com/otiai10/curr v0.0.0-20190513014714-f5a3d24e5776 // indirect
 	github.com/otiai10/gosseract v2.2.1+incompatible
-	github.com/robotn/gohook v0.0.0-20191113163729-aaa2000ed97a
+	github.com/robotn/gohook v0.0.0-20191208195706-98eb507a75d9
 	github.com/robotn/xgb v0.0.0-20190912153532-2cb92d044934
 	github.com/robotn/xgbutil v0.0.0-20190912154524-c861d6f87770
 	github.com/stretchr/testify v1.3.0 // indirect
@@ -16,6 +16,6 @@ require (
 	golang.org/x/sys v0.0.0-20191029155521-f43be2a4598c // indirect
 )
 
-//replace golang.org/x/sys => github.com/golang/sys v0.0.0-20190109145017-48ac38b7c8cb
+// replace golang.org/x/sys => github.com/golang/sys v0.0.0-20190109145017-48ac38b7c8cb
 
 go 1.13
