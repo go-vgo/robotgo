@@ -700,12 +700,12 @@ func CharCodeAt(s string, n int) rune {
 func toUC(text string) []string {
 	var uc []string
 
-	textQuoted := strconv.QuoteToASCII(text)
-	textUnquoted := textQuoted[1 : len(textQuoted)-1]
+	for _, r := range text {
+		textQ := strconv.QuoteToASCII(string(r))
+		textUnQ := textQ[1 : len(textQ)-1]
 
-	strUnicodev := strings.Split(textUnquoted, "\\u")
-	for i := 1; i < len(strUnicodev); i++ {
-		uc = append(uc, "U"+strUnicodev[i])
+		st := strings.Replace(textUnQ, "\\u", "U", -1)
+		uc = append(uc, st)
 	}
 
 	return uc
