@@ -6,7 +6,7 @@ version: "{build}"
 os: Visual Studio 2017
 
 # Platform.
-# platform: 
+# platform:
 #   - x64
 #   - x86
 
@@ -26,7 +26,7 @@ environment:
       MSYSTEM: MINGW64
       PATH: C:\msys64\mingw64\bin\;C:\Program Files (x86)\NSIS\;%PATH%
     - GOARCH: 386
-      # GOVERSION: 1.9.3    
+      # GOVERSION: 1.9.3
       GETH_ARCH: 386
       MSYS2_ARCH: i686
       MSYS2_BITS: 32
@@ -43,7 +43,7 @@ environment:
 #   - go version
 #   - go env
 #   - gcc --version
-  # - python --version
+# - python --version
 
 install:
   - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
@@ -53,7 +53,7 @@ install:
   - 7z x go%GOVERSION%.windows-%GETH_ARCH%.zip -y -oC:\ > NUL
   - go version
   - go env
-  - gcc --version  
+  - gcc --version
 
 # To run your custom scripts instead of automatic MSBuild
 build_script:
