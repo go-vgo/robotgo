@@ -730,8 +730,14 @@ func TypeStr(str string, args ...float64) {
 	if runtime.GOOS == "linux" {
 		strUc := toUC(str)
 		for i := 0; i < len(strUc); i++ {
-			inputUTF(strUc[i])
-			MicroSleep(tm)
+			rstr := []rune(strUc[i])
+			if len(rstr) <= 1 {
+				ustr := uint32(CharCodeAt(strUc[i], 0))
+				UnicodeType(ustr)
+			} else {
+				inputUTF(strUc[i])
+				MicroSleep(tm)
+			}
 		}
 
 		return
