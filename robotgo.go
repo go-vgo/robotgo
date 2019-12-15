@@ -760,7 +760,7 @@ func UnicodeType(str uint32) {
 }
 
 // TypeString send a string, support unicode
-// TypeStr(string: The string to send)
+// TypeStr(string: The string to send), Wno-deprecated
 func TypeString(str string) {
 	cstr := C.CString(str)
 	C.type_string(cstr)
@@ -778,7 +778,7 @@ func PasteStr(str string) {
 	}
 }
 
-// TypeStrDelay type string delayed
+// TypeStrDelay type string delayed, Wno-deprecated
 func TypeStrDelay(str string, delay int) {
 	cstr := C.CString(str)
 	cdelay := C.size_t(delay)
