@@ -778,13 +778,10 @@ func PasteStr(str string) {
 	}
 }
 
-// TypeStrDelay type string delayed, Wno-deprecated
+// TypeStrDelay type string delayed
 func TypeStrDelay(str string, delay int) {
-	cstr := C.CString(str)
-	cdelay := C.size_t(delay)
-	C.type_string_delayed(cstr, cdelay)
-
-	C.free(unsafe.Pointer(cstr))
+	TypeStr(str)
+	Sleep(delay)
 }
 
 // TypeStringDelayed type string delayed, Wno-deprecated
