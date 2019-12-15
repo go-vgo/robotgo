@@ -720,11 +720,15 @@ func inputUTF(str string) {
 
 // TypeStr send a string, support UTF-8
 //
-// robotgo.TypeStr(string: The string to send, float64: microsleep time)
+// robotgo.TypeStr(string: The string to send, float64: microsleep time, x11)
 func TypeStr(str string, args ...float64) {
-	var tm = 7.0
+	var tm, tm1 = 0.0, 7.0
+
 	if len(args) > 0 {
 		tm = args[0]
+	}
+	if len(args) > 1 {
+		tm1 = args[1]
 	}
 
 	if runtime.GOOS == "linux" {
@@ -736,10 +740,11 @@ func TypeStr(str string, args ...float64) {
 				UnicodeType(ustr)
 			} else {
 				inputUTF(strUc[i])
-				MicroSleep(tm)
+				MicroSleep(tm1)
 			}
 		}
 
+		MicroSleep(tm)
 		return
 	}
 
@@ -748,7 +753,7 @@ func TypeStr(str string, args ...float64) {
 		UnicodeType(ustr)
 
 		// if len(args) > 0 {
-		// 	MicroSleep(tm)
+		MicroSleep(tm)
 		// }
 	}
 }
