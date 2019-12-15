@@ -742,9 +742,10 @@ func TypeStr(str string, args ...float64) {
 				inputUTF(strUc[i])
 				MicroSleep(tm1)
 			}
+
+			MicroSleep(tm)
 		}
 
-		MicroSleep(tm)
 		return
 	}
 
