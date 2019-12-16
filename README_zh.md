@@ -149,7 +149,7 @@ import (
 func main() {
   robotgo.TypeStr("Hello World")
   robotgo.TypeStr("测试")
-  robotgo.TypeString("测试")
+  // robotgo.TypeString("测试")
 
   robotgo.TypeStr("山达尔星新星军团, galaxy. こんにちは世界.")
   robotgo.Sleep(1)

@@ -148,8 +148,8 @@ import (
 
 func main() {
   robotgo.TypeStr("Hello World")
-  robotgo.TypeStr("だんしゃり")
-  robotgo.TypeString("テストする")
+  robotgo.TypeStr("だんしゃり", 1.0)
+  // robotgo.TypeString("テストする")
 
   robotgo.TypeStr("Hi galaxy. こんにちは世界.")
   robotgo.Sleep(1)
