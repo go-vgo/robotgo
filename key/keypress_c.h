@@ -179,7 +179,7 @@ void tapKeyCode(MMKeyCode code, MMKeyFlags flags){
 			return true;
 		}
 
-		char *special = "~!@#$%^&*()_+";
+		char *special = "~!@#$%^&*()_+{}|:\"<>?";
 		while (*special) {
 			if (*special == c) {
 				return true;
