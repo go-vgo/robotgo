@@ -173,25 +173,49 @@ void tapKeyCode(MMKeyCode code, MMKeyFlags flags){
 	toggleKeyCode(code, false, flags);
 }
 
+#if defined(USE_X11)
+	bool toUpper(char c) {
+		if (isupper(c)) {
+			return true;
+		}
+
+		char *special = "~!@#$%^&*()_+";
+		while (*special) {
+			if (*special == c) {
+				return true;
+			}
+			special++;
+		}
+		return false;
+	}
+#endif
+
 void toggleKey(char c, const bool down, MMKeyFlags flags){
 	MMKeyCode keyCode = keyCodeForChar(c);
 
 	//Prevent unused variable warning for Mac and Linux.
-#if defined(IS_WINDOWS)
-	int modifiers;
-#endif
+	#if defined(IS_WINDOWS)
+		int modifiers;
+	#endif
 
-	if (isupper(c) && !(flags & MOD_SHIFT)) {
-		flags |= MOD_SHIFT; /* Not sure if this is safe for all layouts. */
-	}
+	#if defined(USE_X11)
+		if (toUpper(c) && !(flags & MOD_SHIFT)) {
+			flags |= MOD_SHIFT; /* Not sure if this is safe for all layouts. */
+		}
+	#else
+		if (isupper(c) && !(flags & MOD_SHIFT)) {
+			flags |= MOD_SHIFT; /* Not sure if this is safe for all layouts. */
+		}
+	#endif
 
-#if defined(IS_WINDOWS)
-	modifiers = keyCode >> 8; // Pull out modifers.
-	if ((modifiers & 1) != 0) flags |= MOD_SHIFT; // Uptdate flags from keycode modifiers.
-    if ((modifiers & 2) != 0) flags |= MOD_CONTROL;
-    if ((modifiers & 4) != 0) flags |= MOD_ALT;
-    keyCode = keyCode & 0xff; // Mask out modifiers.
-#endif
+	#if defined(IS_WINDOWS)
+		modifiers = keyCode >> 8; // Pull out modifers.
+		if ((modifiers & 1) != 0) flags |= MOD_SHIFT; // Uptdate flags from keycode modifiers.
+		if ((modifiers & 2) != 0) flags |= MOD_CONTROL;
+		if ((modifiers & 4) != 0) flags |= MOD_ALT;
+		keyCode = keyCode & 0xff; // Mask out modifiers.
+	#endif
+
 	toggleKeyCode(keyCode, down, flags);
 }
 
