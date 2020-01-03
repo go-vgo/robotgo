@@ -1,5 +1,5 @@
 1. Please **speak English**, this is the language everybody of us can speak and write.
-2. Please take a moment to search that an issue **doesn't already exist**.
+2. Please take a moment to **search** that an issue **doesn't already exist**.
 3. Please make sure `Golang, GCC` is installed correctly before installing RobotGo.
 4. Please ask questions or config/deploy problems on our Gitter channel: https://gitter.im/go-vgo/robotgo
 5. Please give all relevant information below for bug reports, incomplete details will be handled as an invalid report.
