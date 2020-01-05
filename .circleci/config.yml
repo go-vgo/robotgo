@@ -11,6 +11,7 @@ jobs:
       # specify any bash command here prefixed with `run: `
       - run: apt-get update
       - run: apt-get -y install xvfb
+      #
       #  override:
       # './...' is a relative pattern which means all subdirectories
       # - run: go get -u github.com/go-vgo/robotgo

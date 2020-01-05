@@ -11,8 +11,10 @@
 MMSizeInt32 getMainDisplaySize(void){
 #if defined(IS_MACOSX)
 	CGDirectDisplayID displayID = CGMainDisplayID();
-	return MMSizeInt32Make((int32_t)CGDisplayPixelsWide(displayID),
-	                  (int32_t)CGDisplayPixelsHigh(displayID));
+	CGRect displayRect = CGDisplayBounds(displayID);
+	
+	CGSize size = displayRect.size;
+	return MMSizeInt32Make((int32_t)size.width, (int32_t)size.height);
 #elif defined(USE_X11)
 	Display *display = XGetMainDisplay();
 	const int screen = DefaultScreen(display);

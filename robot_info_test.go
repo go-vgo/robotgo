@@ -8,7 +8,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-package robotgo
+package robotgo_test
 
 import (
 	"fmt"
@@ -16,22 +16,23 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/go-vgo/robotgo"
 	"github.com/vcaesar/tt"
 )
 
 func TestGetVer(t *testing.T) {
 	fmt.Println("go version: ", runtime.Version())
-	ver := GetVersion()
+	ver := robotgo.GetVersion()
 
-	tt.Expect(t, Version, ver)
+	tt.Expect(t, robotgo.Version, ver)
 }
 
 func TestGetScreenSize(t *testing.T) {
-	x, y := GetScreenSize()
+	x, y := robotgo.GetScreenSize()
 	log.Println("GetScreenSize: ", x, y)
 }
 
 func TestGetSysScale(t *testing.T) {
-	s := SysScale()
+	s := robotgo.SysScale()
 	log.Println("SysScale: ", s)
 }
