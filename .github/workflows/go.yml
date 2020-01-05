@@ -29,5 +29,6 @@ jobs:
 
       - name: Build
         run: go build -v .
-      # - name: Test
-      #   run: go test -v .
+      - name: Test
+        run: go test -v robot_info_test.go
+        # run: go test -v .
