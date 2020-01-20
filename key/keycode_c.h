@@ -115,14 +115,13 @@ MMKeyCode keyCodeForChar(const char c){
 			/* Some special keys are apparently not handled properly by
 			* XStringToKeysym() on some systems, so search for them instead in our
 			* mapping table. */
-			size_t i;
-			const size_t specialCharacterCount =
-				sizeof(XSpecialCharacterTable) / sizeof(XSpecialCharacterTable[0]);
-			for (i = 0; i < specialCharacterCount; ++i) {
-				if (c == XSpecialCharacterTable[i].name) {
-					code = XSpecialCharacterTable[i].code;
+			struct XSpecialCharacterMapping* xs = XSpecialCharacterTable;
+			while (xs->name) {
+				if (c == xs->name ) {
+					code = xs->code;
 					break;
 				}
+				xs++;
 			}
 		}
 
