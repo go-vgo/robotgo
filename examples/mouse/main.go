@@ -19,6 +19,7 @@ import (
 
 func move() {
 	robotgo.Move(100, 200)
+	robotgo.MoveRelative(10, -200)
 
 	// move the mouse to 100, 200
 	robotgo.MoveMouse(100, 200)
@@ -32,6 +33,7 @@ func move() {
 	// smooth move the mouse to 100, 200
 	robotgo.MoveSmooth(100, 200)
 	robotgo.MoveMouseSmooth(100, 200, 1.0, 100.0)
+	robotgo.MoveSmoothRelative(10, -100, 1.0, 30.0)
 
 	for i := 0; i < 1080; i += 1000 {
 		fmt.Println(i)

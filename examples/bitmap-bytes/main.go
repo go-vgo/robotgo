@@ -30,6 +30,5 @@ func main() {
 	}
 
 	log.Println("bytes: ", b.Bytes())
-
 	ioutil.WriteFile("out.jpg", b.Bytes(), 0666)
 }
