@@ -51,3 +51,34 @@ func TestScrollMouse(t *testing.T) {
 
 	Scroll(210, 210)
 }
+
+func TestMoveRelative(t *testing.T) {
+	Move(200, 200)
+	MilliSleep(10)
+
+	MoveRelative(10, -10)
+	MilliSleep(10)
+
+	x, y := GetMousePos()
+	tt.Equal(t, 210, x)
+	tt.Equal(t, 190, y)
+}
+
+func TestMoveSmoothRelative(t *testing.T) {
+	Move(200, 200)
+	MilliSleep(10)
+
+	MoveSmoothRelative(10, -10)
+	MilliSleep(10)
+
+	x, y := GetMousePos()
+	tt.Equal(t, 210, x)
+	tt.Equal(t, 190, y)
+}
+
+func TestBitmap(t *testing.T) {
+	bit := CaptureScreen()
+	tt.NotNil(t, bit)
+	e := SaveBitmap(bit, "robot_test.png")
+	tt.Empty(t, e)
+}

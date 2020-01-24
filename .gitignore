@@ -3,6 +3,7 @@
 .vscode
 .idea
 
+robot_test.png
 # Examples
 examples/screen/screen
 examples/screen/saveCapture.png
