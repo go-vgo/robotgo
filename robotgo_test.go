@@ -81,4 +81,9 @@ func TestBitmap(t *testing.T) {
 	tt.NotNil(t, bit)
 	e := SaveBitmap(bit, "robot_test.png")
 	tt.Empty(t, e)
+
+	bit1 := OpenBitmap("robot_test.png")
+	b := tt.TypeOf(bit, bit1)
+	tt.True(t, b)
+	tt.NotNil(t, bit1)
 }
