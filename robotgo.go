@@ -1086,6 +1086,11 @@ func OpenImg(path string) []byte {
 	return imgo.ImgToBytes(path)
 }
 
+// SaveImg save the image by []byte
+func SaveImg(b []byte, path string) {
+	imgo.Save(path, b)
+}
+
 // BitmapStr bitmap from string
 func BitmapStr(str string) C.MMBitmapRef {
 	return BitmapFromStr(str)
