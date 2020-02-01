@@ -1,5 +1,5 @@
 # FROM golang:1.10.1
-FROM golang:1.13.6-stretch AS build
+FROM golang:1.13.7-stretch AS build
 # FROM govgo/go:1.11.1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
