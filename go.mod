@@ -10,7 +10,7 @@ require (
 	github.com/robotn/xgbutil v0.0.0-20190912154524-c861d6f87770
 	github.com/vcaesar/gops v0.0.0-20200120141635-c9dda03b64e2
 	github.com/vcaesar/imgo v0.0.0-20191008162304-a83ea7753bc8
-	github.com/vcaesar/tt v0.0.0-20200124150044-d4f30cc912c1
+	github.com/vcaesar/tt v0.0.0-20200209134651-4578689741c0
 	golang.org/x/image v0.0.0-20200119044424-58c23975cae1
 	golang.org/x/net v0.0.0-20190724013045-ca1201d0de80 // indirect
 	golang.org/x/sys v0.0.0-20200120150407-c1edf535530b // indirect

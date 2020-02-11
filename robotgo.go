@@ -65,6 +65,7 @@ import (
 	"github.com/go-vgo/robotgo/clipboard"
 	ps "github.com/vcaesar/gops"
 	"github.com/vcaesar/imgo"
+	"github.com/vcaesar/tt"
 )
 
 const (
@@ -787,6 +788,7 @@ func UnicodeType(str uint32) {
 // TypeString send a string, support unicode
 // TypeStr(string: The string to send), Wno-deprecated
 func TypeString(str string) {
+	tt.Drop("TypeString", "TypeStr")
 	cstr := C.CString(str)
 	C.type_string(cstr)
 
@@ -811,6 +813,7 @@ func TypeStrDelay(str string, delay int) {
 
 // TypeStringDelayed type string delayed, Wno-deprecated
 func TypeStringDelayed(str string, delay int) {
+	tt.Drop("TypeStringDelayed", "TypeStrDelay")
 	TypeStrDelay(str, delay)
 }
 
@@ -822,6 +825,7 @@ func SetKeyDelay(delay int) {
 // SetKeyboardDelay set keyboard delay, Wno-deprecated,
 // this function will be removed in version v1.0.0
 func SetKeyboardDelay(delay int) {
+	tt.Drop("SetKeyboardDelay", "SetKeyDelay")
 	SetKeyDelay(delay)
 }
 
@@ -1171,6 +1175,7 @@ func CopyBitPB(bitmap C.MMBitmapRef) bool {
 
 // CopyBitpb copy bitmap to pasteboard, Wno-deprecated
 func CopyBitpb(bitmap C.MMBitmapRef) bool {
+	tt.Drop("CopyBitpb", "CopyBitPB")
 	return CopyBitPB(bitmap)
 }
 
@@ -1444,6 +1449,7 @@ func GetHandle() int {
 
 // GetBHandle get the window handle, Wno-deprecated
 func GetBHandle() int {
+	tt.Drop("GetBHandle", "GetHandle")
 	hwnd := C.bget_handle()
 	ghwnd := int(hwnd)
 	//fmt.Println("gethwnd---", ghwnd)
