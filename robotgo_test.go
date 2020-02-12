@@ -76,6 +76,19 @@ func TestMoveSmoothRelative(t *testing.T) {
 	tt.Equal(t, 190, y)
 }
 
+func TestKey(t *testing.T) {
+	e := KeyTap("v", "cmd")
+	tt.Empty(t, e)
+
+	e = KeyToggle("v", "up")
+	tt.Empty(t, e)
+}
+
+func TestTypeStr(t *testing.T) {
+	c := CharCodeAt("s", 0)
+	tt.Equal(t, 115, c)
+}
+
 func TestBitmap(t *testing.T) {
 	bit := CaptureScreen()
 	tt.NotNil(t, bit)
