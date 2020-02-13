@@ -18,6 +18,26 @@ import (
 	"github.com/vcaesar/tt"
 )
 
+func TestColor(t *testing.T) {
+	s := GetPixelColor(10, 10)
+	tt.IsType(t, "string", s)
+	tt.NotEmpty(t, s)
+
+	c := GetPxColor(10, 10)
+	s1 := PadHex(c)
+	tt.Equal(t, s, s1)
+}
+
+func TestSize(t *testing.T) {
+	x, y := GetScreenSize()
+	tt.NotZero(t, x)
+	tt.NotZero(t, y)
+
+	x, y = GetScaleSize()
+	tt.NotZero(t, x)
+	tt.NotZero(t, x)
+}
+
 func TestMoveMouse(t *testing.T) {
 	MoveMouse(20, 20)
 	MilliSleep(10)
