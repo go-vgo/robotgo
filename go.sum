@@ -39,8 +39,8 @@ github.com/vcaesar/gops v0.0.0-20200120141635-c9dda03b64e2 h1:9CzTc16j5h8olRz5yw
 github.com/vcaesar/gops v0.0.0-20200120141635-c9dda03b64e2/go.mod h1:HDKiKqHeRYwEhBUTjgBHWT/PkwvLusticopFNbGO/eY=
 github.com/vcaesar/imgo v0.0.0-20191008162304-a83ea7753bc8 h1:9Y+hoKBYa+UtzGqkODfs8c0Q6gp2UfniVNsHQWghPi0=
 github.com/vcaesar/imgo v0.0.0-20191008162304-a83ea7753bc8/go.mod h1:52+3yYrTNjWKh+CkQozNRCLWCE/X666yAWPGbYC3DZI=
-github.com/vcaesar/tt v0.0.0-20200209134651-4578689741c0 h1:663w12XAJXN8v5P3khh0CqrTtDXofJMxIeBbcyQ/2p0=
-github.com/vcaesar/tt v0.0.0-20200209134651-4578689741c0/go.mod h1:GHPxQYhn+7OgKakRusH7KJ0M5MhywoeLb8Fcffs/Gtg=
+github.com/vcaesar/tt v0.0.0-20200214111121-9561a943a243 h1:cx8++jxUQNguYJchu9WYJ6ELAawSTbLRDfBRYaoX5fk=
+github.com/vcaesar/tt v0.0.0-20200214111121-9561a943a243/go.mod h1:GHPxQYhn+7OgKakRusH7KJ0M5MhywoeLb8Fcffs/Gtg=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/image v0.0.0-20190910094157-69e4b8554b2a h1:gHevYm0pO4QUbwy8Dmdr01R5r1BuKtfYqRqF0h/Cbh0=
 golang.org/x/image v0.0.0-20190910094157-69e4b8554b2a/go.mod h1:FeLwcggjj3mMvU+oOTbSwawSJRM1uh48EjtB4UJZlP0=
