@@ -785,6 +785,16 @@ func UnicodeType(str uint32) {
 	C.unicodeType(cstr)
 }
 
+// PasteStr paste a string, support UTF-8
+func PasteStr(str string) string {
+	clipboard.WriteAll(str)
+	if runtime.GOOS == "darwin" {
+		return KeyTap("v", "command")
+	}
+	
+	return KeyTap("v", "control")
+}
+
 // TypeString send a string, support unicode
 // TypeStr(string: The string to send), Wno-deprecated
 func TypeString(str string) {
@@ -793,16 +803,6 @@ func TypeString(str string) {
 	C.type_string(cstr)
 
 	C.free(unsafe.Pointer(cstr))
-}
-
-// PasteStr paste a string, support UTF-8
-func PasteStr(str string) {
-	clipboard.WriteAll(str)
-	if runtime.GOOS == "darwin" {
-		KeyTap("v", "command")
-	} else {
-		KeyTap("v", "control")
-	}
 }
 
 // TypeStrDelay type string delayed
