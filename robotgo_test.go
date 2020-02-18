@@ -48,10 +48,11 @@ func TestMoveMouse(t *testing.T) {
 }
 
 func TestMoveMouseSmooth(t *testing.T) {
-	MoveMouseSmooth(100, 100)
+	b := MoveMouseSmooth(100, 100)
 	MilliSleep(10)
 	x, y := GetMousePos()
 
+	tt.True(t, b)
 	tt.Equal(t, 100, x)
 	tt.Equal(t, 100, y)
 }
