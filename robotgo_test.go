@@ -108,6 +108,9 @@ func TestKey(t *testing.T) {
 func TestTypeStr(t *testing.T) {
 	c := CharCodeAt("s", 0)
 	tt.Equal(t, 115, c)
+
+	e := PasteStr("s")
+	tt.Empty(t, e)
 }
 
 func TestBitmap(t *testing.T) {
