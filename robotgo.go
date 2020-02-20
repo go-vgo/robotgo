@@ -700,8 +700,8 @@ func ReadAll() (string, error) {
 }
 
 // WriteAll write string to clipboard
-func WriteAll(text string) {
-	clipboard.WriteAll(text)
+func WriteAll(text string) error {
+	return clipboard.WriteAll(text)
 }
 
 // CharCodeAt char code at utf-8
@@ -791,7 +791,7 @@ func PasteStr(str string) string {
 	if runtime.GOOS == "darwin" {
 		return KeyTap("v", "command")
 	}
-	
+
 	return KeyTap("v", "control")
 }
 
