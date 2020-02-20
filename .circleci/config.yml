@@ -20,5 +20,5 @@ jobs:
       - run: go get -v -t -d ./...
       - run: xvfb-run go test -v ./...
       # codecov.io
-      # - run: go test -v -covermode=count -coverprofile=coverage.out
-      # - run: bash <(curl -s https://codecov.io/bash)
+      - run: go test -v -covermode=count -coverprofile=coverage.out
+      - run: bash <(curl -s https://codecov.io/bash)
