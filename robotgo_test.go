@@ -122,6 +122,14 @@ func TestTypeStr(t *testing.T) {
 	tt.Empty(t, e)
 }
 
+func TestKeyCode(t *testing.T) {
+	m := MouseMap["left"]
+	tt.Equal(t, 1, m)
+
+	k := Keycode["1"]
+	tt.Equal(t, 2, k)
+}
+
 func TestBitmap(t *testing.T) {
 	bit := CaptureScreen()
 	tt.NotNil(t, bit)
