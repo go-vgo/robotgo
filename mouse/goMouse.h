@@ -12,7 +12,7 @@
 #include "mouse_c.h"
 
 // Global delays.
-int mouseDelay = 10;
+int mouseDelay = 0;
 // int keyboardDelay = 10;
 
 

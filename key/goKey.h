@@ -15,7 +15,7 @@
 #include "keycode_c.h"
 
 
-int keyboardDelay = 10;
+int keyboardDelay = 0;
 
 struct KeyNames{
 	const char* name;
