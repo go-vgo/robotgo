@@ -518,12 +518,6 @@ func MouseToggle(togKey string, args ...interface{}) {
 	C.free(unsafe.Pointer(down))
 }
 
-// SetMouseDelay set mouse delay
-func SetMouseDelay(delay int) {
-	cdelay := C.size_t(delay)
-	C.set_mouse_delay(cdelay)
-}
-
 // ScrollMouse scroll the mouse
 func ScrollMouse(x int, direction string) {
 	cx := C.size_t(x)
@@ -547,6 +541,12 @@ func Scroll(x, y int, args ...int) {
 	cz := C.int(msDelay)
 
 	C.scroll(cx, cy, cz)
+}
+
+// SetMouseDelay set mouse delay
+func SetMouseDelay(delay int) {
+	cdelay := C.size_t(delay)
+	C.set_mouse_delay(cdelay)
 }
 
 /*
@@ -717,6 +717,12 @@ func CharCodeAt(s string, n int) rune {
 	return 0
 }
 
+// UnicodeType tap uint32 unicode
+func UnicodeType(str uint32) {
+	cstr := C.uint(str)
+	C.unicodeType(cstr)
+}
+
 func toUC(text string) []string {
 	var uc []string
 
@@ -779,12 +785,6 @@ func TypeStr(str string, args ...float64) {
 	}
 }
 
-// UnicodeType tap uint32 unicode
-func UnicodeType(str uint32) {
-	cstr := C.uint(str)
-	C.unicodeType(cstr)
-}
-
 // PasteStr paste a string, support UTF-8
 func PasteStr(str string) string {
 	clipboard.WriteAll(str)
@@ -827,6 +827,17 @@ func SetKeyDelay(delay int) {
 func SetKeyboardDelay(delay int) {
 	tt.Drop("SetKeyboardDelay", "SetKeyDelay")
 	SetKeyDelay(delay)
+}
+
+// SetDelay set the key and mouse delay
+func SetDelay(d ...int) {
+	v := 10
+	if len(d) > 0 {
+		v = d[0]
+	}
+
+	SetMouseDelay(v)
+	SetKeyDelay(v)
 }
 
 /*
