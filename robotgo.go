@@ -797,10 +797,15 @@ func PasteStr(str string) string {
 
 // TypeString send a string, support unicode
 // TypeStr(string: The string to send), Wno-deprecated
-func TypeString(str string) {
+func TypeString(str string, delay ...int) {
 	tt.Drop("TypeString", "TypeStr")
+	var cdelay C.size_t
 	cstr := C.CString(str)
-	C.type_string(cstr)
+	if len(delay) > 0 {
+		cdelay = C.size_t(delay[0])
+	}
+
+	C.type_string_delayed(cstr, cdelay)
 
 	C.free(unsafe.Pointer(cstr))
 }
