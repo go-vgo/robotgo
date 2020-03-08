@@ -220,6 +220,11 @@ func SysScale() float64 {
 	return float64(s)
 }
 
+// Scaled x * sys-scale
+func Scaled(x int) int {
+	return int(float64(x) * SysScale())
+}
+
 // ScaleY get primary display vertical DPI scale factor
 func ScaleY() int {
 	return int(C.scale_y())
