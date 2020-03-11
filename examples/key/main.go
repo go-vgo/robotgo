@@ -74,6 +74,7 @@ func keyToggle() {
 	robotgo.KeyToggle("a", "down")
 	robotgo.KeyToggle("a", "down", "alt")
 	robotgo.Sleep(1)
+
 	robotgo.KeyToggle("a", "up", "alt", "cmd")
 	robotgo.MilliSleep(100)
 	robotgo.KeyToggle("q", "up", "alt", "cmd", "shift")
@@ -88,7 +89,11 @@ func cilp() {
 	// robotgo.TypeString("en")
 
 	// write string to clipboard
-	robotgo.WriteAll("テストする")
+	e := robotgo.WriteAll("テストする")
+	if e != nil {
+		fmt.Println("robotgo.WriteAll err is: ", e)
+	}
+
 	// read string from clipboard
 	text, err := robotgo.ReadAll()
 	if err != nil {
