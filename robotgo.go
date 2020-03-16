@@ -510,7 +510,7 @@ func MovesClick(x, y int, args ...interface{}) {
 }
 
 // MouseToggle toggle the mouse
-func MouseToggle(togKey string, args ...interface{}) {
+func MouseToggle(togKey string, args ...interface{}) int {
 	var button C.MMMouseButton = C.LEFT_BUTTON
 
 	if len(args) > 0 {
@@ -518,9 +518,10 @@ func MouseToggle(togKey string, args ...interface{}) {
 	}
 
 	down := C.CString(togKey)
-	C.mouse_toggle(down, button)
+	i := C.mouse_toggle(down, button)
 
 	C.free(unsafe.Pointer(down))
+	return int(i)
 }
 
 // ScrollMouse scroll the mouse

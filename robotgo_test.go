@@ -97,6 +97,11 @@ func TestMoveSmoothRelative(t *testing.T) {
 	tt.Equal(t, 190, y)
 }
 
+func TestMouseToggle(t *testing.T) {
+	e := MouseToggle("up", "right")
+	tt.Zero(t, e)
+}
+
 func TestKey(t *testing.T) {
 	e := KeyTap("v", "cmd")
 	tt.Empty(t, e)
@@ -120,6 +125,9 @@ func TestTypeStr(t *testing.T) {
 
 	e := PasteStr("s")
 	tt.Empty(t, e)
+
+	uc := toUC("s")
+	tt.Equal(t, "[s]", uc)
 }
 
 func TestKeyCode(t *testing.T) {
