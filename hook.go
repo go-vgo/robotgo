@@ -47,7 +47,7 @@ func AddEvent(key string) bool {
 	}
 
 	if len(key) > 1 && !mouseBool {
-		key = strconv.Itoa(Keycode[key].(int))
+		key = strconv.Itoa(int(Keycode[key]))
 	}
 
 	geve := hook.AddEvent(key)
@@ -93,7 +93,7 @@ func AddEvents(key string, arr ...string) bool {
 		l := len(arr)
 		if l > 0 {
 			for i := 0; i < l; i++ {
-				ukey := uint16(Keycode[arr[i]].(int))
+				ukey := Keycode[arr[i]]
 
 				if e.Kind == hook.KeyHold && e.Keycode == ukey {
 					k++
@@ -115,7 +115,7 @@ func AddEvents(key string, arr ...string) bool {
 			ct = true
 		}
 
-		if ct && e.Kind == hook.KeyUp && e.Keycode == uint16(Keycode[key].(int)) {
+		if ct && e.Kind == hook.KeyUp && e.Keycode == Keycode[key] {
 			hook.End()
 			// k = 0
 			break
@@ -148,7 +148,7 @@ func AddMouse(btn string, x ...int16) bool {
 			ct = true
 		}
 
-		if ct && e.Kind == hook.MouseDown && int(e.Button) == ukey {
+		if ct && e.Kind == hook.MouseDown && e.Button == ukey {
 			hook.End()
 			break
 		}

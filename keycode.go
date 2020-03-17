@@ -10,8 +10,10 @@
 
 package robotgo
 
+type uMap map[string]uint16
+
 // MouseMap robotgo hook mouse's code map
-var MouseMap = Map{
+var MouseMap = uMap{
 	"left":       1,
 	"right":      2,
 	"center":     3,
@@ -22,7 +24,7 @@ var MouseMap = Map{
 }
 
 // Keycode robotgo hook key's code map
-var Keycode = Map{
+var Keycode = uMap{
 	"`": 41,
 	"1": 2,
 	"2": 3,
