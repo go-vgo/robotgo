@@ -149,3 +149,13 @@ func TestBitmap(t *testing.T) {
 	tt.True(t, b)
 	tt.NotNil(t, bit1)
 }
+
+func TestAlert(t *testing.T) {
+	go func() {
+		MilliSleep(100)
+		KeyTap("enter")
+	}()
+
+	i := ShowAlert("t", "msg")
+	tt.Zero(t, i)
+}
