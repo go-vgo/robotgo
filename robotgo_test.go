@@ -13,6 +13,7 @@
 package robotgo
 
 import (
+	"log"
 	"testing"
 
 	"github.com/vcaesar/tt"
@@ -152,8 +153,9 @@ func TestBitmap(t *testing.T) {
 
 func TestAlert(t *testing.T) {
 	go func() {
-		MilliSleep(100)
+		MilliSleep(200)
 		KeyTap("enter")
+		log.Println("tap...")
 	}()
 
 	i := ShowAlert("t", "msg")
