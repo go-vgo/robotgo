@@ -99,12 +99,14 @@ var Keycode = uMap{
 	"shift":   42,
 	"rshift":  54,
 	"enter":   28,
+	//
 	"cmd":     3675,
 	"command": 3675,
 	"rcmd":    3676,
 	"ralt":    3640,
-	"up":      57416,
-	"down":    57424,
-	"left":    57419,
-	"right":   57421,
+	//
+	"up":    57416,
+	"down":  57424,
+	"left":  57419,
+	"right": 57421,
 }
