@@ -77,6 +77,14 @@ func findIds() {
 	}
 }
 
+func active() {
+	robotgo.ActivePID(100)
+	// robotgo.Sleep(2)
+	robotgo.ActiveName("code")
+	robotgo.Sleep(1)
+	robotgo.ActiveName("chrome")
+}
+
 func findName() {
 	// find the process name by the process id
 	name, err := robotgo.FindName(100)
@@ -124,15 +132,14 @@ func window() {
 	////////////////////////////////////////////////////////////////////////////////
 
 	alert()
-
+	//
 	get()
 
 	findIds()
-
-	robotgo.ActiveName("chrome")
+	active()
 
 	findName()
-
+	//
 	ps()
 
 	// close current Window
