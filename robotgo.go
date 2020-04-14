@@ -63,7 +63,6 @@ import (
 	"os/exec"
 
 	"github.com/go-vgo/robotgo/clipboard"
-	ps "github.com/vcaesar/gops"
 	"github.com/vcaesar/imgo"
 	"github.com/vcaesar/tt"
 )
@@ -1512,64 +1511,10 @@ func internalGetBounds(pid int32, hwnd int) (int, int, int, int) {
 	return int(bounds.X), int(bounds.Y), int(bounds.W), int(bounds.H)
 }
 
-// Pids get the all process id
-func Pids() ([]int32, error) {
-	return ps.Pids()
-}
-
-// PidExists determine whether the process exists
-func PidExists(pid int32) (bool, error) {
-	return ps.PidExists(pid)
-}
-
 // Is64Bit determine whether the sys is 64bit
 func Is64Bit() bool {
 	b := C.Is64Bit()
 	return bool(b)
-}
-
-// Nps process struct
-type Nps struct {
-	Pid  int32
-	Name string
-}
-
-// Process get the all process struct
-func Process() ([]Nps, error) {
-	var npsArr []Nps
-	nps, err := ps.Process()
-	for i := 0; i < len(nps); i++ {
-		np := Nps{
-			nps[i].Pid,
-			nps[i].Name,
-		}
-
-		npsArr = append(npsArr, np)
-	}
-
-	return npsArr, err
-}
-
-// FindName find the process name by the process id
-func FindName(pid int32) (string, error) {
-	return ps.FindName(pid)
-}
-
-// FindNames find the all process name
-func FindNames() ([]string, error) {
-	return ps.FindNames()
-}
-
-// FindIds finds the all processes named with a subset
-// of "name" (case insensitive),
-// return matched IDs.
-func FindIds(name string) ([]int32, error) {
-	return ps.FindIds(name)
-}
-
-// FindPath find the process path by the process pid
-func FindPath(pid int32) (string, error) {
-	return ps.FindPath(pid)
 }
 
 func internalActive(pid int32, hwnd int) {
@@ -1595,9 +1540,4 @@ func ActiveName(name string) error {
 	}
 
 	return err
-}
-
-// Kill kill the process by PID
-func Kill(pid int32) error {
-	return ps.Kill(pid)
 }
