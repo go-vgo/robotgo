@@ -150,6 +150,21 @@ func TestBitmap(t *testing.T) {
 	tt.NotNil(t, bit1)
 }
 
+func TestPs(t *testing.T) {
+	id, err := Pids()
+	tt.Not(t, "[]", id)
+	tt.IsType(t, "[]int32", id)
+	tt.Nil(t, err)
+
+	b, e := PidExists(id[0])
+	tt.Bool(t, b)
+	tt.Nil(t, e)
+
+	n, e := FindName(id[0])
+	tt.NotEmpty(t, n)
+	tt.Nil(t, e)
+}
+
 // func TestAlert(t *testing.T) {
 // 	go func() {
 // 		MilliSleep(200)
