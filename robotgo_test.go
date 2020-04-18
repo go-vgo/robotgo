@@ -168,6 +168,20 @@ func TestPs(t *testing.T) {
 	n, e := FindName(id[0])
 	tt.NotEmpty(t, n)
 	tt.Nil(t, e)
+
+	n1, e := FindNames()
+	tt.Not(t, "[]", n1)
+	tt.IsType(t, "[]string", n1)
+	tt.Nil(t, e)
+
+	id, err = FindIds(n1[0])
+	tt.Not(t, "[]", id)
+	tt.IsType(t, "[]int32", id)
+	tt.Nil(t, err)
+
+	n, e = FindPath(id[0])
+	tt.NotEmpty(t, n)
+	tt.Nil(t, e)
 }
 
 // func TestAlert(t *testing.T) {
