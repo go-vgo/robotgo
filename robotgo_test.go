@@ -156,6 +156,11 @@ func TestPs(t *testing.T) {
 	tt.IsType(t, "[]int32", id)
 	tt.Nil(t, err)
 
+	ps, e := Process()
+	tt.Not(t, "[]", ps)
+	tt.IsType(t, "[]robotgo.Nps", ps)
+	tt.Nil(t, err)
+
 	b, e := PidExists(id[0])
 	tt.Bool(t, b)
 	tt.Nil(t, e)
