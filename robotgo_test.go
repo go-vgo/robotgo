@@ -179,9 +179,9 @@ func TestPs(t *testing.T) {
 	tt.IsType(t, "[]int32", id)
 	tt.Nil(t, err)
 
-	n, e = FindPath(id[0])
-	tt.NotEmpty(t, n)
-	tt.Nil(t, e)
+	// n, e = FindPath(id[0])
+	// tt.NotEmpty(t, n)
+	// tt.Nil(t, e)
 }
 
 // func TestAlert(t *testing.T) {

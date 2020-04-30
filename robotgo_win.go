@@ -14,6 +14,7 @@ package robotgo
 
 import (
 	"syscall"
+	"unsafe"
 
 	"github.com/lxn/win"
 )
@@ -30,4 +31,24 @@ func GetHWND() win.HWND {
 	hwnd := win.GetForegroundWindow()
 
 	return hwnd
+}
+
+// SendInput send n input event
+func SendInput(nInputs uint32, pInputs unsafe.Pointer, cbSize int32) uint32 {
+	return win.SendInput(nInputs, pInputs, cbSize)
+}
+
+// SendMsg send a message with hwnd
+func SendMsg(hwnd win.HWND, msg uint32, wParam, lParam uintptr) uintptr {
+	return win.SendMessage(hwnd, msg, wParam, lParam)
+}
+
+// SetActiveWindow set window active with hwnd
+func SetActiveWindow(hwnd win.HWND) win.HWND {
+	return win.SetActiveWindow(hwnd)
+}
+
+// SetFocus set window focus with hwnd
+func SetFocus(hWnd win.HWND) win.HWND {
+	return win.SetFocus(hWnd)
 }
