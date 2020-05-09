@@ -32,6 +32,8 @@ import (
 //
 // mouse arguments: mleft, center, mright, wheelDown, wheelUp,
 // wheelLeft, wheelRight.
+//
+// Use "robotgo.AddEvents()" or "gohook" add asynchronous event listener
 func AddEvent(key string) bool {
 	var (
 		// cs   *C.char
