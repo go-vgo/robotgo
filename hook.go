@@ -25,6 +25,28 @@ import (
 |_______|   \__/     |_______||__| \__|     |__|
 */
 
+// EventStart start global event hook
+// return event channel
+func EventStart() chan hook.Event {
+	return hook.Start()
+}
+
+// EventEnd removes global event hook
+func EventEnd() {
+	hook.End()
+}
+
+// EventProcess return go hook process
+func EventProcess(Events chan hook.Event) chan bool {
+	return hook.Process(Events)
+}
+
+// EventHook register gohook event
+func EventHook(When uint8, keysPressed []string, Callback func(hook.Event)) {
+	hook.Register(When, keysPressed, Callback)
+	return
+}
+
 // AddEvent add event listener,
 //
 // parameters for the string type,
