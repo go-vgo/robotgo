@@ -2,6 +2,294 @@
 
 <!--### RobotGo-->
 
+## RobotGo v0.90.0, MT. Rainier
+
+### Add
+
+add gohook modern and concurrent API
+add new gohook examples, thks for cauefcr
+
+Support for multiple screens 
+add getMousePos() multiple screens support
+add move smooth multiple screens support
+
+add all platform system scale support
+add get screen size test code
+
+add screen and bitmap multiple screens support
+add int32_t types support
+
+update keycode type use uint16 with gohook, not type convert
+add ToBitmapBytes func (#204)
+
+add gops test code support
+add Process() function test code
+add more gops test code
+
+add more win32 function export
+
+add get mouse color function
+
+add uint32 to Chex function support
+
+add key_Toggles() c function
+add keyTap and keyToggle "...string" parameters support, Fixed #209
+
+add robotgo simple test code
+
+add Is64Bit() c and go function
+
+add process FindPath() function
+
+add keycode "delete" support and fixed "\\" error
+add more keycode support, "up, down, left, right"...
+
+export hook keycode and add godoc
+
+use robotn fork xgb and update go mod
+
+add hook example to robotgo examples
+
+update gohook and tt mod file
+
+add more and update test code
+
+add drag smooth function support and examples
+
+add ShowAlert() test support
+
+update keypress rand sleep [reduce] and update code style, update c delay default value to 0
+
+add mouse toggle return and add more test
+
+add SetDelay function code and update other code
+
+add scaled function code
+
+add go opencv file
+
+add readme.md file
+
+add move mouse and move smooth relative code
+
+add move mouse and move smooth relative examples
+
+add more test code and update go tt mod
+
+add more bitmap test code
+
+add SaveImg function code
+
+add drop function hint print support
+
+add more key test code
+add more test code
+add paste string test code
+add xvfb run codecov test
+
+add keycode test support
+
+add FindPath example code
+
+add KeyTap() args[2] delay support
+
+add find bitmap nil args support
+
+add find color nil args support
+
+add drag and move mouse multiple screens support
+
+add drag mouse test code
+
+Use CGDisplayBounds not CGDisplayPixelsWide, optimize get mac display size …
+
+Update TypeStr function, add type delay and speed support
+
+update PasteStr function code return error
+
+### Update
+
+Update robot info test code and Add go.yml test support
+
+use while not for match special key map
+remove unless x11 special key and sort
+
+update go mod pkg
+update mod vendor
+remove vendor and update .gitignore
+
+update and fmt config.yml, add Linux go test support
+update Linux CI support x11 test
+
+move hook to hook.go
+
+update appveyor and test code
+update version and code style
+
+update move mouse smooth test code
+
+update clipboard code and add test code
+
+update test code and add codecov support
+
+update show alert test code
+
+update keycode.go
+
+update window examples code
+
+update test code remove windows alert test
+
+move gops code to ps.go
+
+update version
+
+update unix get title type
+
+gofmt go code and update code style
+
+add ToBitmapBytes examples code
+
+update example code, fixed golint warning
+
+update bitmap example code
+
+Update CHANGELOG.md
+
+update code style
+
+update godoc
+
+update keytap code and code style
+
+update Bitmap struct delete fuzzy api
+
+update key examples code
+
+add bitmap from string clear api
+
+update go mod vendor
+update go mod pkg not proxy
+
+update bitmap example code
+
+update test code fixed appveyor CI
+
+update test code fixed equal error
+
+update hook godoc
+
+update event example code
+
+update godoc and code style
+
+update key example code
+
+Update example README.md
+
+update and tidy go mod
+
+update code remove duplicate code and update godoc
+
+update xgb getXid log
+
+update GetBounds x11 error log
+
+update cgo code and version
+
+update TypeString function code [Drop]
+
+update key example code
+
+Update TypeStr function, optimize x11 type string
+
+Update TypeStrDelay function, remove unused code
+
+update code fixed x11 type sleep
+
+Update key example code
+
+use gops to simplify code
+update key examples code
+
+update bitmap examples code
+
+update colorpicker and findcolor example code
+
+update bitmap example code
+
+update robotgo test code, add more test
+
+Update README.md
+
+rename type names make clearer
+
+update types.h code and fixed bug
+
+remove unused code fixed x11 build error
+
+update robot info test code and appveyor
+
+Update README.md, Add more CI badge
+
+update gohook pkg and robot info test code
+
+Update linux upper code, add more special key support
+
+Create go.yml
+Update go.yml
+add more test and update go.yml
+Update dockerfile to go1.13.5
+
+update dockerfile and appveyor.yml
+Update dockerfile and appveyor.yml to go1.14.3
+
+remove Travis go1.11.x
+update appveyor and dockerfile to go1.13.1
+update dockerfile, go.yml and appveyor.yml to go1.14
+
+update travis.yml to go1.14.x and remove go1.13.x
+Update and fmt appveyor.ymlu
+update dockerfile and appveyor to go1.12.5
+
+update appveyor and dockerfile to go1.12.6
+
+add CI go1.13 support
+update config.yml
+update and fmt travis.yml
+Update Travis remove go1.12.x
+
+Update issue and pull request template
+
+### Fix
+
+Update to utf-code function Fixed #189
+
+Update x11 keypress upper code Fixed #243
+
+type conversion needed in addMouse (#201)
+
+update hook, Fixed #202 fatal error: concurrent map writes
+
+add key Kind Fixed #203
+
+optimize get title code, Fixed #165 and typo
+
+Fixed gohook#3 mouse is_drag error on x11
+
+Fixed #213 AddEvents() can't listen correctly multiple times
+
+update clipboard error hand Fixed #212
+
+Update go.mod fixing issue "invalid pseudo-version: does not match version …
+
+update keyboard example code, #238
+
+update go mod file Fixed #239
+
+update gops and other mod files fixed bug
+
+
 ## RobotGo v0.80.0, Sierra Nevada
 
 # Sierra Nevada
