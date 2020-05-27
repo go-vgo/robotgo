@@ -9,7 +9,7 @@
 add gohook modern and concurrent API
 add new gohook examples, thks for cauefcr
 
-Support for multiple screens 
+Support for multiple screens
 add getMousePos() multiple screens support
 add move smooth multiple screens support
 
@@ -21,6 +21,8 @@ add int32_t types support
 
 update keycode type use uint16 with gohook, not type convert
 add ToBitmapBytes func (#204)
+
+gohook: sched_yield support for non-POSIX windows gcc
 
 add gops test code support
 add Process() function test code
@@ -294,7 +296,7 @@ update gops and other mod files fixed bug
 
 # Sierra Nevada
 
-### Add  
+### Add
 
 - [NEW] Add asynchronous event support
 - [NEW] Add multiple keypress event listener support
@@ -333,7 +335,7 @@ update gops and other mod files fixed bug
 
 - [FIX] Add AddEvents func, Fixed #98, #61, #69...
 - [FIX] Add asynchronous event support, Fixed #196, #89...
-- [FIX] add AddMouse func, Fixed #138 
+- [FIX] add AddMouse func, Fixed #138
 - [FIX] Update _Ctype_char to C.char, Fixed go1.12 build error #191
 - [FIX] Update hook, Fixed #195 warning and json break bug
 - [FIX] Fixed color picker, Update README.md and docs
