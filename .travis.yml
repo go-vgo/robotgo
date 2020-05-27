@@ -1,5 +1,9 @@
 language: go
 
+os:
+  - linux
+  - osx
+
 go:
   # - 1.7.x
   # - 1.8.x
@@ -39,4 +43,7 @@ addons:
 before_install:
   - export PATH=$PATH:$HOME/gopath/bin
   - go get -v -t -d ./...
-  - xvfb-run go test -v ./...
+
+script:
+  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then xvfb-run go test -v ./...; fi
+  - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then go test -v ./...; fi
