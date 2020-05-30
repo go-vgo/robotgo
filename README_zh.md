@@ -214,7 +214,7 @@ func main() {
 }
 ```
 
-#### [事件](https://github.com/go-vgo/robotgo/blob/master/examples/event/main.go)
+#### [事件](https://github.com/go-vgo/robotgo/blob/master/examples/gohook/main.go)
 
 ```Go
 package main
