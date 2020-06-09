@@ -230,6 +230,12 @@ import (
 )
 
 func main() {
+  add()
+  low()
+  event()
+}
+
+func add() {
   fmt.Println("--- Please press ctrl + shift + q to stop hook ---")
   robotgo.EventHook(hook.KeyDown, []string{"q", "ctrl", "shift"}, func(e hook.Event) {
     fmt.Println("ctrl-shift-q")
@@ -243,7 +249,18 @@ func main() {
 
   s := robotgo.EventStart()
   <-robotgo.EventProcess(s)
+}
 
+func low() {
+	EvChan := hook.Start()
+	defer hook.End()
+
+	for ev := range EvChan {
+		fmt.Println("hook: ", ev)
+	}
+}
+
+func event() {
   ok := robotgo.AddEvents("q", "ctrl", "shift")
   if ok {
     fmt.Println("add events...")
