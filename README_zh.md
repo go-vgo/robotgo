@@ -145,14 +145,14 @@ import (
 )
 
 func main() {
-  robotgo.TypeStr("Hello World")
-  robotgo.TypeStr("测试")
-  // robotgo.TypeString("测试")
+  robotgo.TypeStr("Hello World. Winter is coming!")
+  robotgo.TypeStr("だんしゃり", 1.0)
+  // robotgo.TypeString("テストする")
 
-  robotgo.TypeStr("山达尔星新星军团, galaxy. こんにちは世界.")
+  robotgo.TypeStr("Hi galaxy. こんにちは世界.")
   robotgo.Sleep(1)
 
-  // ustr := uint32(robotgo.CharCodeAt("测试", 0))
+  // ustr := uint32(robotgo.CharCodeAt("テストする", 0))
   // robotgo.UnicodeType(ustr)
 
   robotgo.KeyTap("enter")
@@ -162,7 +162,7 @@ func main() {
   arr := []string{"alt", "command"}
   robotgo.KeyTap("i", arr)
 
-  robotgo.WriteAll("测试")
+  robotgo.WriteAll("テストする")
   text, err := robotgo.ReadAll()
   if err == nil {
     fmt.Println(text)
@@ -347,7 +347,7 @@ GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64
 
 ## Donate
 
-支持 robotgo, [buy me a coffee](https://github.com/go-vgo/buy-me-a-coffee).
+<!-- 支持 robotgo, [buy me a coffee](https://github.com/go-vgo/buy-me-a-coffee). -->
 
 #### Paypal
 
