@@ -765,8 +765,8 @@ func TypeStr(str string, args ...float64) {
 	if runtime.GOOS == "linux" {
 		strUc := toUC(str)
 		for i := 0; i < len(strUc); i++ {
-			rstr := []rune(strUc[i])
-			if len(rstr) <= 1 {
+			ru := []rune(strUc[i])
+			if len(ru) <= 1 {
 				ustr := uint32(CharCodeAt(strUc[i], 0))
 				UnicodeType(ustr)
 			} else {
