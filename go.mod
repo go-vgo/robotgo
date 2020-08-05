@@ -11,9 +11,9 @@ require (
 	github.com/vcaesar/gops v0.10.0
 	github.com/vcaesar/imgo v0.10.0
 	github.com/vcaesar/tt v0.10.0
-	golang.org/x/image v0.0.0-20200618115811-c13761719519
+	golang.org/x/image v0.0.0-20200801110659-972c09e46d76
 	golang.org/x/net v0.0.0-20200520004742-59133d7f0dd7 // indirect
-	golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae // indirect
+	golang.org/x/sys v0.0.0-20200805065543-0cf7623e9dbd // indirect
 )
 
 // replace golang.org/x/sys => github.com/golang/sys v0.0.0-20190109145017-48ac38b7c8cb
