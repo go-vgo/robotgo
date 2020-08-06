@@ -67,11 +67,13 @@ func readAll() (string, error) {
 	if Unsupported {
 		return "", errMissingCommands
 	}
+
 	pasteCmd := getPasteCommand()
 	out, err := pasteCmd.Output()
 	if err != nil {
 		return "", err
 	}
+
 	return string(out), nil
 }
 
@@ -94,5 +96,6 @@ func writeAll(text string) error {
 	if err := in.Close(); err != nil {
 		return err
 	}
+
 	return copyCmd.Wait()
 }

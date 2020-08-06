@@ -38,8 +38,10 @@ var (
 func waitOpenClipboard() error {
 	started := time.Now()
 	limit := started.Add(time.Second)
-	var r uintptr
-	var err error
+	var (
+		r   uintptr
+		err error
+	)
 	for time.Now().Before(limit) {
 		r, _, err = openClipboard.Call(0)
 		if r != 0 {
@@ -47,6 +49,7 @@ func waitOpenClipboard() error {
 		}
 		time.Sleep(time.Millisecond)
 	}
+
 	return err
 }
 

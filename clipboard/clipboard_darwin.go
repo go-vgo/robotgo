@@ -48,5 +48,6 @@ func writeAll(text string) error {
 	if err := in.Close(); err != nil {
 		return err
 	}
+
 	return copyCmd.Wait()
 }
