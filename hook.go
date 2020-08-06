@@ -36,6 +36,22 @@ func EventEnd() {
 	hook.End()
 }
 
+// Start start global event hook
+// return event channel
+func Start() chan hook.Event {
+	return hook.Start()
+}
+
+// End removes global event hook
+func End() {
+	hook.End()
+}
+
+// StopEvent stop event listener
+func StopEvent() {
+	hook.StopEvent()
+}
+
 // EventProcess return go hook process
 func EventProcess(Events chan hook.Event) chan bool {
 	return hook.Process(Events)
@@ -82,22 +98,6 @@ func AddEvent(key string) bool {
 	}
 
 	return false
-}
-
-// StopEvent stop event listener
-func StopEvent() {
-	hook.StopEvent()
-}
-
-// Start start global event hook
-// return event channel
-func Start() chan hook.Event {
-	return hook.Start()
-}
-
-// End removes global event hook
-func End() {
-	hook.End()
 }
 
 // AddEvents add global event hook
