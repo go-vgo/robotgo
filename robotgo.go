@@ -69,7 +69,7 @@ import (
 
 const (
 	// Version get the robotgo version
-	Version = "v0.90.0.1050, MT. Rainier!"
+	Version = "v0.90.3.1072, MT. Rainier!"
 )
 
 // GetVersion get the robotgo version
@@ -89,8 +89,8 @@ type (
 // Bitmap is Bitmap struct
 type Bitmap struct {
 	ImgBuf        *uint8
-	Width         int
-	Height        int
+	Width, Height int
+
 	Bytewidth     int
 	BitsPixel     uint8
 	BytesPerPixel uint8
@@ -306,9 +306,9 @@ func CaptureScreen(args ...int) C.MMBitmapRef {
 	} else {
 		x = 0
 		y = 0
+
 		// Get screen size.
-		var displaySize C.MMSizeInt32
-		displaySize = C.getMainDisplaySize()
+		displaySize := C.getMainDisplaySize()
 		w = displaySize.w
 		h = displaySize.h
 	}
@@ -638,7 +638,6 @@ func KeyTap(tapKey string, args ...interface{}) string {
 
 	amod := C.CString(akey)
 	amodt := C.CString(keyT)
-
 	str := C.key_tap(zkey, amod, amodt, C.int(keyDelay))
 
 	C.free(unsafe.Pointer(amod))
@@ -659,7 +658,6 @@ func KeyToggle(key string, args ...string) string {
 	ckeyArr := make([](*C.char), 0)
 	if len(args) > 3 {
 		num := len(args)
-
 		for i := 0; i < num; i++ {
 			ckeyArr = append(ckeyArr, (*C.char)(unsafe.Pointer(C.CString(args[i]))))
 		}
@@ -678,7 +676,6 @@ func KeyToggle(key string, args ...string) string {
 
 		if len(args) > 1 {
 			mKey = args[1]
-
 			if len(args) > 2 {
 				mKeyT = args[2]
 			}
@@ -1536,7 +1533,7 @@ func internalActive(pid int32, hwnd int) {
 func ActiveName(name string) error {
 	pids, err := FindIds(name)
 	if err == nil && len(pids) > 0 {
-		ActivePID(pids[0])
+		return ActivePID(pids[0])
 	}
 
 	return err
