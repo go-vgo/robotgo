@@ -60,7 +60,6 @@ func EventProcess(Events chan hook.Event) chan bool {
 // EventHook register gohook event
 func EventHook(When uint8, keysPressed []string, Callback func(hook.Event)) {
 	hook.Register(When, keysPressed, Callback)
-	return
 }
 
 // AddEvent add event listener,
@@ -92,12 +91,7 @@ func AddEvent(key string) bool {
 
 	geve := hook.AddEvent(key)
 	// defer C.free(unsafe.Pointer(cs))
-
-	if geve == 0 {
-		return true
-	}
-
-	return false
+	return geve == 0
 }
 
 // AddEvents add global event hook
