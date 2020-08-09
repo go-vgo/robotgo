@@ -49,8 +49,9 @@ package robotgo
 import "C"
 
 import (
-	// "fmt"
+	"fmt"
 	"image"
+
 	// "os"
 	"reflect"
 	"runtime"
@@ -577,9 +578,9 @@ func KeyTap(tapKey string, args ...interface{}) string {
 		num      int
 		keyDelay = 10
 	)
+
 	// var ckeyArr []*C.char
 	ckeyArr := make([](*C.char), 0)
-
 	// zkey := C.CString(args[0])
 	zkey := C.CString(tapKey)
 	defer C.free(unsafe.Pointer(zkey))
@@ -591,8 +592,8 @@ func KeyTap(tapKey string, args ...interface{}) string {
 			ckeyArr = append(ckeyArr, (*C.char)(unsafe.Pointer(C.CString(s))))
 		}
 
-		str := C.key_Taps(zkey, (**C.char)(unsafe.Pointer(&ckeyArr[0])),
-			C.int(num), 0)
+		str := C.key_Taps(zkey,
+			(**C.char)(unsafe.Pointer(&ckeyArr[0])), C.int(num), 0)
 		return C.GoString(str)
 	}
 
@@ -601,7 +602,6 @@ func KeyTap(tapKey string, args ...interface{}) string {
 
 			keyArr = args[0].([]string)
 			num = len(keyArr)
-
 			for i := 0; i < num; i++ {
 				ckeyArr = append(ckeyArr, (*C.char)(unsafe.Pointer(C.CString(keyArr[i]))))
 			}
@@ -789,7 +789,11 @@ func TypeStr(str string, args ...float64) {
 
 // PasteStr paste a string, support UTF-8
 func PasteStr(str string) string {
-	clipboard.WriteAll(str)
+	err := clipboard.WriteAll(str)
+	if err != nil {
+		return fmt.Sprint(err)
+	}
+
 	if runtime.GOOS == "darwin" {
 		return KeyTap("v", "command")
 	}
