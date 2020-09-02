@@ -2,7 +2,7 @@
 FROM golang:1.14.7-stretch AS build
 # FROM govgo/go:1.11.1
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt update && apt install -y --no-install-recommends \
     # customize dependencies
     libx11-dev xorg-dev \
     # libgtkglextmm-x11-dev
@@ -16,10 +16,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxkbcommon-x11-dev libxkbcommon-dev \
     # Clipboard:
     xsel xclip && \
-    # RUN apt-get install -y xclip
+    # RUN apt install -y xclip
     #
-    apt-get remove --purge --auto-remove && \
-    apt-get clean               && \
+    apt remove --purge --auto-remove && \
+    apt clean               && \
     rm -rf /var/lib/apt/lists/*
 
 RUN go get -u github.com/go-vgo/robotgo
