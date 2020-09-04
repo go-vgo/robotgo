@@ -37,7 +37,7 @@ func addMouse() {
 	fmt.Println("--- Please press left mouse button to see it's position and the right mouse button to exit ---")
 	robotgo.EventHook(hook.MouseDown, []string{}, func(e hook.Event) {
 		if e.Button == hook.MouseMap["left"] {
-			fmt.Printf("mleft @ %v - %v\n", e.X, e.Y)
+			fmt.Printf("mouse left @ %v - %v\n", e.X, e.Y)
 		} else if e.Button == hook.MouseMap["right"] {
 			robotgo.EventEnd()
 		}

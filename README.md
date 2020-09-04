@@ -223,7 +223,7 @@ func main() {
 package main
 
 import (
-	"fmt"
+  "fmt"
 
   "github.com/go-vgo/robotgo"
   hook "github.com/robotn/gohook"
