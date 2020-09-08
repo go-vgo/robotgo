@@ -79,7 +79,7 @@ MMKeyCode keyCodeForChar(const char c){
 													128,
 													&kCFCopyStringDictionaryKeyCallBacks,
 													NULL);
-			if (charToCodeDict == NULL) return UINT16_MAX;
+			if (charToCodeDict == NULL) return K_NOT_A_KEY;
 
 			/* Loop through every keycode (0 - 127) to find its current mapping. */
 			for (i = 0; i < 128; ++i) {
@@ -100,9 +100,18 @@ MMKeyCode keyCodeForChar(const char c){
 		}
 
 		CFRelease(charStr);
+
+		if (code == UINT16_MAX) {
+			return K_NOT_A_KEY;
+		}
+
 		return (MMKeyCode)code;
 	#elif defined(IS_WINDOWS)
-		return VkKeyScan(c);
+		CGKeyCode code;
+		code = VkKeyScan(c);
+		if (code == 0xFFFF)
+			return K_NOT_A_KEY;
+		return code;
 	#elif defined(USE_X11)
 		MMKeyCode code;
 
@@ -124,6 +133,9 @@ MMKeyCode keyCodeForChar(const char c){
 				xs++;
 			}
 		}
+
+		if (code == NoSymbol)
+			return K_NOT_A_KEY;
 
 		return code;
 	#endif
