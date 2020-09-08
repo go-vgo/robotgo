@@ -114,7 +114,7 @@ MMKeyCode keyCodeForChar(const char c){
 
 		return (MMKeyCode)code;
 	#elif defined(IS_WINDOWS)
-		CGKeyCode code;
+		MMKeyCode code;
 		code = VkKeyScan(c);
 		if (code == 0xFFFF)
 			return K_NOT_A_KEY;
