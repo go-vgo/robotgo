@@ -10,6 +10,8 @@
  * responsibility to release the returned object. */
 CFStringRef createStringForKey(CGKeyCode keyCode);
 
+MMKeyCode keyCodeForCharFallBack(const char c);
+
 #elif defined(USE_X11)
 
 /*
@@ -79,7 +81,7 @@ MMKeyCode keyCodeForChar(const char c){
 													128,
 													&kCFCopyStringDictionaryKeyCallBacks,
 													NULL);
-			if (charToCodeDict == NULL) return UINT16_MAX;
+			if (charToCodeDict == NULL) return K_NOT_A_KEY;
 
 			/* Loop through every keycode (0 - 127) to find its current mapping. */
 			for (i = 0; i < 128; ++i) {
@@ -100,9 +102,23 @@ MMKeyCode keyCodeForChar(const char c){
 		}
 
 		CFRelease(charStr);
+
+		// TISGetInputSourceProperty may return nil so we need fallback
+		if (code == UINT16_MAX) {
+			code = keyCodeForCharFallBack(c);
+		}
+
+		if (code == UINT16_MAX) {
+			return K_NOT_A_KEY;
+		}
+
 		return (MMKeyCode)code;
 	#elif defined(IS_WINDOWS)
-		return VkKeyScan(c);
+		MMKeyCode code;
+		code = VkKeyScan(c);
+		if (code == 0xFFFF)
+			return K_NOT_A_KEY;
+		return code;
 	#elif defined(USE_X11)
 		MMKeyCode code;
 
@@ -124,6 +140,9 @@ MMKeyCode keyCodeForChar(const char c){
 				xs++;
 			}
 		}
+
+		if (code == NoSymbol)
+			return K_NOT_A_KEY;
 
 		return code;
 	#endif
@@ -160,6 +179,51 @@ CFStringRef createStringForKey(CGKeyCode keyCode){
 	CFRelease(currentKeyboard);
 
 	return CFStringCreateWithCharacters(kCFAllocatorDefault, chars, 1);
+}
+
+MMKeyCode keyCodeForCharFallBack(const char c) {
+	switch (c) {
+		case 'A': return kVK_ANSI_A;
+		case 'B': return kVK_ANSI_B;
+		case 'C': return kVK_ANSI_C;
+		case 'D': return kVK_ANSI_D;
+		case 'E': return kVK_ANSI_E;
+		case 'F': return kVK_ANSI_F;
+		case 'G': return kVK_ANSI_G;
+		case 'H': return kVK_ANSI_H;
+		case 'I': return kVK_ANSI_I;
+		case 'J': return kVK_ANSI_J;
+		case 'K': return kVK_ANSI_K;
+		case 'L': return kVK_ANSI_L;
+		case 'M': return kVK_ANSI_M;
+		case 'N': return kVK_ANSI_N;
+		case 'O': return kVK_ANSI_O;
+		case 'P': return kVK_ANSI_P;
+		case 'Q': return kVK_ANSI_Q;
+		case 'R': return kVK_ANSI_R;
+		case 'S': return kVK_ANSI_S;
+		case 'T': return kVK_ANSI_T;
+		case 'U': return kVK_ANSI_U;
+		case 'V': return kVK_ANSI_V;
+		case 'W': return kVK_ANSI_W;
+		case 'X': return kVK_ANSI_X;
+		case 'Y': return kVK_ANSI_Y;
+		case 'Z': return kVK_ANSI_Z;
+
+
+		case '0': return kVK_ANSI_0;
+		case '1': return kVK_ANSI_1;
+		case '2': return kVK_ANSI_2;
+		case '3': return kVK_ANSI_3;
+		case '4': return kVK_ANSI_4;
+		case '5': return kVK_ANSI_5;
+		case '6': return kVK_ANSI_6;
+		case '7': return kVK_ANSI_7;
+		case '8': return kVK_ANSI_8;
+		case '9': return kVK_ANSI_9;
+	}
+
+	return K_NOT_A_KEY;
 }
 
 #endif

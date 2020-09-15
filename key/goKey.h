@@ -143,6 +143,8 @@ int CheckKeyCodes(char* k, MMKeyCode *key){
 
 	if (strlen(k) == 1) {
 		*key = keyCodeForChar(*k);
+		if (*key == K_NOT_A_KEY)
+			return -2;
 		return 0;
 	}
 
