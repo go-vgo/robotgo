@@ -116,8 +116,10 @@ MMKeyCode keyCodeForChar(const char c){
 	#elif defined(IS_WINDOWS)
 		MMKeyCode code;
 		code = VkKeyScan(c);
-		if (code == 0xFFFF)
+		if (code == 0xFFFF) {
 			return K_NOT_A_KEY;
+		}
+
 		return code;
 	#elif defined(USE_X11)
 		MMKeyCode code;
@@ -135,14 +137,16 @@ MMKeyCode keyCodeForChar(const char c){
 			while (xs->name) {
 				if (c == xs->name ) {
 					code = xs->code;
+					// 
 					break;
 				}
 				xs++;
 			}
 		}
 
-		if (code == NoSymbol)
+		if (code == NoSymbol) {
 			return K_NOT_A_KEY;
+		}
 
 		return code;
 	#endif
