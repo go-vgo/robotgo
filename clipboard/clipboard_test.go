@@ -28,36 +28,36 @@ func TestCopyAndPaste(t *testing.T) {
 	}
 }
 
-// func TestMultiCopyAndPaste(t *testing.T) {
-// 	expected1 := "French: éèêëàùœç"
-// 	expected2 := "Weird UTF-8: 💩☃"
+func TestMultiCopyAndPaste(t *testing.T) {
+	expected1 := "French: éèêëàùœç"
+	expected2 := "Weird UTF-8: 💩☃"
 
-// 	err := clipboard.WriteAll(expected1)
-// 	if err != nil {
-// 		t.Fatal(err)
-// 	}
+	err := clipboard.WriteAll(expected1)
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// 	actual1, err := clipboard.ReadAll()
-// 	if err != nil {
-// 		t.Fatal(err)
-// 	}
-// 	if actual1 != expected1 {
-// 		t.Errorf("want %s, got %s", expected1, actual1)
-// 	}
+	actual1, err := clipboard.ReadAll()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if actual1 != expected1 {
+		t.Errorf("want %s, got %s", expected1, actual1)
+	}
 
-// 	err = clipboard.WriteAll(expected2)
-// 	if err != nil {
-// 		t.Fatal(err)
-// 	}
+	err = clipboard.WriteAll(expected2)
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// 	actual2, err := clipboard.ReadAll()
-// 	if err != nil {
-// 		t.Fatal(err)
-// 	}
-// 	if actual2 != expected2 {
-// 		t.Errorf("want %s, got %s", expected2, actual2)
-// 	}
-// }
+	actual2, err := clipboard.ReadAll()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if actual2 != expected2 {
+		t.Errorf("want %s, got %s", expected2, actual2)
+	}
+}
 
 func BenchmarkReadAll(b *testing.B) {
 	for i := 0; i < b.N; i++ {
