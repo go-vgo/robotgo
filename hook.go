@@ -53,13 +53,13 @@ func StopEvent() {
 }
 
 // EventProcess return go hook process
-func EventProcess(Events chan hook.Event) chan bool {
-	return hook.Process(Events)
+func EventProcess(events chan hook.Event) chan bool {
+	return hook.Process(events)
 }
 
 // EventHook register gohook event
-func EventHook(When uint8, keysPressed []string, Callback func(hook.Event)) {
-	hook.Register(When, keysPressed, Callback)
+func EventHook(when uint8, keysPressed []string, callback func(hook.Event)) {
+	hook.Register(when, keysPressed, callback)
 }
 
 // AddEvent add event listener,
