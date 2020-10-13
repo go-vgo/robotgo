@@ -350,15 +350,6 @@ Some discussions and questions, please see [issues/228](https://github.com/go-vg
 - Update Window Handle
 - Try support Android, maybe support IOS
 
-## Donate
-
-Supporting robotgo, [buy me a coffee](https://github.com/go-vgo/buy-me-a-coffee).
-
-#### Paypal
-
-Donate money by [paypal](https://www.paypal.me/veni0/25) to my account [vzvway@gmail.com](vzvway@gmail.com)
-
-
 ## Contributors
 
 - See [contributors page](https://github.com/go-vgo/robotgo/graphs/contributors) for full list of contributors.
