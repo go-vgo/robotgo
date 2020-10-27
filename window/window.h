@@ -85,7 +85,7 @@ void set_handle_pid_mData(uintptr pid, uintptr isHwnd){
 bool IsValid(){
 	initWindow(initHandle);
 	if (!IsAxEnabled(true)) {
-		printf("%s\n", "Window:Accessibility API is disabled!\n"
+		printf("%s\n", "Window: Accessibility API is disabled!\n"
 		"Failed to enable access for assistive devices.");
 	}
 	MData actdata = GetActive();

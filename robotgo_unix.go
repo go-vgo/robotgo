@@ -28,13 +28,12 @@ func GetBounds(pid int32, args ...int) (int, int, int, int) {
 	var hwnd int
 	if len(args) > 0 {
 		hwnd = args[0]
-
 		return internalGetBounds(pid, hwnd)
 	}
 
 	xid, err := GetXId(xu, pid)
 	if err != nil {
-		log.Println("GetXid from Pid errors is: ", err)
+		log.Println("Get Xid from Pid errors is: ", err)
 		return 0, 0, 0, 0
 	}
 
@@ -46,13 +45,12 @@ func internalGetTitle(pid int32, args ...int32) string {
 	var hwnd int32
 	if len(args) > 0 {
 		hwnd = args[0]
-
 		return cgetTitle(pid, hwnd)
 	}
 
 	xid, err := GetXId(xu, pid)
 	if err != nil {
-		log.Println("GetXid from Pid errors is: ", err)
+		log.Println("Get Xid from Pid errors is: ", err)
 		return ""
 	}
 
@@ -61,22 +59,22 @@ func internalGetTitle(pid int32, args ...int32) string {
 
 // ActivePIDC active the window by PID,
 // If args[0] > 0 on the unix platform via a xid to active
-func ActivePIDC(pid int32, args ...int) {
+func ActivePIDC(pid int32, args ...int) error {
 	var hwnd int
 	if len(args) > 0 {
 		hwnd = args[0]
-
 		internalActive(pid, hwnd)
-		return
+		return nil
 	}
 
 	xid, err := GetXId(xu, pid)
 	if err != nil {
-		log.Println("GetXid from Pid errors is: ", err)
-		return
+		log.Println("Get Xid from Pid errors is: ", err)
+		return err
 	}
 
 	internalActive(int32(xid), hwnd)
+	return nil
 }
 
 // ActivePID active the window by PID,
