@@ -1107,6 +1107,33 @@ func DecodeImg(path string) (image.Image, string, error) {
 	return imgo.DecodeFile(path)
 }
 
+// ToImage convert C.MMBitmapRef to standard image.Image
+func ToImage(bit C.MMBitmapRef) image.Image {
+	bmp1 := ToBitmap(bit)
+	img1 := image.NewRGBA(image.Rect(0, 0, bmp1.Width, bmp1.Height))
+	img1.Pix = make([]uint8, bmp1.Bytewidth*bmp1.Height)
+
+	copyToVUint8A(img1.Pix, bmp1.ImgBuf)
+	img1.Stride = bmp1.Bytewidth
+	return img1
+}
+
+func val(p *uint8, n int) uint8 {
+	addr := uintptr(unsafe.Pointer(p))
+	addr += uintptr(n)
+	p1 := (*uint8)(unsafe.Pointer(addr))
+	return *p1
+}
+
+func copyToVUint8A(dst []uint8, src *uint8) {
+	for i := 0; i < len(dst)-4; i += 4 {
+		dst[i] = val(src, i+2)
+		dst[i+1] = val(src, i+1)
+		dst[i+2] = val(src, i)
+		dst[i+3] = val(src, i+3)
+	}
+}
+
 // OpenImg open the image return []byte
 func OpenImg(path string) []byte {
 	return imgo.ImgToBytes(path)
@@ -1541,30 +1568,4 @@ func ActiveName(name string) error {
 	}
 
 	return err
-}
-
-// ToImage convert C.MMBitmapRef to standard image.Image
-func ToImage(bit C.MMBitmapRef) image.Image {
-	bmp1 := ToBitmap(bit)
-	img1 := image.NewRGBA(image.Rect(0, 0, bmp1.Width, bmp1.Height))
-	img1.Pix = make([]uint8, bmp1.Bytewidth*bmp1.Height)
-	copyToVUint8A(img1.Pix, bmp1.ImgBuf)
-	img1.Stride = bmp1.Bytewidth
-	return img1
-}
-
-func val(p *uint8, n int) uint8 {
-	addr := uintptr(unsafe.Pointer(p))
-	addr += uintptr(n)
-	p1 := (*uint8)(unsafe.Pointer(addr))
-	return *p1
-}
-
-func copyToVUint8A(dst []uint8, src *uint8) {
-	for i := 0; i < len(dst)-4; i += 4 {
-		dst[i] = val(src, i+2)
-		dst[i+1] = val(src, i+1)
-		dst[i+2] = val(src, i)
-		dst[i+3] = val(src, i+3)
-	}
 }

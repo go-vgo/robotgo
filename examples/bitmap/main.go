@@ -21,6 +21,9 @@ import (
 
 func toBitmap(bmp robotgo.CBitmap) {
 	bitmap := robotgo.ToMMBitmapRef(bmp)
+	img := robotgo.ToImage(bitmap)
+	fmt.Println("img: ", img)
+	imgo.SaveToPNG("test_IMG.png", img)
 
 	gbit := robotgo.ToBitmap(bitmap)
 	fmt.Println("go bitmap", gbit, gbit.Width)
