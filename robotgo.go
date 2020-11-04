@@ -1135,13 +1135,18 @@ func copyToVUint8A(dst []uint8, src *uint8) {
 }
 
 // OpenImg open the image return []byte
-func OpenImg(path string) []byte {
+func OpenImg(path string) ([]byte, error) {
 	return imgo.ImgToBytes(path)
 }
 
 // SaveImg save the image by []byte
-func SaveImg(b []byte, path string) {
-	imgo.Save(path, b)
+func SaveImg(b []byte, path string) error {
+	return imgo.Save(path, b)
+}
+
+// SavePng save the image by image.Image
+func SavePng(img image.Image, path string) error {
+	return imgo.SaveToPNG(path, img)
 }
 
 // BitmapStr bitmap from string
