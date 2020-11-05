@@ -1361,7 +1361,7 @@ ____    __    ____  __  .__   __.  _______   ______   ____    __    ____
 */
 
 // ShowAlert show a alert window
-func ShowAlert(title, msg string, args ...string) int {
+func ShowAlert(title, msg string, args ...string) bool {
 	var (
 		// title         string
 		// msg           string
@@ -1392,7 +1392,7 @@ func ShowAlert(title, msg string, args ...string) int {
 	C.free(unsafe.Pointer(adefaultButton))
 	C.free(unsafe.Pointer(acancelButton))
 
-	return ibool
+	return ibool == 0
 }
 
 // IsValid valid the window

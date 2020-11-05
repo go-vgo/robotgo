@@ -20,7 +20,7 @@ import (
 func alert() {
 	// show Alert Window
 	abool := robotgo.ShowAlert("hello", "robotgo")
-	if abool == 0 {
+	if abool {
 		fmt.Println("ok@@@", "ok")
 	}
 	robotgo.ShowAlert("hello", "robotgo", "Ok", "Cancel")

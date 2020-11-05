@@ -308,7 +308,7 @@ func main() {
   }
 
   abool := robotgo.ShowAlert("test", "robotgo")
-  if abool == 0 {
+  if abool {
     fmt.Println("ok@@@ ", "ok")
   }
 
