@@ -144,6 +144,10 @@ func TestBitmap(t *testing.T) {
 	e := SaveBitmap(bit, "robot_test.png")
 	tt.Empty(t, e)
 
+	img := ToImage(bit)
+	err := SavePng(img, "robot_img.png")
+	tt.Nil(t, err)
+
 	bit1 := OpenBitmap("robot_test.png")
 	b := tt.TypeOf(bit, bit1)
 	tt.True(t, b)
