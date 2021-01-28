@@ -1298,6 +1298,45 @@ func FindColorCS(color CHex, x, y, w, h int, args ...float64) (int, int) {
 	return rx, ry
 }
 
+// FindEveryColor find every color
+func FindEveryColor(color CHex, args ...interface{}) (int, int) {
+	var (
+		bitmap    C.MMBitmapRef
+		tolerance C.float = 0.01
+		lpos      C.MMPoint
+	)
+
+	if len(args) > 0 && args[0] != nil {
+		bitmap = args[0].(C.MMBitmapRef)
+	} else {
+		bitmap = CaptureScreen()
+	}
+
+	if len(args) > 1 {
+		tolerance = C.float(args[1].(float64))
+	}
+
+	if len(args) > 2 {
+		lpos.x = C.size_t(args[2].(int))
+		lpos.y = 0
+	} else {
+		lpos.x = 0
+		lpos.y = 0
+	}
+
+	if len(args) > 3 {
+		lpos.x = C.size_t(args[2].(int))
+		lpos.y = C.size_t(args[3].(int))
+	}
+
+	pos := C.bitmap_find_every_color(bitmap, C.MMRGBHex(color), tolerance, &lpos)
+	if len(args) <= 0 {
+		FreeBitmap(bitmap)
+	}
+
+	return int(pos.x), int(pos.y)
+}
+
 // CountColor count bitmap color
 func CountColor(color CHex, args ...interface{}) int {
 	var (
