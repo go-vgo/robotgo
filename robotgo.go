@@ -1017,8 +1017,13 @@ func FindPic(path string, args ...interface{}) (int, int) {
 	return fx, fy
 }
 
+// FreeMMPointArr free MMPoint array
+func FreeMMPointArr(pointArray C.MMPointArrayRef) {
+	C.destroyMMPointArray(pointArray)
+}
+
 // FindEveryBitmap find the every bitmap
-func FindEveryBitmap(bit C.MMBitmapRef, args ...interface{}) (int, int) {
+func FindEveryBitmap(bit C.MMBitmapRef, args ...interface{}) (posArr []MPoint) {
 	var (
 		sbit      C.MMBitmapRef
 		tolerance C.float = 0.01
@@ -1050,12 +1055,23 @@ func FindEveryBitmap(bit C.MMBitmapRef, args ...interface{}) (int, int) {
 
 	pos := C.find_every_bitmap(bit, sbit, tolerance, &lpos)
 	// FreeBitmap(bit)
+	defer FreeMMPointArr(pos)
 	if len(args) <= 0 {
 		FreeBitmap(sbit)
 	}
 
+	cSize := pos.count
+	cArray := pos.array
+	gSlice := (*[1 << 30]C.MMPoint)(unsafe.Pointer(cArray))[:cSize:cSize]
+	for i := 0; i < len(gSlice); i++ {
+		posArr = append(posArr, MPoint{
+			x: int(gSlice[i].x),
+			y: int(gSlice[i].y),
+		})
+	}
+
 	// fmt.Println("pos----", pos)
-	return int(pos.x), int(pos.y)
+	return
 }
 
 // CountBitmap count of the bitmap
@@ -1299,7 +1315,7 @@ func FindColorCS(color CHex, x, y, w, h int, args ...float64) (int, int) {
 }
 
 // FindEveryColor find every color
-func FindEveryColor(color CHex, args ...interface{}) (int, int) {
+func FindEveryColor(color CHex, args ...interface{}) (posArr []MPoint) {
 	var (
 		bitmap    C.MMBitmapRef
 		tolerance C.float = 0.01
@@ -1330,11 +1346,22 @@ func FindEveryColor(color CHex, args ...interface{}) (int, int) {
 	}
 
 	pos := C.bitmap_find_every_color(bitmap, C.MMRGBHex(color), tolerance, &lpos)
+	defer FreeMMPointArr(pos)
 	if len(args) <= 0 {
 		FreeBitmap(bitmap)
 	}
 
-	return int(pos.x), int(pos.y)
+	cSize := pos.count
+	cArray := pos.array
+	gSlice := (*[1 << 30]C.MMPoint)(unsafe.Pointer(cArray))[:cSize:cSize]
+	for i := 0; i < len(gSlice); i++ {
+		posArr = append(posArr, MPoint{
+			x: int(gSlice[i].x),
+			y: int(gSlice[i].y),
+		})
+	}
+
+	return
 }
 
 // CountColor count bitmap color
