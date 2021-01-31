@@ -1017,8 +1017,13 @@ func FindPic(path string, args ...interface{}) (int, int) {
 	return fx, fy
 }
 
+// FreeMMPointArr free MMPoint array
+func FreeMMPointArr(pointArray C.MMPointArrayRef) {
+	C.destroyMMPointArray(pointArray)
+}
+
 // FindEveryBitmap find the every bitmap
-func FindEveryBitmap(bit C.MMBitmapRef, args ...interface{}) (int, int) {
+func FindEveryBitmap(bit C.MMBitmapRef, args ...interface{}) (posArr []MPoint) {
 	var (
 		sbit      C.MMBitmapRef
 		tolerance C.float = 0.01
@@ -1053,9 +1058,23 @@ func FindEveryBitmap(bit C.MMBitmapRef, args ...interface{}) (int, int) {
 	if len(args) <= 0 {
 		FreeBitmap(sbit)
 	}
+	if pos == nil {
+		return
+	}
+	defer FreeMMPointArr(pos)
+
+	cSize := pos.count
+	cArray := pos.array
+	gSlice := (*[(1 << 28) - 1]C.MMPoint)(unsafe.Pointer(cArray))[:cSize:cSize]
+	for i := 0; i < len(gSlice); i++ {
+		posArr = append(posArr, MPoint{
+			x: int(gSlice[i].x),
+			y: int(gSlice[i].y),
+		})
+	}
 
 	// fmt.Println("pos----", pos)
-	return int(pos.x), int(pos.y)
+	return
 }
 
 // CountBitmap count of the bitmap
@@ -1296,6 +1315,60 @@ func FindColorCS(color CHex, x, y, w, h int, args ...float64) (int, int) {
 	FreeBitmap(bitmap)
 
 	return rx, ry
+}
+
+// FindEveryColor find every color
+func FindEveryColor(color CHex, args ...interface{}) (posArr []MPoint) {
+	var (
+		bitmap    C.MMBitmapRef
+		tolerance C.float = 0.01
+		lpos      C.MMPoint
+	)
+
+	if len(args) > 0 && args[0] != nil {
+		bitmap = args[0].(C.MMBitmapRef)
+	} else {
+		bitmap = CaptureScreen()
+	}
+
+	if len(args) > 1 {
+		tolerance = C.float(args[1].(float64))
+	}
+
+	if len(args) > 2 {
+		lpos.x = C.size_t(args[2].(int))
+		lpos.y = 0
+	} else {
+		lpos.x = 0
+		lpos.y = 0
+	}
+
+	if len(args) > 3 {
+		lpos.x = C.size_t(args[2].(int))
+		lpos.y = C.size_t(args[3].(int))
+	}
+
+	pos := C.bitmap_find_every_color(bitmap, C.MMRGBHex(color), tolerance, &lpos)
+	if len(args) <= 0 {
+		FreeBitmap(bitmap)
+	}
+
+	if pos == nil {
+		return
+	}
+	defer FreeMMPointArr(pos)
+
+	cSize := pos.count
+	cArray := pos.array
+	gSlice := (*[(1 << 28) - 1]C.MMPoint)(unsafe.Pointer(cArray))[:cSize:cSize]
+	for i := 0; i < len(gSlice); i++ {
+		posArr = append(posArr, MPoint{
+			x: int(gSlice[i].x),
+			y: int(gSlice[i].y),
+		})
+	}
+
+	return
 }
 
 // CountColor count bitmap color

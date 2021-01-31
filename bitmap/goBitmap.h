@@ -60,40 +60,32 @@ MMPoint find_bitmap(MMBitmapRef bitmap, MMBitmapRef sbit, float tolerance){
 	// printf("x=%d, y=%d, width=%d, height=%d\n", rect.origin.x, 
 	// rect.origin.y, rect.size.width, rect.size.height);
 
-	if (findBitmapInRect(bitmap, sbit, &point,
-	                     rect, tolerance) == 0) {
+	if (findBitmapInRect(bitmap, sbit, &point, rect, tolerance) == 0) {
 		return point;
 	}
 
 	return point;
 }
 
-MMPoint *find_every_bitmap(MMBitmapRef bitmap, MMBitmapRef sbit, float tolerance, MMPoint *list){
-	if (!bitmap_ready(bitmap) || !bitmap_ready(sbit)) return NULL;
+MMPointArrayRef find_every_bitmap(MMBitmapRef bitmap, MMBitmapRef sbit, float tolerance, MMPoint *list){
+	if (!bitmap_ready(bitmap) || !bitmap_ready(sbit)) { return NULL; }
 
 	MMPoint point;
 	MMPointArrayRef pointArray;
-	MMRect rect = MMBitmapGetBounds(bitmap);
+	MMRect rect = MMBitmapGetBounds(sbit);
 
-	if (findBitmapInRect(bitmap, sbit, &point,
-	                     rect, tolerance) == 0) {
-		return NULL;
+	if (findBitmapInRect(bitmap, sbit, &point, rect, tolerance) == 0) {
+		// return NULL;
 	}
 
 	pointArray = findAllBitmapInRect(bitmap, sbit, rect, tolerance);
-	if (pointArray == NULL) return NULL;
-
-	memcpy(list, pointArray->array, sizeof(MMPoint) * pointArray->count);
-	destroyMMPointArray(pointArray);
-
-	return list;
+	return pointArray;
 }
 
 int count_of_bitmap(MMBitmapRef bitmap, MMBitmapRef sbit, float tolerance){
 	if (!bitmap_ready(bitmap) || !bitmap_ready(sbit)) return 0;
 
 	MMRect rect = MMBitmapGetBounds(bitmap);
-
 	return countOfBitmapInRect(bitmap, sbit, rect, tolerance);
 }
 
@@ -126,9 +118,8 @@ MMBitmapRef bitmap_from_string(const char *str){
 	MMBitmapRef bitmap;
 	MMBMPStringError err;
 
-	if ((bitmap = createMMBitmapFromString(
-		(unsigned char*)str, len, &err )
-		) == NULL) {
+	if ((bitmap = createMMBitmapFromString((unsigned char*)str, len, &err )) 
+		== NULL) {
 		return NULL;
 	}
 
@@ -148,7 +139,6 @@ char *tostring_bitmap(MMBitmapRef bitmap){
 	MMBMPStringError err;
 
 	buf = (char *)createStringFromMMBitmap(bitmap, &err);
-
 	return buf;
 }
 
@@ -174,7 +164,7 @@ MMBitmapRef get_portion(MMBitmapRef bit_map, MMRect rect){
 }
 
 MMRGBHex bitmap_get_color(MMBitmapRef bitmap, size_t x, size_t y){
-	if (!bitmap_ready(bitmap)) return 0;
+	if (!bitmap_ready(bitmap)) { return 0; }
 
 	MMPoint point;
 	point = MMPointMake(x, y);
@@ -195,6 +185,15 @@ MMPoint bitmap_find_color(MMBitmapRef bitmap, MMRGBHex color, float tolerance){
 	}
 
 	return point;
+}
+
+MMPointArrayRef bitmap_find_every_color(MMBitmapRef bitmap, MMRGBHex color, float tolerance, MMPoint *list){
+	if (!bitmap_ready(bitmap)) { return NULL; }
+	MMRect rect = MMBitmapGetBounds(bitmap);
+	MMPointArrayRef pointArray;
+
+	pointArray = findAllColorInRect(bitmap, color, rect, tolerance);
+	return pointArray;
 }
 
 int bitmap_count_of_color(MMBitmapRef bitmap, MMRGBHex color, float tolerance){
