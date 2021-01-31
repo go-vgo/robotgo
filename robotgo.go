@@ -1055,10 +1055,13 @@ func FindEveryBitmap(bit C.MMBitmapRef, args ...interface{}) (posArr []MPoint) {
 
 	pos := C.find_every_bitmap(bit, sbit, tolerance, &lpos)
 	// FreeBitmap(bit)
-	defer FreeMMPointArr(pos)
 	if len(args) <= 0 {
 		FreeBitmap(sbit)
 	}
+	if pos == nil {
+		return
+	}
+	defer FreeMMPointArr(pos)
 
 	cSize := pos.count
 	cArray := pos.array
@@ -1346,10 +1349,14 @@ func FindEveryColor(color CHex, args ...interface{}) (posArr []MPoint) {
 	}
 
 	pos := C.bitmap_find_every_color(bitmap, C.MMRGBHex(color), tolerance, &lpos)
-	defer FreeMMPointArr(pos)
 	if len(args) <= 0 {
 		FreeBitmap(bitmap)
 	}
+
+	if pos == nil {
+		return
+	}
+	defer FreeMMPointArr(pos)
 
 	cSize := pos.count
 	cArray := pos.array

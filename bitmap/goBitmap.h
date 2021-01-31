@@ -75,7 +75,7 @@ MMPointArrayRef find_every_bitmap(MMBitmapRef bitmap, MMBitmapRef sbit, float to
 	MMRect rect = MMBitmapGetBounds(sbit);
 
 	if (findBitmapInRect(bitmap, sbit, &point, rect, tolerance) == 0) {
-		return NULL;
+		// return NULL;
 	}
 
 	pointArray = findAllBitmapInRect(bitmap, sbit, rect, tolerance);
