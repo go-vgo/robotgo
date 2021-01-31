@@ -1065,7 +1065,7 @@ func FindEveryBitmap(bit C.MMBitmapRef, args ...interface{}) (posArr []MPoint) {
 
 	cSize := pos.count
 	cArray := pos.array
-	gSlice := (*[1 << 30]C.MMPoint)(unsafe.Pointer(cArray))[:cSize:cSize]
+	gSlice := (*[(1 << 28) - 1]C.MMPoint)(unsafe.Pointer(cArray))[:cSize:cSize]
 	for i := 0; i < len(gSlice); i++ {
 		posArr = append(posArr, MPoint{
 			x: int(gSlice[i].x),
@@ -1360,7 +1360,7 @@ func FindEveryColor(color CHex, args ...interface{}) (posArr []MPoint) {
 
 	cSize := pos.count
 	cArray := pos.array
-	gSlice := (*[1 << 30]C.MMPoint)(unsafe.Pointer(cArray))[:cSize:cSize]
+	gSlice := (*[(1 << 28) - 1]C.MMPoint)(unsafe.Pointer(cArray))[:cSize:cSize]
 	for i := 0; i < len(gSlice); i++ {
 		posArr = append(posArr, MPoint{
 			x: int(gSlice[i].x),
