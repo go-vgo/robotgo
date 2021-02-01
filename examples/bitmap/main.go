@@ -57,6 +57,9 @@ func findColor(bmp robotgo.CBitmap) {
 	fmt.Println("count...", cnt)
 	cnt1 := robotgo.CountColorCS(0xAADCDC, 10, 20, 30, 40)
 	fmt.Println("count...", cnt1)
+
+	arr := robotgo.FindEveryColor(0xAADCDC)
+	fmt.Println("find all color: ", arr)
 }
 
 func bitmapString(bmp robotgo.CBitmap) {
@@ -146,6 +149,9 @@ func findBitmap(bmp robotgo.CBitmap) {
 
 	fx, fy = robotgo.FindPic("test.tif")
 	fmt.Println("FindPic------", fx, fy)
+
+	arr := robotgo.FindEveryBitmap(openbit)
+	fmt.Println("find all bitmap: ", arr)
 }
 
 func bitmap() {
