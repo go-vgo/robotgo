@@ -83,7 +83,7 @@ MMPointArrayRef find_every_bitmap(MMBitmapRef bitmap, MMBitmapRef sbit, float to
 }
 
 int count_of_bitmap(MMBitmapRef bitmap, MMBitmapRef sbit, float tolerance){
-	if (!bitmap_ready(bitmap) || !bitmap_ready(sbit)) return 0;
+	if (!bitmap_ready(bitmap) || !bitmap_ready(sbit)) { return 0; }
 
 	MMRect rect = MMBitmapGetBounds(bitmap);
 	return countOfBitmapInRect(bitmap, sbit, rect, tolerance);
@@ -109,7 +109,6 @@ MMBitmapRef bitmap_open(char *path, uint16_t ttype){
 	bitmap = newMMBitmapFromFile(path, ttype, &err);
 	// printf("....%zd\n", bitmap->width);
 	return bitmap;
-
 }
 
 MMBitmapRef bitmap_from_string(const char *str){
@@ -118,7 +117,7 @@ MMBitmapRef bitmap_from_string(const char *str){
 	MMBitmapRef bitmap;
 	MMBMPStringError err;
 
-	if ((bitmap = createMMBitmapFromString((unsigned char*)str, len, &err )) 
+	if ((bitmap = createMMBitmapFromString((unsigned char*)str, len, &err)) 
 		== NULL) {
 		return NULL;
 	}
@@ -144,7 +143,7 @@ char *tostring_bitmap(MMBitmapRef bitmap){
 
 // out with size 200 is enough
 bool bitmap_str(MMBitmapRef bitmap, char *out){
-	if (!bitmap_ready(bitmap)) return false;
+	if (!bitmap_ready(bitmap)) { return false; }
 	sprintf(out, "<Bitmap with resolution %lu%lu, \
 	                    %u bits per pixel, and %u bytes per pixel>",
 	                    (unsigned long)bitmap->width,
