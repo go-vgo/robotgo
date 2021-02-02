@@ -99,8 +99,8 @@ type Bitmap struct {
 
 // MPoint is MPoint struct
 type MPoint struct {
-	x int
-	y int
+	X int
+	Y int
 }
 
 // Try handler(err)
@@ -1068,8 +1068,8 @@ func FindEveryBitmap(bit C.MMBitmapRef, args ...interface{}) (posArr []MPoint) {
 	gSlice := (*[(1 << 28) - 1]C.MMPoint)(unsafe.Pointer(cArray))[:cSize:cSize]
 	for i := 0; i < len(gSlice); i++ {
 		posArr = append(posArr, MPoint{
-			x: int(gSlice[i].x),
-			y: int(gSlice[i].y),
+			X: int(gSlice[i].x),
+			Y: int(gSlice[i].y),
 		})
 	}
 
@@ -1363,8 +1363,8 @@ func FindEveryColor(color CHex, args ...interface{}) (posArr []MPoint) {
 	gSlice := (*[(1 << 28) - 1]C.MMPoint)(unsafe.Pointer(cArray))[:cSize:cSize]
 	for i := 0; i < len(gSlice); i++ {
 		posArr = append(posArr, MPoint{
-			x: int(gSlice[i].x),
-			y: int(gSlice[i].y),
+			X: int(gSlice[i].x),
+			Y: int(gSlice[i].y),
 		})
 	}
 
