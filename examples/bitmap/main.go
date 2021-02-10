@@ -60,6 +60,9 @@ func findColor(bmp robotgo.CBitmap) {
 
 	arr := robotgo.FindEveryColor(0xAADCDC)
 	fmt.Println("find all color: ", arr)
+	for i := 0; i < len(arr); i++ {
+		fmt.Println("pos is: ", arr[i].X, arr[i].Y)
+	}
 }
 
 func bitmapString(bmp robotgo.CBitmap) {
@@ -152,6 +155,9 @@ func findBitmap(bmp robotgo.CBitmap) {
 
 	arr := robotgo.FindEveryBitmap(openbit)
 	fmt.Println("find all bitmap: ", arr)
+	for i := 0; i < len(arr); i++ {
+		fmt.Println("pos is: ", arr[i].X, arr[i].Y)
+	}
 }
 
 func bitmap() {
