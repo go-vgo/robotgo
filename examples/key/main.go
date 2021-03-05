@@ -99,7 +99,7 @@ func cilp() {
 	if err != nil {
 		fmt.Println("robotgo.ReadAll err is: ", err)
 	}
-	fmt.Println(text)
+	fmt.Println("text: ", text)
 }
 
 func key() {

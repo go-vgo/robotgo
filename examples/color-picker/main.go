@@ -16,7 +16,10 @@ func colorPicker() {
 		fmt.Println("color: #", clo)
 
 		// clipboard
-		robotgo.WriteAll("#" + clo)
+		err := robotgo.WriteAll("#" + clo)
+		if err != nil {
+			fmt.Println("err: ", err)
+		}
 	}
 }
 
