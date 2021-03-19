@@ -70,7 +70,7 @@ import (
 
 const (
 	// Version get the robotgo version
-	Version = "v0.91.0.1089, MT. Rainier!"
+	Version = "v0.93.1.1189, MT. Rainier!"
 )
 
 // GetVersion get the robotgo version
