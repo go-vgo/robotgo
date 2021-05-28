@@ -49,6 +49,7 @@ package robotgo
 import "C"
 
 import (
+	"bytes"
 	"fmt"
 	"image"
 
@@ -1124,6 +1125,12 @@ func OpenBitmap(gpath string, args ...int) C.MMBitmapRef {
 // DecodeImg decode the image to image.Image and return
 func DecodeImg(path string) (image.Image, string, error) {
 	return imgo.DecodeFile(path)
+}
+
+// ByteToImg convert []byte to image.Image
+func ByteToImg(b []byte) (image.Image, error) {
+	img, _, err := image.Decode(bytes.NewReader(b))
+	return img, err
 }
 
 // ToImage convert C.MMBitmapRef to standard image.Image
