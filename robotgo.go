@@ -978,7 +978,7 @@ func FindBitmap(bit C.MMBitmapRef, args ...interface{}) (int, int) {
 
 	fx, fy := internalFindBitmap(bit, sbit, tolerance)
 	// FreeBitmap(bit)
-	if len(args) <= 0 {
+	if len(args) <= 0 || (len(args) > 0 && args[0] == nil) {
 		FreeBitmap(sbit)
 	}
 
@@ -1011,7 +1011,7 @@ func FindPic(path string, args ...interface{}) (int, int) {
 
 	fx, fy := internalFindBitmap(openbit, sbit, tolerance)
 	FreeBitmap(openbit)
-	if len(args) <= 0 {
+	if len(args) <= 0 || (len(args) > 0 && args[0] == nil) {
 		FreeBitmap(sbit)
 	}
 
@@ -1056,7 +1056,7 @@ func FindEveryBitmap(bit C.MMBitmapRef, args ...interface{}) (posArr []MPoint) {
 
 	pos := C.find_every_bitmap(bit, sbit, tolerance, &lpos)
 	// FreeBitmap(bit)
-	if len(args) <= 0 {
+	if len(args) <= 0 || (len(args) > 0 && args[0] == nil) {
 		FreeBitmap(sbit)
 	}
 	if pos == nil {
@@ -1299,7 +1299,7 @@ func FindColor(color CHex, args ...interface{}) (int, int) {
 	}
 
 	pos := C.bitmap_find_color(bitmap, C.MMRGBHex(color), tolerance)
-	if len(args) <= 0 {
+	if len(args) <= 0 || (len(args) > 0 && args[0] == nil) {
 		FreeBitmap(bitmap)
 	}
 
@@ -1356,7 +1356,7 @@ func FindEveryColor(color CHex, args ...interface{}) (posArr []MPoint) {
 	}
 
 	pos := C.bitmap_find_every_color(bitmap, C.MMRGBHex(color), tolerance, &lpos)
-	if len(args) <= 0 {
+	if len(args) <= 0 || (len(args) > 0 && args[0] == nil) {
 		FreeBitmap(bitmap)
 	}
 
@@ -1396,7 +1396,7 @@ func CountColor(color CHex, args ...interface{}) int {
 	}
 
 	count := C.bitmap_count_of_color(bitmap, C.MMRGBHex(color), tolerance)
-	if len(args) <= 0 {
+	if len(args) <= 0 || (len(args) > 0 && args[0] == nil) {
 		FreeBitmap(bitmap)
 	}
 
