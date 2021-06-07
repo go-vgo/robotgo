@@ -135,6 +135,11 @@ struct KeyNames{
 	{ "lights_kbd_up",    K_LIGHTS_KBD_UP },
 	{ "lights_kbd_down",  K_LIGHTS_KBD_DOWN },
 
+	//Swedish keys
+	{ "å",	K_ARING},
+	{ "ä",	K_ADIAERESIS},
+	{ "ö",	K_ODIAERESIS},
+
 	{ NULL,               K_NOT_A_KEY } /* end marker */
 };
 

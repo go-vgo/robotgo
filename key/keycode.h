@@ -57,6 +57,7 @@ enum _MMKeyCode {
 	K_F23 = K_NOT_A_KEY,
 	K_F24 = K_NOT_A_KEY,
 
+
 	K_META = kVK_Command,
 	K_LMETA = kVK_Command,
 	K_RMETA = kVK_RightCommand,
@@ -132,6 +133,7 @@ enum _MMKeyCode {
 	K_TAB = XK_Tab,
 	K_ESCAPE = XK_Escape,
 	K_UP = XK_Up,
+
 	K_DOWN = XK_Down,
 	K_RIGHT = XK_Right,
 	K_LEFT = XK_Left,
@@ -222,7 +224,12 @@ enum _MMKeyCode {
 	K_LIGHTS_MON_DOWN = XF86XK_MonBrightnessDown,
 	K_LIGHTS_KBD_TOGGLE = XF86XK_KbdLightOnOff,
 	K_LIGHTS_KBD_UP = XF86XK_KbdBrightnessUp,
-	K_LIGHTS_KBD_DOWN = XF86XK_KbdBrightnessDown
+	K_LIGHTS_KBD_DOWN = XF86XK_KbdBrightnessDown,
+
+	//Swedish keys
+	K_ARING = XK_aring,
+	K_ADIAERESIS = XK_adiaeresis,
+	K_ODIAERESIS = XK_odiaeresis
 };
 
 typedef KeySym MMKeyCode;
