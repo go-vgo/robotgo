@@ -132,6 +132,12 @@ func bitmapTest(bmp robotgo.CBitmap) {
 
 	fx, fy = robotgo.FindBitmap(bit)
 	fmt.Println("FindBitmap------", fx, fy)
+
+	fx, fy = robotgo.FindBitmap(bit, nil, 0.2)
+	fmt.Println("find bitmap: ", fx, fy)
+
+	fx, fy = robotgo.FindBitmap(bit, bitmap, 0.3)
+	fmt.Println("find bitmap: ", fx, fy)
 }
 
 func findBitmap(bmp robotgo.CBitmap) {
