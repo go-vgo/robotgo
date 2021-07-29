@@ -7,14 +7,19 @@ import (
 )
 
 func main() {
-	clipboard.WriteAll("日本語")
+	err := clipboard.WriteAll("日本語")
+	if err != nil {
+		log.Println("clipboard write all error: ", err)
+	}
+
 	text, err := clipboard.ReadAll()
 	if err != nil {
 		log.Println("clipboard read all error: ", err)
-	} else {
-		if text != "" {
-			log.Println("text is: ", text)
-			// Output: 日本語
-		}
+		return
+	}
+
+	if text != "" {
+		log.Println("text is: ", text)
+		// Output: 日本語
 	}
 }
