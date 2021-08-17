@@ -330,6 +330,14 @@ go build main.go
 ```
 
 #### Other to windows
+Install Requirements:
+```bash
+sudo apt-get install gcc-multilib
+sudo apt-get install gcc-mingw-w64
+# fix err: zlib.h: No such file or directory
+sudo apt-get install libz-mingw-w64-dev
+```
+Build the binary:
 ```Go
 GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ go build -x ./
 ```
