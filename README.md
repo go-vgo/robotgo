@@ -90,7 +90,7 @@ sudo apt install libxkbcommon-dev
 sudo apt install xsel xclip
 ```
 
-#### Fedora:
+##### Fedora:
 
 ```yml
 sudo dnf install libxkbcommon-devel libXtst-devel libxkbcommon-x11-devel xorg-x11-xkb-utils-devel
@@ -330,17 +330,20 @@ go build main.go
 ```
 
 #### Other to windows
-Install Requirements:
+
+##### Install Requirements (Ubuntu):
 ```bash
-sudo apt-get install gcc-multilib
-sudo apt-get install gcc-mingw-w64
+sudo apt install gcc-multilib
+sudo apt install gcc-mingw-w64
 # fix err: zlib.h: No such file or directory
-sudo apt-get install libz-mingw-w64-dev
+sudo apt install libz-mingw-w64-dev
 ```
+
 Build the binary:
 ```Go
 GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ go build -x ./
 ```
+
 ```
 // CC=mingw-w64\x86_64-7.2.0-win32-seh-rt_v5-rev1\mingw64\bin\gcc.exe
 // CXX=mingw-w64\x86_64-7.2.0-win32-seh-rt_v5-rev1\mingw64\bin\g++.exe
