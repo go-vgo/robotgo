@@ -88,6 +88,10 @@ sudo apt install xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x1
 sudo apt install libxkbcommon-dev
 
 sudo apt install xsel xclip
+
+sudo apt-get install gcc-multilib
+sudo apt-get install gcc-mingw-w64
+sudo apt install libz-mingw-w64-dev
 ```
 
 #### Fedora:
