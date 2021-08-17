@@ -7,9 +7,9 @@
 	#include <png.h>
 #elif defined(IS_WINDOWS)
 	#if defined (__x86_64__)
-		#include "../cdeps/amd/win64/png.h"
+		#include "../cdeps/win/amd/win64/png.h"
 	#else
-		#include "../cdeps/amd/win32/png.h"
+		#include "../cdeps/win/amd/win32/png.h"
 	#endif
 #endif
 
