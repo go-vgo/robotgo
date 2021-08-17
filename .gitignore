@@ -58,8 +58,12 @@ vendor
 !cdeps/mac/libpng.a
 !cdeps/mac/amd/libpng.a
 !cdeps/mac/m1/libpng.a
+# 
 !cdeps/win32/libpng.a
 !cdeps/win64/libpng.a
+!cdeps/win/amd/win32/libpng.a
+!cdeps/win/amd/win64/libpng.a
+!cdeps/win/arm/libpng.a
 #
 *.la
 *.lo
