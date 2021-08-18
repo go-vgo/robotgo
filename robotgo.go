@@ -738,6 +738,9 @@ func toUC(text string) []string {
 		textUnQ := textQ[1 : len(textQ)-1]
 
 		st := strings.Replace(textUnQ, "\\u", "U", -1)
+		if st == "\\\\" {
+			st = "\\"
+		}
 		uc = append(uc, st)
 	}
 
