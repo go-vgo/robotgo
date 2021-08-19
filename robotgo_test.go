@@ -126,8 +126,9 @@ func TestTypeStr(t *testing.T) {
 	e := PasteStr("s")
 	tt.Empty(t, e)
 
-	uc := toUC("s")
-	tt.Equal(t, "[s]", uc)
+	s1 := "abc\\\\cd/s@世界"
+	uc := ToUC(s1)
+	tt.Equal(t, "[a b c \\ \\ c d / s @ U4e16 U754c]", uc)
 }
 
 func TestKeyCode(t *testing.T) {

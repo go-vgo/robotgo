@@ -75,7 +75,7 @@ import (
 
 const (
 	// Version get the robotgo version
-	Version = "v0.93.1.1189, MT. Rainier!"
+	Version = "v0.99.1.1189, MT. Rainier!"
 )
 
 // GetVersion get the robotgo version
@@ -730,7 +730,8 @@ func UnicodeType(str uint32) {
 	C.unicodeType(cstr)
 }
 
-func toUC(text string) []string {
+// ToUC trans string to unicode []string
+func ToUC(text string) []string {
 	var uc []string
 
 	for _, r := range text {
@@ -768,7 +769,7 @@ func TypeStr(str string, args ...float64) {
 	}
 
 	if runtime.GOOS == "linux" {
-		strUc := toUC(str)
+		strUc := ToUC(str)
 		for i := 0; i < len(strUc); i++ {
 			ru := []rune(strUc[i])
 			if len(ru) <= 1 {
