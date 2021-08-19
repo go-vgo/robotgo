@@ -646,7 +646,15 @@ char* get_title_by_hand(MData m_data){
 	// Check result value
 	if (result != NULL) {
 		// Convert result to a string
-		char *name = (char*)result;
+		char *name = (char*)calloc(strlen(result)+1, sizeof(char*));
+		char *rptr = (char*)result;
+		char *nptr = name;
+		while (*rptr) {
+			*nptr = *rptr;
+			nptr++;
+			rptr++;
+		}
+		*nptr = '\0';
 		XFree(result);
 
 		if (name != NULL) { return name; }
@@ -658,8 +666,17 @@ char* get_title_by_hand(MData m_data){
 	// Check result value
 	if (result != NULL) {
 		// Convert result to a string
-		char *name = (char*)result;
+		char *name = (char*)calloc(strlen(result)+1, sizeof(char*));
+		char *rptr = (char*)result;
+		char *nptr = name;
+		while (*rptr) {
+			*nptr = *rptr;
+			nptr++;
+			rptr++;
+		}
+		*nptr = '\0';
 		XFree(result);
+
 		return name;
 	}
 
