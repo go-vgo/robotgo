@@ -742,6 +742,9 @@ func ToUC(text string) []string {
 		if st == "\\\\" {
 			st = "\\"
 		}
+		if st == `\"` {
+			st = `"`
+		}
 		uc = append(uc, st)
 	}
 
