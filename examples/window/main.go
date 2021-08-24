@@ -39,10 +39,6 @@ func get() {
 	hwnd := robotgo.GetHandle()
 	fmt.Println("hwnd---", hwnd)
 
-	// get current Window Handle
-	bhwnd := robotgo.GetBHandle()
-	fmt.Println("bhwnd---", bhwnd)
-
 	// get current Window title
 	title := robotgo.GetTitle()
 	fmt.Println("title-----", title)
