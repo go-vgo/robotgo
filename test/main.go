@@ -41,12 +41,12 @@ func aRobotgo() {
 	color := robotgo.GetPixelColor(100, 200)
 	fmt.Println("color@@@", color)
 
-	robotgo.TypeString("Hello World")
+	robotgo.TypeStr("Hello World")
 	// robotgo.KeyTap("a", "control")
 	robotgo.KeyTap("f1", "control")
 	// robotgo.KeyTap("enter")
 	// robotgo.KeyToggle("enter", "down")
-	robotgo.TypeString("en")
+	robotgo.TypeStr("en")
 
 	abitmap := robotgo.CaptureScreen()
 	fmt.Println("all...", abitmap)

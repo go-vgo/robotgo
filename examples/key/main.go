@@ -26,7 +26,7 @@ func typeStr() {
 
 	robotgo.TypeStr("Hi galaxy. こんにちは世界.")
 	robotgo.Sleep(2)
-	// robotgo.TypeString("So, hi, bye!")
+	// robotgo.TypeStr("So, hi, bye!")
 	robotgo.MilliSleep(100)
 
 	ustr := uint32(robotgo.CharCodeAt("So, hi, bye!", 0))
@@ -86,7 +86,7 @@ func keyToggle() {
 }
 
 func cilp() {
-	// robotgo.TypeString("en")
+	// robotgo.TypeStr("en")
 
 	// write string to clipboard
 	e := robotgo.WriteAll("テストする")
