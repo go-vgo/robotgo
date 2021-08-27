@@ -36,13 +36,13 @@ import (
 
 func main() {
   robotgo.TypeStr("Hello World")
-  // robotgo.TypeString("だんしゃり")
+  // robotgo.TypeStr("だんしゃり")
   robotgo.TypeStr("だんしゃり")
   // ustr := uint32(robotgo.CharCodeAt("だんしゃり", 0))
   // robotgo.UnicodeType(ustr)
 
   robotgo.KeyTap("enter")
-  robotgo.TypeString("en")
+  robotgo.TypeStr("en")
   robotgo.KeyTap("i", "alt", "command")
   arr := []string{"alt", "command"}
   robotgo.KeyTap("i", arr)

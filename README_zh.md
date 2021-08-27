@@ -147,7 +147,7 @@ import (
 func main() {
   robotgo.TypeStr("Hello World. Winter is coming!")
   robotgo.TypeStr("だんしゃり", 1.0)
-  // robotgo.TypeString("テストする")
+  // robotgo.TypeStr("テストする")
 
   robotgo.TypeStr("Hi galaxy. こんにちは世界.")
   robotgo.Sleep(1)
@@ -156,7 +156,7 @@ func main() {
   // robotgo.UnicodeType(ustr)
 
   robotgo.KeyTap("enter")
-  // robotgo.TypeString("en")
+  // robotgo.TypeStr("en")
   robotgo.KeyTap("i", "alt", "command")
 
   arr := []string{"alt", "command"}
@@ -319,7 +319,7 @@ func main() {
 
 ## CrossCompiling
 
-##### Windows64 to win32
+##### Windows64 to windows32
 ```Go
 SET CGO_ENABLED=1
 SET GOARCH=386
@@ -328,14 +328,14 @@ go build main.go
 
 #### Other to windows
 
-##### Install Requirements (Ubuntu):
+Install Requirements (Ubuntu):
 ```bash
 sudo apt install gcc-multilib
 sudo apt install gcc-mingw-w64
 sudo apt install libz-mingw-w64-dev
 ```
 
-##### Build the binary:
+Build the binary:
 
 ```Go
 GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ go build -x ./
