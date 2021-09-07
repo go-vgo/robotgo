@@ -983,6 +983,11 @@ func ByteToImg(b []byte) (image.Image, error) {
 
 // ToImage convert C.MMBitmapRef to standard image.Image
 func ToImage(bit C.MMBitmapRef) image.Image {
+	return ToRGBA(bit)
+}
+
+// ToRGBA convert C.MMBitmapRef to standard image.RGBA
+func ToRGBA(bit C.MMBitmapRef) *image.RGBA {
 	bmp1 := ToBitmap(bit)
 	img1 := image.NewRGBA(image.Rect(0, 0, bmp1.Width, bmp1.Height))
 	img1.Pix = make([]uint8, bmp1.Bytewidth*bmp1.Height)
