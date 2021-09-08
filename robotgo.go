@@ -51,7 +51,6 @@ package robotgo
 import "C"
 
 import (
-	"bytes"
 	"fmt"
 	"image"
 
@@ -64,12 +63,9 @@ import (
 	"unsafe"
 
 	// "syscall"
-	"encoding/base64"
-	"image/jpeg"
 	"os/exec"
 
 	"github.com/go-vgo/robotgo/clipboard"
-	"github.com/vcaesar/imgo"
 	"github.com/vcaesar/tt"
 )
 
@@ -951,36 +947,6 @@ func TocharBitmap(bit C.MMBitmapRef) *C.char {
 	return strBit
 }
 
-// ToByteImg convert image.Image to []byte
-func ToByteImg(img image.Image) []byte {
-	buff := bytes.NewBuffer(nil)
-	jpeg.Encode(buff, img, nil)
-
-	var dist []byte
-	base64.StdEncoding.Encode(dist, buff.Bytes())
-
-	return dist
-}
-
-// ToStringImg convert image.Image to string
-func ToStringImg(img image.Image) string {
-	return string(ToByteImg(img))
-}
-
-// StrToImg convert base64 string to image.Image
-func StrToImg(data string) (image.Image, error) {
-	reader := base64.NewDecoder(base64.StdEncoding, strings.NewReader(data))
-	m, _, err := image.Decode(reader)
-
-	return m, err
-}
-
-// ByteToImg convert []byte to image.Image
-func ByteToImg(b []byte) (image.Image, error) {
-	img, _, err := image.Decode(bytes.NewReader(b))
-	return img, err
-}
-
 // ToImage convert C.MMBitmapRef to standard image.Image
 func ToImage(bit C.MMBitmapRef) image.Image {
 	return ToRGBA(bit)
@@ -989,28 +955,7 @@ func ToImage(bit C.MMBitmapRef) image.Image {
 // ToRGBA convert C.MMBitmapRef to standard image.RGBA
 func ToRGBA(bit C.MMBitmapRef) *image.RGBA {
 	bmp1 := ToBitmap(bit)
-	img1 := image.NewRGBA(image.Rect(0, 0, bmp1.Width, bmp1.Height))
-	img1.Pix = make([]uint8, bmp1.Bytewidth*bmp1.Height)
-
-	copyToVUint8A(img1.Pix, bmp1.ImgBuf)
-	img1.Stride = bmp1.Bytewidth
-	return img1
-}
-
-func val(p *uint8, n int) uint8 {
-	addr := uintptr(unsafe.Pointer(p))
-	addr += uintptr(n)
-	p1 := (*uint8)(unsafe.Pointer(addr))
-	return *p1
-}
-
-func copyToVUint8A(dst []uint8, src *uint8) {
-	for i := 0; i < len(dst)-4; i += 4 {
-		dst[i] = val(src, i+2)
-		dst[i+1] = val(src, i+1)
-		dst[i+2] = val(src, i)
-		dst[i+3] = val(src, i+3)
-	}
+	return ToRGBAGo(bmp1)
 }
 
 func internalFindBitmap(bit, sbit C.MMBitmapRef, tolerance float64) (int, int) {
@@ -1193,26 +1138,6 @@ func OpenBitmap(gpath string, args ...int) C.MMBitmapRef {
 	C.free(unsafe.Pointer(path))
 
 	return bit
-}
-
-// DecodeImg decode the image to image.Image and return
-func DecodeImg(path string) (image.Image, string, error) {
-	return imgo.DecodeFile(path)
-}
-
-// OpenImg open the image return []byte
-func OpenImg(path string) ([]byte, error) {
-	return imgo.ImgToBytes(path)
-}
-
-// SaveImg save the image by []byte
-func SaveImg(b []byte, path string) error {
-	return imgo.Save(path, b)
-}
-
-// SavePng save the image by image.Image
-func SavePng(img image.Image, path string) error {
-	return imgo.SaveToPNG(path, img)
 }
 
 // BitmapStr bitmap from string
