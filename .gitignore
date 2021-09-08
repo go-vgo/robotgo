@@ -84,4 +84,9 @@ vendor
 
 # Project-local glide cache, RE: https://github.com/Masterminds/glide/issues/736
  .glide/
+
+#
 examples/bitmap/test_IMG.png
+examples/bitmap/imgToBitmap/test_01.png
+examples/bitmap/imgToBitmap/test_002.jpeg
+examples/bitmap/imgToBitmap/test_003.jpeg
