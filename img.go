@@ -37,6 +37,11 @@ func SavePng(img image.Image, path string) error {
 	return imgo.SaveToPNG(path, img)
 }
 
+// SaveJpeg save the image by image.Image
+func SaveJpeg(img image.Image, path string) error {
+	return imgo.SaveToJpeg(path, img)
+}
+
 // ToByteImg convert image.Image to []byte
 func ToByteImg(img image.Image) []byte {
 	return imgo.ToByteImg(img)

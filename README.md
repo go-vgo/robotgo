@@ -130,6 +130,11 @@ import (
 
 func main() {
   robotgo.ScrollMouse(10, "up")
+  robotgo.Scroll(100, 200)
+
+  robotgo.MoveMouse(10, 10)
+  robotgo.Drag(10, 10)
+
   robotgo.MouseClick("left", true)
   robotgo.MoveMouseSmooth(100, 200, 1.0, 100.0)
 }
@@ -189,6 +194,9 @@ func main() {
 
   color := robotgo.GetPixelColor(100, 200)
   fmt.Println("color---- ", color)
+
+  sx, sy := robotgo.GetScreenSize()
+	fmt.Println("get screen size: ", sx, sy)
 }
 ```
 
@@ -208,9 +216,19 @@ func main() {
   // use `defer robotgo.FreeBitmap(bit)` to free the bitmap
   defer robotgo.FreeBitmap(bitmap)
 
-  fmt.Println("...", bitmap)
+  fmt.Println("bitmap...", bitmap)
+  img := robotgo.ToImage(bitmap)
+  robotgo.SavePng(img, "test_1.png")
 
-  fx, fy := robotgo.FindBitmap(bitmap)
+  bit2 := robotgo.ToCBitmap(robotgo.ImgToBitmap(img))
+  fx, fy := robotgo.FindBitmap(bit2)
+  fmt.Println("FindBitmap------ ", fx, fy)
+
+  arr := robotgo.FindEveryBitmap(bit2)
+  fmt.Println("Find every bitmap: ", arr)
+  robotgo.SaveBitmap(bitmap, "test.png")
+
+  fx, fy = robotgo.FindBitmap(bitmap)
   fmt.Println("FindBitmap------ ", fx, fy)
 
   robotgo.SaveBitmap(bitmap, "test.png")
