@@ -63,7 +63,7 @@ func screen() {
 
 	// gets the screen width and height
 	sx, sy := robotgo.GetScreenSize()
-	fmt.Println("...", sx, sy)
+	fmt.Println("get screen size: ", sx, sy)
 
 	color()
 }
