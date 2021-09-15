@@ -11,7 +11,7 @@ import (
 	"github.com/vcaesar/imgo"
 )
 
-//go:embed test_01.png
+//go:embed test_007.jpeg
 var testPng []byte
 
 func main() {
@@ -40,7 +40,7 @@ func test() {
 	robotgo.SavePng(img, "test_1.png")
 
 	img1, _ := robotgo.ByteToImg(testPng)
-	robotgo.SaveJpeg(img1, "test_2.jpeg")
+	robotgo.SaveJpeg(img1, "test_7.jpeg")
 
 	bit2 := robotgo.ToCBitmap(robotgo.ImgToBitmap(img))
 	fx, fy := robotgo.FindBitmap(bit2)
