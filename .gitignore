@@ -90,3 +90,7 @@ examples/bitmap/test_IMG.png
 examples/bitmap/imgToBitmap/test_01.png
 examples/bitmap/imgToBitmap/test_002.jpeg
 examples/bitmap/imgToBitmap/test_003.jpeg
+examples/bitmap/imgToBitmap/test_1.png
+examples/bitmap/imgToBitmap/test_2.jpeg
+examples/bitmap/imgToBitmap/test.png
+robot_img.png
