@@ -194,7 +194,7 @@ func main() {
   fmt.Println("color----", color)
 
   sx, sy := robotgo.GetScreenSize()
-	fmt.Println("get screen size: ", sx, sy)
+  fmt.Println("get screen size: ", sx, sy)
 }
 ```
 

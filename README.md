@@ -125,7 +125,7 @@ Note go1.10.x C file compilation cache problem, [golang #24355](https://github.c
 package main
 
 import (
-	"github.com/go-vgo/robotgo"
+  "github.com/go-vgo/robotgo"
 )
 
 func main() {
@@ -183,9 +183,9 @@ func main() {
 package main
 
 import (
-	"fmt"
+  "fmt"
 
-	"github.com/go-vgo/robotgo"
+  "github.com/go-vgo/robotgo"
 )
 
 func main() {
@@ -196,7 +196,7 @@ func main() {
   fmt.Println("color---- ", color)
 
   sx, sy := robotgo.GetScreenSize()
-	fmt.Println("get screen size: ", sx, sy)
+  fmt.Println("get screen size: ", sx, sy)
 }
 ```
 
@@ -206,9 +206,9 @@ func main() {
 package main
 
 import (
-	"fmt"
+  "fmt"
 
-	"github.com/go-vgo/robotgo"
+  "github.com/go-vgo/robotgo"
 )
 
 func main() {
@@ -302,9 +302,9 @@ func event() {
 package main
 
 import (
-	"fmt"
+  "fmt"
 
-	"github.com/go-vgo/robotgo"
+  "github.com/go-vgo/robotgo"
 )
 
 func main() {

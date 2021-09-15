@@ -63,6 +63,7 @@ import (
 	"unsafe"
 
 	// "syscall"
+	"math/rand"
 	"os/exec"
 
 	"github.com/go-vgo/robotgo/clipboard"
@@ -695,6 +696,23 @@ func KeyToggle(key string, args ...string) string {
 	C.free(unsafe.Pointer(cmKeyT))
 
 	return C.GoString(str)
+}
+
+// KeyPress press key string
+func KeyPress(key string) {
+	KeyDown(key)
+	Sleep(15 + rand.Intn(10))
+	KeyUp(key)
+}
+
+// KeyDown press down a key
+func KeyDown(key string) {
+	KeyToggle(key, "down")
+}
+
+// KeyUp press up a key
+func KeyUp(key string) {
+	KeyToggle(key, "up")
 }
 
 // ReadAll read string from clipboard
