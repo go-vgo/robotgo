@@ -5,14 +5,14 @@
 ## [Keyboard](#Keyboard)
 
 ##### [Keys](https://github.com/go-vgo/robotgo/blob/master/docs/keys.md)
-##### [SetKeyboardDelay](#SetKeyDelay) (Equivalent to SetKeyDelay, Wno-deprecated)
+<!-- ##### [SetKeyboardDelay](#SetKeyDelay) (Equivalent to SetKeyDelay, Wno-deprecated) -->
 ##### [SetKeyDelay](#SetKeyDelay)
 ##### [KeyTap](#KeyTap)
 ##### [KeyToggle](#KeyToggle)
-##### [TypeString](#TypeString)
-##### [TypeStringDelayed](#TypeStrDelay) (Equivalent to TypeStrDelay, Wno-deprecated)
-##### [TypeStrDelay](#TypeStrDelay)
+<!-- ##### [TypeString](#TypeString)
+##### [TypeStringDelayed](#TypeStrDelay) (Equivalent to TypeStrDelay, Wno-deprecated) -->
 ##### [TypeStr](#TypeStr)
+##### [TypeStrDelay](#TypeStrDelay)
 ##### [WriteAll](#WriteAll)
 ##### [ReadAll](#ReadAll)
 
@@ -57,7 +57,7 @@
 
 ## [Event](#Event)
 
-##### [LEvent](#LEvent) (Equivalent to AddEvent, Wno-deprecated)
+<!-- ##### [LEvent](#LEvent) (Equivalent to AddEvent, Wno-deprecated) -->
 ##### [AddEvent](#AddEvent)
 ##### [StopEvent](#StopEvent)
 
@@ -71,7 +71,7 @@
 ##### [GetActive](#GetActive)
 ##### [SetHandle](#SetHandle)
 ##### [GetHandle](#GetHandle)
-##### [GetBHandle](#GetHandle)
+<!-- ##### [GetBHandle](#GetHandle) -->
 ##### [GetTitle](#GetTitle)
 ##### [GetPID](#GetPID)
 ##### [Pids](#Pids)
@@ -126,7 +126,13 @@ modifier (optional, string or array) - Accepts alt, command (mac), control, and 
 #### Return:
     return KeyToggle status
 
-### <h3 id="TypeString">.TypeString(string)</h3>
+<!-- ### <h3 id="TypeString">.TypeString(string)</h3>
+
+#### Arguments:
+
+    string - The string to send. -->
+
+### <h3 id="TypeStr">.TypeStr(string)</h3>
 
 #### Arguments:
 
@@ -138,12 +144,6 @@ modifier (optional, string or array) - Accepts alt, command (mac), control, and 
 
     string - The string to send.
     cpm - Characters per minute.
-
-### <h3 id="TypeStr">.TypeStr(string)</h3>
-
-#### Arguments:
-
-    string - The string to send.
 
 ### <h3 id="WriteAll">.WriteAll(text string)</h3>
 
@@ -331,7 +331,7 @@ robotgo.ScrollMouse(50, "down")
     Gets part or all of the screen.
 
     GoCaptureScreen Returns a go struct
-    Capture_Screen (Drop support)
+<!-- Capture_Screen (Drop support) -->
 
 #### Arguments:
 

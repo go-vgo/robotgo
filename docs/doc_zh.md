@@ -5,14 +5,14 @@
 ## [键盘](#Keyboard)
 
 ##### [Keys](https://github.com/go-vgo/robotgo/blob/master/docs/keys.md)
-##### [SetKeyboardDelay](#SetKeyDelay) (相当于 SetKeyDelay, 废弃 API)
+<!-- ##### [SetKeyboardDelay](#SetKeyDelay) (相当于 SetKeyDelay, 废弃 API) -->
 ##### [SetKeyDelay](#SetKeyDelay)
 ##### [KeyTap](#KeyTap)
 ##### [KeyToggle](#KeyToggle)
-##### [TypeString](#TypeString)
-##### [TypeStringDelayed](#TypeStrDelay) (相当于 TypeStrDelay, 废弃 API)
-##### [TypeStrDelay](#TypeStrDelay)
+<!-- ##### [TypeString](#TypeString)
+##### [TypeStringDelayed](#TypeStrDelay) (相当于 TypeStrDelay, 废弃 API) -->
 ##### [TypeStr](#TypeStr)
+##### [TypeStrDelay](#TypeStrDelay)
 ##### [WriteAll](#WriteAll)
 ##### [ReadAll](#ReadAll)
 
@@ -59,7 +59,7 @@
 
 ## [事件](#Event)
 
-##### [LEvent](#AddEvent) (相当于 AddEvent, 废弃 API)
+<!-- ##### [LEvent](#AddEvent) (相当于 AddEvent, 废弃 API) -->
 ##### [AddEvent](#AddEvent)
 ##### [StopEvent](#StopEvent)
 
@@ -73,7 +73,7 @@
 ##### [GetActive](#GetActive)
 ##### [SetHandle](#SetHandle)
 ##### [GetHandle](#GetHandle)
-##### [GetBHandle](#GetHandle)
+<!-- ##### [GetBHandle](#GetHandle) -->
 ##### [GetTitle](#GetTitle)
 ##### [GetPID](#GetPID)
 ##### [Pids](#Pids)
@@ -131,11 +131,18 @@ modifier (optional, string or array) - Accepts alt, command (mac), control, and 
 
     返回 KeyToggle 状态
 
-### <h3 id="TypeString">.TypeString(string)</h3>
+<!-- ### <h3 id="TypeString">.TypeString(string)</h3>
+
+#### 参数:
+
+    string - The string to send. -->
+
+### <h3 id="TypeStr">.TypeStr(string)</h3>
 
 #### 参数:
 
     string - The string to send.
+
 
 ### <h3 id="TypeStrDelay">.TypeStrDelay(string, cpm)</h3>
 
@@ -143,12 +150,6 @@ modifier (optional, string or array) - Accepts alt, command (mac), control, and 
 
     string - The string to send.
     cpm - Characters per minute.
-
-### <h3 id="TypeStr">.TypeStr(string)</h3>
-
-#### 参数:
-
-    string - The string to send.
 
 ### <h3 id="WriteAll">.WriteAll(text string)</h3>
 
@@ -345,7 +346,7 @@ robotgo.ScrollMouse(50, "down")
     Gets part or all of the screen.
 
     GoCaptureScreen Returns a go struct
-    Capture_Screen (废弃)
+<!-- Capture_Screen (废弃) -->
 
 #### 参数:
 
