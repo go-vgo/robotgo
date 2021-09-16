@@ -46,7 +46,6 @@ struct XSpecialCharacterMapping XSpecialCharacterTable[] = {
   	{'@', XK_at},
   	{':', XK_colon},
   	{';', XK_semicolon},
-  	{'`', XK_grave},
   	{'{', XK_braceleft},
   	{'}', XK_braceright},
   	{'|', XK_bar},
@@ -55,10 +54,11 @@ struct XSpecialCharacterMapping XSpecialCharacterTable[] = {
   	{')', XK_parenright},
   	{' ', XK_space},
   	{'/', XK_slash},
+	{'\\', XK_backslash},
+	{'`', XK_grave},
 	{'"', XK_quoteright},
   	{'\'', XK_quotedbl},
 	// {'\'', XK_quoteright},
-	{'\\', XK_backslash},
   	{'\t', XK_Tab},
   	{'\n', XK_Return}
 };
