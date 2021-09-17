@@ -95,3 +95,4 @@ examples/bitmap/imgToBitmap/test_2.jpeg
 examples/bitmap/imgToBitmap/test.png
 examples/bitmap/imgToBitmap/test_7.jpeg
 robot_img.png
+examples/bitmap/bitmapTobytes/out.jpg
