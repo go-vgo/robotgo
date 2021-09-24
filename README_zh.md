@@ -9,7 +9,7 @@
 [![GitHub release](https://img.shields.io/github/release/go-vgo/robotgo.svg)](https://github.com/go-vgo/robotgo/releases/latest)
 [![Join the chat at https://gitter.im/go-vgo/robotgo](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/go-vgo/robotgo?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-  >Golang 跨平台自动化系统，控制键盘、鼠标、位图、图像、读取屏幕，进程、窗口句柄以及全局事件监听
+> Golang 跨平台自动化系统，控制键盘、鼠标、位图、图像、读取屏幕，进程、窗口句柄以及全局事件监听
 
 RobotGo 支持 Mac, Windows, and Linux(X11).
 

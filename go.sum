@@ -33,10 +33,11 @@ github.com/tklauser/numcpus v0.3.0 h1:ILuRUQBtssgnxw0XXIjKUC56fgnOrFoQQ/4+DeU2bi
 github.com/tklauser/numcpus v0.3.0/go.mod h1:yFGUr7TUHQRAhyqBcEg0Ge34zDBAsIvJJcyE6boqnA8=
 github.com/vcaesar/gops v0.21.2 h1:OwWoJR0zb+AK41TN2adhZUP9lAmaRMzkWwf7Ux5Mx00=
 github.com/vcaesar/gops v0.21.2/go.mod h1:BEJGigAc9GORbEegWX9rRon/qwibjDs8p50WYm2KlXw=
-github.com/vcaesar/imgo v0.20.0 h1:lX7a2vygTri0Z3VYpwoQA2LPvbphFyT5ON4NTqdC4wQ=
-github.com/vcaesar/imgo v0.20.0/go.mod h1:eJscuTEdc6sVn/hZruy8kWi61xqKHLtbAYyPeYcn+t4=
-github.com/vcaesar/tt v0.11.0 h1:obQecjgbnAxxC6OYGY6yDvhGRW2PR5wD8Ma2uJH3WGA=
+github.com/vcaesar/imgo v0.30.0 h1:ODQVX0EFJEh+WkKahCBtE0SqcDCIjl/kjiOplR0Ouh8=
+github.com/vcaesar/imgo v0.30.0/go.mod h1:8TGnt5hjaMgwDByvMFIzUDSh5uSea4n1tAbSvnhvA6U=
 github.com/vcaesar/tt v0.11.0/go.mod h1:GHPxQYhn+7OgKakRusH7KJ0M5MhywoeLb8Fcffs/Gtg=
+github.com/vcaesar/tt v0.20.0 h1:9t2Ycb9RNHcP0WgQgIaRKJBB+FrRdejuaL6uWIHuoBA=
+github.com/vcaesar/tt v0.20.0/go.mod h1:GHPxQYhn+7OgKakRusH7KJ0M5MhywoeLb8Fcffs/Gtg=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
 golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d h1:RNPAfi2nHY7C2srAV8A49jpsYr0ADedCk1wq6fTMTvs=
