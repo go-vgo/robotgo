@@ -34,6 +34,7 @@ func toBitmap(bmp robotgo.CBitmap) {
 	robotgo.SaveBitmap(cbit, "tocbitmap.png")
 }
 
+// find color
 func findColor(bmp robotgo.CBitmap) {
 	bitmap := robotgo.ToMMBitmapRef(bmp)
 
@@ -105,7 +106,7 @@ func decode() {
 	fmt.Println("decode test.png", img, name)
 
 	byt, _ := robotgo.OpenImg("test.png")
-	imgo.Save("test2.png", byt)
+	imgo.SaveByte("test2.png", byt)
 
 	w, h := robotgo.GetImgSize("test.png")
 	fmt.Println("image width and hight ", w, h)

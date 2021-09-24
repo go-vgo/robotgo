@@ -27,9 +27,19 @@ func OpenImg(path string) ([]byte, error) {
 	return imgo.ImgToBytes(path)
 }
 
+// Read read the file return image.Image
+func Read(path string) (image.Image, error) {
+	return imgo.Read(path)
+}
+
+// Save create a image file with the image.Image
+func Save(img image.Image, path string) error {
+	return imgo.Save(path, img)
+}
+
 // SaveImg save the image by []byte
 func SaveImg(b []byte, path string) error {
-	return imgo.Save(path, b)
+	return imgo.SaveByte(path, b)
 }
 
 // SavePng save the image by image.Image
@@ -43,13 +53,13 @@ func SaveJpeg(img image.Image, path string) error {
 }
 
 // ToByteImg convert image.Image to []byte
-func ToByteImg(img image.Image) []byte {
-	return imgo.ToByteImg(img)
+func ToByteImg(img image.Image, fm ...string) []byte {
+	return imgo.ToByteImg(img, fm...)
 }
 
 // ToStringImg convert image.Image to string
-func ToStringImg(img image.Image) string {
-	return string(ToByteImg(img))
+func ToStringImg(img image.Image, fm ...string) string {
+	return string(ToByteImg(img, fm...))
 }
 
 // StrToImg convert base64 string to image.Image
