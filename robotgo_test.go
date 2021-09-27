@@ -107,6 +107,9 @@ func TestKey(t *testing.T) {
 	e := KeyTap("v", "cmd")
 	tt.Empty(t, e)
 
+	e = KeyTap("enter")
+	tt.Empty(t, e)
+
 	e = KeyToggle("v", "up")
 	tt.Empty(t, e)
 }
