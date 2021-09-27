@@ -1,6 +1,116 @@
 # CHANGELOG
 
 <!--### RobotGo-->
+## RobotGo v0.100.0, MT. Baker; Enhancement bitmap and image, add arm support...
+
+### Add
+
+- [NEW] add more image function support
+- [NEW] add ImgToBitmap(), ToImg(), FindEveryBitmap(), FindEveryColor(), Svae(), Read(), SaveJpeg() and other function support
+
+- [NEW] add func ToImage: convert C.MMBitmapRef to standard image.Image
+- [NEW] add ToImage examples code
+- [NEW] add more image function and update go mod
+
+- [NEW] add find every color function
+- [NEW] add free and find all point function
+- [NEW] update find bitmap and color
+
+- [NEW] add byte to image function
+- [NEW] add more image convert function
+
+- [NEW] add mac os M1 support
+- [NEW] add windows arm support
+
+- [NEW] add more key toggle and press function
+
+- [NEW] add ToRGBA() function support
+- [NEW] add ImgToBitmap and RGBAToBitmap support
+- [NEW] Update and move image function to img.go
+
+- [NEW] add more img to bitmap examples code and Update file name
+
+### Update
+
+- [NEW] Update README.md and CHANGELOG.md
+- [NEW] add macOS to .travis.yml
+- [NEW] update go mod pkg
+
+- [NEW] Update hook examples link to newest
+- [NEW] update dockerfile and appveyor to go1.14.4
+
+- [NEW] Update README.md, add more examples
+- [NEW] move hook and event to gohook
+- [NEW] move cbitmap and bitmap-bytes to bitmap dir
+
+- [NEW] update some name
+- [NEW] update dockerfile and appveyor.yml
+
+- [NEW] update clipboard code
+- [NEW] update hook code and more API
+
+- [NEW] optimize code and update version
+- [NEW] add paste string err return and optimize code
+- [NEW] update go.yml and travis.yml to go1.15
+- [NEW] Update Ubuntu apt-get to apt
+
+- [NEW] update go version and key code
+- [NEW] update test code and go mod
+- [NEW] Update README.md and test code
+
+- [NEW] update parameter name and version
+- [NEW] update dockerfile and appveyor.yml
+- [NEW] update error return and print
+
+- [NEW] update ShowAlert optimize return code
+- [NEW] add more test and update go mod
+
+- [NEW] compatible with 32-bit platforms
+- [NEW] add more bitmap examples
+
+- [NEW] update point structure to public
+
+- [NEW] add more examples
+- [NEW] update examples and version
+- [NEW] Update clipboard example code
+
+- [NEW] Update README.md Section ####Other to windows (#348) …
+- [NEW] Update png.h path
+- [NEW] Update go mod
+- [NEW] Update circle.yml and travis.yml
+
+- [NEW] Remove unless example code and update circle.yml
+- [NEW] Removed drop api example code and Update README.md
+
+- [NEW] Update go mod and xx.yml
+- [NEW] Update README.md and example
+
+- [NEW] add more bitmap examples code
+- [NEW] Update go mod and Update README.md
+- [NEW] gofmt to 1.17 build tag
+- [NEW] Update bitmap examples code
+
+- [NEW] Update version and keycode
+- [NEW] Update docs remove drop API
+
+
+### Fixed
+
+- [FIX] Update go mod and fixed #290
+- [FIX] Update gohook to v0.30.2 fixed bug
+- [FIX] Fixed Mouse buttons reversed type
+- [FIX] Fixed returns "Invalid key code specified." if specified character is not v… … add keyCodeForCharFallBack
+
+- [FIX] This fixes the disappearing backslash issue #351
+- [FIX] Export ToUC function and update test code
+- [FIX] Fixes #258: char* arrays in C not being copied correctly
+- [FIX] Fixed Linux TypeStr() function double quote
+
+- [FIX] update free bitmap fixed #333
+- [FIX] update gops to v0.20.0 fixed bug and other mod pkg
+- [FIX] update gohook fixed warning
+
+
 
 ## RobotGo v0.90.0, MT. Rainier
 
