@@ -827,7 +827,7 @@ func PasteStr(str string) string {
 	return KeyTap("v", "control")
 }
 
-// TypeString send a string, support unicode
+// Deprecated: TypeString send a string, support unicode
 // TypeStr(string: The string to send), Wno-deprecated
 func TypeString(str string, delay ...int) {
 	tt.Drop("TypeString", "TypeStr")
@@ -848,7 +848,7 @@ func TypeStrDelay(str string, delay int) {
 	Sleep(delay)
 }
 
-// TypeStringDelayed type string delayed, Wno-deprecated
+// Deprecated: TypeStringDelayed type string delayed, Wno-deprecated
 func TypeStringDelayed(str string, delay int) {
 	tt.Drop("TypeStringDelayed", "TypeStrDelay")
 	TypeStrDelay(str, delay)
@@ -859,7 +859,7 @@ func SetKeyDelay(delay int) {
 	C.set_keyboard_delay(C.size_t(delay))
 }
 
-// SetKeyboardDelay set keyboard delay, Wno-deprecated,
+// Deprecated: SetKeyboardDelay set keyboard delay, Wno-deprecated,
 // this function will be removed in version v1.0.0
 func SetKeyboardDelay(delay int) {
 	tt.Drop("SetKeyboardDelay", "SetKeyDelay")
@@ -1236,7 +1236,7 @@ func CopyBitPB(bitmap C.MMBitmapRef) bool {
 	return gbool
 }
 
-// CopyBitpb copy bitmap to pasteboard, Wno-deprecated
+// Deprecated: CopyBitpb copy bitmap to pasteboard, Wno-deprecated
 func CopyBitpb(bitmap C.MMBitmapRef) bool {
 	tt.Drop("CopyBitpb", "CopyBitPB")
 	return CopyBitPB(bitmap)
@@ -1564,7 +1564,7 @@ func GetHandle() int {
 	return ghwnd
 }
 
-// GetBHandle get the window handle, Wno-deprecated
+// Deprecated: GetBHandle get the window handle, Wno-deprecated
 func GetBHandle() int {
 	tt.Drop("GetBHandle", "GetHandle")
 	hwnd := C.bget_handle()
