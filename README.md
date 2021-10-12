@@ -132,11 +132,12 @@ func main() {
   robotgo.ScrollMouse(10, "up")
   robotgo.Scroll(100, 200)
 
-  robotgo.MoveMouse(10, 10)
+  robotgo.Move(10, 10)
   robotgo.Drag(10, 10)
 
-  robotgo.MouseClick("left", true)
-  robotgo.MoveMouseSmooth(100, 200, 1.0, 100.0)
+  robotgo.Click("left", true)
+  robotgo.MoveSmooth(100, 200, 1.0, 100.0)
+  robotgo.MouseToggle("up")
 }
 ```
 
@@ -168,6 +169,8 @@ func main() {
 
   arr := []string{"alt", "command"}
   robotgo.KeyTap("i", arr)
+
+  robotgo.KeyToggle("a", "down")
 
   robotgo.WriteAll("Test")
   text, err := robotgo.ReadAll()
