@@ -1215,10 +1215,17 @@ func Convert(opath, spath string, args ...int) {
 	SaveBitmap(bitmap, spath, mtype)
 }
 
-// FreeBitmap free and dealloc bitmap
+// FreeBitmap free and dealloc the C bitmap
 func FreeBitmap(bitmap C.MMBitmapRef) {
 	// C.destroyMMBitmap(bitmap)
 	C.bitmap_dealloc(bitmap)
+}
+
+// FreeBitmapArr free and dealloc the C bitmap array
+func FreeBitmapArr(bit ...C.MMBitmapRef) {
+	for i := 0; i < len(bit); i++ {
+		FreeBitmap(bit[i])
+	}
 }
 
 // ReadBitmap returns false and sets error if |bitmap| is NULL
