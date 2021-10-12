@@ -132,11 +132,12 @@ func main() {
   robotgo.ScrollMouse(10, "up")
   robotgo.Scroll(100, 200)
 
-  robotgo.MoveMouse(10, 10)
+  robotgo.Move(10, 10)
   robotgo.Drag(10, 10)
 
-  robotgo.MouseClick("left", true)
-  robotgo.MoveMouseSmooth(100, 200, 1.0, 100.0)
+  robotgo.Click("left", true)
+  robotgo.MoveSmooth(100, 200, 1.0, 100.0)
+  robotgo.MouseToggle("up")
 }
 ```
 
@@ -169,6 +170,8 @@ func main() {
   arr := []string{"alt", "command"}
   robotgo.KeyTap("i", arr)
 
+  robotgo.KeyToggle("a", "down")
+
   robotgo.WriteAll("Test")
   text, err := robotgo.ReadAll()
   if err == nil {
@@ -186,6 +189,7 @@ import (
   "fmt"
 
   "github.com/go-vgo/robotgo"
+  "github.com/vcaesar/imgo"
 )
 
 func main() {
@@ -197,6 +201,13 @@ func main() {
 
   sx, sy := robotgo.GetScreenSize()
   fmt.Println("get screen size: ", sx, sy)
+
+  bit := robotgo.CaptureScreen(10, 10, 30, 30)
+  defer robotgo.FreeBitmap(bit)
+  robotgo.SaveBitmap(bit, "test_1.png")
+
+  img := robotgo.ToImage(bit)
+  imgo.Save("test.png", img)
 }
 ```
 
@@ -248,6 +259,15 @@ func opencv() {
   defer robotgo.FindBitmap(bit)
   fmt.Print("find bitmap: ")
   fmt.Println(robotgo.FindBitmap(bit))
+
+  bit0 := robotgo.CaptureScreen()
+  img := robotgo.ToImage(bit0)
+  bit1 := robotgo.CaptureScreen(10, 10, 30, 30)
+  img1 := robotgo.ToImage(bit1)
+  defer robotgo.FreeBitmapArr(bit0, bit1)
+
+  fmt.Print("gcv find image: ")
+  fmt.Println(gcv.FindImg(img1, img))
 }
 ```
 
