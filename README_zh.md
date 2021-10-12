@@ -199,7 +199,7 @@ func main() {
 
   bit := robotgo.CaptureScreen(10, 10, 30, 30)
   defer robotgo.FreeBitmap(bit)
-  robotgo.SaveBimap(bit, "test_1.png")
+  robotgo.SaveBitmap(bit, "test_1.png")
 
   img := robotgo.ToImage(bit)
   imgo.Save("test.png", img)
