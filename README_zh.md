@@ -234,18 +234,18 @@ func main() {
 }
 
 func opencv() {
-	name := "test.png"
-	name1 := "test_001.png"
-	robotgo.SaveCapture(name, 10, 10, 30, 30)
-	robotgo.SaveCapture(name1)
+  name := "test.png"
+  name1 := "test_001.png"
+  robotgo.SaveCapture(name, 10, 10, 30, 30)
+  robotgo.SaveCapture(name1)
 
-	fmt.Print("gcv find image: ")
-	fmt.Println(gcv.FindImgFile(name, name1))
+  fmt.Print("gcv find image: ")
+  fmt.Println(gcv.FindImgFile(name, name1))
 
-	bit := robotgo.OpenBitmap(name)
+  bit := robotgo.OpenBitmap(name)
   defer robotgo.FindBitmap(bit)
-	fmt.Print("find bitmap: ")
-	fmt.Println(robotgo.FindBitmap(bit))
+  fmt.Print("find bitmap: ")
+  fmt.Println(robotgo.FindBitmap(bit))
 }
 ```
 
@@ -284,10 +284,10 @@ func add() {
 }
 
 func low() {
-	EvChan := hook.Start()
+	evChan := hook.Start()
 	defer hook.End()
 
-	for ev := range EvChan {
+	for ev := range evChan {
 		fmt.Println("hook: ", ev)
 	}
 }
