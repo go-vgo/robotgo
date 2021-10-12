@@ -209,6 +209,7 @@ import (
   "fmt"
 
   "github.com/go-vgo/robotgo"
+  "github.com/vcaesar/gcv"
 )
 
 func main() {
@@ -232,6 +233,21 @@ func main() {
   fmt.Println("FindBitmap------ ", fx, fy)
 
   robotgo.SaveBitmap(bitmap, "test.png")
+}
+
+func opencv() {
+	name := "test.png"
+	name1 := "test_001.png"
+	robotgo.SaveCapture(name, 10, 10, 30, 30)
+	robotgo.SaveCapture(name1)
+
+	fmt.Print("gcv find image: ")
+	fmt.Println(gcv.FindImgFile(name, name1))
+
+	bit := robotgo.OpenBitmap(name)
+  defer robotgo.FindBitmap(bit)
+	fmt.Print("find bitmap: ")
+	fmt.Println(robotgo.FindBitmap(bit))
 }
 ```
 
