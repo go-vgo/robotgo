@@ -80,6 +80,13 @@ func GetVersion() string {
 	return Version
 }
 
+var (
+	// MouseSleep set the mouse default millisecond sleep time
+	MouseSleep = 0
+	// KeySleep set the key default millisecond sleep time
+	KeySleep = 0
+)
+
 type (
 	// Map a map[string]interface{}
 	Map map[string]interface{}
@@ -222,7 +229,7 @@ func SysScale() float64 {
 	return float64(s)
 }
 
-// Scaled x * sys-scale
+// Scaled return x * sys_scale
 func Scaled(x int) int {
 	return int(float64(x) * SysScale())
 }
@@ -259,6 +266,11 @@ func Scale() int {
 
 	x := ScaleX()
 	return dpi[x]
+}
+
+// Scale0 return ScaleX() / 0.96
+func Scale0() int {
+	return int(float64(ScaleX()) / 0.96)
 }
 
 // Mul mul the scale
@@ -328,6 +340,14 @@ func GoCaptureScreen(args ...int) Bitmap {
 	return ToBitmap(bit)
 }
 
+// CaptureImg capture the screen and return image.Image
+func CaptureImg(args ...int) image.Image {
+	bit := CaptureScreen(args...)
+	defer FreeBitmap(bit)
+
+	return ToImage(bit)
+}
+
 // SaveCapture capture screen and save
 func SaveCapture(spath string, args ...int) {
 	bit := CaptureScreen(args...)
@@ -370,22 +390,23 @@ func MoveMouse(x, y int) {
 	Move(x, y)
 }
 
-// Move move the mouse
+// Move move the mouse to (x, y)
 func Move(x, y int) {
 	cx := C.int32_t(x)
 	cy := C.int32_t(y)
 	C.move_mouse(cx, cy)
+
+	MilliSleep(MouseSleep)
 }
 
-// DragMouse drag the mouse
+// DragMouse drag the mouse to (x, y)
 func DragMouse(x, y int, args ...string) {
 	Drag(x, y, args...)
 }
 
-// Drag drag the mouse
+// Drag drag the mouse to (x, y)
 func Drag(x, y int, args ...string) {
 	var button C.MMMouseButton = C.LEFT_BUTTON
-
 	cx := C.int32_t(x)
 	cy := C.int32_t(y)
 
@@ -394,6 +415,7 @@ func Drag(x, y int, args ...string) {
 	}
 
 	C.drag_mouse(cx, cy, button)
+	MilliSleep(MouseSleep)
 }
 
 // DragSmooth drag the mouse smooth
@@ -436,6 +458,7 @@ func MoveSmooth(x, y int, args ...interface{}) bool {
 	}
 
 	cbool := C.move_mouse_smooth(cx, cy, low, high, C.int(mouseDelay))
+	MilliSleep(MouseSleep)
 
 	return bool(cbool)
 }
@@ -449,12 +472,12 @@ func MoveArgs(x, y int) (int, int) {
 	return mx, my
 }
 
-// MoveRelative move mose relative
+// MoveRelative move mouse with relative
 func MoveRelative(x, y int) {
 	Move(MoveArgs(x, y))
 }
 
-// MoveSmoothRelative move mose smooth relative
+// MoveSmoothRelative move mouse smooth with relative
 func MoveSmoothRelative(x, y int, args ...interface{}) {
 	mx, my := MoveArgs(x, y)
 	MoveSmooth(mx, my, args...)
@@ -495,6 +518,7 @@ func Click(args ...interface{}) {
 	}
 
 	C.mouse_click(button, double)
+	MilliSleep(MouseSleep)
 }
 
 // MoveClick move and click the mouse
@@ -523,6 +547,7 @@ func MouseToggle(togKey string, args ...interface{}) int {
 	i := C.mouse_toggle(down, button)
 
 	C.free(unsafe.Pointer(down))
+	MilliSleep(MouseSleep)
 	return int(i)
 }
 
@@ -533,9 +558,10 @@ func ScrollMouse(x int, direction string) {
 	C.scroll_mouse(cx, cy)
 
 	C.free(unsafe.Pointer(cy))
+	MilliSleep(MouseSleep)
 }
 
-// Scroll scroll the mouse with x, y
+// Scroll scroll the mouse to (x, y)
 //
 // robotgo.Scroll(x, y, msDelay int)
 func Scroll(x, y int, args ...int) {
@@ -549,6 +575,13 @@ func Scroll(x, y int, args ...int) {
 	cz := C.int(msDelay)
 
 	C.scroll(cx, cy, cz)
+	MilliSleep(MouseSleep)
+}
+
+// ScrollRelative scroll mouse with relative
+func ScrollRelative(x, y int, args ...int) {
+	mx, my := MoveArgs(x, y)
+	Scroll(mx, my, args...)
 }
 
 // SetMouseDelay set mouse delay
@@ -645,6 +678,7 @@ func KeyTap(tapKey string, args ...interface{}) string {
 	C.free(unsafe.Pointer(amod))
 	C.free(unsafe.Pointer(amodt))
 
+	MilliSleep(KeySleep)
 	return C.GoString(str)
 }
 
@@ -695,6 +729,7 @@ func KeyToggle(key string, args ...string) string {
 	C.free(unsafe.Pointer(cmKey))
 	C.free(unsafe.Pointer(cmKeyT))
 
+	MilliSleep(KeySleep)
 	return C.GoString(str)
 }
 
@@ -811,6 +846,7 @@ func TypeStr(str string, args ...float64) {
 		MicroSleep(tm)
 		// }
 	}
+	MilliSleep(KeySleep)
 }
 
 // PasteStr paste a string, support UTF-8
@@ -989,7 +1025,7 @@ func FindCBitmap(bmp CBitmap, args ...interface{}) (int, int) {
 
 // FindBitmap find the bitmap's pos
 //
-//	robotgo.FindBitmap(bitmap, subbitamp C.MMBitmapRef, tolerance float64)
+//	robotgo.FindBitmap(bitmap, source_bitamp C.MMBitmapRef, tolerance float64)
 //
 //  |tolerance| should be in the range 0.0f - 1.0f, denoting how closely the
 //  colors in the bitmaps need to match, with 0 being exact and 1 being any.
@@ -1023,7 +1059,7 @@ func FindBitmap(bit C.MMBitmapRef, args ...interface{}) (int, int) {
 
 // FindPic finding the image by path
 //
-//	robotgo.FindPic(path string, subbitamp C.MMBitmapRef, tolerance float64)
+//	robotgo.FindPic(path string, source_bitamp C.MMBitmapRef, tolerance float64)
 //
 // This method only automatically free the internal bitmap,
 // use `defer robotgo.FreeBitmap(bit)` to free the bitmap
@@ -1435,32 +1471,32 @@ func ShowAlert(title, msg string, args ...string) bool {
 	var (
 		// title         string
 		// msg           string
-		defaultButton = "Ok"
-		cancelButton  = "Cancel"
+		defaultBtn = "Ok"
+		cancelBtn  = "Cancel"
 	)
 
 	if len(args) > 0 {
 		// title = args[0]
 		// msg = args[1]
-		defaultButton = args[0]
+		defaultBtn = args[0]
 	}
 
 	if len(args) > 1 {
-		cancelButton = args[1]
+		cancelBtn = args[1]
 	}
 
-	atitle := C.CString(title)
-	amsg := C.CString(msg)
-	adefaultButton := C.CString(defaultButton)
-	acancelButton := C.CString(cancelButton)
+	cTitle := C.CString(title)
+	cMsg := C.CString(msg)
+	defaultButton := C.CString(defaultBtn)
+	cancelButton := C.CString(cancelBtn)
 
-	cbool := C.show_alert(atitle, amsg, adefaultButton, acancelButton)
+	cbool := C.show_alert(cTitle, cMsg, defaultButton, cancelButton)
 	ibool := int(cbool)
 
-	C.free(unsafe.Pointer(atitle))
-	C.free(unsafe.Pointer(amsg))
-	C.free(unsafe.Pointer(adefaultButton))
-	C.free(unsafe.Pointer(acancelButton))
+	C.free(unsafe.Pointer(cTitle))
+	C.free(unsafe.Pointer(cMsg))
+	C.free(unsafe.Pointer(defaultButton))
+	C.free(unsafe.Pointer(cancelButton))
 
 	return ibool == 0
 }
