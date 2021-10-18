@@ -20,13 +20,13 @@ import (
 func typeStr() {
 	// importing "Hello World"
 	robotgo.TypeStr("Hello World!", 1.0)
-
+	robotgo.KeySleep = 100
 	robotgo.TypeStr("だんしゃり")
-	robotgo.MicroSleep(10.2)
 
-	robotgo.TypeStr("Hi galaxy. こんにちは世界.")
-	robotgo.Sleep(2)
-	// robotgo.TypeStr("So, hi, bye!")
+	robotgo.TypeStr("Hi galaxy. こんにちは世界. 你好, 再见!")
+
+	robotgo.Sleep(1)
+	robotgo.TypeStr("So, hi, bye!")
 	robotgo.MilliSleep(100)
 
 	ustr := uint32(robotgo.CharCodeAt("So, hi, bye!", 0))
@@ -38,6 +38,7 @@ func typeStr() {
 func keyTap() {
 	// press "enter"
 	robotgo.KeyTap("enter")
+	robotgo.KeySleep = 200
 	robotgo.KeyTap("a")
 	robotgo.MilliSleep(100)
 	robotgo.KeyTap("a", "ctrl")
@@ -71,6 +72,7 @@ func keyTap() {
 }
 
 func keyToggle() {
+	// robotgo.KeySleep = 150
 	robotgo.KeyToggle("a", "down")
 	robotgo.KeyToggle("a", "down", "alt")
 	robotgo.Sleep(1)

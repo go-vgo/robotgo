@@ -18,11 +18,12 @@ import (
 )
 
 func move() {
+	robotgo.MouseSleep = 100
 	robotgo.Move(100, 200)
 	robotgo.MoveRelative(10, -200)
 
 	// move the mouse to 100, 200
-	robotgo.MoveMouse(100, 200)
+	robotgo.Move(100, 200)
 
 	robotgo.Drag(10, 10)
 	robotgo.Drag(20, 20, "right")
@@ -37,7 +38,8 @@ func move() {
 
 	for i := 0; i < 1080; i += 1000 {
 		fmt.Println(i)
-		robotgo.MoveMouse(800, i)
+		// MoveMouse(800, i)
+		robotgo.Move(800, i)
 	}
 }
 
@@ -50,7 +52,7 @@ func click() {
 	robotgo.Click("right", false)
 
 	// double click the left mouse button
-	robotgo.MouseClick("left", true)
+	robotgo.Click("left", true)
 }
 
 func get() {
@@ -61,7 +63,7 @@ func get() {
 		fmt.Println("mouse...", "586")
 	}
 
-	robotgo.MoveMouse(x, y)
+	robotgo.Move(x, y)
 }
 
 func toggleAndScroll() {

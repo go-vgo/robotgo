@@ -167,7 +167,7 @@ func U32ToHex(hex C.uint32_t) C.MMRGBHex {
 	return C.MMRGBHex(hex)
 }
 
-// U8ToHex teans *C.uint8_t to C.MMRGBHex
+// U8ToHex trans *C.uint8_t to C.MMRGBHex
 func U8ToHex(hex *C.uint8_t) C.MMRGBHex {
 	return C.MMRGBHex(*hex)
 }
