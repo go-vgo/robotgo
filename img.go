@@ -72,6 +72,21 @@ func ByteToImg(b []byte) (image.Image, error) {
 	return imgo.ByteToImg(b)
 }
 
+// ImgSize get the file image size
+func ImgSize(path string) (int, int, error) {
+	return imgo.GetSize(path)
+}
+
+// Width return the image.Image width
+func Width(img image.Image) int {
+	return img.Bounds().Max.X
+}
+
+// Height return the image.Image height
+func Height(img image.Image) int {
+	return img.Bounds().Max.Y
+}
+
 // RGBAToBitmap convert the standard image.RGBA to Bitmap
 func RGBAToBitmap(r1 *image.RGBA) (bit Bitmap) {
 	bit.Width = r1.Bounds().Size().X

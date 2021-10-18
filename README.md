@@ -226,7 +226,6 @@ import (
   "fmt"
 
   "github.com/go-vgo/robotgo"
-  "github.com/vcaesar/gcv"
 )
 
 func main() {
@@ -250,6 +249,23 @@ func main() {
   fmt.Println("FindBitmap------ ", fx, fy)
 
   robotgo.SaveBitmap(bitmap, "test.png")
+}
+```
+
+#### [OpenCV](https://github.com/vcaesar/gcv)
+
+```Go
+package main
+
+import (
+  "fmt"
+
+  "github.com/go-vgo/robotgo"
+  "github.com/vcaesar/gcv"
+)
+
+func main() {
+  opencv()
 }
 
 func opencv() {
