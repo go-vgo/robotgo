@@ -137,7 +137,7 @@ func MicroSleep(tm float64) {
 	C.microsleep(C.double(tm))
 }
 
-// GoString teans C.char to string
+// GoString trans C.char to string
 func GoString(char *C.char) string {
 	return C.GoString(char)
 }
@@ -386,7 +386,6 @@ func CheckMouse(btn string) C.MMMouseButton {
 
 // MoveMouse move the mouse
 func MoveMouse(x, y int) {
-	// C.size_t  int
 	Move(x, y)
 }
 
@@ -463,7 +462,7 @@ func MoveSmooth(x, y int, args ...interface{}) bool {
 	return bool(cbool)
 }
 
-// MoveArgs move mose relative args
+// MoveArgs move mouse relative args
 func MoveArgs(x, y int) (int, int) {
 	mx, my := GetMousePos()
 	mx = mx + x
@@ -629,6 +628,7 @@ func KeyTap(tapKey string, args ...interface{}) string {
 
 		str := C.key_Taps(zkey,
 			(**C.char)(unsafe.Pointer(&ckeyArr[0])), C.int(num), 0)
+		MilliSleep(KeySleep)
 		return C.GoString(str)
 	}
 
@@ -668,6 +668,7 @@ func KeyTap(tapKey string, args ...interface{}) string {
 		str := C.key_Taps(zkey, (**C.char)(unsafe.Pointer(&ckeyArr[0])),
 			C.int(num), C.int(keyDelay))
 
+		MilliSleep(KeySleep)
 		return C.GoString(str)
 	}
 
@@ -699,6 +700,7 @@ func KeyToggle(key string, args ...string) string {
 		}
 
 		str := C.key_Toggles(ckey, (**C.char)(unsafe.Pointer(&ckeyArr[0])), C.int(num))
+		MilliSleep(KeySleep)
 		return C.GoString(str)
 	}
 
@@ -736,7 +738,7 @@ func KeyToggle(key string, args ...string) string {
 // KeyPress press key string
 func KeyPress(key string) {
 	KeyDown(key)
-	Sleep(15 + rand.Intn(10))
+	Sleep(1 + rand.Intn(3))
 	KeyUp(key)
 }
 
