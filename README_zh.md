@@ -238,6 +238,7 @@ func main() {
   bit2 := robotgo.ToCBitmap(robotgo.ImgToBitmap(img))
   fx, fy := robotgo.FindBitmap(bit2)
   fmt.Println("FindBitmap------ ", fx, fy)
+  robotgo.Move(fx, fy)
 
   arr := robotgo.FindEveryBitmap(bit2)
   fmt.Println("Find every bitmap: ", arr)
@@ -257,6 +258,7 @@ package main
 
 import (
   "fmt"
+  "math/rand"
 
   "github.com/go-vgo/robotgo"
   "github.com/vcaesar/gcv"
@@ -291,7 +293,14 @@ func opencv() {
 
   fmt.Print("gcv find image: ")
   fmt.Println(gcv.FindImg(img1, img))
-  fmt.Println(gcv.FindAllImg(img1, img))
+  fmt.Println()
+
+  res := gcv.FindAllImg(img1, img)
+  fmt.Println(res[0].TopLeft.Y, res[0].Rects.TopLeft.X, res)
+  x, y := res[0].TopLeft.X, res[0].TopLeft.Y
+  robotgo.Move(x, y-rand.Intn(5))
+  robotgo.MilliSleep(100)
+  robotgo.Click()
 }
 ```
 
