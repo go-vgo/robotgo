@@ -60,8 +60,8 @@ MMRectInt32 getScreenRect(int32_t display_id) {
 #elif defined(IS_WINDOWS)
 	if (GetSystemMetrics(SM_CMONITORS) == 1) {
  		return MMRectInt32Make(
-						(int32_t)GetSystemMetrics(SM_XSCREEN),
-						(int32_t)GetSystemMetrics(SM_YSCREEN),
+						(int32_t)0,
+						(int32_t)0,
 			 			(int32_t)GetSystemMetrics(SM_CXSCREEN),
  		                (int32_t)GetSystemMetrics(SM_CYSCREEN));
  	} else {
