@@ -106,10 +106,21 @@ type Bitmap struct {
 	BytesPerPixel uint8
 }
 
-// MPoint is MPoint struct
-type MPoint struct {
+// Point is point struct
+type Point struct {
 	X int
 	Y int
+}
+
+// Size is size structure
+type Size struct {
+	W, H int
+}
+
+// Rect is rect structure
+type Rect struct {
+	Point
+	Size
 }
 
 // Try handler(err)
@@ -191,7 +202,7 @@ func RgbToHex(r, g, b uint8) C.uint32_t {
 	return C.color_rgb_to_hex(C.uint8_t(r), C.uint8_t(g), C.uint8_t(b))
 }
 
-// GetPxColor get pixel color return C.MMRGBHex
+// GetPxColor get the pixel color return C.MMRGBHex
 func GetPxColor(x, y int) C.MMRGBHex {
 	cx := C.int32_t(x)
 	cy := C.int32_t(y)
@@ -200,7 +211,7 @@ func GetPxColor(x, y int) C.MMRGBHex {
 	return color
 }
 
-// GetPixelColor get pixel color return string
+// GetPixelColor get the pixel color return string
 func GetPixelColor(x, y int) string {
 	cx := C.int32_t(x)
 	cy := C.int32_t(y)
@@ -218,7 +229,7 @@ func GetMouseColor() string {
 	return GetPixelColor(x, y)
 }
 
-// ScaleX get primary display horizontal DPI scale factor
+// ScaleX get the primary display horizontal DPI scale factor
 func ScaleX() int {
 	return int(C.scale_x())
 }
@@ -244,6 +255,26 @@ func GetScreenSize() (int, int) {
 	size := C.get_screen_size()
 	// fmt.Println("...", size, size.width)
 	return int(size.w), int(size.h)
+}
+
+// GetScreenRect get the screen rect
+func GetScreenRect(displayId ...int) Rect {
+	display := 0
+	if len(displayId) > 0 {
+		display = displayId[0]
+	}
+
+	rect := C.getScreenRect(C.int32_t(display))
+	return Rect{
+		Point{
+			X: int(rect.origin.x),
+			Y: int(rect.origin.y),
+		},
+		Size{
+			W: int(rect.size.w),
+			H: int(rect.size.h),
+		},
+	}
 }
 
 // Scale get the screen scale
@@ -322,7 +353,7 @@ func CaptureScreen(args ...int) C.MMBitmapRef {
 		x = 0
 		y = 0
 
-		// Get screen size.
+		// Get the main screen size.
 		displaySize := C.getMainDisplaySize()
 		w = displaySize.w
 		h = displaySize.h
@@ -1098,7 +1129,7 @@ func FreeMMPointArr(pointArray C.MMPointArrayRef) {
 }
 
 // FindEveryBitmap find the every bitmap
-func FindEveryBitmap(bit C.MMBitmapRef, args ...interface{}) (posArr []MPoint) {
+func FindEveryBitmap(bit C.MMBitmapRef, args ...interface{}) (posArr []Point) {
 	var (
 		sbit      C.MMBitmapRef
 		tolerance C.float = 0.01
@@ -1142,7 +1173,7 @@ func FindEveryBitmap(bit C.MMBitmapRef, args ...interface{}) (posArr []MPoint) {
 	cArray := pos.array
 	gSlice := (*[(1 << 28) - 1]C.MMPoint)(unsafe.Pointer(cArray))[:cSize:cSize]
 	for i := 0; i < len(gSlice); i++ {
-		posArr = append(posArr, MPoint{
+		posArr = append(posArr, Point{
 			X: int(gSlice[i].x),
 			Y: int(gSlice[i].y),
 		})
@@ -1353,7 +1384,7 @@ func FindColorCS(color CHex, x, y, w, h int, args ...float64) (int, int) {
 }
 
 // FindEveryColor find every color
-func FindEveryColor(color CHex, args ...interface{}) (posArr []MPoint) {
+func FindEveryColor(color CHex, args ...interface{}) (posArr []Point) {
 	var (
 		bitmap    C.MMBitmapRef
 		tolerance C.float = 0.01
@@ -1397,7 +1428,7 @@ func FindEveryColor(color CHex, args ...interface{}) (posArr []MPoint) {
 	cArray := pos.array
 	gSlice := (*[(1 << 28) - 1]C.MMPoint)(unsafe.Pointer(cArray))[:cSize:cSize]
 	for i := 0; i < len(gSlice); i++ {
-		posArr = append(posArr, MPoint{
+		posArr = append(posArr, Point{
 			X: int(gSlice[i].x),
 			Y: int(gSlice[i].y),
 		})

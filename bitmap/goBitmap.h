@@ -141,7 +141,7 @@ char *tostring_bitmap(MMBitmapRef bitmap){
 	return buf;
 }
 
-// out with size 200 is enough
+// char out size 200 is enough
 bool bitmap_str(MMBitmapRef bitmap, char *out){
 	if (!bitmap_ready(bitmap)) { return false; }
 	sprintf(out, "<Bitmap with resolution %lu%lu, \
