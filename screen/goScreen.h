@@ -97,7 +97,7 @@ char* get_XDisplay_name(){
 
 // capture_screen capture screen
 MMBitmapRef capture_screen(int32_t x, int32_t y, int32_t w, int32_t h){
-	// if (){
+	// if () {
 	// 	x = 0;
 	// 	y = 0;
 	// 	// Get screen size.

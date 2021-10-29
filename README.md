@@ -41,6 +41,7 @@ RobotGo supports Mac, Windows, and Linux(X11); and robotgo supports arm64 and x8
   - [Chinese Docs](https://github.com/go-vgo/robotgo/blob/master/docs/doc_zh.md)
 
 ## Binding:
+[ADB](https://github.com/vcaesar/adb), packaging android adb API.
 
 [Robotn](https://github.com/vcaesar/robotn), binding JavaScript and other, support more language.
 
