@@ -304,6 +304,14 @@ func opencv() {
   robotgo.Move(x, y-rand.Intn(5))
   robotgo.MilliSleep(100)
   robotgo.Click()
+
+  res = gcv.FindAll(img1, img) // use find template and sift
+  fmt.Println("find all: ", res)
+  res1 := gcv.Find(img1, img)
+  fmt.Println("find: ", res1)
+
+  x, y = gcv.FindX(img1, img)
+  fmt.Println(x, y)
 }
 ```
 
