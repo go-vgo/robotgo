@@ -12,6 +12,7 @@ package robotgo
 
 import (
 	"image"
+	"os/exec"
 	"unsafe"
 
 	"github.com/vcaesar/imgo"
@@ -156,4 +157,25 @@ func copyToVUint8A(dst []uint8, src *uint8) {
 		dst[i+2] = val(src, i)
 		dst[i+3] = val(src, i+3)
 	}
+}
+
+// GetText get the image text by tesseract ocr
+//
+// robotgo.GetText(imgPath, lang string)
+func GetText(imgPath string, args ...string) (string, error) {
+	var lang = "eng"
+
+	if len(args) > 0 {
+		lang = args[0]
+		if lang == "zh" {
+			lang = "chi_sim"
+		}
+	}
+
+	body, err := exec.Command("tesseract", imgPath,
+		"stdout", "-l", lang).Output()
+	if err != nil {
+		return "", err
+	}
+	return string(body), nil
 }

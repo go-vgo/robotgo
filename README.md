@@ -310,7 +310,8 @@ func opencv() {
   res1 := gcv.Find(img1, img)
   fmt.Println("find: ", res1)
 
-  x, y = gcv.FindX(img1, img)
+  img2, _, _ := robotgo.DecodeImg("test_001.png")
+  x, y = gcv.FindX(img2, img)
   fmt.Println(x, y)
 }
 ```
