@@ -16,15 +16,16 @@ func colorPicker() {
 		fmt.Println("color: #", clo)
 
 		// clipboard
-		err := robotgo.WriteAll("#" + clo)
+		s1 := fmt.Sprint(x, ", ", y) + ": " + "#" + clo
+		err := robotgo.WriteAll(s1)
 		if err != nil {
-			fmt.Println("err: ", err)
+			fmt.Println("clipboard err: ", err)
 		}
 	}
 }
 
 func main() {
-	fmt.Println("color picker...")
+	fmt.Println("color picker: ")
 
 	for {
 		colorPicker()
