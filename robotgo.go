@@ -371,12 +371,35 @@ func CaptureImg(args ...int) image.Image {
 	return ToImage(bit)
 }
 
-// SaveCapture capture screen and save
-func SaveCapture(spath string, args ...int) {
-	bit := CaptureScreen(args...)
+// FreeBitmap free and dealloc the C bitmap
+func FreeBitmap(bitmap C.MMBitmapRef) {
+	// C.destroyMMBitmap(bitmap)
+	C.bitmap_dealloc(bitmap)
+}
 
-	SaveBitmap(bit, spath)
-	FreeBitmap(bit)
+// ToBitmap trans C.MMBitmapRef to Bitmap
+func ToBitmap(bit C.MMBitmapRef) Bitmap {
+	bitmap := Bitmap{
+		ImgBuf:        (*uint8)(bit.imageBuffer),
+		Width:         int(bit.width),
+		Height:        int(bit.height),
+		Bytewidth:     int(bit.bytewidth),
+		BitsPixel:     uint8(bit.bitsPerPixel),
+		BytesPerPixel: uint8(bit.bytesPerPixel),
+	}
+
+	return bitmap
+}
+
+// ToImage convert C.MMBitmapRef to standard image.Image
+func ToImage(bit C.MMBitmapRef) image.Image {
+	return ToRGBA(bit)
+}
+
+// ToRGBA convert C.MMBitmapRef to standard image.RGBA
+func ToRGBA(bit C.MMBitmapRef) *image.RGBA {
+	bmp1 := ToBitmap(bit)
+	return ToRGBAGo(bmp1)
 }
 
 /*

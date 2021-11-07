@@ -26,12 +26,12 @@ bool bitmap_ready(MMBitmapRef bitmap){
 	return true;
 }
 
-void bitmap_dealloc(MMBitmapRef bitmap){
-	if (bitmap != NULL) {
-		destroyMMBitmap(bitmap);
-		bitmap = NULL;
-	}
-}
+// void bitmap_dealloc(MMBitmapRef bitmap){
+// 	if (bitmap != NULL) {
+// 		destroyMMBitmap(bitmap);
+// 		bitmap = NULL;
+// 	}
+// }
 
 bool bitmap_copy_to_pboard(MMBitmapRef bitmap){
 	MMPasteError err;

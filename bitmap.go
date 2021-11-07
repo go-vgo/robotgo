@@ -26,7 +26,6 @@ package robotgo
 import "C"
 
 import (
-	"image"
 	"unsafe"
 
 	"github.com/vcaesar/tt"
@@ -41,18 +40,13 @@ import (
 |______/  |__|     |__|     |__|  |__| /__/     \__\ | _|
 */
 
-// ToBitmap trans C.MMBitmapRef to Bitmap
-func ToBitmap(bit C.MMBitmapRef) Bitmap {
-	bitmap := Bitmap{
-		ImgBuf:        (*uint8)(bit.imageBuffer),
-		Width:         int(bit.width),
-		Height:        int(bit.height),
-		Bytewidth:     int(bit.bytewidth),
-		BitsPixel:     uint8(bit.bitsPerPixel),
-		BytesPerPixel: uint8(bit.bytesPerPixel),
-	}
+// SaveCapture capture screen and save
+func SaveCapture(spath string, args ...int) string {
+	bit := CaptureScreen(args...)
 
-	return bitmap
+	err := SaveBitmap(bit, spath)
+	FreeBitmap(bit)
+	return err
 }
 
 // ToCBitmap trans Bitmap to C.MMBitmapRef
@@ -69,6 +63,11 @@ func ToCBitmap(bit Bitmap) C.MMBitmapRef {
 	return cbitmap
 }
 
+// ToMMBitmapRef trans CBitmap to C.MMBitmapRef
+func ToMMBitmapRef(bit CBitmap) C.MMBitmapRef {
+	return C.MMBitmapRef(bit)
+}
+
 // ToBitmapBytes saves Bitmap to bitmap format in bytes
 func ToBitmapBytes(bit C.MMBitmapRef) []byte {
 	var len C.size_t
@@ -82,11 +81,6 @@ func ToBitmapBytes(bit C.MMBitmapRef) []byte {
 	return bs
 }
 
-// ToMMBitmapRef trans CBitmap to C.MMBitmapRef
-func ToMMBitmapRef(bit CBitmap) C.MMBitmapRef {
-	return C.MMBitmapRef(bit)
-}
-
 // TostringBitmap tostring bitmap to string
 func TostringBitmap(bit C.MMBitmapRef) string {
 	strBit := C.tostring_bitmap(bit)
@@ -97,17 +91,6 @@ func TostringBitmap(bit C.MMBitmapRef) string {
 func TocharBitmap(bit C.MMBitmapRef) *C.char {
 	strBit := C.tostring_bitmap(bit)
 	return strBit
-}
-
-// ToImage convert C.MMBitmapRef to standard image.Image
-func ToImage(bit C.MMBitmapRef) image.Image {
-	return ToRGBA(bit)
-}
-
-// ToRGBA convert C.MMBitmapRef to standard image.RGBA
-func ToRGBA(bit C.MMBitmapRef) *image.RGBA {
-	bmp1 := ToBitmap(bit)
-	return ToRGBAGo(bmp1)
 }
 
 func internalFindBitmap(bit, sbit C.MMBitmapRef, tolerance float64) (int, int) {
@@ -337,7 +320,7 @@ func GetPortion(bit C.MMBitmapRef, x, y, w, h int) C.MMBitmapRef {
 // Convert convert the bitmap
 //
 // robotgo.Convert(opath, spath string, type int)
-func Convert(opath, spath string, args ...int) {
+func Convert(opath, spath string, args ...int) string {
 	var mtype = 1
 	if len(args) > 0 {
 		mtype = args[0]
@@ -346,13 +329,7 @@ func Convert(opath, spath string, args ...int) {
 	// C.CString()
 	bitmap := OpenBitmap(opath)
 	// fmt.Println("a----", bit_map)
-	SaveBitmap(bitmap, spath, mtype)
-}
-
-// FreeBitmap free and dealloc the C bitmap
-func FreeBitmap(bitmap C.MMBitmapRef) {
-	// C.destroyMMBitmap(bitmap)
-	C.bitmap_dealloc(bitmap)
+	return SaveBitmap(bitmap, spath, mtype)
 }
 
 // FreeBitmapArr free and dealloc the C bitmap array

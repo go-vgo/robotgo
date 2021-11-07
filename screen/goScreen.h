@@ -95,6 +95,13 @@ char* get_XDisplay_name(){
 	#endif
 }
 
+void bitmap_dealloc(MMBitmapRef bitmap){
+	if (bitmap != NULL) {
+		destroyMMBitmap(bitmap);
+		bitmap = NULL;
+	}
+}
+
 // capture_screen capture screen
 MMBitmapRef capture_screen(int32_t x, int32_t y, int32_t w, int32_t h){
 	// if () {
