@@ -100,18 +100,18 @@
 	"num_enter"
 	"num_equal"
 
-	// "numpad_0"		No Linux support
-	"numpad_0"
-	"numpad_1"
-	"numpad_2"
-	"numpad_3"
-	"numpad_4"
-	"numpad_5"
-	"numpad_6"
-	"numpad_7"
-	"numpad_8"
-	"numpad_9"
-	"numpad_lock"
+	// // "numpad_0"		No Linux support
+	// "numpad_0"
+	// "numpad_1"
+	// "numpad_2"
+	// "numpad_3"
+	// "numpad_4"
+	// "numpad_5"
+	// "numpad_6"
+	// "numpad_7"
+	// "numpad_8"
+	// "numpad_9"
+	// "numpad_lock"
 
 	"lights_mon_up"		 Turn up monitor brightness					No Windows support
 	"lights_mon_down"	 Turn down monitor brightness				No Windows support
