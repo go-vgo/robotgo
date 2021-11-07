@@ -659,6 +659,13 @@ func KeyTap(tapKey string, args ...interface{}) string {
 		keyDelay = 10
 	)
 
+	if _, ok := Special[tapKey]; ok {
+		tapKey = Special[tapKey]
+		if len(args) <= 0 {
+			args = append(args, "shift")
+		}
+	}
+
 	// var ckeyArr []*C.char
 	ckeyArr := make([](*C.char), 0)
 	// zkey := C.CString(args[0])
