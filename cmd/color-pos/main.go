@@ -7,6 +7,7 @@ import (
 )
 
 func colorPicker() {
+	// click the left mouse button to get the value
 	m := robotgo.AddEvent("mleft")
 	if m {
 		x, y := robotgo.GetMousePos()
