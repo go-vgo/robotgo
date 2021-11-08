@@ -108,15 +108,7 @@ struct KeyNames{
 	{ "num9",		K_NUMPAD_9 },
 	{ "num_lock",	K_NUMPAD_LOCK },
 
-	{"num.",	K_NUMPAD_DECIMAL },
-	{"num+",	K_NUMPAD_PLUS },
-	{"num-",	K_NUMPAD_MINUS },
-	{"num*",	K_NUMPAD_MUL },
-	{"num/",	K_NUMPAD_DIV },
-	{"num_clear",	K_NUMPAD_CLEAR },
-	{"num_enter",	K_NUMPAD_ENTER },
-	{"num_equal",	K_NUMPAD_EQUAL },
-
+	// todo: removed
 	{ "numpad_0",		K_NUMPAD_0 },
 	{ "numpad_1",		K_NUMPAD_1 },
 	{ "numpad_2",		K_NUMPAD_2 },
@@ -128,6 +120,15 @@ struct KeyNames{
 	{ "numpad_8",		K_NUMPAD_8 },
 	{ "numpad_9",		K_NUMPAD_9 },
 	{ "numpad_lock",	K_NUMPAD_LOCK },
+
+	{"num.",	K_NUMPAD_DECIMAL },
+	{"num+",	K_NUMPAD_PLUS },
+	{"num-",	K_NUMPAD_MINUS },
+	{"num*",	K_NUMPAD_MUL },
+	{"num/",	K_NUMPAD_DIV },
+	{"num_clear",	K_NUMPAD_CLEAR },
+	{"num_enter",	K_NUMPAD_ENTER },
+	{"num_equal",	K_NUMPAD_EQUAL },
 
 	{ "lights_mon_up",    K_LIGHTS_MON_UP },
 	{ "lights_mon_down",  K_LIGHTS_MON_DOWN },
