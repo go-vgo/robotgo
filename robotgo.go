@@ -663,7 +663,7 @@ func KeyTap(tapKey string, args ...interface{}) string {
 		keyT     = "null"
 		keyArr   []string
 		num      int
-		keyDelay = 10
+		keyDelay int // This is legacy and drop option, use robotgo.KeySleep
 	)
 
 	if _, ok := Special[tapKey]; ok {
@@ -891,7 +891,11 @@ func inputUTF(str string) {
 
 // TypeStr send a string, support UTF-8
 //
-// robotgo.TypeStr(string: The string to send, float64: microsleep time, x11)
+// robotgo.TypeStr(string: The string to send, float64: microsleep time, x11 option)
+//
+// Examples:
+// robotgo.TypeStr("abc@123, hi, こんにちは")
+//
 func TypeStr(str string, args ...float64) {
 	var tm, tm1 = 0.0, 7.0
 
@@ -931,7 +935,8 @@ func TypeStr(str string, args ...float64) {
 	MilliSleep(KeySleep)
 }
 
-// PasteStr paste a string, support UTF-8
+// PasteStr paste a string, support UTF-8,
+// write the string to clipboard and tap `cmd + v`
 func PasteStr(str string) string {
 	err := clipboard.WriteAll(str)
 	if err != nil {
@@ -945,8 +950,10 @@ func PasteStr(str string) string {
 	return KeyTap("v", "control")
 }
 
-// Deprecated: TypeString send a string, support unicode
+// Deprecated: TypeString send a string, support unicode(no linux support)
 // TypeStr(string: The string to send), Wno-deprecated
+//
+// This function will be removed in version v1.0.0
 func TypeString(str string, delay ...int) {
 	tt.Drop("TypeString", "TypeStr")
 	var cdelay C.size_t
@@ -967,6 +974,8 @@ func TypeStrDelay(str string, delay int) {
 }
 
 // Deprecated: TypeStringDelayed type string delayed, Wno-deprecated
+//
+// This function will be removed in version v1.0.0
 func TypeStringDelayed(str string, delay int) {
 	tt.Drop("TypeStringDelayed", "TypeStrDelay")
 	TypeStrDelay(str, delay)
@@ -978,7 +987,8 @@ func SetKeyDelay(delay int) {
 }
 
 // Deprecated: SetKeyboardDelay set keyboard delay, Wno-deprecated,
-// this function will be removed in version v1.0.0
+//
+// This function will be removed in version v1.0.0
 func SetKeyboardDelay(delay int) {
 	tt.Drop("SetKeyboardDelay", "SetKeyDelay")
 	SetKeyDelay(delay)
@@ -1147,6 +1157,8 @@ func GetHandle() int {
 }
 
 // Deprecated: GetBHandle get the window handle, Wno-deprecated
+//
+// This function will be removed in version v1.0.0
 func GetBHandle() int {
 	tt.Drop("GetBHandle", "GetHandle")
 	hwnd := C.bget_handle()
