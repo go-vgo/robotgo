@@ -355,6 +355,8 @@ func CopyBitPB(bitmap C.MMBitmapRef) bool {
 }
 
 // Deprecated: CopyBitpb copy bitmap to pasteboard, Wno-deprecated
+//
+// This function will be removed in version v1.0.0
 func CopyBitpb(bitmap C.MMBitmapRef) bool {
 	tt.Drop("CopyBitpb", "CopyBitPB")
 	return CopyBitPB(bitmap)
