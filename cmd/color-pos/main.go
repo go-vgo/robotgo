@@ -27,7 +27,7 @@ func colorPicker() {
 
 func main() {
 	fmt.Println("color picker: ")
-
+	fmt.Println("click the left mouse button to get the value.")
 	for {
 		colorPicker()
 	}

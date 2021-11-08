@@ -650,6 +650,13 @@ func SetMouseDelay(delay int) {
 // See keys:
 //	https://github.com/go-vgo/robotgo/blob/master/docs/keys.md
 //
+// Examples:
+// robotgo.KeyTap("a")
+// robotgo.KeyTap("i", "alt", "command")
+//
+// arr := []string{"alt", "command"}
+// robotgo.KeyTap("i", arr)
+//
 func KeyTap(tapKey string, args ...interface{}) string {
 	var (
 		akey     string
@@ -672,6 +679,7 @@ func KeyTap(tapKey string, args ...interface{}) string {
 	zkey := C.CString(tapKey)
 	defer C.free(unsafe.Pointer(zkey))
 
+	// args not key delay
 	if len(args) > 2 && (reflect.TypeOf(args[2]) != reflect.TypeOf(num)) {
 		num = len(args)
 		for i := 0; i < num; i++ {
@@ -685,6 +693,7 @@ func KeyTap(tapKey string, args ...interface{}) string {
 		return C.GoString(str)
 	}
 
+	// key delay
 	if len(args) > 0 {
 		if reflect.TypeOf(args[0]) == reflect.TypeOf(keyArr) {
 
@@ -736,12 +745,29 @@ func KeyTap(tapKey string, args ...interface{}) string {
 	return C.GoString(str)
 }
 
-// KeyToggle toggle the keyboard
+// KeyToggle toggle the keyboard, if there not have args default is "down"
 //
 // See keys:
 //	https://github.com/go-vgo/robotgo/blob/master/docs/keys.md
 //
+// Examples:
+// robotgo.KeyToggle("a")
+// robotgo.KeyToggle("a", "up")
+//
+// robotgo.KeyToggle("a", "up", "alt", "cmd")
+//
 func KeyToggle(key string, args ...string) string {
+	if len(args) <= 0 {
+		args = append(args, "down")
+	}
+
+	if _, ok := Special[key]; ok {
+		key = Special[key]
+		if len(args) <= 1 {
+			args = append(args, "shift")
+		}
+	}
+
 	ckey := C.CString(key)
 	defer C.free(unsafe.Pointer(ckey))
 
@@ -757,6 +783,7 @@ func KeyToggle(key string, args ...string) string {
 		return C.GoString(str)
 	}
 
+	// use key_toggle()
 	var (
 		down, mKey, mKeyT = "null", "null", "null"
 		// keyDelay = 10
