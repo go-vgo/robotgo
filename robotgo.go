@@ -444,12 +444,14 @@ func Move(x, y int) {
 	MilliSleep(MouseSleep)
 }
 
-// DragMouse drag the mouse to (x, y)
+// DragMouse drag the mouse to (x, y),
+// It's not valid now, use the DragSmooth()
 func DragMouse(x, y int, args ...string) {
 	Drag(x, y, args...)
 }
 
-// Drag drag the mouse to (x, y)
+// Drag drag the mouse to (x, y),
+// It's not valid now, use the DragSmooth()
 func Drag(x, y int, args ...string) {
 	var button C.MMMouseButton = C.LEFT_BUTTON
 	cx := C.int32_t(x)
@@ -466,6 +468,7 @@ func Drag(x, y int, args ...string) {
 // DragSmooth drag the mouse smooth
 func DragSmooth(x, y int, args ...interface{}) {
 	MouseToggle("down")
+	MilliSleep(50)
 	MoveSmooth(x, y, args...)
 	MouseToggle("up")
 }
