@@ -415,16 +415,17 @@ func ToRGBA(bit C.MMBitmapRef) *image.RGBA {
 // CheckMouse check the mouse button
 func CheckMouse(btn string) C.MMMouseButton {
 	// button = args[0].(C.MMMouseButton)
-	if btn == "left" {
-		return C.LEFT_BUTTON
+	m1 := map[string]C.MMMouseButton{
+		"left":       C.LEFT_BUTTON,
+		"center":     C.CENTER_BUTTON,
+		"right":      C.RIGHT_BUTTON,
+		"wheelDown":  C.WheelDown,
+		"wheelUp":    C.WheelUp,
+		"wheelLeft":  C.WheelLeft,
+		"wheelRight": C.WheelRight,
 	}
-
-	if btn == "center" {
-		return C.CENTER_BUTTON
-	}
-
-	if btn == "right" {
-		return C.RIGHT_BUTTON
+	if v, ok := m1[btn]; ok {
+		return v
 	}
 
 	return C.LEFT_BUTTON
@@ -445,9 +446,13 @@ func Move(x, y int) {
 }
 
 // DragMouse drag the mouse to (x, y),
-// It's not valid now, use the DragSmooth()
-func DragMouse(x, y int, args ...string) {
-	Drag(x, y, args...)
+// It's same with the DragSmooth() now
+func DragMouse(x, y int, args ...interface{}) {
+	Toggle("left")
+	MilliSleep(50)
+	// Drag(x, y, args...)
+	MoveSmooth(x, y, args...)
+	Toggle("left", "up")
 }
 
 // Drag drag the mouse to (x, y),
@@ -465,12 +470,12 @@ func Drag(x, y int, args ...string) {
 	MilliSleep(MouseSleep)
 }
 
-// DragSmooth drag the mouse smooth
+// DragSmooth drag the mouse like smooth to (x, y)
 func DragSmooth(x, y int, args ...interface{}) {
-	MouseToggle("down")
+	Toggle("left")
 	MilliSleep(50)
 	MoveSmooth(x, y, args...)
-	MouseToggle("up")
+	Toggle("left", "up")
 }
 
 // MoveMouseSmooth move the mouse smooth,
@@ -581,6 +586,28 @@ func MoveClick(x, y int, args ...interface{}) {
 func MovesClick(x, y int, args ...interface{}) {
 	MoveSmooth(x, y)
 	MouseClick(args...)
+}
+
+// Toggle toggle the mose, support: "left", "center", "right",
+//  "wheelDown", "wheelUp", "wheelLeft", "wheelRight"
+//
+// Examples:
+// 	robotgo.Toggle("left", "up")
+// 	robotgo.Toggle("left") // default is down
+func Toggle(key ...string) int {
+	var button C.MMMouseButton = C.LEFT_BUTTON
+	if len(key) > 0 {
+		button = CheckMouse(key[0])
+	}
+	down := C.CString("down")
+	if len(key) > 1 {
+		down = C.CString(key[1])
+	}
+
+	i := C.mouse_toggle(down, button)
+	C.free(unsafe.Pointer(down))
+	MilliSleep(MouseSleep)
+	return int(i)
 }
 
 // MouseToggle toggle the mouse
