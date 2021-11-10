@@ -437,6 +437,10 @@ func MoveMouse(x, y int) {
 }
 
 // Move move the mouse to (x, y)
+//
+// Examples:
+// 	robotgo.MouseSleep = 100  // 100 millisecond
+// 	robotgo.Move(10, 10)
 func Move(x, y int) {
 	cx := C.int32_t(x)
 	cy := C.int32_t(y)
@@ -471,6 +475,9 @@ func Drag(x, y int, args ...string) {
 }
 
 // DragSmooth drag the mouse like smooth to (x, y)
+//
+// Examples:
+//	robotgo.DragSmooth(10, 10)
 func DragSmooth(x, y int, args ...interface{}) {
 	Toggle("left")
 	MilliSleep(50)
@@ -488,6 +495,10 @@ func MoveMouseSmooth(x, y int, args ...interface{}) bool {
 // moves mouse to x, y human like, with the mouse button up.
 //
 // robotgo.MoveSmooth(x, y int, low, high float64, mouseDelay int)
+//
+// Examples:
+//	robotgo.MoveSmooth(10, 10)
+//	robotgo.MoveSmooth(10, 10, 1.0, 2.0)
 func MoveSmooth(x, y int, args ...interface{}) bool {
 	cx := C.int32_t(x)
 	cy := C.int32_t(y)
@@ -516,7 +527,7 @@ func MoveSmooth(x, y int, args ...interface{}) bool {
 	return bool(cbool)
 }
 
-// MoveArgs move mouse relative args
+// MoveArgs get the mouse relative args
 func MoveArgs(x, y int) (int, int) {
 	mx, my := GetMousePos()
 	mx = mx + x
@@ -536,7 +547,7 @@ func MoveSmoothRelative(x, y int, args ...interface{}) {
 	MoveSmooth(mx, my, args...)
 }
 
-// GetMousePos get mouse's portion
+// GetMousePos get mouse's portion return x, y
 func GetMousePos() (int, int) {
 	pos := C.get_mouse_pos()
 
@@ -553,9 +564,14 @@ func MouseClick(args ...interface{}) {
 	Click(args...)
 }
 
-// Click click the mouse
+// Click click the mouse button
 //
 // robotgo.Click(button string, double bool)
+//
+// Examples:
+// 	robotgo.Click()  // default is left button
+//	robotgo.Click("right")
+//	robotgo.Click("wheelLeft")
 func Click(args ...interface{}) {
 	var (
 		button C.MMMouseButton = C.LEFT_BUTTON
@@ -588,12 +604,12 @@ func MovesClick(x, y int, args ...interface{}) {
 	MouseClick(args...)
 }
 
-// Toggle toggle the mose, support: "left", "center", "right",
+// Toggle toggle the mouse, support button: "left", "center", "right",
 //  "wheelDown", "wheelUp", "wheelLeft", "wheelRight"
 //
 // Examples:
-// 	robotgo.Toggle("left", "up")
-// 	robotgo.Toggle("left") // default is down
+//	robotgo.Toggle("left") // default is down
+//	robotgo.Toggle("left", "up")
 func Toggle(key ...string) int {
 	var button C.MMMouseButton = C.LEFT_BUTTON
 	if len(key) > 0 {
@@ -611,6 +627,10 @@ func Toggle(key ...string) int {
 }
 
 // MouseToggle toggle the mouse
+//
+// Examples:
+// 	robotgo.MouseToggle("down", "right")
+//	robotgo.MouseToggle("up", "right")
 func MouseToggle(togKey string, args ...interface{}) int {
 	var button C.MMMouseButton = C.LEFT_BUTTON
 
@@ -626,7 +646,11 @@ func MouseToggle(togKey string, args ...interface{}) int {
 	return int(i)
 }
 
-// ScrollMouse scroll the mouse
+// ScrollMouse scroll the mouse to (x, "up")
+//
+// Examples:
+//	robotgo.ScrollMouse(10, "down")
+//	robotgo.ScrollMouse(10, "up")
 func ScrollMouse(x int, direction string) {
 	cx := C.size_t(x)
 	cy := C.CString(direction)
@@ -639,6 +663,9 @@ func ScrollMouse(x int, direction string) {
 // Scroll scroll the mouse to (x, y)
 //
 // robotgo.Scroll(x, y, msDelay int)
+//
+// Examples:
+//	robotgo.Scroll(10, 10)
 func Scroll(x, y int, args ...int) {
 	var msDelay = 10
 	if len(args) > 0 {
@@ -654,6 +681,9 @@ func Scroll(x, y int, args ...int) {
 }
 
 // ScrollRelative scroll mouse with relative
+//
+// Examples:
+//	robotgo.ScrollRelative(10, 10)
 func ScrollRelative(x, y int, args ...int) {
 	mx, my := MoveArgs(x, y)
 	Scroll(mx, my, args...)
@@ -681,11 +711,12 @@ func SetMouseDelay(delay int) {
 //	https://github.com/go-vgo/robotgo/blob/master/docs/keys.md
 //
 // Examples:
-// robotgo.KeyTap("a")
-// robotgo.KeyTap("i", "alt", "command")
+// 	robotgo.KeySleep = 100  // 100 millisecond
+//	robotgo.KeyTap("a")
+// 	robotgo.KeyTap("i", "alt", "command")
 //
-// arr := []string{"alt", "command"}
-// robotgo.KeyTap("i", arr)
+// 	arr := []string{"alt", "command"}
+// 	robotgo.KeyTap("i", arr)
 //
 func KeyTap(tapKey string, args ...interface{}) string {
 	var (
@@ -781,10 +812,10 @@ func KeyTap(tapKey string, args ...interface{}) string {
 //	https://github.com/go-vgo/robotgo/blob/master/docs/keys.md
 //
 // Examples:
-// robotgo.KeyToggle("a")
-// robotgo.KeyToggle("a", "up")
+// 	robotgo.KeyToggle("a")
+// 	robotgo.KeyToggle("a", "up")
 //
-// robotgo.KeyToggle("a", "up", "alt", "cmd")
+// 	robotgo.KeyToggle("a", "up", "alt", "cmd")
 //
 func KeyToggle(key string, args ...string) string {
 	if len(args) <= 0 {
@@ -924,7 +955,7 @@ func inputUTF(str string) {
 // robotgo.TypeStr(string: The string to send, float64: microsleep time, x11 option)
 //
 // Examples:
-// robotgo.TypeStr("abc@123, hi, こんにちは")
+// 	robotgo.TypeStr("abc@123, hi, こんにちは")
 //
 func TypeStr(str string, args ...float64) {
 	var tm, tm1 = 0.0, 7.0
@@ -1252,7 +1283,10 @@ func internalActive(pid int32, hwnd int) {
 // 	C.active_PID(C.uintptr(pid), C.uintptr(hwnd))
 // }
 
-// ActiveName active window by name
+// ActiveName active the window by name
+//
+// Examples:
+// 	robotgo.ActiveName("chrome")
 func ActiveName(name string) error {
 	pids, err := FindIds(name)
 	if err == nil && len(pids) > 0 {
