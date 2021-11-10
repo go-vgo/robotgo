@@ -23,10 +23,14 @@ extern "C"
 	#include <ApplicationServices/ApplicationServices.h>
 	// #include </System/Library/Frameworks/ApplicationServices.framework/Versions/A/Headers/ApplicationServices.h>
 
-	typedef enum  {
+	typedef enum {
 		LEFT_BUTTON = kCGMouseButtonLeft,
 		RIGHT_BUTTON = kCGMouseButtonRight,
-		CENTER_BUTTON = kCGMouseButtonCenter
+		CENTER_BUTTON = kCGMouseButtonCenter,
+		WheelDown  =  4,
+		WheelUp    = 5,
+		WheelLeft  =  6,
+		WheelRight = 7,
 	} MMMouseButton;
 
 #elif defined(USE_X11)
@@ -34,7 +38,11 @@ extern "C"
 	enum _MMMouseButton {
 		LEFT_BUTTON = 1,
 		CENTER_BUTTON = 2,
-		RIGHT_BUTTON = 3
+		RIGHT_BUTTON = 3,
+		WheelDown =  4,
+		WheelUp  =  5,
+		WheelLeft =  6,
+		WheelRight = 7,
 	};
 	typedef unsigned int MMMouseButton;
 
@@ -43,7 +51,11 @@ extern "C"
 	enum _MMMouseButton {
 		LEFT_BUTTON = 1,
 		CENTER_BUTTON = 2,
-		RIGHT_BUTTON = 3
+		RIGHT_BUTTON = 3,
+		WheelDown =  4,
+		WheelUp  =  5,
+		WheelLeft =  6,
+		WheelRight = 7,
 	};
 	typedef unsigned int MMMouseButton;
 
@@ -53,10 +65,11 @@ extern "C"
 
 #define MMMouseButtonIsValid(button) \
 	(button == LEFT_BUTTON || button == RIGHT_BUTTON || \
-	 button == CENTER_BUTTON)
+		button == CENTER_BUTTON || button == WheelDown || \
+		button == WheelUp || button == WheelLeft || \
+		button == WheelRight)
 
-enum __MMMouseWheelDirection
-{
+enum __MMMouseWheelDirection {
 	DIRECTION_DOWN 	= -1,
 	DIRECTION_UP	= 1
 };
