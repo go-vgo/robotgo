@@ -569,7 +569,7 @@ func MouseClick(args ...interface{}) {
 // robotgo.Click(button string, double bool)
 //
 // Examples:
-// 	robotgo.Click()  // default is left button
+// 	robotgo.Click() // default is left button
 //	robotgo.Click("right")
 //	robotgo.Click("wheelLeft")
 func Click(args ...interface{}) {
@@ -680,6 +680,40 @@ func Scroll(x, y int, args ...int) {
 	MilliSleep(MouseSleep)
 }
 
+// ScrollSmooth scroll the mouse smooth,
+// default scroll 5 times and sleep 100 millisecond
+//
+// robotgo.ScrollSmooth(toy, num, sleep, tox)
+//
+// Examples:
+//	robotgo.ScrollSmooth(-10)
+//	robotgo.ScrollSmooth(-10, 6, 200, -10)
+func ScrollSmooth(to int, args ...int) {
+	i := 0
+	num := 5
+	if len(args) > 0 {
+		num = args[0]
+	}
+	tm := 100
+	if len(args) > 1 {
+		tm = args[1]
+	}
+	tox := 0
+	if len(args) > 2 {
+		tox = args[2]
+	}
+
+	for {
+		Scroll(tox, to)
+		MilliSleep(tm)
+		i++
+		if i == num {
+			break
+		}
+	}
+	MilliSleep(MouseSleep)
+}
+
 // ScrollRelative scroll mouse with relative
 //
 // Examples:
@@ -711,12 +745,12 @@ func SetMouseDelay(delay int) {
 //	https://github.com/go-vgo/robotgo/blob/master/docs/keys.md
 //
 // Examples:
-// 	robotgo.KeySleep = 100  // 100 millisecond
+//	robotgo.KeySleep = 100 // 100 millisecond
 //	robotgo.KeyTap("a")
-// 	robotgo.KeyTap("i", "alt", "command")
+//	robotgo.KeyTap("i", "alt", "command")
 //
-// 	arr := []string{"alt", "command"}
-// 	robotgo.KeyTap("i", arr)
+//	arr := []string{"alt", "command"}
+//	robotgo.KeyTap("i", arr)
 //
 func KeyTap(tapKey string, args ...interface{}) string {
 	var (
@@ -812,10 +846,10 @@ func KeyTap(tapKey string, args ...interface{}) string {
 //	https://github.com/go-vgo/robotgo/blob/master/docs/keys.md
 //
 // Examples:
-// 	robotgo.KeyToggle("a")
-// 	robotgo.KeyToggle("a", "up")
+//	robotgo.KeyToggle("a")
+//	robotgo.KeyToggle("a", "up")
 //
-// 	robotgo.KeyToggle("a", "up", "alt", "cmd")
+//	robotgo.KeyToggle("a", "up", "alt", "cmd")
 //
 func KeyToggle(key string, args ...string) string {
 	if len(args) <= 0 {
@@ -955,7 +989,7 @@ func inputUTF(str string) {
 // robotgo.TypeStr(string: The string to send, float64: microsleep time, x11 option)
 //
 // Examples:
-// 	robotgo.TypeStr("abc@123, hi, こんにちは")
+//	robotgo.TypeStr("abc@123, hi, こんにちは")
 //
 func TypeStr(str string, args ...float64) {
 	var tm, tm1 = 0.0, 7.0
@@ -1077,6 +1111,11 @@ ____    __    ____  __  .__   __.  _______   ______   ____    __    ____
 */
 
 // ShowAlert show a alert window
+// Displays alert with the attributes.
+// If cancel button is not given, only the default button is displayed
+//
+// Examples:
+//	robogo.ShowAlert("hi", "window", "ok", "cancel")
 func ShowAlert(title, msg string, args ...string) bool {
 	var (
 		// title         string
@@ -1235,7 +1274,13 @@ func cgetTitle(hwnd, isHwnd int32) string {
 	return gtitle
 }
 
-// GetTitle get the window title
+// GetTitle get the window title return string
+//
+// Examples:
+//	fmt.Println(robogo.GetTitle())
+//
+//	ids, _ := robogo.FindIds()
+//	robogo.GetTitle(ids[0])
 func GetTitle(args ...int32) string {
 	if len(args) <= 0 {
 		title := C.get_main_title()
@@ -1250,7 +1295,7 @@ func GetTitle(args ...int32) string {
 	return internalGetTitle(args[0])
 }
 
-// GetPID get the process id
+// GetPID get the process id return int32
 func GetPID() int32 {
 	pid := C.get_PID()
 	return int32(pid)
