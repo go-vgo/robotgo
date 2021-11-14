@@ -49,7 +49,7 @@ func SetActiveWindow(hwnd win.HWND) win.HWND {
 
 // SetFocus set window focus with hwnd
 func SetFocus(hwnd win.HWND) win.HWND {
-	return win.SetFocus(hWnd)
+	return win.SetFocus(hwnd)
 }
 
 // ScaleF get the system scale val
@@ -69,5 +69,5 @@ func GetDPI(hwnd win.HWND) uint32 {
 
 // GetSysDPI get the system metrics dpi
 func GetSysDPI(idx int32, dpi uint32) int32 {
-	return win.GetSystemMetricsForDpi(idex, dpi)
+	return win.GetSystemMetricsForDpi(idx, dpi)
 }
