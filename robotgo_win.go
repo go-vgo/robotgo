@@ -21,16 +21,14 @@ import (
 )
 
 // FindWindow find window hwnd by name
-func FindWindow(str string) win.HWND {
-	hwnd := win.FindWindow(nil, syscall.StringToUTF16Ptr(str))
-
+func FindWindow(name string) win.HWND {
+	hwnd := win.FindWindow(nil, syscall.StringToUTF16Ptr(name))
 	return hwnd
 }
 
 // GetHWND get foreground window hwnd
 func GetHWND() win.HWND {
 	hwnd := win.GetForegroundWindow()
-
 	return hwnd
 }
 
@@ -50,6 +48,26 @@ func SetActiveWindow(hwnd win.HWND) win.HWND {
 }
 
 // SetFocus set window focus with hwnd
-func SetFocus(hWnd win.HWND) win.HWND {
-	return win.SetFocus(hWnd)
+func SetFocus(hwnd win.HWND) win.HWND {
+	return win.SetFocus(hwnd)
+}
+
+// ScaleF get the system scale val
+func ScaleF() float64 {
+	return float64(GetMainDPI()) / 96.0
+}
+
+// GetMainDPI get the display dpi
+func GetMainDPI() int {
+	return int(GetDPI(GetHWND()))
+}
+
+// GetDPI get the window dpi
+func GetDPI(hwnd win.HWND) uint32 {
+	return win.GetDpiForWindow(hwnd)
+}
+
+// GetSysDPI get the system metrics dpi
+func GetSysDPI(idx int32, dpi uint32) int32 {
+	return win.GetSystemMetricsForDpi(idx, dpi)
 }

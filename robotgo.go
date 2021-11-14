@@ -305,8 +305,8 @@ func Mul(x int) int {
 // GetScaleSize get the screen scale size
 func GetScaleSize() (int, int) {
 	x, y := GetScreenSize()
-	s := Scale()
-	return x * s / 100, y * s / 100
+	f := ScaleF()
+	return int(float64(x) * f), int(float64(y) * f)
 }
 
 // SetXDisplayName set XDisplay name (Linux)
