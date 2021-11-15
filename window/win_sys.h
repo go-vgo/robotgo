@@ -39,19 +39,20 @@ double sys_scale() {
 		return pixelWidth / targetWidth;
 	#elif defined(USE_X11)
 		
-		double xres;
-		Display *dpy;
+		// double xres;
+		// Display *dpy;
 
-		char *displayname = NULL;
-		int scr = 0; /* Screen number */
+		// char *displayname = NULL;
+		// int scr = 0; /* Screen number */
 
-		dpy = XOpenDisplay (displayname);
-		xres = ((((double) DisplayWidth(dpy, scr)) * 25.4) /
-			((double) DisplayWidthMM(dpy, scr)));
+		// dpy = XOpenDisplay (displayname);
+		// xres = ((((double) DisplayWidth(dpy, scr)) * 25.4) /
+		// 	((double) DisplayWidthMM(dpy, scr)));
 
-   		XCloseDisplay (dpy);
+   		// XCloseDisplay (dpy);
 
-   		return xres + 0.5;
+		// return xres / 96.0;
+		return 1.0;
    	#elif defined(IS_WINDOWS)
    		double s = scaleX() / 96.0;
    		return s;

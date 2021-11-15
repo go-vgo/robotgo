@@ -221,25 +221,15 @@ func GetMouseColor() string {
 	return GetPixelColor(x, y)
 }
 
-// ScaleX get the primary display horizontal DPI scale factor
-func ScaleX() int {
-	return int(C.scale_x())
-}
-
-// SysScale get the sys scale
+// SysScale get the sys scale (x11 todo)
 func SysScale() float64 {
 	s := C.sys_scale()
 	return float64(s)
 }
 
-// Scaled return x * sys_scale
+// Scaled get the screen scaled size
 func Scaled(x int) int {
-	return int(float64(x) * SysScale())
-}
-
-// ScaleY get primary display vertical DPI scale factor
-func ScaleY() int {
-	return int(C.scale_y())
+	return int(float64(x) * ScaleF())
 }
 
 // GetScreenSize get the screen size
@@ -259,47 +249,14 @@ func GetScreenRect(displayId ...int) Rect {
 	rect := C.getScreenRect(C.int32_t(display))
 	return Rect{
 		Point{
-			X: int(rect.origin.x),
-			Y: int(rect.origin.y),
+			X: Scaled(int(rect.origin.x)),
+			Y: Scaled(int(rect.origin.y)),
 		},
 		Size{
-			W: int(rect.size.w),
-			H: int(rect.size.h),
+			W: Scaled(int(rect.size.w)),
+			H: Scaled(int(rect.size.h)),
 		},
 	}
-}
-
-// Scale get the screen scale
-func Scale() int {
-	dpi := map[int]int{
-		0: 100,
-		// DPI Scaling Level
-		96:  100,
-		120: 125,
-		144: 150,
-		168: 175,
-		192: 200,
-		216: 225,
-		// Custom DPI
-		240: 250,
-		288: 300,
-		384: 400,
-		480: 500,
-	}
-
-	x := ScaleX()
-	return dpi[x]
-}
-
-// Scale0 return ScaleX() / 0.96
-func Scale0() int {
-	return int(float64(ScaleX()) / 0.96)
-}
-
-// Mul mul the scale
-func Mul(x int) int {
-	s := Scale()
-	return x * s / 100
 }
 
 // GetScaleSize get the screen scale size
@@ -307,26 +264,6 @@ func GetScaleSize() (int, int) {
 	x, y := GetScreenSize()
 	f := ScaleF()
 	return int(float64(x) * f), int(float64(y) * f)
-}
-
-// SetXDisplayName set XDisplay name (Linux)
-func SetXDisplayName(name string) string {
-	cname := C.CString(name)
-	str := C.set_XDisplay_name(cname)
-
-	gstr := C.GoString(str)
-	C.free(unsafe.Pointer(cname))
-
-	return gstr
-}
-
-// GetXDisplayName get XDisplay name (Linux)
-func GetXDisplayName() string {
-	name := C.get_XDisplay_name()
-	gname := C.GoString(name)
-	C.free(unsafe.Pointer(name))
-
-	return gname
 }
 
 // CaptureScreen capture the screen return bitmap(c struct),
@@ -342,13 +279,12 @@ func CaptureScreen(args ...int) C.MMBitmapRef {
 		w = C.int32_t(args[2])
 		h = C.int32_t(args[3])
 	} else {
-		x = 0
-		y = 0
+		rect := GetScreenRect()
 
-		// Get the main screen size.
-		displaySize := C.getMainDisplaySize()
-		w = displaySize.w
-		h = displaySize.h
+		x = C.int32_t(rect.X)
+		y = C.int32_t(rect.Y)
+		w = C.int32_t(rect.W)
+		h = C.int32_t(rect.H)
 	}
 
 	bit := C.capture_screen(x, y, w, h)
@@ -400,6 +336,69 @@ func ToImage(bit C.MMBitmapRef) image.Image {
 func ToRGBA(bit C.MMBitmapRef) *image.RGBA {
 	bmp1 := ToBitmap(bit)
 	return ToRGBAGo(bmp1)
+}
+
+// SetXDisplayName set XDisplay name (Linux)
+func SetXDisplayName(name string) string {
+	cname := C.CString(name)
+	str := C.set_XDisplay_name(cname)
+
+	gstr := C.GoString(str)
+	C.free(unsafe.Pointer(cname))
+
+	return gstr
+}
+
+// GetXDisplayName get XDisplay name (Linux)
+func GetXDisplayName() string {
+	name := C.get_XDisplay_name()
+	gname := C.GoString(name)
+	C.free(unsafe.Pointer(name))
+
+	return gname
+}
+
+// ScaleX get the primary display horizontal DPI scale factor, drop
+func ScaleX() int {
+	return int(C.scale_x())
+}
+
+// ScaleY get primary display vertical DPI scale factor, drop
+func ScaleY() int {
+	return int(C.scale_y())
+}
+
+// Scale get the screen scale (only windows old), drop
+func Scale() int {
+	dpi := map[int]int{
+		0: 100,
+		// DPI Scaling Level
+		96:  100,
+		120: 125,
+		144: 150,
+		168: 175,
+		192: 200,
+		216: 225,
+		// Custom DPI
+		240: 250,
+		288: 300,
+		384: 400,
+		480: 500,
+	}
+
+	x := ScaleX()
+	return dpi[x]
+}
+
+// Scale0 return ScaleX() / 0.96, drop
+func Scale0() int {
+	return int(float64(ScaleX()) / 0.96)
+}
+
+// Mul mul the scale, drop
+func Mul(x int) int {
+	s := Scale()
+	return x * s / 100
 }
 
 /*
