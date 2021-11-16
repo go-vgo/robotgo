@@ -364,16 +364,19 @@ func GetXDisplayName() string {
 	return gname
 }
 
+// Deprecated:
 // ScaleX get the primary display horizontal DPI scale factor, drop
 func ScaleX() int {
 	return int(C.scale_x())
 }
 
+// Deprecated:
 // ScaleY get primary display vertical DPI scale factor, drop
 func ScaleY() int {
 	return int(C.scale_y())
 }
 
+// Deprecated:
 // Scale get the screen scale (only windows old), drop
 func Scale() int {
 	dpi := map[int]int{
@@ -396,11 +399,13 @@ func Scale() int {
 	return dpi[x]
 }
 
+// Deprecated:
 // Scale0 return ScaleX() / 0.96, drop
 func Scale0() int {
 	return int(float64(ScaleX()) / 0.96)
 }
 
+// Deprecated:
 // Mul mul the scale, drop
 func Mul(x int) int {
 	s := Scale()
@@ -447,6 +452,11 @@ func MoveMouse(x, y int) {
 // 	robotgo.MouseSleep = 100  // 100 millisecond
 // 	robotgo.Move(10, 10)
 func Move(x, y int) {
+	if runtime.GOOS == "windows" {
+		f := ScaleF()
+		x, y = Scaled0(x, f), Scaled0(y, f)
+	}
+
 	cx := C.int32_t(x)
 	cy := C.int32_t(y)
 	C.move_mouse(cx, cy)
@@ -505,6 +515,11 @@ func MoveMouseSmooth(x, y int, args ...interface{}) bool {
 //	robotgo.MoveSmooth(10, 10)
 //	robotgo.MoveSmooth(10, 10, 1.0, 2.0)
 func MoveSmooth(x, y int, args ...interface{}) bool {
+	if runtime.GOOS == "windows" {
+		f := ScaleF()
+		x, y = Scaled0(x, f), Scaled0(y, f)
+	}
+
 	cx := C.int32_t(x)
 	cy := C.int32_t(y)
 
@@ -599,14 +614,14 @@ func Click(args ...interface{}) {
 //
 // robotgo.MoveClick(x, y int, button string, double bool)
 func MoveClick(x, y int, args ...interface{}) {
-	MoveMouse(x, y)
-	MouseClick(args...)
+	Move(x, y)
+	Click(args...)
 }
 
 // MovesClick move smooth and click the mouse
 func MovesClick(x, y int, args ...interface{}) {
 	MoveSmooth(x, y)
-	MouseClick(args...)
+	Click(args...)
 }
 
 // Toggle toggle the mouse, support button: "left", "center", "right",
