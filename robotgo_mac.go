@@ -15,5 +15,9 @@ package robotgo
 
 // ScaleF get the system scale val
 func ScaleF() float64 {
-	return SysScale()
+	f := SysScale()
+	if f == 0.0 {
+		f = 1.0
+	}
+	return f
 }

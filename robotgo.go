@@ -221,7 +221,7 @@ func GetMouseColor() string {
 	return GetPixelColor(x, y)
 }
 
-// SysScale get the sys scale (x11 todo)
+// SysScale get the sys scale
 func SysScale() float64 {
 	s := C.sys_scale()
 	return float64(s)
@@ -229,7 +229,12 @@ func SysScale() float64 {
 
 // Scaled get the screen scaled size
 func Scaled(x int) int {
-	return int(float64(x) * ScaleF())
+	return Scaled0(x, ScaleF())
+}
+
+// Scaled0 return int(x * f)
+func Scaled0(x int, f float64) int {
+	return int(float64(x) * f)
 }
 
 // GetScreenSize get the screen size
@@ -247,15 +252,16 @@ func GetScreenRect(displayId ...int) Rect {
 	}
 
 	rect := C.getScreenRect(C.int32_t(display))
+	x, y, w, h := int(rect.origin.x), int(rect.origin.y),
+		int(rect.size.w), int(rect.size.h)
+
+	if runtime.GOOS == "windows" {
+		f := ScaleF()
+		x, y, w, h = Scaled0(x, f), Scaled0(y, f), Scaled0(w, f), Scaled0(h, f)
+	}
 	return Rect{
-		Point{
-			X: Scaled(int(rect.origin.x)),
-			Y: Scaled(int(rect.origin.y)),
-		},
-		Size{
-			W: Scaled(int(rect.size.w)),
-			H: Scaled(int(rect.size.h)),
-		},
+		Point{X: x, Y: y},
+		Size{W: w, H: h},
 	}
 }
 
