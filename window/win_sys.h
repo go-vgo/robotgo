@@ -9,6 +9,11 @@
 // except according to those terms.
 
 // #include "../base/os.h"
+#if defined(USE_X11)
+	// #include <X11/Xlib.h>
+	// #include <X11/Xatom.h>
+	#include <X11/Xresource.h>
+#endif
 
 Bounds get_client(uintptr pid, uintptr isHwnd);
 
@@ -38,21 +43,34 @@ double sys_scale() {
 		
 		return pixelWidth / targetWidth;
 	#elif defined(USE_X11)
-		
-		// double xres;
-		// Display *dpy;
+		double xres;
+		Display *dpy;
 
-		// char *displayname = NULL;
-		// int scr = 0; /* Screen number */
+		char *displayname = NULL;
+		int scr = 0; /* Screen number */
 
-		// dpy = XOpenDisplay (displayname);
-		// xres = ((((double) DisplayWidth(dpy, scr)) * 25.4) /
-		// 	((double) DisplayWidthMM(dpy, scr)));
+		dpy = XOpenDisplay(displayname);
+		xres = ((((double) DisplayWidth(dpy, scr)) * 25.4) /
+			((double) DisplayWidthMM(dpy, scr)));
 
-   		// XCloseDisplay (dpy);
+		// https://github.com/glfw/glfw/issues/1019#issuecomment-302772498
+		char *rms = XResourceManagerString(dpy);
+		if (rms) {
+			XrmDatabase db;
+			XrmValue value;
+			char *type = NULL;
 
-		// return xres / 96.0;
-		return 1.0;
+			XrmInitialize(); /* Need to initialize the DB before calling Xrm* functions */
+			db = XrmGetStringDatabase(rms);
+			if (XrmGetResource(db, "Xft.dpi", "String", &type, &value) == True) {
+				if (value.addr) {
+					xres = atof(value.addr);
+				}
+			}
+		}
+		XCloseDisplay (dpy);
+
+		return xres / 96.0;
    	#elif defined(IS_WINDOWS)
    		double s = scaleX() / 96.0;
    		return s;

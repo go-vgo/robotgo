@@ -54,7 +54,11 @@ func SetFocus(hwnd win.HWND) win.HWND {
 
 // ScaleF get the system scale val
 func ScaleF() float64 {
-	return float64(GetMainDPI()) / 96.0
+	f := float64(GetMainDPI()) / 96.0
+	if f == 0.0 {
+		f = 1.0
+	}
+	return f
 }
 
 // GetMainDPI get the display dpi
