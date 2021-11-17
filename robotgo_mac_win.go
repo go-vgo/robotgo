@@ -37,6 +37,10 @@ func internalGetTitle(pid int32, args ...int32) string {
 // ActivePID active the window by PID,
 //
 // If args[0] > 0 on the Windows platform via a window handle to active
+//
+// Examples:
+//	ids, _ := robotgo.FindIds()
+//	robotgo.ActivePID(ids[0])
 func ActivePID(pid int32, args ...int) error {
 	var hwnd int
 	if len(args) > 0 {

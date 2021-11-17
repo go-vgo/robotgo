@@ -59,7 +59,7 @@ GCC
 
 #### For Mac OS X:
 
-Xcode Command Line Tools (And Privacy setting: [#277](#277) )
+Xcode Command Line Tools (And Privacy setting: [#277](https://github.com/go-vgo/robotgo/issues/277) )
 
 ```
 xcode-select --install
@@ -70,7 +70,8 @@ xcode-select --install
 [MinGW-w64](https://sourceforge.net/projects/mingw-w64/files) (Use recommended) 
 
 ```
-Or the other GCC (But you should compile the "libpng" with yourself. Or you can removed the bitmap.go. 
+Or the other GCC (But you should compile the "libpng" with yourself. 
+Or you can removed the bitmap.go. 
 
 In the plans, the bitmap.go will moves to the bitmap dir, but break the API. )
 ```
@@ -114,7 +115,6 @@ sudo dnf install xsel xclip
 ```
 go get github.com/go-vgo/robotgo
 ```
-  It's that easy!
 
 png.h: No such file or directory? Please see [issues/47](https://github.com/go-vgo/robotgo/issues/47).
 
