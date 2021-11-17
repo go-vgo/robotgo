@@ -441,6 +441,7 @@ func CheckMouse(btn string) C.MMMouseButton {
 	return C.LEFT_BUTTON
 }
 
+// Deprecated:
 // MoveMouse move the mouse
 func MoveMouse(x, y int) {
 	Move(x, y)
@@ -452,10 +453,10 @@ func MoveMouse(x, y int) {
 // 	robotgo.MouseSleep = 100  // 100 millisecond
 // 	robotgo.Move(10, 10)
 func Move(x, y int) {
-	if runtime.GOOS == "windows" {
-		f := ScaleF()
-		x, y = Scaled0(x, f), Scaled0(y, f)
-	}
+	// if runtime.GOOS == "windows" {
+	// 	f := ScaleF()
+	// 	x, y = Scaled0(x, f), Scaled0(y, f)
+	// }
 
 	cx := C.int32_t(x)
 	cy := C.int32_t(y)
@@ -464,6 +465,7 @@ func Move(x, y int) {
 	MilliSleep(MouseSleep)
 }
 
+// Deprecated:
 // DragMouse drag the mouse to (x, y),
 // It's same with the DragSmooth() now
 func DragMouse(x, y int, args ...interface{}) {
@@ -474,6 +476,7 @@ func DragMouse(x, y int, args ...interface{}) {
 	Toggle("left", "up")
 }
 
+// Deprecated:
 // Drag drag the mouse to (x, y),
 // It's not valid now, use the DragSmooth()
 func Drag(x, y int, args ...string) {
@@ -500,6 +503,7 @@ func DragSmooth(x, y int, args ...interface{}) {
 	Toggle("left", "up")
 }
 
+// Deprecated:
 // MoveMouseSmooth move the mouse smooth,
 // moves mouse to x, y human like, with the mouse button up.
 func MoveMouseSmooth(x, y int, args ...interface{}) bool {
@@ -515,10 +519,10 @@ func MoveMouseSmooth(x, y int, args ...interface{}) bool {
 //	robotgo.MoveSmooth(10, 10)
 //	robotgo.MoveSmooth(10, 10, 1.0, 2.0)
 func MoveSmooth(x, y int, args ...interface{}) bool {
-	if runtime.GOOS == "windows" {
-		f := ScaleF()
-		x, y = Scaled0(x, f), Scaled0(y, f)
-	}
+	// if runtime.GOOS == "windows" {
+	// 	f := ScaleF()
+	// 	x, y = Scaled0(x, f), Scaled0(y, f)
+	// }
 
 	cx := C.int32_t(x)
 	cy := C.int32_t(y)
@@ -577,6 +581,7 @@ func GetMousePos() (int, int) {
 	return x, y
 }
 
+// Deprecated:
 // MouseClick click the mouse
 //
 // robotgo.MouseClick(button string, double bool)
@@ -646,6 +651,7 @@ func Toggle(key ...string) int {
 	return int(i)
 }
 
+// Deprecated:
 // MouseToggle toggle the mouse
 //
 // Examples:
@@ -666,6 +672,7 @@ func MouseToggle(togKey string, args ...interface{}) int {
 	return int(i)
 }
 
+// Deprecated:
 // ScrollMouse scroll the mouse to (x, "up")
 //
 // Examples:

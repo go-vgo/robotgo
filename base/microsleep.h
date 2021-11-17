@@ -20,8 +20,7 @@
  *
  * Pauses execution for the given amount of milliseconds.
  */
-H_INLINE void microsleep(double milliseconds)
-{
+H_INLINE void microsleep(double milliseconds) {
 #if defined(IS_WINDOWS)
 	Sleep((DWORD)milliseconds); /* (Unfortunately truncated to a 32-bit integer.) */
 #else
