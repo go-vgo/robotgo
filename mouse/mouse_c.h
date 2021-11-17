@@ -206,6 +206,7 @@ void toggleMouse(bool down, MMMouseButton button){
 
 void clickMouse(MMMouseButton button){
 	toggleMouse(true, button);
+	microsleep(5.0);
 	toggleMouse(false, button);
 }
 
@@ -309,7 +310,7 @@ void scrollMouse(int scrollMagnitude, MMMouseWheelDirection scrollDirection){
 	#endif
 }
 
-void scrollMouseXY(int x, int y){
+void scrollMouseXY(int x, int y) {
 	#if defined(IS_WINDOWS)
 		// Fix for #97,
 		// C89 needs variables declared on top of functions (mouseScrollInput)

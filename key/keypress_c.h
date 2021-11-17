@@ -173,6 +173,7 @@ void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags){
 
 void tapKeyCode(MMKeyCode code, MMKeyFlags flags){
 	toggleKeyCode(code, true, flags);
+	microsleep(5.0);
 	toggleKeyCode(code, false, flags);
 }
 
@@ -224,6 +225,7 @@ void toggleKey(char c, const bool down, MMKeyFlags flags){
 
 void tapKey(char c, MMKeyFlags flags){
 	toggleKey(c, true, flags);
+	microsleep(5.0);
 	toggleKey(c, false, flags);
 }
 
@@ -289,6 +291,7 @@ void unicodeType(const unsigned value){
 		UniChar ch = (UniChar)value; // Convert to unsigned char
 
 		toggleUnicode(ch, true);
+		microsleep(5.0);
 		toggleUnicode(ch, false);
 	#elif defined(IS_WINDOWS)
 		INPUT input[2];
@@ -307,10 +310,12 @@ void unicodeType(const unsigned value){
   		SendInput(2, input, sizeof(INPUT));
 	#elif defined(USE_X11)
 		toggleUniKey(value, true);
+		microsleep(5.0);
 		toggleUniKey(value, false);	
 	#endif
 }
 
+// todo: removed
 void typeStringDelayed(const char *str, const unsigned cpm){
 	
 	/* Characters per second */
