@@ -34,7 +34,7 @@ RobotGo 支持 Mac, Windows, and Linux(X11).
 ## Docs
 - [GoDoc](https://godoc.org/github.com/go-vgo/robotgo) <br>
 
-- [中文文档](https://github.com/go-vgo/robotgo/blob/master/docs/doc_zh.md)&nbsp;&nbsp;&nbsp; (弃用)
+- [中文文档](https://github.com/go-vgo/robotgo/blob/master/docs/doc_zh.md) (弃用)
 - [English Docs](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) (弃用)
 
 ## Binding:
@@ -55,7 +55,7 @@ GCC
 
 #### For Mac OS X:
 
-Xcode Command Line Tools  (And Privacy setting: #277 )
+Xcode Command Line Tools  (And Privacy setting: [#277](#277) )
 
 ```
 xcode-select --install
@@ -63,8 +63,11 @@ xcode-select --install
 
 #### For Windows:
 
-[MinGW-w64](https://sourceforge.net/projects/mingw-w64/files) (推荐使用) or other GCC
+[MinGW-w64](https://sourceforge.net/projects/mingw-w64/files) (推荐使用) 
 
+```
+Or the other GCC (But you should compile the "libpng" with yourself. Or you can removed the bitmap.go )
+```
 
 #### For everything else (Linux 等其他系统):
 
@@ -135,7 +138,7 @@ func main() {
   robotgo.Scroll(100, 0)
   robotgo.MilliSleep(100)
   // robotgo.ScrollRelative(10, -100)
-  robogo.ScrollSmooth(-10, 6)
+  robotgo.ScrollSmooth(-10, 6)
 
   robotgo.MouseSleep = 100
   robotgo.Move(10, 20)
@@ -145,7 +148,7 @@ func main() {
   robotgo.Click("left", true)
   robotgo.MoveSmooth(100, 200, 1.0, 10.0)
 
-  robogo.Toggle("left")
+  robotgo.Toggle("left")
   robotgo.Toggle("left", "up")
 }
 ```
