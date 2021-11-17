@@ -36,9 +36,10 @@ RobotGo supports Mac, Windows, and Linux(X11); and robotgo supports arm64 and x8
 - [License](#license)
 
 ## Docs
-  - [GoDoc](https://godoc.org/github.com/go-vgo/robotgo)
-  - [API Docs](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) &nbsp;&nbsp;&nbsp;
-  - [Chinese Docs](https://github.com/go-vgo/robotgo/blob/master/docs/doc_zh.md)
+  - [GoDoc](https://godoc.org/github.com/go-vgo/robotgo) <br>
+
+  - [API Docs](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) &nbsp;&nbsp;&nbsp; (Deprecated, no updated)
+  - [Chinese Docs](https://github.com/go-vgo/robotgo/blob/master/docs/doc_zh.md) (Deprecated, no updated)
 
 ## Binding:
 [ADB](https://github.com/vcaesar/adb), packaging android adb API.
@@ -57,14 +58,17 @@ GCC
 ```
 
 #### For Mac OS X:
+
+Xcode Command Line Tools (And Privacy setting: #277 )
+
 ```
-Xcode Command Line Tools
+xcode-select --install
 ```
 
 #### For Windows:
-```
-MinGW-w64 (Use recommended) or other GCC
-```
+
+[MinGW-w64](https://sourceforge.net/projects/mingw-w64/files) (Use recommended) or other GCC
+
 
 #### For everything else:
 
@@ -81,12 +85,12 @@ xcb, xkb, libxkbcommon
 ##### Ubuntu:
 
 ```yml
+# gcc
 sudo apt install gcc libc6-dev
 
 sudo apt install libx11-dev xorg-dev libxtst-dev libpng++-dev
 
-sudo apt install xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev
-sudo apt install libxkbcommon-dev
+sudo apt install xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev libxkbcommon-dev
 
 sudo apt install xsel xclip
 ```
@@ -130,19 +134,25 @@ import (
 )
 
 func main() {
-  robotgo.ScrollMouse(10, "up")
-  robotgo.Scroll(100, 200)
+  // robotgo.ScrollMouse(10, "up")
+  robotgo.Scroll(0, -10)
+  robotgo.Scroll(100, 0)
+
   robotgo.MilliSleep(100)
-  robotgo.ScrollRelative(10, -100)
+  robotgo.ScrollSmooth(-10, 6)
+  // robotgo.ScrollRelative(10, -100)
 
   robotgo.MouseSleep = 100
   robotgo.Move(10, 20)
   robotgo.MoveRelative(0, -10)
   robotgo.Drag(10, 10)
 
+  robogo.Click("wheelRight")
   robotgo.Click("left", true)
-  robotgo.MoveSmooth(100, 200, 1.0, 100.0)
-  robotgo.MouseToggle("up")
+  robotgo.MoveSmooth(100, 200, 1.0, 10.0)
+
+  robotgo.Toggle("left")
+  robotgo.Toggle("left", "up")
 }
 ```
 
@@ -177,7 +187,8 @@ func main() {
   robotgo.KeyTap("i", arr)
 
   robotgo.MilliSleep(100)
-  robotgo.KeyToggle("a", "down")
+  robogo.KeyToggle("a")
+  robotgo.KeyToggle("a", "up")
 
   robotgo.WriteAll("Test")
   text, err := robotgo.ReadAll()
