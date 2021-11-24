@@ -33,7 +33,7 @@ func move() {
 
 	// smooth move the mouse to 100, 200
 	robotgo.MoveSmooth(100, 200)
-	robotgo.MoveMouseSmooth(100, 200, 1.0, 100.0)
+	robotgo.MoveSmooth(100, 200, 1.0, 100.0)
 	robotgo.MoveSmoothRelative(10, -100, 1.0, 30.0)
 
 	for i := 0; i < 1080; i += 1000 {
@@ -68,13 +68,13 @@ func get() {
 
 func toggleAndScroll() {
 	// scrolls the mouse either up
-	robotgo.ScrollMouse(10, "up")
-	robotgo.Scroll(100, 200)
+	// robotgo.ScrollMouse(10, "up")
+	robotgo.Scroll(100, 10)
+	robotgo.Scroll(0, -10)
 
-	// toggles right mouse button
-	robotgo.MouseToggle("down", "right")
-
-	robotgo.MouseToggle("up")
+	// toggles the right mouse button
+	robotgo.Toggle("right")
+	robotgo.Toggle("right", "up")
 }
 
 func mouse() {
