@@ -46,7 +46,7 @@ func test() {
 	fx, fy := robotgo.FindBitmap(bit2)
 	fmt.Println("FindBitmap------ ", fx, fy)
 
-	arr := robotgo.FindEveryBitmap(bit2)
+	arr := robotgo.FindAllBitmap(bit2)
 	fmt.Println("Find every bitmap: ", arr)
 	robotgo.SaveBitmap(bitmap, "test.png")
 }

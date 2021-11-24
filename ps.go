@@ -66,6 +66,11 @@ func FindPath(pid int32) (string, error) {
 	return ps.FindPath(pid)
 }
 
+// Run run a cmd shell
+func Run(path string) ([]byte, error) {
+	return ps.Run(path)
+}
+
 // Kill kill the process by PID
 func Kill(pid int32) error {
 	return ps.Kill(pid)

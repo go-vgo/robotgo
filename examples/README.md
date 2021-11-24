@@ -17,9 +17,10 @@ import (
 )
 
 func main() {
-  robotgo.ScrollMouse(10, "up")
+  // robotgo.ScrollMouse(10, "up")
+  robotgo.Scroll(0, 10)
   robotgo.MouseClick("left", true)
-  robotgo.MoveMouseSmooth(100, 200, 1.0, 100.0)
+  robotgo.MoveSmooth(100, 200, 1.0, 100.0)
 } 
 ``` 
 

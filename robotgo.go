@@ -205,14 +205,7 @@ func GetPxColor(x, y int) C.MMRGBHex {
 
 // GetPixelColor get the pixel color return string
 func GetPixelColor(x, y int) string {
-	cx := C.int32_t(x)
-	cy := C.int32_t(y)
-
-	color := C.get_pixel_color(cx, cy)
-	gcolor := C.GoString(color)
-	C.free(unsafe.Pointer(color))
-
-	return gcolor
+	return PadHex(GetPxColor(x, y))
 }
 
 // GetMouseColor get the mouse pos's color
@@ -229,7 +222,8 @@ func SysScale() float64 {
 
 // Scaled get the screen scaled size
 func Scaled(x int) int {
-	return Scaled0(x, ScaleF())
+	f := ScaleF()
+	return Scaled0(x, f)
 }
 
 // Scaled0 return int(x * f)
@@ -244,7 +238,7 @@ func GetScreenSize() (int, int) {
 	return int(size.w), int(size.h)
 }
 
-// GetScreenRect get the screen rect
+// GetScreenRect get the screen rect (x, y, w, h)
 func GetScreenRect(displayId ...int) Rect {
 	display := 0
 	if len(displayId) > 0 {
@@ -285,6 +279,7 @@ func CaptureScreen(args ...int) C.MMBitmapRef {
 		w = C.int32_t(args[2])
 		h = C.int32_t(args[3])
 	} else {
+		// Get the main screen rect.
 		rect := GetScreenRect()
 
 		x = C.int32_t(rect.X)
@@ -364,19 +359,19 @@ func GetXDisplayName() string {
 	return gname
 }
 
-// Deprecated:
+// Deprecated: use the ScaledF()
 // ScaleX get the primary display horizontal DPI scale factor, drop
 func ScaleX() int {
 	return int(C.scale_x())
 }
 
-// Deprecated:
+// Deprecated: use the ScaledF()
 // ScaleY get primary display vertical DPI scale factor, drop
 func ScaleY() int {
 	return int(C.scale_y())
 }
 
-// Deprecated:
+// Deprecated: use the ScaledF()
 // Scale get the screen scale (only windows old), drop
 func Scale() int {
 	dpi := map[int]int{
@@ -399,13 +394,13 @@ func Scale() int {
 	return dpi[x]
 }
 
-// Deprecated:
+// Deprecated: use the ScaledF()
 // Scale0 return ScaleX() / 0.96, drop
 func Scale0() int {
 	return int(float64(ScaleX()) / 0.96)
 }
 
-// Deprecated:
+// Deprecated: use the ScaledF()
 // Mul mul the scale, drop
 func Mul(x int) int {
 	s := Scale()
@@ -441,7 +436,7 @@ func CheckMouse(btn string) C.MMMouseButton {
 	return C.LEFT_BUTTON
 }
 
-// Deprecated:
+// Deprecated: use the Move()
 // MoveMouse move the mouse
 func MoveMouse(x, y int) {
 	Move(x, y)
@@ -465,7 +460,7 @@ func Move(x, y int) {
 	MilliSleep(MouseSleep)
 }
 
-// Deprecated:
+// Deprecated: use the DragSmooth()
 // DragMouse drag the mouse to (x, y),
 // It's same with the DragSmooth() now
 func DragMouse(x, y int, args ...interface{}) {
@@ -476,7 +471,7 @@ func DragMouse(x, y int, args ...interface{}) {
 	Toggle("left", "up")
 }
 
-// Deprecated:
+// Deprecated: use the DragSmooth()
 // Drag drag the mouse to (x, y),
 // It's not valid now, use the DragSmooth()
 func Drag(x, y int, args ...string) {
@@ -503,7 +498,7 @@ func DragSmooth(x, y int, args ...interface{}) {
 	Toggle("left", "up")
 }
 
-// Deprecated:
+// Deprecated: use the MoveSmooth()
 // MoveMouseSmooth move the mouse smooth,
 // moves mouse to x, y human like, with the mouse button up.
 func MoveMouseSmooth(x, y int, args ...interface{}) bool {
@@ -528,7 +523,7 @@ func MoveSmooth(x, y int, args ...interface{}) bool {
 	cy := C.int32_t(y)
 
 	var (
-		mouseDelay = 10
+		mouseDelay = 5
 		low        C.double
 		high       C.double
 	)
@@ -571,17 +566,16 @@ func MoveSmoothRelative(x, y int, args ...interface{}) {
 	MoveSmooth(mx, my, args...)
 }
 
-// GetMousePos get mouse's portion return x, y
+// GetMousePos get the mouse's portion return x, y
 func GetMousePos() (int, int) {
 	pos := C.get_mouse_pos()
-
 	x := int(pos.x)
 	y := int(pos.y)
 
 	return x, y
 }
 
-// Deprecated:
+// Deprecated: use the Click()
 // MouseClick click the mouse
 //
 // robotgo.MouseClick(button string, double bool)
@@ -618,14 +612,22 @@ func Click(args ...interface{}) {
 // MoveClick move and click the mouse
 //
 // robotgo.MoveClick(x, y int, button string, double bool)
+//
+// Examples:
+//	robotgo.MouseSleep = 100
+//	robotgo.MoveClick(10, 10)
 func MoveClick(x, y int, args ...interface{}) {
 	Move(x, y)
+	MilliSleep(50)
 	Click(args...)
 }
 
 // MovesClick move smooth and click the mouse
+//
+// use the `robotgo.MouseSleep = 100`
 func MovesClick(x, y int, args ...interface{}) {
 	MoveSmooth(x, y)
+	MilliSleep(50)
 	Click(args...)
 }
 
@@ -651,7 +653,7 @@ func Toggle(key ...string) int {
 	return int(i)
 }
 
-// Deprecated:
+// Deprecated: use the Toggle()
 // MouseToggle toggle the mouse
 //
 // Examples:
@@ -672,7 +674,7 @@ func MouseToggle(togKey string, args ...interface{}) int {
 	return int(i)
 }
 
-// Deprecated:
+// Deprecated: use the Scroll()
 // ScrollMouse scroll the mouse to (x, "up")
 //
 // Examples:
@@ -1072,7 +1074,8 @@ func PasteStr(str string) string {
 	return KeyTap("v", "control")
 }
 
-// Deprecated: TypeString send a string, support unicode(no linux support)
+// Deprecated: use the TypeStr()
+// TypeString send a string, support unicode(no linux support)
 // TypeStr(string: The string to send), Wno-deprecated
 //
 // This function will be removed in version v1.0.0
@@ -1095,7 +1098,8 @@ func TypeStrDelay(str string, delay int) {
 	Sleep(delay)
 }
 
-// Deprecated: TypeStringDelayed type string delayed, Wno-deprecated
+// Deprecated: use the TypeStr()
+// TypeStringDelayed type string delayed, Wno-deprecated
 //
 // This function will be removed in version v1.0.0
 func TypeStringDelayed(str string, delay int) {
@@ -1108,7 +1112,8 @@ func SetKeyDelay(delay int) {
 	C.set_keyboard_delay(C.size_t(delay))
 }
 
-// Deprecated: SetKeyboardDelay set keyboard delay, Wno-deprecated,
+// Deprecated: use the SetKeyDelay()
+// SetKeyboardDelay set keyboard delay, Wno-deprecated,
 //
 // This function will be removed in version v1.0.0
 func SetKeyboardDelay(delay int) {
@@ -1142,7 +1147,7 @@ ____    __    ____  __  .__   __.  _______   ______   ____    __    ____
 // If cancel button is not given, only the default button is displayed
 //
 // Examples:
-//	robogo.ShowAlert("hi", "window", "ok", "cancel")
+//	robotgo.ShowAlert("hi", "window", "ok", "cancel")
 func ShowAlert(title, msg string, args ...string) bool {
 	var (
 		// title         string
@@ -1283,7 +1288,8 @@ func GetHandle() int {
 	return ghwnd
 }
 
-// Deprecated: GetBHandle get the window handle, Wno-deprecated
+// Deprecated: use the GetHandle()
+// GetBHandle get the window handle, Wno-deprecated
 //
 // This function will be removed in version v1.0.0
 func GetBHandle() int {
@@ -1304,10 +1310,10 @@ func cgetTitle(hwnd, isHwnd int32) string {
 // GetTitle get the window title return string
 //
 // Examples:
-//	fmt.Println(robogo.GetTitle())
+//	fmt.Println(robotgo.GetTitle())
 //
-//	ids, _ := robogo.FindIds()
-//	robogo.GetTitle(ids[0])
+//	ids, _ := robotgo.FindIds()
+//	robotgo.GetTitle(ids[0])
 func GetTitle(args ...int32) string {
 	if len(args) <= 0 {
 		title := C.get_main_title()

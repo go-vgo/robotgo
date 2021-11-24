@@ -26,14 +26,14 @@ func aRobotgo() {
 	x, y := robotgo.GetMousePos()
 	fmt.Println("pos:", x, y)
 
-	robotgo.MoveMouse(x, y)
-	robotgo.MoveMouse(100, 200)
+	robotgo.Move(x, y)
+	robotgo.Move(100, 200)
 
 	robotgo.MouseToggle("up")
 
 	for i := 0; i < 1080; i += 1000 {
 		fmt.Println(i)
-		robotgo.MoveMouse(800, i)
+		robotgo.Move(800, i)
 	}
 
 	fmt.Println(robotgo.GetPixelColor(x, y))
@@ -65,7 +65,7 @@ func aRobotgo() {
 	fmt.Println("...type", reflect.TypeOf(bitTest), reflect.TypeOf(bitmapTest))
 
 	// robotgo.MouseClick()
-	robotgo.ScrollMouse(10, "up")
+	robotgo.Scroll(0, 10)
 }
 
 func main() {
