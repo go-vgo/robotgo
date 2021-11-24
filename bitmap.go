@@ -49,6 +49,13 @@ func SaveCapture(spath string, args ...int) string {
 	return err
 }
 
+// FreeBitmapArr free and dealloc the C bitmap array
+func FreeBitmapArr(bit ...C.MMBitmapRef) {
+	for i := 0; i < len(bit); i++ {
+		FreeBitmap(bit[i])
+	}
+}
+
 // ToCBitmap trans Bitmap to C.MMBitmapRef
 func ToCBitmap(bit Bitmap) C.MMBitmapRef {
 	cbitmap := C.createMMBitmap(
@@ -108,8 +115,8 @@ func FindCBitmap(bmp CBitmap, args ...interface{}) (int, int) {
 //
 //	robotgo.FindBitmap(bitmap, source_bitamp C.MMBitmapRef, tolerance float64)
 //
-//  |tolerance| should be in the range 0.0f - 1.0f, denoting how closely the
-//  colors in the bitmaps need to match, with 0 being exact and 1 being any.
+// 	|tolerance| should be in the range 0.0f - 1.0f, denoting how closely the
+// 	colors in the bitmaps need to match, with 0 being exact and 1 being any.
 //
 // This method only automatically free the internal bitmap,
 // use `defer robotgo.FreeBitmap(bit)` to free the bitmap
@@ -176,8 +183,14 @@ func FreeMMPointArr(pointArray C.MMPointArrayRef) {
 	C.destroyMMPointArray(pointArray)
 }
 
-// FindEveryBitmap find the every bitmap
-func FindEveryBitmap(bit C.MMBitmapRef, args ...interface{}) (posArr []Point) {
+// Deprecated: use the FindAllBitmap()
+// FindEveryBitmap find the every bitmap, same with the FindAllBitmap()
+func FindEveryBitmap(bit C.MMBitmapRef, args ...interface{}) []Point {
+	return FindAllBitmap(bit, args...)
+}
+
+// FindAllBitmap find the all bitmap
+func FindAllBitmap(bit C.MMBitmapRef, args ...interface{}) (posArr []Point) {
 	var (
 		sbit      C.MMBitmapRef
 		tolerance C.float = 0.01
@@ -332,13 +345,6 @@ func Convert(opath, spath string, args ...int) string {
 	return SaveBitmap(bitmap, spath, mtype)
 }
 
-// FreeBitmapArr free and dealloc the C bitmap array
-func FreeBitmapArr(bit ...C.MMBitmapRef) {
-	for i := 0; i < len(bit); i++ {
-		FreeBitmap(bit[i])
-	}
-}
-
 // ReadBitmap returns false and sets error if |bitmap| is NULL
 func ReadBitmap(bitmap C.MMBitmapRef) bool {
 	abool := C.bitmap_ready(bitmap)
@@ -368,7 +374,7 @@ func DeepCopyBit(bitmap C.MMBitmapRef) C.MMBitmapRef {
 	return bit
 }
 
-// GetColor get bitmap color
+// GetColor get the bitmap color
 func GetColor(bitmap C.MMBitmapRef, x, y int) C.MMRGBHex {
 	color := C.bitmap_get_color(bitmap, C.size_t(x), C.size_t(y))
 
@@ -427,8 +433,14 @@ func FindColorCS(color CHex, x, y, w, h int, args ...float64) (int, int) {
 	return rx, ry
 }
 
-// FindEveryColor find every color
-func FindEveryColor(color CHex, args ...interface{}) (posArr []Point) {
+// Deprecated: use the FindAllColor()
+// FindEveryColor find the every color, same with the FindAllColor()
+func FindEveryColor(color CHex, args ...interface{}) []Point {
+	return FindAllColor(color, args...)
+}
+
+// FindAllColor find the all color
+func FindAllColor(color CHex, args ...interface{}) (posArr []Point) {
 	var (
 		bitmap    C.MMBitmapRef
 		tolerance C.float = 0.01
