@@ -40,8 +40,8 @@ func TestSize(t *testing.T) {
 }
 
 func TestMoveMouse(t *testing.T) {
-	MoveMouse(20, 20)
-	MilliSleep(10)
+	Move(20, 20)
+	MilliSleep(50)
 	x, y := GetMousePos()
 
 	tt.Equal(t, 20, x)
@@ -49,8 +49,8 @@ func TestMoveMouse(t *testing.T) {
 }
 
 func TestMoveMouseSmooth(t *testing.T) {
-	b := MoveMouseSmooth(100, 100)
-	MilliSleep(10)
+	b := MoveSmooth(100, 100)
+	MilliSleep(50)
 	x, y := GetMousePos()
 
 	tt.True(t, b)
@@ -60,7 +60,7 @@ func TestMoveMouseSmooth(t *testing.T) {
 
 func TestDragMouse(t *testing.T) {
 	DragMouse(500, 500)
-	MilliSleep(10)
+	MilliSleep(50)
 	x, y := GetMousePos()
 
 	tt.Equal(t, 500, x)
@@ -68,18 +68,20 @@ func TestDragMouse(t *testing.T) {
 }
 
 func TestScrollMouse(t *testing.T) {
-	ScrollMouse(120, "up")
+	// ScrollMouse(120, "up")
+	Scroll(0, 120)
 	MilliSleep(100)
 
 	Scroll(210, 210)
+	MilliSleep(10)
 }
 
 func TestMoveRelative(t *testing.T) {
 	Move(200, 200)
-	MilliSleep(10)
+	MilliSleep(50)
 
 	MoveRelative(10, -10)
-	MilliSleep(10)
+	MilliSleep(50)
 
 	x, y := GetMousePos()
 	tt.Equal(t, 210, x)
@@ -88,10 +90,10 @@ func TestMoveRelative(t *testing.T) {
 
 func TestMoveSmoothRelative(t *testing.T) {
 	Move(200, 200)
-	MilliSleep(10)
+	MilliSleep(50)
 
 	MoveSmoothRelative(10, -10)
-	MilliSleep(10)
+	MilliSleep(50)
 
 	x, y := GetMousePos()
 	tt.Equal(t, 210, x)
@@ -99,7 +101,10 @@ func TestMoveSmoothRelative(t *testing.T) {
 }
 
 func TestMouseToggle(t *testing.T) {
-	e := MouseToggle("up", "right")
+	e := Toggle("right")
+	tt.Zero(t, e)
+
+	e = Toggle("right", "up")
 	tt.Zero(t, e)
 }
 
@@ -141,6 +146,9 @@ func TestKeyCode(t *testing.T) {
 
 	k := Keycode["1"]
 	tt.Equal(t, 2, k)
+
+	s := Special["+"]
+	tt.Equal(t, "=", s)
 }
 
 func TestBitmap(t *testing.T) {

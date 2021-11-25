@@ -213,8 +213,8 @@ robotgo.MoveMouseSmooth(100, 200, 1.0, 100.0)
 #### Examples:
 
 ```Go
-robogo.MouseClick()
-robogo.MouseClick("left", true)
+robotgo.MouseClick()
+robotgo.MouseClick("left", true)
 ```
 
 ### <h3 id="MoveClick">.MoveClick(x, y, button, double)</h3>
@@ -231,8 +231,8 @@ robogo.MouseClick("left", true)
 #### Examples:
 
 ```Go
-robogo.MoveClick(10, 20)
-robogo.MoveClick(10, 20, "left", true)
+robotgo.MoveClick(10, 20)
+robotgo.MoveClick(10, 20, "left", true)
 ```
 
 ### <h3 id="MouseToggle">.MouseToggle(down, button)</h3>

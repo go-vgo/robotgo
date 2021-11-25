@@ -36,14 +36,16 @@ func EventEnd() {
 	hook.End()
 }
 
-// Deprecated: use the EventStart()
+// Deprecated: use the EventStart(),
+//
 // Start start global event hook
 // return event channel
 func Start() chan hook.Event {
 	return hook.Start()
 }
 
-// Deprecated: use the EventEnd()
+// Deprecated: use the EventEnd(),
+//
 // End removes global event hook
 func End() {
 	hook.End()

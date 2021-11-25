@@ -359,19 +359,22 @@ func GetXDisplayName() string {
 	return gname
 }
 
-// Deprecated: use the ScaledF()
+// Deprecated: use the ScaledF(),
+//
 // ScaleX get the primary display horizontal DPI scale factor, drop
 func ScaleX() int {
 	return int(C.scale_x())
 }
 
-// Deprecated: use the ScaledF()
+// Deprecated: use the ScaledF(),
+//
 // ScaleY get primary display vertical DPI scale factor, drop
 func ScaleY() int {
 	return int(C.scale_y())
 }
 
-// Deprecated: use the ScaledF()
+// Deprecated: use the ScaledF(),
+//
 // Scale get the screen scale (only windows old), drop
 func Scale() int {
 	dpi := map[int]int{
@@ -394,13 +397,15 @@ func Scale() int {
 	return dpi[x]
 }
 
-// Deprecated: use the ScaledF()
+// Deprecated: use the ScaledF(),
+//
 // Scale0 return ScaleX() / 0.96, drop
 func Scale0() int {
 	return int(float64(ScaleX()) / 0.96)
 }
 
-// Deprecated: use the ScaledF()
+// Deprecated: use the ScaledF(),
+//
 // Mul mul the scale, drop
 func Mul(x int) int {
 	s := Scale()
@@ -436,7 +441,8 @@ func CheckMouse(btn string) C.MMMouseButton {
 	return C.LEFT_BUTTON
 }
 
-// Deprecated: use the Move()
+// Deprecated: use the Move(),
+//
 // MoveMouse move the mouse
 func MoveMouse(x, y int) {
 	Move(x, y)
@@ -460,7 +466,8 @@ func Move(x, y int) {
 	MilliSleep(MouseSleep)
 }
 
-// Deprecated: use the DragSmooth()
+// Deprecated: use the DragSmooth(),
+//
 // DragMouse drag the mouse to (x, y),
 // It's same with the DragSmooth() now
 func DragMouse(x, y int, args ...interface{}) {
@@ -471,7 +478,8 @@ func DragMouse(x, y int, args ...interface{}) {
 	Toggle("left", "up")
 }
 
-// Deprecated: use the DragSmooth()
+// Deprecated: use the DragSmooth(),
+//
 // Drag drag the mouse to (x, y),
 // It's not valid now, use the DragSmooth()
 func Drag(x, y int, args ...string) {
@@ -498,7 +506,8 @@ func DragSmooth(x, y int, args ...interface{}) {
 	Toggle("left", "up")
 }
 
-// Deprecated: use the MoveSmooth()
+// Deprecated: use the MoveSmooth(),
+//
 // MoveMouseSmooth move the mouse smooth,
 // moves mouse to x, y human like, with the mouse button up.
 func MoveMouseSmooth(x, y int, args ...interface{}) bool {
@@ -575,7 +584,8 @@ func GetMousePos() (int, int) {
 	return x, y
 }
 
-// Deprecated: use the Click()
+// Deprecated: use the Click(),
+//
 // MouseClick click the mouse
 //
 // robotgo.MouseClick(button string, double bool)
@@ -653,7 +663,8 @@ func Toggle(key ...string) int {
 	return int(i)
 }
 
-// Deprecated: use the Toggle()
+// Deprecated: use the Toggle(),
+//
 // MouseToggle toggle the mouse
 //
 // Examples:
@@ -674,7 +685,8 @@ func MouseToggle(togKey string, args ...interface{}) int {
 	return int(i)
 }
 
-// Deprecated: use the Scroll()
+// Deprecated: use the Scroll(),
+//
 // ScrollMouse scroll the mouse to (x, "up")
 //
 // Examples:
@@ -1074,7 +1086,8 @@ func PasteStr(str string) string {
 	return KeyTap("v", "control")
 }
 
-// Deprecated: use the TypeStr()
+// Deprecated: use the TypeStr(),
+//
 // TypeString send a string, support unicode(no linux support)
 // TypeStr(string: The string to send), Wno-deprecated
 //
@@ -1098,7 +1111,8 @@ func TypeStrDelay(str string, delay int) {
 	Sleep(delay)
 }
 
-// Deprecated: use the TypeStr()
+// Deprecated: use the TypeStr(),
+//
 // TypeStringDelayed type string delayed, Wno-deprecated
 //
 // This function will be removed in version v1.0.0
@@ -1112,7 +1126,8 @@ func SetKeyDelay(delay int) {
 	C.set_keyboard_delay(C.size_t(delay))
 }
 
-// Deprecated: use the SetKeyDelay()
+// Deprecated: use the SetKeyDelay(),
+//
 // SetKeyboardDelay set keyboard delay, Wno-deprecated,
 //
 // This function will be removed in version v1.0.0
@@ -1288,7 +1303,8 @@ func GetHandle() int {
 	return ghwnd
 }
 
-// Deprecated: use the GetHandle()
+// Deprecated: use the GetHandle(),
+//
 // GetBHandle get the window handle, Wno-deprecated
 //
 // This function will be removed in version v1.0.0
