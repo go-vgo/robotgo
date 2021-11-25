@@ -183,7 +183,8 @@ func FreeMMPointArr(pointArray C.MMPointArrayRef) {
 	C.destroyMMPointArray(pointArray)
 }
 
-// Deprecated: use the FindAllBitmap()
+// Deprecated: use the FindAllBitmap(),
+//
 // FindEveryBitmap find the every bitmap, same with the FindAllBitmap()
 func FindEveryBitmap(bit C.MMBitmapRef, args ...interface{}) []Point {
 	return FindAllBitmap(bit, args...)
@@ -433,7 +434,8 @@ func FindColorCS(color CHex, x, y, w, h int, args ...float64) (int, int) {
 	return rx, ry
 }
 
-// Deprecated: use the FindAllColor()
+// Deprecated: use the FindAllColor(),
+//
 // FindEveryColor find the every color, same with the FindAllColor()
 func FindEveryColor(color CHex, args ...interface{}) []Point {
 	return FindAllColor(color, args...)
