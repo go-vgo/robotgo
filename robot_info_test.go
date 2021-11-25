@@ -29,10 +29,16 @@ func TestGetVer(t *testing.T) {
 
 func TestGetScreenSize(t *testing.T) {
 	x, y := robotgo.GetScreenSize()
-	log.Println("GetScreenSize: ", x, y)
+	log.Println("Get screen size: ", x, y)
+
+	rect := robotgo.GetScreenRect()
+	fmt.Println("Get screen rect: ", rect)
 }
 
 func TestGetSysScale(t *testing.T) {
 	s := robotgo.SysScale()
 	log.Println("SysScale: ", s)
+
+	f := robotgo.ScaleF()
+	log.Println("sclae: ", f)
 }
