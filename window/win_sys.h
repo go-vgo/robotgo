@@ -56,16 +56,18 @@ double sys_scale() {
 		// https://github.com/glfw/glfw/issues/1019#issuecomment-302772498
 		char *rms = XResourceManagerString(dpy);
 		if (rms) {
-			XrmDatabase db;
-			XrmValue value;
-			char *type = NULL;
+			XrmDatabase db = XrmGetStringDatabase(rms);
+			if (db) {
+				XrmValue value;
+				char *type = NULL;
 
-			XrmInitialize(); /* Need to initialize the DB before calling Xrm* functions */
-			db = XrmGetStringDatabase(rms);
-			if (XrmGetResource(db, "Xft.dpi", "String", &type, &value) == True) {
-				if (value.addr) {
-					xres = atof(value.addr);
+				if (XrmGetResource(db, "Xft.dpi", "String", &type, &value)) {
+					if (value.addr) {
+						xres = atof(value.addr);
+					}
 				}
+
+				XrmDestroyDatabase(db);
 			}
 		}
 		XCloseDisplay (dpy);
