@@ -289,12 +289,14 @@ func OpenBitmap(gpath string, args ...int) C.MMBitmapRef {
 	return bit
 }
 
+// Deprecated: use the BitmapFromStr(),
+//
 // BitmapStr bitmap from string
 func BitmapStr(str string) C.MMBitmapRef {
 	return BitmapFromStr(str)
 }
 
-// BitmapFromStr bitmap from string
+// BitmapFromStr read bitmap from the string
 func BitmapFromStr(str string) C.MMBitmapRef {
 	cs := C.CString(str)
 	bit := C.bitmap_from_string(cs)

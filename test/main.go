@@ -29,7 +29,8 @@ func aRobotgo() {
 	robotgo.Move(x, y)
 	robotgo.Move(100, 200)
 
-	robotgo.MouseToggle("up")
+	robotgo.Toggle("left")
+	robotgo.Toggle("left", "up")
 
 	for i := 0; i < 1080; i += 1000 {
 		fmt.Println(i)
