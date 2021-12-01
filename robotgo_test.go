@@ -14,6 +14,7 @@
 package robotgo
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/vcaesar/tt"
@@ -156,6 +157,20 @@ func TestBitmap(t *testing.T) {
 	tt.NotNil(t, bit)
 	e := SaveBitmap(bit, "robot_test.png")
 	tt.Empty(t, e)
+
+	bit0 := CaptureScreen(10, 10, 20, 20)
+	x, y := FindBitmap(bit0)
+	fmt.Println("Find bitmap: ", x, y)
+
+	arr := FindAllBitmap(bit0)
+	fmt.Println("Find all bitmap:", arr)
+	tt.Equal(t, 1, len(arr))
+
+	c1 := CHex(0xAADCDC)
+	x, y = FindColor(c1)
+	fmt.Println("Find color: ", x, y)
+	arr = FindAllColor(c1)
+	fmt.Println("Find all color: ", arr)
 
 	img := ToImage(bit)
 	err := SavePng(img, "robot_img.png")
