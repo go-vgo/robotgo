@@ -18,6 +18,12 @@ See Requirements:
 	https://github.com/go-vgo/robotgo#requirements
 
 Installation:
+With Go module support (Go 1.11+), just import:
+```go
+	import "github.com/go-vgo/robotgo"
+```
+
+Otherwise, to install the robotgo package, run the command:
 	go get -u github.com/go-vgo/robotgo
 */
 package robotgo
@@ -641,7 +647,8 @@ func MovesClick(x, y int, args ...interface{}) {
 	Click(args...)
 }
 
-// Toggle toggle the mouse, support button: "left", "center", "right",
+// Toggle toggle the mouse, support button:
+//	"left", "center", "right",
 //  "wheelDown", "wheelUp", "wheelLeft", "wheelRight"
 //
 // Examples:
