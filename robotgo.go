@@ -19,9 +19,7 @@ See Requirements:
 
 Installation:
 With Go module support (Go 1.11+), just import:
-```go
 	import "github.com/go-vgo/robotgo"
-```
 
 Otherwise, to install the robotgo package, run the command:
 	go get -u github.com/go-vgo/robotgo
