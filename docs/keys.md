@@ -46,7 +46,7 @@
 	"cmd"		is the "win" key for windows
 	"lcmd"		left command
 	"rcmd"		right command
-	"command"
+	// "command"
 	"alt"
 	"lalt"		left alt
 	"ralt"		right alt
@@ -57,7 +57,7 @@
 	"shift"
 	"lshift"	left shift
 	"rshift"	right shift
-	"right_shift"
+	// "right_shift"
 	"capslock"
 	"space"
 	"print"
