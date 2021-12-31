@@ -4,7 +4,7 @@
 
 static Display *mainDisplay = NULL;
 static int registered = 0;
-static char *displayName = ":0.0";
+static char *displayName = NULL;
 static int hasDisplayNameChanged = 0;
 
 Display *XGetMainDisplay(void)
@@ -22,6 +22,11 @@ Display *XGetMainDisplay(void)
 		/* Then try using environment variable DISPLAY */
 		if (mainDisplay == NULL) {
 			mainDisplay = XOpenDisplay(NULL);
+		}
+
+		/* Fall back to the most likely :0.0*/
+		if (mainDisplay == NULL) {
+			mainDisplay = XOpenDisplay(":0.0");
 		}
 
 		if (mainDisplay == NULL) {
