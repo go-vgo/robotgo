@@ -14,7 +14,6 @@
 package robotgo
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/vcaesar/tt"
@@ -150,36 +149,6 @@ func TestKeyCode(t *testing.T) {
 
 	s := Special["+"]
 	tt.Equal(t, "=", s)
-}
-
-func TestBitmap(t *testing.T) {
-	bit := CaptureScreen()
-	tt.NotNil(t, bit)
-	e := SaveBitmap(bit, "robot_test.png")
-	tt.Empty(t, e)
-
-	bit0 := CaptureScreen(10, 10, 20, 20)
-	x, y := FindBitmap(bit0)
-	fmt.Println("Find bitmap: ", x, y)
-
-	arr := FindAllBitmap(bit0)
-	fmt.Println("Find all bitmap:", arr)
-	tt.Equal(t, 1, len(arr))
-
-	c1 := CHex(0xAADCDC)
-	x, y = FindColor(c1)
-	fmt.Println("Find color: ", x, y)
-	arr = FindAllColor(c1)
-	fmt.Println("Find all color: ", arr)
-
-	img := ToImage(bit)
-	err := SavePng(img, "robot_img.png")
-	tt.Nil(t, err)
-
-	bit1 := OpenBitmap("robot_test.png")
-	b := tt.TypeOf(bit, bit1)
-	tt.True(t, b)
-	tt.NotNil(t, bit1)
 }
 
 func TestPs(t *testing.T) {

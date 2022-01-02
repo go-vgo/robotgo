@@ -38,7 +38,7 @@ MMSizeInt32 getMainDisplaySize(void){
 MMRectInt32 getScreenRect(int32_t display_id) {
 #if defined(IS_MACOSX)
 	CGDirectDisplayID displayID = (CGDirectDisplayID) display_id;
-	if (display_id == 0) {
+	if (display_id == -1) {
 		displayID = CGMainDisplayID();
 	}
 	CGRect displayRect = CGDisplayBounds(displayID);

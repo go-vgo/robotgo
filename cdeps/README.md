@@ -1,1 +1,0 @@
-C language dependent package, better to compilation. ( zlib and libpng )
