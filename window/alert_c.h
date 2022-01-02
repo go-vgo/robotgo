@@ -73,6 +73,7 @@ int showAlert(const char *title, const char *msg, const char *defaultButton,
 
 	if (defaultButton == NULL) defaultButton = "OK";
 
+	// snprintf.h
 	if (cancelButton == NULL) {
 		asprintf(&buttonList, "%s:2", defaultButton);
 	} else {
