@@ -18,6 +18,7 @@ See Requirements:
 	https://github.com/go-vgo/robotgo#requirements
 
 Installation:
+
 With Go module support (Go 1.11+), just import:
 	import "github.com/go-vgo/robotgo"
 
@@ -68,7 +69,7 @@ import (
 
 const (
 	// Version get the robotgo version
-	Version = "v0.100.0.1189, MT. Baker!"
+	Version = "v1.00.0.1189, MT. Baker!"
 )
 
 // GetVersion get the robotgo version
@@ -81,6 +82,9 @@ var (
 	MouseSleep = 0
 	// KeySleep set the key default millisecond sleep time
 	KeySleep = 0
+
+	// DisplayID set the screen display id
+	DisplayID = -1
 )
 
 type (
@@ -199,23 +203,36 @@ func RgbToHex(r, g, b uint8) C.uint32_t {
 }
 
 // GetPxColor get the pixel color return C.MMRGBHex
-func GetPxColor(x, y int) C.MMRGBHex {
+func GetPxColor(x, y int, displayId ...int) C.MMRGBHex {
 	cx := C.int32_t(x)
 	cy := C.int32_t(y)
 
-	color := C.get_px_color(cx, cy)
+	display := displayIdx(displayId...)
+	color := C.get_px_color(cx, cy, C.int32_t(display))
 	return color
 }
 
 // GetPixelColor get the pixel color return string
-func GetPixelColor(x, y int) string {
-	return PadHex(GetPxColor(x, y))
+func GetPixelColor(x, y int, displayId ...int) string {
+	return PadHex(GetPxColor(x, y, displayId...))
 }
 
 // GetMouseColor get the mouse pos's color
 func GetMouseColor() string {
 	x, y := GetMousePos()
 	return GetPixelColor(x, y)
+}
+
+func displayIdx(id ...int) int {
+	display := -1
+	if DisplayID != -1 {
+		display = DisplayID
+	}
+	if len(id) > 0 {
+		display = id[0]
+	}
+
+	return display
 }
 
 // SysScale get the sys scale
@@ -244,7 +261,7 @@ func GetScreenSize() (int, int) {
 
 // GetScreenRect get the screen rect (x, y, w, h)
 func GetScreenRect(displayId ...int) Rect {
-	display := 0
+	display := -1
 	if len(displayId) > 0 {
 		display = displayId[0]
 	}
@@ -274,8 +291,16 @@ func GetScaleSize() (int, int) {
 // use `defer robotgo.FreeBitmap(bitmap)` to free the bitmap
 //
 // robotgo.CaptureScreen(x, y, w, h int)
-func CaptureScreen(args ...int) C.MMBitmapRef {
+func CaptureScreen(args ...int) CBitmap {
 	var x, y, w, h C.int32_t
+	displayId := -1
+	if DisplayID != -1 {
+		displayId = DisplayID
+	}
+
+	if len(args) > 4 {
+		displayId = args[4]
+	}
 
 	if len(args) > 3 {
 		x = C.int32_t(args[0])
@@ -284,16 +309,15 @@ func CaptureScreen(args ...int) C.MMBitmapRef {
 		h = C.int32_t(args[3])
 	} else {
 		// Get the main screen rect.
-		rect := GetScreenRect()
-
+		rect := GetScreenRect(displayId)
 		x = C.int32_t(rect.X)
 		y = C.int32_t(rect.Y)
 		w = C.int32_t(rect.W)
 		h = C.int32_t(rect.H)
 	}
 
-	bit := C.capture_screen(x, y, w, h)
-	return bit
+	bit := C.capture_screen(x, y, w, h, C.int32_t(displayId))
+	return CBitmap(bit)
 }
 
 // GoCaptureScreen capture the screen and return bitmap(go struct)
@@ -313,13 +337,13 @@ func CaptureImg(args ...int) image.Image {
 }
 
 // FreeBitmap free and dealloc the C bitmap
-func FreeBitmap(bitmap C.MMBitmapRef) {
+func FreeBitmap(bitmap CBitmap) {
 	// C.destroyMMBitmap(bitmap)
-	C.bitmap_dealloc(bitmap)
+	C.bitmap_dealloc(C.MMBitmapRef(bitmap))
 }
 
 // ToBitmap trans C.MMBitmapRef to Bitmap
-func ToBitmap(bit C.MMBitmapRef) Bitmap {
+func ToBitmap(bit CBitmap) Bitmap {
 	bitmap := Bitmap{
 		ImgBuf:        (*uint8)(bit.imageBuffer),
 		Width:         int(bit.width),
@@ -332,13 +356,27 @@ func ToBitmap(bit C.MMBitmapRef) Bitmap {
 	return bitmap
 }
 
+// ToCBitmap trans Bitmap to C.MMBitmapRef
+func ToCBitmap(bit Bitmap) CBitmap {
+	cbitmap := C.createMMBitmap_c(
+		(*C.uint8_t)(bit.ImgBuf),
+		C.size_t(bit.Width),
+		C.size_t(bit.Height),
+		C.size_t(bit.Bytewidth),
+		C.uint8_t(bit.BitsPixel),
+		C.uint8_t(bit.BytesPerPixel),
+	)
+
+	return CBitmap(cbitmap)
+}
+
 // ToImage convert C.MMBitmapRef to standard image.Image
-func ToImage(bit C.MMBitmapRef) image.Image {
+func ToImage(bit CBitmap) image.Image {
 	return ToRGBA(bit)
 }
 
 // ToRGBA convert C.MMBitmapRef to standard image.RGBA
-func ToRGBA(bit C.MMBitmapRef) *image.RGBA {
+func ToRGBA(bit CBitmap) *image.RGBA {
 	bmp1 := ToBitmap(bit)
 	return ToRGBAGo(bmp1)
 }
@@ -536,7 +574,7 @@ func MoveSmooth(x, y int, args ...interface{}) bool {
 	cy := C.int32_t(y)
 
 	var (
-		mouseDelay = 5
+		mouseDelay = 1
 		low        C.double
 		high       C.double
 	)

@@ -17,22 +17,24 @@
 	#include <string.h>
 #endif
 
-MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect){
+MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id){
 #if defined(IS_MACOSX)
 
 	MMBitmapRef bitmap = NULL;
 	uint8_t *buffer = NULL;
 	size_t bufferSize = 0;
 
-	CGDirectDisplayID displayID = CGMainDisplayID();
+	CGDirectDisplayID displayID = (CGDirectDisplayID) display_id;
+
+	if (displayID == -1) {
+		displayID = CGMainDisplayID();
+	}
 
 	CGImageRef image = CGDisplayCreateImageForRect(displayID,
 		CGRectMake(rect.origin.x, rect.origin.y, rect.size.w, rect.size.h));
-
 	if (!image) { return NULL; }
 
 	CFDataRef imageData = CGDataProviderCopyData(CGImageGetDataProvider(image));
-
 	if (!imageData) { return NULL; }
 
 	bufferSize = CFDataGetLength(imageData);
@@ -40,7 +42,7 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect){
 
 	CFDataGetBytes(imageData, CFRangeMake(0, bufferSize), buffer);
 
-	bitmap = createMMBitmap(buffer, 
+	bitmap = createMMBitmap_c(buffer, 
 		CGImageGetWidth(image),CGImageGetHeight(image),
 		CGImageGetBytesPerRow(image), CGImageGetBitsPerPixel(image),
 		CGImageGetBitsPerPixel(image) / 8);
@@ -60,7 +62,7 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect){
 	XCloseDisplay(display);
 	if (image == NULL) { return NULL; }
 
-	bitmap = createMMBitmap((uint8_t *)image->data, 
+	bitmap = createMMBitmap_c((uint8_t *)image->data, 
 		rect.size.w, rect.size.h, (size_t)image->bytes_per_line, 
 		(uint8_t)image->bits_per_pixel, (uint8_t)image->bits_per_pixel / 8);
 	image->data = NULL; /* Steal ownership of bitmap data so we don't have to
@@ -109,7 +111,7 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect){
 		return NULL;
 	}
 
-	bitmap = createMMBitmap(NULL, rect.size.w, rect.size.h, 4 * rect.size.w,
+	bitmap = createMMBitmap_c(NULL, rect.size.w, rect.size.h, 4 * rect.size.w,
 	                        (uint8_t)bi.bmiHeader.biBitCount, 4);
 
 	/* Copy the data to our pixel buffer. */

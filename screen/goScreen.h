@@ -45,7 +45,7 @@ uint32_t color_rgb_to_hex(uint8_t r, uint8_t g, uint8_t b){
 	return RGB_TO_HEX(r, g, b);
 }
 
-MMRGBHex get_px_color(int32_t x, int32_t y){
+MMRGBHex get_px_color(int32_t x, int32_t y, int32_t display_id) {
 	MMBitmapRef bitmap;
 	MMRGBHex color;
 
@@ -53,7 +53,7 @@ MMRGBHex get_px_color(int32_t x, int32_t y){
 		return color;
 	}
 
-	bitmap = copyMMBitmapFromDisplayInRect(MMRectInt32Make(x, y, 1, 1));
+	bitmap = copyMMBitmapFromDisplayInRect(MMRectInt32Make(x, y, 1, 1), display_id);
 	// bitmap = MMRectMake(x, y, 1, 1);
 
 	color = MMRGBHexAtPoint(bitmap, 0, 0);
@@ -62,8 +62,8 @@ MMRGBHex get_px_color(int32_t x, int32_t y){
 	return color;
 }
 
-char* get_pixel_color(int32_t x, int32_t y){
-	MMRGBHex color = get_px_color(x, y);
+char* get_pixel_color(int32_t x, int32_t y, int32_t display_id) {
+	MMRGBHex color = get_px_color(x, y, display_id);
 
 	char* s = pad_hex(color);
 	return s;
@@ -104,16 +104,8 @@ void bitmap_dealloc(MMBitmapRef bitmap){
 }
 
 // capture_screen capture screen
-MMBitmapRef capture_screen(int32_t x, int32_t y, int32_t w, int32_t h){
-	// if () {
-	// 	x = 0;
-	// 	y = 0;
-	// 	// Get screen size.
-	// 	MMSize displaySize = getMainDisplaySize();
-	// 	w = displaySize.width;
-	// 	h = displaySize.height;
-	// }
-	MMBitmapRef bitmap = copyMMBitmapFromDisplayInRect(MMRectInt32Make(x, y, w, h));
+MMBitmapRef capture_screen(int32_t x, int32_t y, int32_t w, int32_t h, int32_t display_id) {
+	MMBitmapRef bitmap = copyMMBitmapFromDisplayInRect(MMRectInt32Make(x, y, w, h), display_id);
 	// printf("%s\n", bitmap);
 	return bitmap;
 }

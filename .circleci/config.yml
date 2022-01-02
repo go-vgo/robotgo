@@ -11,11 +11,13 @@ jobs:
       - checkout
       # specify any bash command here prefixed with `run: `
       - run: apt update
-      - run: apt -y install gcc libc6-dev
-          libx11-dev xorg-dev libxtst-dev libpng++-dev
-          xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev
-          libxkbcommon-dev
+      - run:
+          apt -y install gcc libc6-dev
+          libx11-dev xorg-dev libxtst-dev
           xsel xclip
+          # libpng++-dev
+          # xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev
+          # libxkbcommon-dev
       - run: apt -y install xvfb
       #
       #  override:
