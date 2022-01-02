@@ -14,7 +14,8 @@ func main() {
 	fmt.Println("get scale screen size: ", width, height)
 
 	bitmap := robotgo.CaptureScreen(0, 0, width, height)
-	robotgo.SaveBitmap(bitmap, "test.png")
+	// robotgo.SaveBitmap(bitmap, "test.png")
+	robotgo.Save(robotgo.ToImage(bitmap), "test.png")
 
 	sx := robotgo.ScaleX()
 	s := robotgo.Scale()
@@ -27,7 +28,8 @@ func main() {
 	rx, ry, rw, rh := sx, sy, robotx, roboty
 	// bit1 := robotgo.CaptureScreen(10, 20, robotw, roboth)
 	bit1 := robotgo.CaptureScreen(rx, ry, rw, rh)
-	robotgo.SaveBitmap(bit1, "test2.png")
+	// robotgo.SaveBitmap(bit1, "test2.png")
+	robotgo.Save(robotgo.ToImage(bit1), "test2.png")
 
 	clo := robotgo.GetPixelColor(robotx, roboty)
 	fmt.Println("GetPixelColor...", clo)
