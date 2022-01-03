@@ -16,6 +16,7 @@
 #endif
 
 Bounds get_client(uintptr pid, uintptr isHwnd);
+intptr scaleX();
 
 double sys_scale(int32_t display_id) {
 	#if defined(IS_MACOSX)
@@ -31,13 +32,11 @@ double sys_scale(int32_t display_id) {
 		
 		return pixelWidth / targetWidth;
 	#elif defined(USE_X11)
-		double xres;
-
 		char *displayname = NULL;
 		Display *dpy = XOpenDisplay(displayname);
 		
 		int scr = 0; /* Screen number */
-		xres = ((((double) DisplayWidth(dpy, scr)) * 25.4) /
+		double xres = ((((double) DisplayWidth(dpy, scr)) * 25.4) /
 			((double) DisplayWidthMM(dpy, scr)));
 
 		// https://github.com/glfw/glfw/issues/1019#issuecomment-302772498
