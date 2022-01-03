@@ -17,25 +17,13 @@
 
 Bounds get_client(uintptr pid, uintptr isHwnd);
 
-intptr scaleX(){
-	#if defined(IS_MACOSX)
-		return 0;
-	#elif defined(USE_X11)
-		return 0;
-	#elif defined(IS_WINDOWS)
-		// Get desktop dc
-		HDC desktopDc = GetDC(NULL);
-		// Get native resolution
-		intptr horizontalDPI = GetDeviceCaps(desktopDc, LOGPIXELSX);
-		// intptr verticalDPI = GetDeviceCaps(desktopDc, LOGPIXELSY);
-		return horizontalDPI;
-	#endif
-}
-
-double sys_scale() {
+double sys_scale(int32_t display_id) {
 	#if defined(IS_MACOSX)
 	
-		CGDirectDisplayID displayID = CGMainDisplayID();
+		CGDirectDisplayID displayID = (CGDirectDisplayID) display_id;
+		if (displayID == -1) {
+			displayID = CGMainDisplayID();
+		}
 		CGDisplayModeRef modeRef = CGDisplayCopyDisplayMode(displayID);
 
 		double pixelWidth = CGDisplayModeGetPixelWidth(modeRef);
@@ -44,12 +32,11 @@ double sys_scale() {
 		return pixelWidth / targetWidth;
 	#elif defined(USE_X11)
 		double xres;
-		Display *dpy;
 
 		char *displayname = NULL;
+		Display *dpy = XOpenDisplay(displayname);
+		
 		int scr = 0; /* Screen number */
-
-		dpy = XOpenDisplay(displayname);
 		xres = ((((double) DisplayWidth(dpy, scr)) * 25.4) /
 			((double) DisplayWidthMM(dpy, scr)));
 
@@ -77,6 +64,21 @@ double sys_scale() {
    		double s = scaleX() / 96.0;
    		return s;
    	#endif
+}
+
+intptr scaleX(){
+	#if defined(IS_MACOSX)
+		return 0;
+	#elif defined(USE_X11)
+		return 0;
+	#elif defined(IS_WINDOWS)
+		// Get desktop dc
+		HDC desktopDc = GetDC(NULL);
+		// Get native resolution
+		intptr horizontalDPI = GetDeviceCaps(desktopDc, LOGPIXELSX);
+		// intptr verticalDPI = GetDeviceCaps(desktopDc, LOGPIXELSY);
+		return horizontalDPI;
+	#endif
 }
 
 intptr scaleY(){

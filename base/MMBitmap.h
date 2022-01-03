@@ -33,7 +33,7 @@ typedef MMBitmap *MMBitmapRef;
 
 /* Creates new MMBitmap with the given values.
  * Follows the Create Rule (caller is responsible for destroy()'ing object). */
-MMBitmapRef createMMBitmap(uint8_t *buffer, size_t width, size_t height,
+MMBitmapRef createMMBitmap_c(uint8_t *buffer, size_t width, size_t height,
                            size_t bytewidth, uint8_t bitsPerPixel,
 						   uint8_t bytesPerPixel);
 
@@ -43,12 +43,12 @@ void destroyMMBitmap(MMBitmapRef bitmap);
 /* Releases memory occupied by MMBitmap. Acts via CallBack method*/
 void destroyMMBitmapBuffer(char * bitmapBuffer, void * hint);
 
-/* Returns copy of MMBitmap, to be destroy()'d by caller. */
-MMBitmapRef copyMMBitmap(MMBitmapRef bitmap);
+// /* Returns copy of MMBitmap, to be destroy()'d by caller. */
+// MMBitmapRef copyMMBitmap(MMBitmapRef bitmap);
 
-/* Returns copy of one MMBitmap juxtaposed in another (to be destroy()'d
- * by the caller.), or NULL on error. */
-MMBitmapRef copyMMBitmapFromPortion(MMBitmapRef source, MMRect rect);
+// /* Returns copy of one MMBitmap juxtaposed in another (to be destroy()'d
+//  * by the caller.), or NULL on error. */
+// MMBitmapRef copyMMBitmapFromPortion(MMBitmapRef source, MMRect rect);
 
 #define MMBitmapPointInBounds(image, p) ((p).x < (image)->width && \
                                          (p).y < (image)->height)
@@ -72,19 +72,19 @@ MMBitmapRef copyMMBitmapFromPortion(MMBitmapRef source, MMRect rect);
 #define MMRGBHexAtPoint(image, x, y) \
 	hexFromMMRGB(MMRGBColorAtPoint(image, x, y))
 
-/* Increment either point.x or point.y depending on the position of point.x.
- * That is, if x + 1 is >= width, increment y and start x at the beginning.
- * Otherwise, increment x.
- *
- * This is used as a convenience macro to scan rows when calling functions such
- * as findColorInRectAt() and findBitmapInBitmapAt(). */
-#define ITER_NEXT_POINT(pixel, width, start_x) \
-do {                                           \
-  if (++(pixel).x >= (width)) {                \
-    (pixel).x = start_x;                       \
-    ++(point).y;                               \
-  }                                            \
-} while (0);
+// /* Increment either point.x or point.y depending on the position of point.x.
+//  * That is, if x + 1 is >= width, increment y and start x at the beginning.
+//  * Otherwise, increment x.
+//  *
+//  * This is used as a convenience macro to scan rows when calling functions such
+//  * as findColorInRectAt() and findBitmapInBitmapAt(). */
+// #define ITER_NEXT_POINT(pixel, width, start_x) \
+// do {                                           \
+//   if (++(pixel).x >= (width)) {                \
+//     (pixel).x = start_x;                       \
+//     ++(point).y;                               \
+//   }                                            \
+// } while (0);
 
 #ifdef __cplusplus
 }
