@@ -113,14 +113,15 @@ void moveMouse(MMPointInt32 point){
 		#define MOUSE_COORD_TO_ABS(coord, width_or_height) ( \
 			((65536 * coord) / width_or_height) + (coord < 0 ? -1 : 1))
 
-		point.x = MOUSE_COORD_TO_ABS(point.x, GetSystemMetrics(SM_CXSCREEN));
-		point.y = MOUSE_COORD_TO_ABS(point.y, GetSystemMetrics(SM_CYSCREEN));
+		MMRectInt32 rect = getScreenRect();
+		size_t x = MOUSE_COORD_TO_ABS(point.x - rect.origin.x, rect.size.w);
+		size_t y = MOUSE_COORD_TO_ABS(point.y - rect.origin.y, rect.size.h);
 
 		INPUT mouseInput;
 		mouseInput.type = INPUT_MOUSE;
-		mouseInput.mi.dx = point.x;
-		mouseInput.mi.dy = point.y;
-		mouseInput.mi.dwFlags = MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE;
+		mouseInput.mi.dx = x;
+		mouseInput.mi.dy = y;
+		mouseInput.mi.dwFlags = MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE | MOUSEEVENTF_VIRTUALDESK;
 		mouseInput.mi.time = 0;		// System will provide the timestamp
 		mouseInput.mi.dwExtraInfo = 0;
 		mouseInput.mi.mouseData = 0;
