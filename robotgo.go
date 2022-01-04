@@ -192,6 +192,11 @@ func PadHex(hex C.MMRGBHex) string {
 	return gcolor
 }
 
+// PadHexs trans CHex to string
+func PadHexs(hex CHex) string {
+	return PadHex(C.MMRGBHex(hex))
+}
+
 // HexToRgb trans hex to rgb
 func HexToRgb(hex uint32) *C.uint8_t {
 	return C.color_hex_to_rgb(C.uint32_t(hex))
@@ -341,6 +346,11 @@ func CaptureImg(args ...int) image.Image {
 func FreeBitmap(bitmap CBitmap) {
 	// C.destroyMMBitmap(bitmap)
 	C.bitmap_dealloc(C.MMBitmapRef(bitmap))
+}
+
+// ToMMBitmapRef trans CBitmap to C.MMBitmapRef
+func ToMMBitmapRef(bit CBitmap) C.MMBitmapRef {
+	return C.MMBitmapRef(bit)
 }
 
 // ToBitmap trans C.MMBitmapRef to Bitmap
