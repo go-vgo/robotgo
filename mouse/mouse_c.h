@@ -113,7 +113,7 @@ void moveMouse(MMPointInt32 point){
 		#define MOUSE_COORD_TO_ABS(coord, width_or_height) ( \
 			((65536 * coord) / width_or_height) + (coord < 0 ? -1 : 1))
 
-		MMRectInt32 rect = getScreenRect();
+		MMRectInt32 rect = getScreenRect(-1);
 		size_t x = MOUSE_COORD_TO_ABS(point.x - rect.origin.x, rect.size.w);
 		size_t y = MOUSE_COORD_TO_ABS(point.y - rect.origin.y, rect.size.h);
 
