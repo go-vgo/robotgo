@@ -236,14 +236,15 @@ func displayIdx(id ...int) int {
 }
 
 // SysScale get the sys scale
-func SysScale() float64 {
-	s := C.sys_scale()
+func SysScale(displayId ...int) float64 {
+	display := displayIdx(displayId...)
+	s := C.sys_scale(C.int32_t(display))
 	return float64(s)
 }
 
 // Scaled get the screen scaled size
-func Scaled(x int) int {
-	f := ScaleF()
+func Scaled(x int, displayId ...int) int {
+	f := ScaleF(displayId...)
 	return Scaled0(x, f)
 }
 
@@ -271,7 +272,7 @@ func GetScreenRect(displayId ...int) Rect {
 		int(rect.size.w), int(rect.size.h)
 
 	if runtime.GOOS == "windows" {
-		f := ScaleF()
+		f := ScaleF(displayId...)
 		x, y, w, h = Scaled0(x, f), Scaled0(y, f), Scaled0(w, f), Scaled0(h, f)
 	}
 	return Rect{
@@ -281,9 +282,9 @@ func GetScreenRect(displayId ...int) Rect {
 }
 
 // GetScaleSize get the screen scale size
-func GetScaleSize() (int, int) {
+func GetScaleSize(displayId ...int) (int, int) {
 	x, y := GetScreenSize()
-	f := ScaleF()
+	f := ScaleF(displayId...)
 	return int(float64(x) * f), int(float64(y) * f)
 }
 

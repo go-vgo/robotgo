@@ -37,8 +37,8 @@ static int xmessage(char *argv[], int *exit_status);
 		                                                     kCFStringEncodingUTF8))
 #endif
 
-int showAlert(const char *title, const char *msg, const char *defaultButton,
-              const char *cancelButton)
+int showAlert(const char *title, const char *msg, 
+		const char *defaultButton, const char *cancelButton) 
 {
 #if defined(IS_MACOSX)
 	CFStringRef alertHeader = CFStringCreateWithUTF8String(title);
@@ -46,17 +46,9 @@ int showAlert(const char *title, const char *msg, const char *defaultButton,
 	CFStringRef defaultButtonTitle = CFStringCreateWithUTF8String(defaultButton);
 	CFStringRef cancelButtonTitle = CFStringCreateWithUTF8String(cancelButton);
 	CFOptionFlags responseFlags;
-	SInt32 err = CFUserNotificationDisplayAlert(0.0,
-	                                            kCFUserNotificationNoteAlertLevel,
-	                                            NULL,
-	                                            NULL,
-	                                            NULL,
-	                                            alertHeader,
-	                                            alertMessage,
-	                                            defaultButtonTitle,
-	                                            cancelButtonTitle,
-	                                            NULL,
-	                                            &responseFlags);
+	SInt32 err = CFUserNotificationDisplayAlert(
+		0.0, kCFUserNotificationNoteAlertLevel, NULL, NULL, NULL, alertHeader, alertMessage,
+	    defaultButtonTitle, cancelButtonTitle, NULL, &responseFlags);
 												
 	if (alertHeader != NULL) CFRelease(alertHeader);
 	if (alertMessage != NULL) CFRelease(alertMessage);
