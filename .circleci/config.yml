@@ -16,17 +16,14 @@ jobs:
           libx11-dev xorg-dev libxtst-dev
           xsel xclip
           # libpng++-dev
-          # xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev
-          # libxkbcommon-dev
+          # xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev libxkbcommon-dev
       - run: apt -y install xvfb
       #
       #  override:
-      # './...' is a relative pattern which means all subdirectories
       # - run: go get -u github.com/go-vgo/robotgo
-      # - run: go get -u golang.org/x/sys/unix
-      # - run: go get -u github.com/shirou/gopsutil
       - run: go get -v -t -d ./...
       - run: xvfb-run go test -v ./...
+      #
       # codecov.io
       # - run: xvfb-run go test -v -covermode=count -coverprofile=coverage.out
       # - run: bash <(curl -s https://codecov.io/bash)
