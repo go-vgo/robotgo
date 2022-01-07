@@ -326,8 +326,8 @@ func CaptureScreen(args ...int) CBitmap {
 	return CBitmap(bit)
 }
 
-// GoCaptureScreen capture the screen and return bitmap(go struct)
-func GoCaptureScreen(args ...int) Bitmap {
+// CaptureGo capture the screen and return bitmap(go struct)
+func CaptureGo(args ...int) Bitmap {
 	bit := CaptureScreen(args...)
 	defer FreeBitmap(bit)
 

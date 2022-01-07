@@ -23,8 +23,8 @@ func bitmap() {
 	gbit := robotgo.ToBitmap(abitMap)
 	fmt.Println("bitmap...", gbit.Width)
 
-	gbitMap := robotgo.GoCaptureScreen()
-	fmt.Println("GoCaptureScreen...", gbitMap.Width)
+	gbitMap := robotgo.CaptureGo()
+	fmt.Println("Go CaptureScreen...", gbitMap.Width)
 	// fmt.Println("...", gbitmap.Width, gbitmap.BytesPerPixel)
 
 	// robotgo.SaveCapture("saveCapture.png", 10, 20, 100, 100)
