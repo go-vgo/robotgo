@@ -41,7 +41,7 @@ void initWindow(uintptr handle){
 	}
 
 	mData.XWin = 0;
-
+	XCloseDisplay(rDisplay);
 #elif defined(IS_WINDOWS)
 	mData.HWnd = 0;
 #endif
@@ -125,6 +125,7 @@ bool IsValid(){
 
 	// Free result and return true
 	XFree(result);
+	XCloseDisplay(rDisplay);
 	return true;
 
 #elif defined(IS_WINDOWS)
@@ -412,7 +413,7 @@ void SetActive(const MData win){
 		XSetInputFocus(rDisplay, win.XWin,
 						RevertToParent, CurrentTime);
 	}
-
+	XCloseDisplay(rDisplay);
 #elif defined(IS_WINDOWS)
 
 	if (IsMinimized()) {
@@ -502,6 +503,7 @@ MData GetActive(void){
 	Window window = None;
 	int revert = RevertToNone;
 	XGetInputFocus(rDisplay, &window, &revert);
+	XCloseDisplay(rDisplay);
 
 	// Return foreground window
 	result.XWin = window;
@@ -590,7 +592,7 @@ void close_window_by_Id(MData m_data){
 
 	// Close the window
 	XDestroyWindow(rDisplay, m_data.XWin);
-
+	XCloseDisplay(rDisplay);
 #elif defined(IS_WINDOWS)
 
 	PostMessage(m_data.HWnd, WM_CLOSE, 0, 0);
