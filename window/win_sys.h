@@ -224,6 +224,8 @@ Bounds get_client(uintptr pid, uintptr isHwnd){
 		bounds.Y = y;
 		bounds.W = attr.width;
 		bounds.H = attr.height;
+		XCloseDisplay(rDisplay);
+		
 		return bounds;
 
 	#elif defined(IS_WINDOWS)

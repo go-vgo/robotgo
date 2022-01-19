@@ -135,6 +135,7 @@ typedef struct _Bounds Bounds;
 
 			// Reinstate old handler
 			XSetErrorHandler(mOld);
+			XCloseDisplay(rDisplay);
 		}
 
 	// Definitions
@@ -182,6 +183,7 @@ typedef struct _Bounds Bounds;
 		WM_ACTIVE  = XInternAtom(rDisplay, "_NET_ACTIVE_WINDOW",           True);
 		WM_HINTS   = XInternAtom(rDisplay, "_MOTIF_WM_HINTS",              True);
 		WM_EXTENTS = XInternAtom(rDisplay, "_NET_FRAME_EXTENTS",           True);
+		XCloseDisplay(rDisplay);
 	}
 
 
@@ -219,6 +221,7 @@ typedef struct _Bounds Bounds;
 			XFree (result);
 		}
 
+		XCloseDisplay(rDisplay);
 		return NULL;
 	}
 
@@ -262,6 +265,7 @@ typedef struct _Bounds Bounds;
 				XFree(desktop);
 			}
 		}
+		XCloseDisplay(rDisplay);
 	}
 
 	static Bounds GetFrame(MData win){
