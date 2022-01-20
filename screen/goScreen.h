@@ -96,6 +96,33 @@ char* get_XDisplay_name(){
 	#endif
 }
 
+#if defined(IS_WINDOWS)
+bool CALLBACK MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData) {
+    uint32_t *count = (uint32_t*)dwData;
+    (*count)++;
+    return true;
+}
+#endif
+
+uint32_t get_num_displays() {
+#if defined(IS_MACOSX)
+	uint32_t count = 0;
+	if (CGGetActiveDisplayList(0, nil, &count) == kCGErrorSuccess) {
+		return count;
+	}
+	return 0;
+#elif defined(USE_X11)
+	return 0;
+#elif defined(IS_WINDOWS)
+    uint32_t count = 0;
+    if (EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, (LPARAM)&count)) {
+        return count;
+	}
+	return 0;
+#endif
+}
+
+
 void bitmap_dealloc(MMBitmapRef bitmap){
 	if (bitmap != NULL) {
 		destroyMMBitmap(bitmap);

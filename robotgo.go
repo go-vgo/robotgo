@@ -239,6 +239,10 @@ func displayIdx(id ...int) int {
 	return display
 }
 
+func getNumDisplays() int {
+	return int(C.get_num_displays())
+}
+
 // SysScale get the sys scale
 func SysScale(displayId ...int) float64 {
 	display := displayIdx(displayId...)

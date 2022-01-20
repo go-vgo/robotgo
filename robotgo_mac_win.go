@@ -50,3 +50,8 @@ func ActivePID(pid int32, args ...int) error {
 	internalActive(pid, hwnd)
 	return nil
 }
+
+// DisplaysNum get the count of displays
+func DisplaysNum() int {
+	return getNumDisplays()
+}
