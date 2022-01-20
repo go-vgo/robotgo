@@ -17,6 +17,7 @@ import (
 	"errors"
 	"log"
 
+	"github.com/robotn/xgb"
 	"github.com/robotn/xgb/xinerama"
 	"github.com/robotn/xgb/xproto"
 	"github.com/robotn/xgbutil"
