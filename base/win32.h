@@ -1,8 +1,8 @@
 #if defined(IS_WINDOWS)
-    bool CALLBACK MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData) {
+    BOOL CALLBACK MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData) {
         uint32_t *count = (uint32_t*)dwData;
         (*count)++;
-        return true;
+        return TRUE;
     }
    
     typedef struct{

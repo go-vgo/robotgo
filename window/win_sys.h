@@ -164,7 +164,7 @@ Bounds get_bounds(uintptr pid, uintptr isHwnd){
     #endif
 }
 
-Bounds get_client(uintptr pid, uintptr isHwnd){
+Bounds get_client(uintptr pid, uintptr isHwnd) {
 	// Check if the window is valid
 	Bounds bounds;
 	if (!IsValid()) { return bounds; }
@@ -183,7 +183,7 @@ Bounds get_client(uintptr pid, uintptr isHwnd){
 		Window root, parent;
 		Window* children;
 		unsigned int count;
-		int32 x = 0, y = 0;
+		int32_t x = 0, y = 0;
 
 		// Check if the window is the root
 		XQueryTree(rDisplay, win.XWin,

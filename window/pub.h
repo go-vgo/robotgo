@@ -9,10 +9,15 @@
 // except according to those terms.
 
 // #include "../base/os.h"
+#if defined(IS_MACOSX)
+	#include <dlfcn.h>
+#elif defined(USE_X11)
+	#include <X11/Xatom.h>
+#endif
 
 #ifdef RobotGo_64
-	typedef int64			intptr;	
-	typedef uint64			uintptr;	
+	typedef int64_t			intptr;	
+	typedef uint64_t			uintptr;	
 #else
 	typedef int32_t			 intptr;
 	typedef uint32_t		 uintptr;	// Unsigned pointer integer
@@ -177,7 +182,7 @@ typedef struct _Bounds Bounds;
 	}
 
 	// Functions
-	static void* GetWindowProperty(MData win, Atom atom, uint32* items) {
+	static void* GetWindowProperty(MData win, Atom atom, uint32_t* items) {
 		// Property variables
 		Atom type; int format;
 		unsigned long  nItems;
@@ -253,15 +258,15 @@ typedef struct _Bounds Bounds;
 		Bounds frame;
 		// Retrieve frame bounds
 		if (WM_EXTENTS != None) {
-			long* result; uint32 nItems = 0;
+			long* result; uint32_t nItems = 0;
 			// Get the window extents property
 			result = (long*) GetWindowProperty(win, WM_EXTENTS, &nItems);
 			if (result != NULL) {
 				if (nItems == 4) {
-					frame.X = (int32) result[0];
-					frame.Y = (int32) result[2];
-					frame.W = (int32) result[0] + (int32) result[1];
-					frame.H =  (int32) result[2] + (int32) result[3];
+					frame.X = (int32_t) result[0];
+					frame.Y = (int32_t) result[2];
+					frame.W = (int32_t) result[0] + (int32_t) result[1];
+					frame.H = (int32_t) result[2] + (int32_t) result[3];
 				}
 
 				XFree(result);

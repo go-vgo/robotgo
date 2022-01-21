@@ -10,9 +10,6 @@
 
 // #include "../base/os.h"
 #include "pub.h"
-#if defined(IS_MACOSX)
-	#include <dlfcn.h>
-#endif
 
 bool setHandle(uintptr handle);
 bool IsValid();
@@ -447,7 +444,7 @@ MData GetActive(void) {
 	// Attempt to get the foreground window multiple times in case
 	MData result;
 
-	uint8 times = 0;
+	uint8_t times = 0;
 	while (++times < 20) {
 		HWND handle;
 		handle = GetForegroundWindow();
@@ -626,7 +623,7 @@ int32_t WGetPID(void) {
 	// Check result and convert it
 	if (result == NULL) { return 0; }
 	
-	int32 pid = (int32) *result;
+	int32_t pid = (int32_t) *result;
 	XFree(result);
 	return pid;
 #elif defined(IS_WINDOWS)

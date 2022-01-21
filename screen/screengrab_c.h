@@ -52,7 +52,7 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id) 
 #elif defined(USE_X11)
 	MMBitmapRef bitmap;
 	Display *display;
-	if display_id == -1 {
+	if (display_id == -1) {
 		display = XOpenDisplay(NULL);
 	} else {
 		display = XGetMainDisplay();
@@ -92,7 +92,7 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id) 
 	bi.bmiHeader.biClrUsed = 0;
 	bi.bmiHeader.biClrImportant = 0;
 
-	if display_id == -1 {
+	if (display_id == -1) {
 		screen = GetDC(NULL); /* Get entire screen */
 	} else {
 		screen = GetDC((HWND) display_id);
