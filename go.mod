@@ -8,7 +8,7 @@ require (
 	// github.com/robotn/gohook v0.31.3
 	github.com/robotn/xgb v0.0.0-20190912153532-2cb92d044934
 	github.com/robotn/xgbutil v0.0.0-20190912154524-c861d6f87770
-	github.com/vcaesar/gops v0.21.3
+	github.com/vcaesar/gops v0.22.0
 	github.com/vcaesar/imgo v0.30.0
 	github.com/vcaesar/keycode v0.10.0
 	github.com/vcaesar/tt v0.20.0
@@ -17,15 +17,16 @@ require (
 )
 
 require (
-	github.com/StackExchange/wmi v1.2.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
+	github.com/lufia/plan9stats v0.0.0-20211012122336-39d0f177ccd0 // indirect
 	github.com/otiai10/mint v1.3.0 // indirect
-	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/shirou/gopsutil v3.21.10+incompatible // indirect
+	github.com/power-devops/perfstat v0.0.0-20210106213030-5aafc221ea8c // indirect
+	github.com/shirou/gopsutil/v3 v3.21.12 // indirect
 	github.com/tklauser/go-sysconf v0.3.9 // indirect
 	github.com/tklauser/numcpus v0.3.0 // indirect
-	golang.org/x/sys v0.0.0-20211123173158-ef496fb156ab // indirect
+	github.com/yusufpapurcu/wmi v1.2.2 // indirect
+	golang.org/x/sys v0.0.0-20220114195835-da31bd327af9 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
 

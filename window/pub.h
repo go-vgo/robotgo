@@ -10,6 +10,14 @@
 
 // #include "../base/os.h"
 
+#ifdef RobotGo_64
+	typedef int64			intptr;	
+	typedef uint64			uintptr;	
+#else
+	typedef int32_t			 intptr;
+	typedef uint32_t		 uintptr;	// Unsigned pointer integer
+#endif
+
 struct _MData{
 	#if defined(IS_MACOSX)
 		CGWindowID		CgID;		// Handle to a CGWindowID
@@ -23,49 +31,41 @@ struct _MData{
 };
 
 typedef struct _MData MData;
-
 MData mData;
 
-struct _Bounds{
-	int32		X;				// Top left X coordinate
-	int32		Y;				// Top left Y coordinate
-	int32		W;				// Total bounds width
-	int32		H;				// Total bounds height
+struct _Bounds {
+	int32_t		X;				// Top left X coordinate
+	int32_t		Y;				// Top left Y coordinate
+	int32_t		W;				// bounds width
+	int32_t		H;				// bounds height
 };
-
 typedef struct _Bounds Bounds;
 
 #if defined(IS_MACOSX)
-
 	static Boolean(*gAXIsProcessTrustedWithOptions) (CFDictionaryRef);
-
 	static CFStringRef* gkAXTrustedCheckOptionPrompt;
 
 	AXError _AXUIElementGetWindow(AXUIElementRef, CGWindowID* out);
-
 	static AXUIElementRef GetUIElement(CGWindowID win){
 		intptr pid = 0;
 		// double_t pid = 0;
 
 		// Create array storing window
 		CGWindowID window[1] = { win };
-		CFArrayRef wlist = CFArrayCreate(NULL, 
-						(const void**)window, 1, NULL);
+		CFArrayRef wlist = CFArrayCreate(NULL, (const void**)window, 1, NULL);
 
 		// Get window info
 		CFArrayRef info = CGWindowListCreateDescriptionFromArray(wlist);
 		CFRelease(wlist);
 
 		// Check whether the resulting array is populated
-		if (info != NULL && CFArrayGetCount(info) > 0){
+		if (info != NULL && CFArrayGetCount(info) > 0) {
 			// Retrieve description from info array
 			CFDictionaryRef desc = (CFDictionaryRef)CFArrayGetValueAtIndex(info, 0);
 
 			// Get window PID
-			CFNumberRef data =(CFNumberRef)
-				CFDictionaryGetValue(desc, kCGWindowOwnerPID);
-
-			if (data != NULL){
+			CFNumberRef data = (CFNumberRef) CFDictionaryGetValue(desc, kCGWindowOwnerPID);
+			if (data != NULL) {
 				CFNumberGetValue(data, kCFNumberIntType, &pid);
 			}
 
@@ -74,17 +74,15 @@ typedef struct _Bounds Bounds;
 		}
 
 		// Check if PID was retrieved
-		if (pid <= 0) {return NULL;}
+		if (pid <= 0) { return NULL; }
 
 		// Create an accessibility object using retrieved PID
 		AXUIElementRef application = AXUIElementCreateApplication(pid);
-
 		if (application == 0) {return NULL;}
 
 		CFArrayRef windows = NULL;
 		// Get all windows associated with the app
-		AXUIElementCopyAttributeValues(application,
-			kAXWindowsAttribute, 0, 1024, &windows);
+		AXUIElementCopyAttributeValues(application, kAXWindowsAttribute, 0, 1024, &windows);
 
 		// Reference to resulting value
 		AXUIElementRef result = NULL;
@@ -94,14 +92,11 @@ typedef struct _Bounds Bounds;
 			// Loop all windows in the process
 			for (CFIndex i = 0; i < count; ++i){
 				// Get the element at the index
-				AXUIElementRef element = (AXUIElementRef)
-					CFArrayGetValueAtIndex(windows, i);
-
+				AXUIElementRef element = (AXUIElementRef) CFArrayGetValueAtIndex(windows, i);
 				CGWindowID temp = 0;
 				// Use undocumented API to get WindowID
 				_AXUIElementGetWindow(element, &temp);
 
-				// Check results
 				if (temp == win) {
 					// Retain element
 					CFRetain(element);
@@ -117,15 +112,11 @@ typedef struct _Bounds Bounds;
 		return result;
 	}
 #elif defined(USE_X11)
-
 	// Error Handling
-
 	typedef int (*XErrorHandler) (Display*, XErrorEvent*);
 
 	static int XHandleError(Display* dp, XErrorEvent* e) { return 0; }
-
 		XErrorHandler mOld;
-
 		void XDismissErrors (void) {
 			Display *rDisplay = XOpenDisplay(NULL);
 			// Save old handler and dismiss errors
@@ -139,12 +130,11 @@ typedef struct _Bounds Bounds;
 		}
 
 	// Definitions
-
 	struct Hints{
 		unsigned long Flags;
 		unsigned long Funcs;
 		unsigned long Decorations;
-		  signed long Mode;
+		signed   long Mode;
 		unsigned long Stat;
 	};
 
@@ -186,10 +176,8 @@ typedef struct _Bounds Bounds;
 		XCloseDisplay(rDisplay);
 	}
 
-
-
 	// Functions
-	static void* GetWindowProperty(MData win, Atom atom, uint32* items){
+	static void* GetWindowProperty(MData win, Atom atom, uint32* items) {
 		// Property variables
 		Atom type; int format;
 		unsigned long  nItems;
@@ -200,25 +188,22 @@ typedef struct _Bounds Bounds;
 		// Check the atom
 		if (atom != None) {
 			// Retrieve and validate the specified property
-			if (!XGetWindowProperty(rDisplay, win.XWin, atom, 0,
-				BUFSIZ, False, AnyPropertyType, &type, &format,
-				&nItems, &bAfter, &result) && result && nItems) {
+			if (!XGetWindowProperty(rDisplay, win.XWin, atom, 0, 
+				BUFSIZ, False, AnyPropertyType, &type, &format, &nItems, &bAfter, &result) 
+				&& result && nItems) {
 
 				// Copy items result
 				if (items != NULL) {
 					*items = (uint32) nItems;
 				}
-
 				return result;
 			}
 		}
 
 		// Reset the items result if valid
-		if (items != NULL) {*items = 0;}
-
-		// Free the result if it got allocated
+		if (items != NULL) { *items = 0; }
 		if (result != NULL) {
-			XFree (result);
+			XFree(result);
 		}
 
 		XCloseDisplay(rDisplay);
@@ -226,11 +211,9 @@ typedef struct _Bounds Bounds;
 	}
 
 	//////
-
 	#define STATE_TOPMOST  0
 	#define STATE_MINIMIZE 1
 	#define STATE_MAXIMIZE 2
-
 
 	//////
 	static void SetDesktopForWindow(MData win){
@@ -239,7 +222,6 @@ typedef struct _Bounds Bounds;
 		if (WM_DESKTOP != None && WM_CURDESK != None) {
 			// Get desktop property
 			long* desktop = (long*)GetWindowProperty(win, WM_DESKTOP,NULL);
-
 			// Check result value
 			if (desktop != NULL) {
 				// Retrieve the screen number
@@ -258,9 +240,8 @@ typedef struct _Bounds Bounds;
 				e.data.l[1] = CurrentTime;
 
 				// Send the message
-				XSendEvent(rDisplay,
-					root, False, SubstructureNotifyMask |
-					SubstructureRedirectMask, (XEvent*) &e);
+				XSendEvent(rDisplay, root, False, SubstructureNotifyMask | SubstructureRedirectMask, 
+					(XEvent*) &e);
 
 				XFree(desktop);
 			}
@@ -275,8 +256,6 @@ typedef struct _Bounds Bounds;
 			long* result; uint32 nItems = 0;
 			// Get the window extents property
 			result = (long*) GetWindowProperty(win, WM_EXTENTS, &nItems);
-
-			// Verify the results
 			if (result != NULL) {
 				if (nItems == 4) {
 					frame.X = (int32) result[0];
@@ -288,11 +267,25 @@ typedef struct _Bounds Bounds;
 				XFree(result);
 			}
 		}
-
 		return frame;
 	}
 
 
 #elif defined(IS_WINDOWS)
 	//
+	void win_min(HWND hwnd, bool state){
+        if (state) {
+            ShowWindow(hwnd, SW_MINIMIZE);
+        } else {
+            ShowWindow(hwnd, SW_RESTORE);
+        }
+    }
+
+    void win_max(HWND hwnd, bool state){
+        if (state) {
+            ShowWindow(hwnd, SW_MAXIMIZE);
+        } else {
+            ShowWindow(hwnd, SW_RESTORE);
+        }
+    }
 #endif

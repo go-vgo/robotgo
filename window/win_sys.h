@@ -20,26 +20,23 @@ intptr scaleX();
 
 double sys_scale(int32_t display_id) {
 	#if defined(IS_MACOSX)
-	
 		CGDirectDisplayID displayID = (CGDirectDisplayID) display_id;
 		if (displayID == -1) {
 			displayID = CGMainDisplayID();
 		}
+		
 		CGDisplayModeRef modeRef = CGDisplayCopyDisplayMode(displayID);
-
 		double pixelWidth = CGDisplayModeGetPixelWidth(modeRef);
 		double targetWidth = CGDisplayModeGetWidth(modeRef);
-		
+	
 		return pixelWidth / targetWidth;
 	#elif defined(USE_X11)
-		char *displayname = NULL;
-		Display *dpy = XOpenDisplay(displayname);
-		
+		Display *dpy = XOpenDisplay(NULL);
+
 		int scr = 0; /* Screen number */
 		double xres = ((((double) DisplayWidth(dpy, scr)) * 25.4) /
 			((double) DisplayWidthMM(dpy, scr)));
 
-		// https://github.com/glfw/glfw/issues/1019#issuecomment-302772498
 		char *rms = XResourceManagerString(dpy);
 		if (rms) {
 			XrmDatabase db = XrmGetStringDatabase(rms);
@@ -75,7 +72,6 @@ intptr scaleX(){
 		HDC desktopDc = GetDC(NULL);
 		// Get native resolution
 		intptr horizontalDPI = GetDeviceCaps(desktopDc, LOGPIXELSX);
-		// intptr verticalDPI = GetDeviceCaps(desktopDc, LOGPIXELSY);
 		return horizontalDPI;
 	#endif
 }
@@ -86,9 +82,7 @@ intptr scaleY(){
 	#elif defined(USE_X11)
 		return 0;
 	#elif defined(IS_WINDOWS)
-		// Get desktop dc
 		HDC desktopDc = GetDC(NULL);
-		// Get native resolution
 		intptr verticalDPI = GetDeviceCaps(desktopDc, LOGPIXELSY);
 		return verticalDPI;
 	#endif
@@ -100,7 +94,6 @@ Bounds get_bounds(uintptr pid, uintptr isHwnd){
 	if (!IsValid()) { return bounds; }
 
     #if defined(IS_MACOSX)
-
 		// Bounds bounds;
 		AXValueRef axp = NULL;
 		AXValueRef axs = NULL;
@@ -136,9 +129,7 @@ Bounds get_bounds(uintptr pid, uintptr isHwnd){
 		if (axs != NULL) { CFRelease(axs); }
 
 		return bounds;
-
     #elif defined(USE_X11)
-
         // Ignore X errors
         XDismissErrors();
         MData win;
@@ -153,7 +144,6 @@ Bounds get_bounds(uintptr pid, uintptr isHwnd){
         bounds.H = client.H + frame.H;
 
         return bounds;
-
     #elif defined(IS_WINDOWS)
         HWND hwnd;
         if (isHwnd == 0) {
@@ -171,7 +161,6 @@ Bounds get_bounds(uintptr pid, uintptr isHwnd){
         bounds.H = rect.bottom - rect.top;
 
         return bounds;
-
     #endif
 }
 
@@ -181,11 +170,8 @@ Bounds get_client(uintptr pid, uintptr isHwnd){
 	if (!IsValid()) { return bounds; }
 
 	#if defined(IS_MACOSX)
-
 		return get_bounds(pid, isHwnd);
-
 	#elif defined(USE_X11)
-
         Display *rDisplay = XOpenDisplay(NULL);
 
 		// Ignore X errors
@@ -227,7 +213,6 @@ Bounds get_client(uintptr pid, uintptr isHwnd){
 		XCloseDisplay(rDisplay);
 		
 		return bounds;
-
 	#elif defined(IS_WINDOWS)
 		HWND hwnd;
 		if (isHwnd == 0) {
@@ -253,6 +238,5 @@ Bounds get_client(uintptr pid, uintptr isHwnd){
 		bounds.H = rect.bottom - rect.top;
 
 		return bounds;
-
 	#endif
 }

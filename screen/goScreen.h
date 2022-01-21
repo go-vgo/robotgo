@@ -10,18 +10,19 @@
 
 #include "../base/types.h"
 #include "../base/rgb.h"
+#include "../base/win32.h"
 #include "screengrab_c.h"
 #include "screen_c.h"
 #include <stdio.h>
 // #include "../MMBitmap_c.h"
 
-void padHex(MMRGBHex color, char* hex){
+void padHex(MMRGBHex color, char* hex) {
 	// Length needs to be 7 because snprintf includes a terminating null.
 	// Use %06x to pad hex value with leading 0s.
 	snprintf(hex, 7, "%06x", color);
 }
 
-char* pad_hex(MMRGBHex color){
+char* pad_hex(MMRGBHex color) {
 	char hex[7];
 	padHex(color, hex);
 	// destroyMMBitmap(bitmap);
@@ -34,14 +35,14 @@ char* pad_hex(MMRGBHex color){
 
 static uint8_t rgb[3];
 
-uint8_t* color_hex_to_rgb(uint32_t h){
+uint8_t* color_hex_to_rgb(uint32_t h) {
 	rgb[0] = RED_FROM_HEX(h);
 	rgb[1] = GREEN_FROM_HEX(h);
 	rgb[2] = BLUE_FROM_HEX(h);
 	return rgb;
 }
 
-uint32_t color_rgb_to_hex(uint8_t r, uint8_t g, uint8_t b){
+uint32_t color_rgb_to_hex(uint8_t r, uint8_t g, uint8_t b) {
 	return RGB_TO_HEX(r, g, b);
 }
 
@@ -49,7 +50,7 @@ MMRGBHex get_px_color(int32_t x, int32_t y, int32_t display_id) {
 	MMBitmapRef bitmap;
 	MMRGBHex color;
 
-	if (!pointVisibleOnMainDisplay(MMPointInt32Make(x, y))){
+	if (!pointVisibleOnMainDisplay(MMPointInt32Make(x, y))) {
 		return color;
 	}
 
@@ -69,13 +70,13 @@ char* get_pixel_color(int32_t x, int32_t y, int32_t display_id) {
 	return s;
 }
 
-MMSizeInt32 get_screen_size(){
+MMSizeInt32 get_screen_size() {
 	// Get display size.
 	MMSizeInt32 displaySize = getMainDisplaySize();
 	return displaySize;
 }
 
-char* set_XDisplay_name(char* name){
+char* set_XDisplay_name(char* name) {
 	#if defined(USE_X11)
 		setXDisplay(name);
 		return "success";
@@ -84,7 +85,7 @@ char* set_XDisplay_name(char* name){
 	#endif
 }
 
-char* get_XDisplay_name(){
+char* get_XDisplay_name() {
 	#if defined(USE_X11)
 		const char* display = getXDisplay();
 		char* sd = (char*)calloc(100, sizeof(char*));
@@ -96,34 +97,26 @@ char* get_XDisplay_name(){
 	#endif
 }
 
-#if defined(IS_WINDOWS)
-bool CALLBACK MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData) {
-    uint32_t *count = (uint32_t*)dwData;
-    (*count)++;
-    return true;
-}
-#endif
-
 uint32_t get_num_displays() {
-#if defined(IS_MACOSX)
-	uint32_t count = 0;
-	if (CGGetActiveDisplayList(0, nil, &count) == kCGErrorSuccess) {
-		return count;
-	}
-	return 0;
-#elif defined(USE_X11)
-	return 0;
-#elif defined(IS_WINDOWS)
-    uint32_t count = 0;
-    if (EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, (LPARAM)&count)) {
-        return count;
-	}
-	return 0;
-#endif
+	#if defined(IS_MACOSX)
+		uint32_t count = 0;
+		if (CGGetActiveDisplayList(0, nil, &count) == kCGErrorSuccess) {
+			return count;
+		}
+		return 0;
+	#elif defined(USE_X11)
+		return 0;
+	#elif defined(IS_WINDOWS)
+		uint32_t count = 0;
+		if (EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, (LPARAM)&count)) {
+			return count;
+		}
+		return 0;
+	#endif
 }
 
 
-void bitmap_dealloc(MMBitmapRef bitmap){
+void bitmap_dealloc(MMBitmapRef bitmap) {
 	if (bitmap != NULL) {
 		destroyMMBitmap(bitmap);
 		bitmap = NULL;
