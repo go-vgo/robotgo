@@ -199,7 +199,7 @@ typedef struct _Bounds Bounds;
 
 				// Copy items result
 				if (items != NULL) {
-					*items = (uint32) nItems;
+					*items = (uint32_t) nItems;
 				}
 				return result;
 			}
