@@ -18,9 +18,9 @@ import (
 )
 
 func bitmap() {
-	abitMap := robotgo.CaptureScreen()
-	fmt.Println("abitMap...", abitMap)
-	gbit := robotgo.ToBitmap(abitMap)
+	bit := robotgo.CaptureScreen()
+	fmt.Println("abitMap...", bit)
+	gbit := robotgo.ToBitmap(bit)
 	fmt.Println("bitmap...", gbit.Width)
 
 	gbitMap := robotgo.CaptureGo()

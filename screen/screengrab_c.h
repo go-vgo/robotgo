@@ -17,15 +17,13 @@
 	#include <string.h>
 #endif
 
-MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id){
+MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id) {
 #if defined(IS_MACOSX)
-
 	MMBitmapRef bitmap = NULL;
 	uint8_t *buffer = NULL;
 	size_t bufferSize = 0;
 
 	CGDirectDisplayID displayID = (CGDirectDisplayID) display_id;
-
 	if (displayID == -1) {
 		displayID = CGMainDisplayID();
 	}
@@ -43,7 +41,7 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id){
 	CFDataGetBytes(imageData, CFRangeMake(0, bufferSize), buffer);
 
 	bitmap = createMMBitmap_c(buffer, 
-		CGImageGetWidth(image),CGImageGetHeight(image),
+		CGImageGetWidth(image), CGImageGetHeight(image),
 		CGImageGetBytesPerRow(image), CGImageGetBitsPerPixel(image),
 		CGImageGetBitsPerPixel(image) / 8);
 
@@ -53,11 +51,16 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id){
 	return bitmap;
 #elif defined(USE_X11)
 	MMBitmapRef bitmap;
+	Display *display;
+	if (display_id == -1) {
+		display = XOpenDisplay(NULL);
+	} else {
+		display = XGetMainDisplay();
+	}
 
-	Display *display = XOpenDisplay(NULL);
 	XImage *image = XGetImage(display, XDefaultRootWindow(display),
 							(int)rect.origin.x, (int)rect.origin.y,
-	                        (unsigned int)rect.size.w,(unsigned int)rect.size.h,
+	                        (unsigned int)rect.size.w, (unsigned int)rect.size.h,
 	                        AllPlanes, ZPixmap);
 	XCloseDisplay(display);
 	if (image == NULL) { return NULL; }
@@ -65,8 +68,7 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id){
 	bitmap = createMMBitmap_c((uint8_t *)image->data, 
 		rect.size.w, rect.size.h, (size_t)image->bytes_per_line, 
 		(uint8_t)image->bits_per_pixel, (uint8_t)image->bits_per_pixel / 8);
-	image->data = NULL; /* Steal ownership of bitmap data so we don't have to
-	                     * copy it. */
+	image->data = NULL; /* Steal ownership of bitmap data so we don't have to copy it. */
 	XDestroyImage(image);
 
 	return bitmap;
@@ -90,7 +92,11 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id){
 	bi.bmiHeader.biClrUsed = 0;
 	bi.bmiHeader.biClrImportant = 0;
 
-	screen = GetDC(NULL); /* Get entire screen */
+	if (display_id == -1) {
+		screen = GetDC(NULL); /* Get entire screen */
+	} else {
+		screen = GetDC((HWND) display_id);
+	}
 	if (screen == NULL) { return NULL; }
 
 	/* Get screen data in display device context. */

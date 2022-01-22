@@ -121,7 +121,7 @@ char* get_title(uintptr pid, uintptr isHwnd){
 	return title;
 }
 
-int32 get_PID(void){
+int32_t get_PID(void){
 	int pid = WGetPID();
 	return pid;
 }

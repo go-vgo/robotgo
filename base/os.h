@@ -46,4 +46,18 @@
 	#define ADD_PADDING(width) (BYTE_ALIGN + (((width) - 1) & ~(BYTE_ALIGN - 1)))
 #endif
 
+#if defined(IS_WINDOWS)
+	#if defined (_WIN64)
+		#define RobotGo_64
+	#else
+		#define RobotGo_32
+	#endif
+#else
+	#if defined (__x86_64__)
+		#define RobotGo_64
+	#else
+		#define RobotGo_32
+	#endif
+#endif
+
 #endif /* OS_H */

@@ -9,10 +9,7 @@
 // except according to those terms.
 
 // #include "../base/os.h"
-// #include <stdlib.h>
-#include "process.h"
 #include "pub.h"
-#include "win32.h"
 
 bool setHandle(uintptr handle);
 bool IsValid();
@@ -22,16 +19,13 @@ void initWindow();
 char* get_title_by_hand(MData m_data);
 void close_window_by_Id(MData m_data);
 
-//int findwindow()
-
+// int findwindow()
 uintptr initHandle = 0;
 
 void initWindow(uintptr handle){
 #if defined(IS_MACOSX)
-
 	mData.CgID = 0;
 	mData.AxID = 0;
-
 #elif defined(USE_X11)
 	Display *rDisplay = XOpenDisplay(NULL);
 	// If atoms loaded
@@ -45,7 +39,6 @@ void initWindow(uintptr handle){
 #elif defined(IS_WINDOWS)
 	mData.HWnd = 0;
 #endif
-
 	setHandle(handle);
 }
 
@@ -59,7 +52,6 @@ bool Is64Bit() {
 
 MData set_handle_pid(uintptr pid, uintptr isHwnd){
 	MData win;
-
 	#if defined(IS_MACOSX)
 		// Handle to a AXUIElementRef
 		win.AxID = AXUIElementCreateApplication(pid);
@@ -91,58 +83,50 @@ bool IsValid(){
 	MData actdata = GetActive();
 
 #if defined(IS_MACOSX)
-
 	mData.CgID = actdata.CgID;
 	mData.AxID = actdata.AxID;
-
-	if (mData.CgID == 0 || mData.AxID == 0)return false;
+	if (mData.CgID == 0 || mData.AxID == 0){ return false; }
 
 	CFTypeRef r = NULL;
-
 	// Attempt to get the window role
-	if (AXUIElementCopyAttributeValue(mData.AxID,
-		kAXRoleAttribute,&r) == kAXErrorSuccess && r){
-			CFRelease (r);
+	if (AXUIElementCopyAttributeValue(mData.AxID, kAXRoleAttribute, &r) == kAXErrorSuccess && r){
+			CFRelease(r);
 			return true;
 	}
 
 	return false;
-
 #elif defined(USE_X11)
 	mData.XWin = actdata.XWin;
-	if (mData.XWin == 0) {return false;}
+	if (mData.XWin == 0) { return false; }
 
 	Display *rDisplay = XOpenDisplay(NULL);
 	// Check for a valid X-Window display
-	if (rDisplay == NULL) {return false;}
+	if (rDisplay == NULL) { return false; }
 
 	// Ignore X errors
 	XDismissErrors();
 
 	// Get the window PID property
 	void* result = GetWindowProperty(mData, WM_PID,NULL);
-	if (result == NULL) {return false;}
+	if (result == NULL) { return false; }
 
 	// Free result and return true
 	XFree(result);
 	XCloseDisplay(rDisplay);
-	return true;
 
+	return true;
 #elif defined(IS_WINDOWS)
 	mData.HWnd = actdata.HWnd;
-
 	if (mData.HWnd == 0) {
 		return false;
 	}
 
 	return IsWindow(mData.HWnd) != 0;
-
 #endif
 }
 
 bool IsAxEnabled(bool options){
 #if defined(IS_MACOSX)
-
 	// Statically load all required functions one time
 	static dispatch_once_t once; dispatch_once (&once,
 	^{
@@ -152,19 +136,18 @@ bool IsAxEnabled(bool options){
 
 		// Validate the handle
 		if (handle != NULL) {
-			*(void**) (&gAXIsProcessTrustedWithOptions) =
+			*(void**) (&gAXIsProcessTrustedWithOptions) = 
 				dlsym (handle, "AXIsProcessTrustedWithOptions");
 
-			gkAXTrustedCheckOptionPrompt = (CFStringRef*)
-				dlsym (handle, "kAXTrustedCheckOptionPrompt");
+			gkAXTrustedCheckOptionPrompt = 
+				(CFStringRef*) dlsym (handle, "kAXTrustedCheckOptionPrompt");
 		}
 	});
 
 	// Check for new OSX 10.9 function
 	if (gAXIsProcessTrustedWithOptions) {
 		// Check whether to show prompt
-		CFBooleanRef displayPrompt = options ?
-			kCFBooleanTrue : kCFBooleanFalse;
+		CFBooleanRef displayPrompt = options ? kCFBooleanTrue : kCFBooleanFalse;
 
 		// Convert display prompt value into a dictionary
 		const void* k[] = { *gkAXTrustedCheckOptionPrompt };
@@ -186,7 +169,6 @@ bool IsAxEnabled(bool options){
 		return AXAPIEnabled() || AXIsProcessTrusted();
 		#pragma clang diagnostic pop
 	}
-
 #elif defined(USE_X11)
 	return true;
 #elif defined(IS_WINDOWS)
@@ -198,7 +180,7 @@ bool IsAxEnabled(bool options){
 bool setHandle(uintptr handle){
 #if defined(IS_MACOSX)
 	// Release the AX element
-	if (mData.AxID != NULL){
+	if (mData.AxID != NULL) {
 		CFRelease(mData.AxID);
 	}
 
@@ -206,7 +188,7 @@ bool setHandle(uintptr handle){
 	mData.CgID = 0;
 	mData.AxID = 0;
 
-	if (handle == 0){
+	if (handle == 0) {
 		// return 0;
 		return true;
 	}
@@ -214,7 +196,6 @@ bool setHandle(uintptr handle){
 	// Retrieve the window element
 	CGWindowID cgID = (CGWindowID)handle;
 	AXUIElementRef axID = GetUIElement(cgID);
-
 	if (axID != NULL){
 		mData.CgID = cgID;
 		mData.AxID = axID;
@@ -224,11 +205,8 @@ bool setHandle(uintptr handle){
 
 	// return 1;
 	return false;
-
 #elif defined(USE_X11)
-
 	mData.XWin = (Window)handle;
-
 	if (handle == 0){
 		return true;
 	}
@@ -240,9 +218,7 @@ bool setHandle(uintptr handle){
 	mData.XWin = 0;
 	return false;
 #elif defined(IS_WINDOWS)
-
 	mData.HWnd = (HWND)handle;
-
 	if (handle == 0) {
 		return true;
 	}
@@ -253,7 +229,6 @@ bool setHandle(uintptr handle){
 
 	mData.HWnd = 0;
 	return false;
-
 #endif
 }
 
@@ -272,20 +247,13 @@ bool IsTopMost(void){
 	// Check the window validity
 	if (!IsValid()) {return false;}
 #if defined(IS_MACOSX)
-
 	return false; // WARNING: Unavailable
-
 #elif defined(USE_X11)
-
 	// Ignore X errors
 	// XDismissErrors ();
 	// return GetState (mData.XWin, STATE_TOPMOST);
-
 #elif defined(IS_WINDOWS)
-
-	return (GetWindowLongPtr(mData.HWnd, GWL_EXSTYLE)
-		& WS_EX_TOPMOST) != 0;
-
+	return (GetWindowLongPtr(mData.HWnd, GWL_EXSTYLE) & WS_EX_TOPMOST) != 0;
 #endif
 }
 
@@ -293,13 +261,10 @@ bool IsMinimized(void){
 	// Check the window validity
 	if (!IsValid()) {return false;}
 #if defined(IS_MACOSX)
-
 	CFBooleanRef data = NULL;
-
 	// Determine whether the window is minimized
-	if (AXUIElementCopyAttributeValue(mData.AxID,
-		kAXMinimizedAttribute, (CFTypeRef*) &data)
-		== kAXErrorSuccess && data != NULL) {
+	if (AXUIElementCopyAttributeValue(mData.AxID, kAXMinimizedAttribute, 
+	(CFTypeRef*) &data) == kAXErrorSuccess && data != NULL) {
 		// Convert resulting data into a bool
 		bool result = CFBooleanGetValue(data);
 		CFRelease(data);
@@ -307,52 +272,36 @@ bool IsMinimized(void){
 	}
 
 	return false;
-
 #elif defined(USE_X11)
-
 	// Ignore X errors
 	// XDismissErrors();
 	// return GetState(mData.XWin, STATE_MINIMIZE);
-
 #elif defined(IS_WINDOWS)
-
-	return (GetWindowLongPtr(mData.HWnd, GWL_STYLE)
-		& WS_MINIMIZE) != 0;
-
+	return (GetWindowLongPtr(mData.HWnd, GWL_STYLE) & WS_MINIMIZE) != 0;
 #endif
 }
 
 //////
-
 bool IsMaximized(void){
 	// Check the window validity
 	if (!IsValid()) {return false;}
 #if defined(IS_MACOSX)
-
 	return false; // WARNING: Unavailable
-
 #elif defined(USE_X11)
-
 	// Ignore X errors
 	// XDismissErrors();
 	// return GetState(mData.XWin, STATE_MAXIMIZE);
-
 #elif defined(IS_WINDOWS)
-
-	return (GetWindowLongPtr(mData.HWnd, GWL_STYLE)
-		& WS_MAXIMIZE) != 0;
-
+	return (GetWindowLongPtr(mData.HWnd, GWL_STYLE) & WS_MAXIMIZE) != 0;
 #endif
 }
 
-void SetActive(const MData win){
+void SetActive(const MData win) {
 	// Check if the window is valid
 	if (!IsValid()) { return; }
 #if defined(IS_MACOSX)
-
 	// Attempt to raise the specified window object
-	if (AXUIElementPerformAction(win.AxID, kAXRaiseAction)
-		!= kAXErrorSuccess) {
+	if (AXUIElementPerformAction(win.AxID, kAXRaiseAction) != kAXErrorSuccess) {
 		pid_t pid = 0;
 		// Attempt to retrieve the PID of the window
 		if (AXUIElementGetPid(win.AxID, &pid)
@@ -361,10 +310,6 @@ void SetActive(const MData win){
 		// Ignore deprecated warnings
 		#pragma clang diagnostic push
 		#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-
-		// NOTE: Until Apple actually removes
-		// these functions, there's no real
-		// reason to switch to the NS* flavor
 
 		ProcessSerialNumber psn;
 		// Attempt to retrieve the process psn
@@ -377,7 +322,6 @@ void SetActive(const MData win){
 	}
 
 #elif defined(USE_X11)
-
 	// Ignore X errors
 	XDismissErrors();
 
@@ -410,24 +354,20 @@ void SetActive(const MData win){
 		XRaiseWindow(rDisplay, win.XWin);
 
 		// Set the specified window's input focus
-		XSetInputFocus(rDisplay, win.XWin,
-						RevertToParent, CurrentTime);
+		XSetInputFocus(rDisplay, win.XWin, RevertToParent, CurrentTime);
 	}
 	XCloseDisplay(rDisplay);
 #elif defined(IS_WINDOWS)
-
 	if (IsMinimized()) {
 		ShowWindow(win.HWnd, SW_RESTORE);
 	}
 
 	SetForegroundWindow(win.HWnd);
-
 #endif
 }
 
-MData GetActive(void){
+MData GetActive(void) {
 #if defined(IS_MACOSX)
-
 	MData result;
 	// Ignore deprecated warnings
 	#pragma clang diagnostic push
@@ -435,8 +375,7 @@ MData GetActive(void){
 
 	ProcessSerialNumber psn; pid_t pid;
 	// Attempt to retrieve the front process
-	if (GetFrontProcess(&psn) != 0 ||
-		GetProcessPID(&psn, &pid) != 0) {
+	if (GetFrontProcess(&psn) != 0 || GetProcessPID(&psn, &pid) != 0) {
 		return result;
 	}
 
@@ -448,30 +387,23 @@ MData GetActive(void){
 
 	AXUIElementRef element;
 	// Retrieve the currently focused window
-	if (AXUIElementCopyAttributeValue(focused,
-		kAXFocusedWindowAttribute, (CFTypeRef*)
-		&element) == kAXErrorSuccess && element) {
+	if (AXUIElementCopyAttributeValue(focused, kAXFocusedWindowAttribute, (CFTypeRef*) &element) 
+		== kAXErrorSuccess && element) {
 
 		CGWindowID win = 0;
 		// Use undocumented API to get WID
-		if (_AXUIElementGetWindow(element, &win)
-			== kAXErrorSuccess && win) {
+		if (_AXUIElementGetWindow(element, &win) == kAXErrorSuccess && win) {
 			// Manually set internals
 			result.CgID = win;
 			result.AxID = element;
-		}
-		// Something went wrong
-		else {
+		} else {
 			CFRelease(element);
 		}
 	}
-
 	CFRelease(focused);
 
 	return result;
-
 #elif defined(USE_X11)
-
 	MData result;
 	Display *rDisplay = XOpenDisplay(NULL);
 	// Check X-Window display
@@ -508,13 +440,11 @@ MData GetActive(void){
 	// Return foreground window
 	result.XWin = window;
 	return result;
-
 #elif defined(IS_WINDOWS)
-
 	// Attempt to get the foreground window multiple times in case
 	MData result;
 
-	uint8 times = 0;
+	uint8_t times = 0;
 	while (++times < 20) {
 		HWND handle;
 		handle = GetForegroundWindow();
@@ -523,11 +453,10 @@ MData GetActive(void){
 			result.HWnd = (HWND)handle;
 			return result;
 		}
-		Sleep (20);
+		Sleep(20);
 	}
 
 	return result;
-
 #endif
 }
 
@@ -536,21 +465,14 @@ void SetTopMost(bool state){
 	// Check window validity
 	if (!IsValid()) {return;}
 #if defined(IS_MACOSX)
-
 	// WARNING: Unavailable
-
 #elif defined(USE_X11)
-
 	// Ignore X errors
 	// XDismissErrors();
 	// SetState(mData.XWin, STATE_TOPMOST, state);
-
 #elif defined(IS_WINDOWS)
-
-	SetWindowPos(mData.HWnd,
-		state ? HWND_TOPMOST : HWND_NOTOPMOST,
+	SetWindowPos(mData.HWnd, state ? HWND_TOPMOST : HWND_NOTOPMOST,
 		0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-
 #endif
 }
 
@@ -573,20 +495,15 @@ void close_window_by_Id(MData m_data){
 	if (!IsValid()) { return; }
 #if defined(IS_MACOSX)
 	AXUIElementRef b = NULL;
-
 	// Retrieve the close button of this window
-	if (AXUIElementCopyAttributeValue(m_data.AxID,
-		kAXCloseButtonAttribute, (CFTypeRef*) &b)
+	if (AXUIElementCopyAttributeValue(m_data.AxID, kAXCloseButtonAttribute, (CFTypeRef*) &b) 
 		== kAXErrorSuccess && b != NULL) {
 		// Simulate button press on the close button
 		AXUIElementPerformAction(b, kAXPressAction);
 		CFRelease(b);
 	}
-
 #elif defined(USE_X11)
-
 	Display *rDisplay = XOpenDisplay(NULL);
-
 	// Ignore X errors
 	XDismissErrors();
 
@@ -594,7 +511,6 @@ void close_window_by_Id(MData m_data){
 	XDestroyWindow(rDisplay, m_data.XWin);
 	XCloseDisplay(rDisplay);
 #elif defined(IS_WINDOWS)
-
 	PostMessage(m_data.HWnd, WM_CLOSE, 0, 0);
 #endif
 }
@@ -611,18 +527,29 @@ char* get_title_by_pid(uintptr pid, uintptr isHwnd){
   	return get_title_by_hand(win);
 }
 
+char* named(void *result) {
+	char *name = (char*)calloc(strlen(result)+1, sizeof(char*));
+	char *rptr = (char*)result;
+	char *nptr = name;
+	while (*rptr) {
+		*nptr = *rptr;
+		nptr++;
+		rptr++;
+	}
+	*nptr = '\0';
+
+	return name;
+}
+
 char* get_title_by_hand(MData m_data){
 	// Check if the window is valid
 	if (!IsValid()) {return "IsValid failed.";}
-
 #if defined(IS_MACOSX)
-
 	CFStringRef data = NULL;
 
 	// Determine the current title of the window
 	if (AXUIElementCopyAttributeValue(m_data.AxID,
-		kAXTitleAttribute, (CFTypeRef*) &data)
-		== kAXErrorSuccess && data != NULL) {
+		kAXTitleAttribute, (CFTypeRef*) &data) == kAXErrorSuccess && data != NULL) {
 		char conv[512];
 		// Convert result to a C-String
 		CFStringGetCString(data, conv, 512, kCFStringEncodingUTF8);
@@ -635,28 +562,17 @@ char* get_title_by_hand(MData m_data){
 	}
 
 	return "";
-
 #elif defined(USE_X11)
-
 	void* result;
 	// Ignore X errors
 	XDismissErrors();
 
 	// Get window title (UTF-8)
 	result = GetWindowProperty(m_data, WM_NAME, NULL);
-
 	// Check result value
 	if (result != NULL) {
 		// Convert result to a string
-		char *name = (char*)calloc(strlen(result)+1, sizeof(char*));
-		char *rptr = (char*)result;
-		char *nptr = name;
-		while (*rptr) {
-			*nptr = *rptr;
-			nptr++;
-			rptr++;
-		}
-		*nptr = '\0';
+		char* name = named(result);
 		XFree(result);
 
 		if (name != NULL) { return name; }
@@ -664,28 +580,17 @@ char* get_title_by_hand(MData m_data){
 
 	// Get window title (ASCII)
 	result = GetWindowProperty(m_data, XA_WM_NAME, NULL);
-
 	// Check result value
 	if (result != NULL) {
 		// Convert result to a string
-		char *name = (char*)calloc(strlen(result)+1, sizeof(char*));
-		char *rptr = (char*)result;
-		char *nptr = name;
-		while (*rptr) {
-			*nptr = *rptr;
-			nptr++;
-			rptr++;
-		}
-		*nptr = '\0';
+		char* name = named(result);
 		XFree(result);
 
 		return name;
 	}
 
 	return "";
-
 #elif defined(IS_WINDOWS)
-
 	if (GetWindowText(m_data.HWnd, m_data.Title, 512) > 0){
 		char* name = m_data.Title;
 
@@ -695,44 +600,36 @@ char* get_title_by_hand(MData m_data){
 	}
 
 	return "";
-
 #endif
 }
 
-int32 WGetPID(void){
+int32_t WGetPID(void) {
 	// Check window validity
 	if (!IsValid()) { return 0; }
-
 #if defined(IS_MACOSX)
-
 	pid_t pid = 0;
 	// Attempt to retrieve the window pid
 	if (AXUIElementGetPid(mData.AxID, &pid)== kAXErrorSuccess) {
-			return pid;
-		}
+		return pid;
+	}
 
 	return 0;
-
 #elif defined(USE_X11)
-
 	// Ignore X errors
 	XDismissErrors();
 
 	// Get the window PID
 	long* result = (long*)GetWindowProperty(mData, WM_PID,NULL);
-
 	// Check result and convert it
 	if (result == NULL) { return 0; }
-	int32 pid = (int32) *result;
+	
+	int32_t pid = (int32_t) *result;
 	XFree(result);
 	return pid;
-
 #elif defined(IS_WINDOWS)
-
-	DWORD  id = 0;
+	DWORD id = 0;
 	GetWindowThreadProcessId(mData.HWnd, &id);
 	return id;
-
 #endif
 }
 
