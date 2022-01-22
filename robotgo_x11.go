@@ -15,6 +15,7 @@ package robotgo
 
 import (
 	"errors"
+	"fmt"
 	"log"
 
 	"github.com/robotn/xgb"
@@ -185,11 +186,11 @@ func Alert(title, msg string, args ...string) bool {
 		` -title ` + title + ` -buttons ` + defaultBtn + ":0," + cancelBtn + ":1" + ` -default Ok`
 	out, err := Run(c)
 	if err != nil {
-		fmt.Println("Alert: ", err, ". ", strint(out))
+		fmt.Println("Alert: ", err, ". ", string(out))
 		return false
 	}
 
-	if strint(out) == "1" {
+	if string(out) == "1" {
 		return false
 	}
 	return true
