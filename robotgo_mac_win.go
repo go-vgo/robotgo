@@ -55,3 +55,13 @@ func ActivePID(pid int32, args ...int) error {
 func DisplaysNum() int {
 	return getNumDisplays()
 }
+
+// Alert show a alert window
+// Displays alert with the attributes.
+// If cancel button is not given, only the default button is displayed
+//
+// Examples:
+//	robotgo.Alert("hi", "window", "ok", "cancel")
+func Alert(title, msg string, args ...string) bool {
+	return showAlert(title, msg, args...)
+}

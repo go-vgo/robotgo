@@ -1214,29 +1214,25 @@ ____    __    ____  __  .__   __.  _______   ______   ____    __    ____
 
 */
 
-// ShowAlert show a alert window
-// Displays alert with the attributes.
-// If cancel button is not given, only the default button is displayed
-//
-// Examples:
-//	robotgo.ShowAlert("hi", "window", "ok", "cancel")
-func ShowAlert(title, msg string, args ...string) bool {
+func alertArgs(args ...string) (string, string) {
 	var (
-		// title         string
-		// msg           string
 		defaultBtn = "Ok"
 		cancelBtn  = "Cancel"
 	)
 
 	if len(args) > 0 {
-		// title = args[0]
-		// msg = args[1]
 		defaultBtn = args[0]
 	}
 
 	if len(args) > 1 {
 		cancelBtn = args[1]
 	}
+
+	return defaultBtn, cancelBtn
+}
+
+func showAlert(title, msg string, args ...string) bool {
+	defaultBtn, cancelBtn := alertArgs(args...)
 
 	cTitle := C.CString(title)
 	cMsg := C.CString(msg)

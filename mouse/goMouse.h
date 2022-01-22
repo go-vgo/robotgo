@@ -13,32 +13,9 @@
 
 // Global delays.
 int mouseDelay = 0;
-// int keyboardDelay = 10;
-
-
-// int CheckMouseButton(const char * const b,
-// 	MMMouseButton * const button){
-// 	if (!button) return -1;
-
-// 	if (strcmp(b, "left") == 0) {
-// 		*button = LEFT_BUTTON;
-// 	}
-// 	else if (strcmp(b, "right") == 0) {
-// 		*button = RIGHT_BUTTON;
-// 	}
-// 	else if (strcmp(b, "middle") == 0) {
-// 		*button = CENTER_BUTTON;
-// 	} else {
-// 		return -2;
-// 	}
-
-// 	return 0;
-// }
 
 int move_mouse(int32_t x, int32_t y){
 	MMPointInt32 point;
-	// int x = 103;
-	// int y = 104;
 	point = MMPointInt32Make(x, y);
 	moveMouse(point);
 
@@ -47,16 +24,11 @@ int move_mouse(int32_t x, int32_t y){
 
 
 int drag_mouse(int32_t x, int32_t y, MMMouseButton button){
-	// const size_t x = 10;
-	// const size_t y = 20;
-	// MMMouseButton button = LEFT_BUTTON;
-
 	MMPointInt32 point;
 	point = MMPointInt32Make(x, y);
 	dragMouse(point, button);
 	microsleep(mouseDelay);
 
-	// printf("%s\n", "gyp-----");
 	return 0;
 }
 
@@ -73,15 +45,10 @@ bool move_mouse_smooth(int32_t x, int32_t y, double lowSpeed,
 
 MMPointInt32 get_mouse_pos(){
 	MMPointInt32 pos = getMousePos();
-
-	// Return object with .x and .y.
-	// printf("%zu\n%zu\n", pos.x, pos.y );
 	return pos;
 }
 
 int mouse_click(MMMouseButton button, bool doubleC){
-	// MMMouseButton button = LEFT_BUTTON;
-	// bool doubleC = false;
 	if (!doubleC) {
 		clickMouse(button);
 	} else {
@@ -94,7 +61,6 @@ int mouse_click(MMMouseButton button, bool doubleC){
 }
 
 int mouse_toggle(char* d, MMMouseButton button){
-	// MMMouseButton button = LEFT_BUTTON;
 	bool down = false;
 	if (strcmp(d, "down") == 0) {
 		down = true;
@@ -111,9 +77,7 @@ int mouse_toggle(char* d, MMMouseButton button){
 }
 
 int set_mouse_delay(size_t val){
-	// int val = 10;
 	mouseDelay = val;
-
 	return 0;
 }
 
@@ -125,7 +89,6 @@ int scroll(int x, int y, int msDelay){
 }
 
 int scroll_mouse(size_t scrollMagnitude, char *s){
-	// int scrollMagnitude = 20;
 	MMMouseWheelDirection scrollDirection;
 
 	if (strcmp(s, "up") == 0) {
@@ -133,7 +96,6 @@ int scroll_mouse(size_t scrollMagnitude, char *s){
 	} else if (strcmp(s, "down") == 0) {
 		scrollDirection = DIRECTION_DOWN;
 	} else {
-		// return "Invalid scroll direction specified.";
 		return 1;
 	}
 
