@@ -95,7 +95,7 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id) 
 	if (display_id == -1) {
 		screen = GetDC(NULL); /* Get entire screen */
 	} else {
-		screen = GetDC((HWND) display_id);
+		screen = GetDC((HWND) (uintptr) display_id);
 	}
 	if (screen == NULL) { return NULL; }
 

@@ -15,14 +15,6 @@
 	#include <X11/Xatom.h>
 #endif
 
-#ifdef RobotGo_64
-	typedef int64_t			intptr;	
-	typedef uint64_t			uintptr;	
-#else
-	typedef int32_t			 intptr;
-	typedef uint32_t		 uintptr;	// Unsigned pointer integer
-#endif
-
 struct _MData{
 	#if defined(IS_MACOSX)
 		CGWindowID		CgID;		// Handle to a CGWindowID

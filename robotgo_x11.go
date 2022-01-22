@@ -15,6 +15,7 @@ package robotgo
 
 import (
 	"errors"
+	"fmt"
 	"log"
 
 	"github.com/robotn/xgb"
@@ -171,4 +172,26 @@ func DisplaysNum() int {
 	}
 
 	return int(reply.Number)
+}
+
+// Alert show a alert window
+// Displays alert with the attributes.
+// If cancel button is not given, only the default button is displayed
+//
+// Examples:
+//	robotgo.Alert("hi", "window", "ok", "cancel")
+func Alert(title, msg string, args ...string) bool {
+	defaultBtn, cancelBtn := alertArgs(args...)
+	c := `xmessage -center ` + msg +
+		` -title ` + title + ` -buttons ` + defaultBtn + ":0," + cancelBtn + ":1" + ` -default Ok`
+	out, err := Run(c)
+	if err != nil {
+		fmt.Println("Alert: ", err, ". ", string(out))
+		return false
+	}
+
+	if string(out) == "1" {
+		return false
+	}
+	return true
 }
