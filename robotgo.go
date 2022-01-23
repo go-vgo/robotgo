@@ -424,13 +424,6 @@ func ScaleX() int {
 
 // Deprecated: use the ScaledF(),
 //
-// ScaleY get primary display vertical DPI scale factor, drop
-func ScaleY() int {
-	return int(C.scale_y())
-}
-
-// Deprecated: use the ScaledF(),
-//
 // Scale get the screen scale (only windows old), drop
 func Scale() int {
 	dpi := map[int]int{
@@ -1254,7 +1247,6 @@ func showAlert(title, msg string, args ...string) bool {
 func IsValid() bool {
 	abool := C.is_valid()
 	gbool := bool(abool)
-	// fmt.Println("bool---------", gbool)
 	return gbool
 }
 

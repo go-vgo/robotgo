@@ -74,7 +74,7 @@ void set_handle_pid_mData(uintptr pid, uintptr isHwnd){
 	mData = win;
 }
 
-bool IsValid(){
+bool IsValid() {
 	initWindow(initHandle);
 	if (!IsAxEnabled(true)) {
 		printf("%s\n", "Window: Accessibility API is disabled!\n"
@@ -230,17 +230,6 @@ bool setHandle(uintptr handle){
 	mData.HWnd = 0;
 	return false;
 #endif
-}
-
-// uint32 uintptr
-uintptr getHandle() {
-	#if defined(IS_MACOSX)
-		return (uintptr)mData.CgID;
-	#elif defined(USE_X11)
-		return (uintptr)mData.XWin;
-	#elif defined(IS_WINDOWS)
-		return (uintptr)mData.HWnd;
-	#endif
 }
 
 bool IsTopMost(void){
