@@ -184,7 +184,7 @@ func Alert(title, msg string, args ...string) bool {
 	defaultBtn, cancelBtn := alertArgs(args...)
 	c := `xmessage -center ` + msg +
 		` -title ` + title + ` -buttons ` + defaultBtn + ":0,"
-	if cancleBtn != "" {
+	if cancelBtn != "" {
 		c += cancelBtn + ":1"
 	}
 	c += ` -default ` + defaultBtn
