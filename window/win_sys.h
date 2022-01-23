@@ -76,18 +76,6 @@ intptr scaleX(){
 	#endif
 }
 
-intptr scaleY(){
-	#if defined(IS_MACOSX)
-		return 0;
-	#elif defined(USE_X11)
-		return 0;
-	#elif defined(IS_WINDOWS)
-		HDC desktopDc = GetDC(NULL);
-		intptr verticalDPI = GetDeviceCaps(desktopDc, LOGPIXELSY);
-		return verticalDPI;
-	#endif
-}
-
 Bounds get_bounds(uintptr pid, uintptr isHwnd){
 	// Check if the window is valid
 	Bounds bounds;

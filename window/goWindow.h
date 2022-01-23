@@ -14,28 +14,17 @@
 
 int show_alert(const char *title, const char *msg,
 	const char *defaultButton, const char *cancelButton){
-		
-	int alert = showAlert(title, msg, defaultButton, cancelButton);
-	return alert;
+
+	return showAlert(title, msg, defaultButton, cancelButton);
 }
 
 intptr scale_x(){
 	return scaleX();
 }
 
-intptr scale_y(){
-	return scaleY();
-}
-
 bool is_valid(){
-	bool abool = IsValid();
-	return abool;
+	return IsValid();
 }
-
-// int find_window(char* name){
-// 	int z = findwindow(name);
-// 	return z;
-// }
 
 void min_window(uintptr pid, bool state, uintptr isHwnd){
 	#if defined(IS_MACOSX)
@@ -80,8 +69,7 @@ void close_window(uintptr pid, uintptr isHwnd){
 }
 
 bool set_handle(uintptr handle){
-	bool hwnd = setHandle(handle);
-	return hwnd;
+	return setHandle(handle);
 }
 
 uintptr get_handle(){
@@ -96,9 +84,19 @@ uintptr get_handle(){
 	#endif
 }
 
+// uint32 uintptr
+uintptr getHandle() {
+	#if defined(IS_MACOSX)
+		return (uintptr)mData.CgID;
+	#elif defined(USE_X11)
+		return (uintptr)mData.XWin;
+	#elif defined(IS_WINDOWS)
+		return (uintptr)mData.HWnd;
+	#endif
+}
+
 uintptr bget_handle(){
-	uintptr hwnd = getHandle();
-	return hwnd;
+	return getHandle();
 }
 
 void set_active(const MData win){
