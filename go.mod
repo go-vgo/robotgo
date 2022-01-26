@@ -9,7 +9,7 @@ require (
 	github.com/robotn/xgb v0.0.0-20190912153532-2cb92d044934
 	github.com/robotn/xgbutil v0.0.0-20190912154524-c861d6f87770
 	github.com/vcaesar/gops v0.22.0
-	github.com/vcaesar/imgo v0.30.0
+	github.com/vcaesar/imgo v0.30.1
 	github.com/vcaesar/keycode v0.10.0
 	github.com/vcaesar/tt v0.20.0
 	golang.org/x/image v0.0.0-20211028202545-6944b10bf410 // indirect
