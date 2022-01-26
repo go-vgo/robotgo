@@ -12,6 +12,7 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/go-vgo/robotgo"
 	// "go-vgo/robotgo"
@@ -26,8 +27,24 @@ func bitmap() {
 	gbitMap := robotgo.CaptureGo()
 	fmt.Println("Go CaptureScreen...", gbitMap.Width)
 	// fmt.Println("...", gbitmap.Width, gbitmap.BytesPerPixel)
-
 	// robotgo.SaveCapture("saveCapture.png", 10, 20, 100, 100)
+
+	img := robotgo.CaptureImg()
+	robotgo.Save(img, "save.png")
+
+	num := robotgo.DisplaysNum()
+	for i := 0; i < num; i++ {
+		robotgo.DisplayID = i
+		img1 := robotgo.CaptureImg()
+		path1 := "save_" + strconv.Itoa(i)
+		robotgo.Save(img1, path1+".png")
+		robotgo.SaveJpeg(img1, path1+".jpeg", 50)
+
+		img2 := robotgo.CaptureImg(10, 10, 20, 20)
+		path2 := "test_" + strconv.Itoa(i)
+		robotgo.Save(img2, path2+".png")
+		robotgo.SaveJpeg(img2, path2+".jpeg", 50)
+	}
 }
 
 func color() {
@@ -64,6 +81,12 @@ func screen() {
 	// gets the screen width and height
 	sx, sy := robotgo.GetScreenSize()
 	fmt.Println("get screen size: ", sx, sy)
+	for i := 0; i < robotgo.DisplaysNum(); i++ {
+		s1 := robotgo.ScaleF(i)
+		fmt.Println("ScaleF: ", s1)
+	}
+	sx, sy = robotgo.GetScaleSize()
+	fmt.Println("get screen sclae size: ", sx, sy)
 
 	color()
 }

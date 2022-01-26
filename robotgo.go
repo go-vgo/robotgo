@@ -222,9 +222,9 @@ func GetPixelColor(x, y int, displayId ...int) string {
 }
 
 // GetMouseColor get the mouse pos's color
-func GetMouseColor() string {
+func GetMouseColor(displayId ...int) string {
 	x, y := GetMousePos()
-	return GetPixelColor(x, y)
+	return GetPixelColor(x, y, displayId...)
 }
 
 func displayIdx(id ...int) int {
@@ -319,8 +319,8 @@ func CaptureScreen(args ...int) CBitmap {
 	} else {
 		// Get the main screen rect.
 		rect := GetScreenRect(displayId)
-		x = C.int32_t(rect.X)
-		y = C.int32_t(rect.Y)
+		// x = C.int32_t(rect.X)
+		// y = C.int32_t(rect.Y)
 		w = C.int32_t(rect.W)
 		h = C.int32_t(rect.H)
 	}

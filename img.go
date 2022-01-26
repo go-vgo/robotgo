@@ -34,8 +34,8 @@ func Read(path string) (image.Image, error) {
 }
 
 // Save create a image file with the image.Image
-func Save(img image.Image, path string) error {
-	return imgo.Save(path, img)
+func Save(img image.Image, path string, quality ...int) error {
+	return imgo.Save(path, img, quality...)
 }
 
 // SaveImg save the image by []byte
@@ -49,8 +49,8 @@ func SavePng(img image.Image, path string) error {
 }
 
 // SaveJpeg save the image by image.Image
-func SaveJpeg(img image.Image, path string) error {
-	return imgo.SaveToJpeg(path, img)
+func SaveJpeg(img image.Image, path string, quality ...int) error {
+	return imgo.SaveToJpeg(path, img, quality...)
 }
 
 // ToByteImg convert image.Image to []byte
