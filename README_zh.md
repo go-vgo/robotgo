@@ -15,7 +15,7 @@ RobotGo 支持 Mac, Windows, and Linux(X11).
 
 <br>
 
-提 Issues 请到 [Github](https://github.com/go-vgo/robotgo), 便于统一管理和即时更新
+提 Issues 请到 [Github](https://github.com/go-vgo/robotgo), 便于统一管理和即时更新; `REDAME_zh.md 已废弃, 不再更新`
 
 ## Contents
 - [Docs](#docs)
@@ -34,8 +34,8 @@ RobotGo 支持 Mac, Windows, and Linux(X11).
 ## Docs
 - [GoDoc](https://godoc.org/github.com/go-vgo/robotgo) <br>
 
-- [中文文档](https://github.com/go-vgo/robotgo/blob/master/docs/doc_zh.md) (弃用)
-- [English Docs](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) (弃用)
+<!-- - [中文文档](https://github.com/go-vgo/robotgo/blob/master/docs/doc_zh.md) (弃用)
+- [English Docs](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) (弃用) -->
 
 ## Binding:
 
@@ -430,7 +430,7 @@ func main() {
     robotgo.Kill(100)
   }
 
-  abool := robotgo.ShowAlert("test", "robotgo")
+  abool := robotgo.Alert("test", "robotgo")
   if abool {
     fmt.Println("ok@@@ ", "ok")
   }

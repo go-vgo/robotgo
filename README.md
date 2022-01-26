@@ -19,8 +19,6 @@
 
 RobotGo supports Mac, Windows, and Linux(X11); and robotgo supports arm64 and x86-amd64.
 
-[Chinese Simplified](https://github.com/go-vgo/robotgo/blob/master/README_zh.md)
-
 ## Contents
 - [Docs](#docs)
 - [Binding](#binding)
@@ -37,9 +35,7 @@ RobotGo supports Mac, Windows, and Linux(X11); and robotgo supports arm64 and x8
 
 ## Docs
   - [GoDoc](https://godoc.org/github.com/go-vgo/robotgo) <br>
-  
   - [API Docs](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md)  (Deprecated, no updated)
-  - [Chinese Docs](https://github.com/go-vgo/robotgo/blob/master/docs/doc_zh.md) (Deprecated, no updated)
 
 ## Binding:
 [ADB](https://github.com/vcaesar/adb), packaging android adb API.
@@ -70,17 +66,15 @@ xcode-select --install
 [MinGW-w64](https://sourceforge.net/projects/mingw-w64/files) (Use recommended) 
 
 ```
-Or the other GCC (But you should compile the "libpng" with yourself. 
-Or you can removed the bitmap.go. 
-
-In the plans, the bitmap.go will moves to the bitmap dir, but break the API. )
+Or the other GCC (But you should compile the "libpng" with yourself when use the bitmap.)
 ```
 
 #### For everything else:
 
 ```
-GCC, 
-libpng (bitmap)
+GCC
+
+libpng (Just used by bitmap)
 
 X11 with the XTest extension (also known as the Xtst library)
 
@@ -99,20 +93,31 @@ xsel xclip
 # gcc
 sudo apt install gcc libc6-dev
 
-sudo apt install libx11-dev xorg-dev libxtst-dev libpng++-dev
+# x11
+sudo apt install libx11-dev xorg-dev libxtst-dev
 
+# Bitmap
+sudo apt install libpng++-dev
+
+# Hook
 sudo apt install xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev libxkbcommon-dev
 
+# Clipboard
 sudo apt install xsel xclip
 ```
 
 ##### Fedora:
 
 ```yml
-sudo dnf install libXtst-devel libxkbcommon-devel libxkbcommon-x11-devel xorg-x11-xkb-utils-devel
+sudo dnf install libXtst-devel 
 
+# Bitmap
 sudo dnf install libpng-devel
 
+# Hook
+sudo dnf install libxkbcommon-devel libxkbcommon-x11-devel xorg-x11-xkb-utils-devel
+
+# Clipboard
 sudo dnf install xsel xclip
 ```
 
@@ -241,10 +246,21 @@ func main() {
 
   bit := robotgo.CaptureScreen(10, 10, 30, 30)
   defer robotgo.FreeBitmap(bit)
-  robotgo.SaveBitmap(bit, "test_1.png")
 
   img := robotgo.ToImage(bit)
   imgo.Save("test.png", img)
+
+  num := robotgo.DisplaysNum()
+	for i := 0; i < num; i++ {
+	  robotgo.DisplayID = i
+		img1 := robotgo.CaptureImg()
+    path1 := "save_" + strconv.Itoa(i)
+		robotgo.Save(img1, path1+".png")
+		robotgo.SaveJpeg(img1, path1+".jpeg", 50)
+
+		img2 := robotgo.CaptureImg(10, 10, 20, 20)
+		robotgo.Save(img2, "test_"+strconv.Itoa(i)+".png")
+	}
 }
 ```
 
@@ -257,30 +273,31 @@ import (
   "fmt"
 
   "github.com/go-vgo/robotgo"
+  "github.com/vcaesar/bitmap"
 )
 
 func main() {
-  bitmap := robotgo.CaptureScreen(10, 20, 30, 40)
+  bit := robotgo.CaptureScreen(10, 20, 30, 40)
   // use `defer robotgo.FreeBitmap(bit)` to free the bitmap
-  defer robotgo.FreeBitmap(bitmap)
+  defer robotgo.FreeBitmap(bit)
 
-  fmt.Println("bitmap...", bitmap)
-  img := robotgo.ToImage(bitmap)
-  robotgo.SavePng(img, "test_1.png")
+  fmt.Println("bitmap...", bit)
+  img := robotgo.ToImage(bit)
+  // robotgo.SavePng(img, "test_1.png")
+  robotgo.Save(img, "test_1.png")
 
   bit2 := robotgo.ToCBitmap(robotgo.ImgToBitmap(img))
-  fx, fy := robotgo.FindBitmap(bit2)
+  fx, fy := bitmap.Find(bit2)
   fmt.Println("FindBitmap------ ", fx, fy)
   robotgo.Move(fx, fy)
 
-  arr := robotgo.FindAllBitmap(bit2)
+  arr := bitmap.FindAll(bit2)
   fmt.Println("Find all bitmap: ", arr)
-  robotgo.SaveBitmap(bitmap, "test.png")
 
-  fx, fy = robotgo.FindBitmap(bitmap)
+  fx, fy = bitmap.Find(bit)
   fmt.Println("FindBitmap------ ", fx, fy)
 
-  robotgo.SaveBitmap(bitmap, "test.png")
+  bitmap.Save(bit, "test.png")
 }
 ```
 
@@ -354,7 +371,7 @@ package main
 import (
   "fmt"
 
-  "github.com/go-vgo/robotgo"
+  // "github.com/go-vgo/robotgo"
   hook "github.com/robotn/gohook"
 )
 
@@ -366,18 +383,18 @@ func main() {
 
 func add() {
   fmt.Println("--- Please press ctrl + shift + q to stop hook ---")
-  robotgo.EventHook(hook.KeyDown, []string{"q", "ctrl", "shift"}, func(e hook.Event) {
+  hook.Register(hook.KeyDown, []string{"q", "ctrl", "shift"}, func(e hook.Event) {
     fmt.Println("ctrl-shift-q")
-    robotgo.EventEnd()
+    hook.End()
   })
 
   fmt.Println("--- Please press w---")
-  robotgo.EventHook(hook.KeyDown, []string{"w"}, func(e hook.Event) {
+  hook.Register(hook.KeyDown, []string{"w"}, func(e hook.Event) {
     fmt.Println("w")
   })
 
-  s := robotgo.EventStart()
-  <-robotgo.EventProcess(s)
+  s := hook.Start()
+  <-hook.Process(s)
 }
 
 func low() {
@@ -390,17 +407,17 @@ func low() {
 }
 
 func event() {
-  ok := robotgo.AddEvents("q", "ctrl", "shift")
+  ok := hook.AddEvents("q", "ctrl", "shift")
   if ok {
     fmt.Println("add events...")
   }
 
-  keve := robotgo.AddEvent("k")
+  keve := hook.AddEvent("k")
   if keve {
     fmt.Println("you press... ", "k")
   }
 
-  mleft := robotgo.AddEvent("mleft")
+  mleft := hook.AddEvent("mleft")
   if mleft {
     fmt.Println("you press... ", "mouse left button")
   }
@@ -439,7 +456,7 @@ func main() {
     robotgo.Kill(100)
   }
 
-  abool := robotgo.ShowAlert("test", "robotgo")
+  abool := robotgo.Alert("test", "robotgo")
   if abool {
  	  fmt.Println("ok@@@ ", "ok")
   }
@@ -460,7 +477,7 @@ go build main.go
 
 #### Other to windows
 
-Install Requirements (Ubuntu):
+Install Requirements (Ubuntu, Just used by bitmap.):
 ```bash
 sudo apt install gcc-multilib
 sudo apt install gcc-mingw-w64
