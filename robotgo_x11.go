@@ -44,6 +44,23 @@ func GetBounds(pid int32, args ...int) (int, int, int, int) {
 	return internalGetBounds(int32(xid), hwnd)
 }
 
+// GetClient get the window client bounds
+func GetClient(pid int32, args ...int) (int, int, int, int) {
+	var hwnd int
+	if len(args) > 0 {
+		hwnd = args[0]
+		return internalGetClient(pid, hwnd)
+	}
+
+	xid, err := GetXId(xu, pid)
+	if err != nil {
+		log.Println("Get Xid from Pid errors is: ", err)
+		return 0, 0, 0, 0
+	}
+
+	return internalGetClient(int32(xid), hwnd)
+}
+
 // internalGetTitle get the window title
 func internalGetTitle(pid int32, args ...int32) string {
 	var hwnd int32

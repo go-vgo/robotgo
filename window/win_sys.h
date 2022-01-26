@@ -88,22 +88,20 @@ Bounds get_bounds(uintptr pid, uintptr isHwnd){
 		AXUIElementRef AxID = AXUIElementCreateApplication(pid);
 
 		// Determine the current point of the window
-		if (AXUIElementCopyAttributeValue(
-			AxID, kAXPositionAttribute, (CFTypeRef*) &axp)
+		if (AXUIElementCopyAttributeValue(AxID, kAXPositionAttribute, (CFTypeRef*) &axp)
 			!= kAXErrorSuccess || axp == NULL){
 			goto exit;
 		}
 
 		// Determine the current size of the window
-		if (AXUIElementCopyAttributeValue(
-			AxID, kAXSizeAttribute, (CFTypeRef*) &axs)
+		if (AXUIElementCopyAttributeValue(AxID, kAXSizeAttribute, (CFTypeRef*) &axs)
 			!= kAXErrorSuccess || axs == NULL){
 			goto exit;
 		}
 
 		CGPoint p; CGSize s;
 		// Attempt to convert both values into atomic types
-		if (AXValueGetValue(axp, kAXValueCGPointType, &p) &&
+		if (AXValueGetValue(axp, kAXValueCGPointType, &p) && 
 			AXValueGetValue(axs, kAXValueCGSizeType, &s)){
 			bounds.X = p.x;
 			bounds.Y = p.y;
@@ -174,8 +172,7 @@ Bounds get_client(uintptr pid, uintptr isHwnd) {
 		int32_t x = 0, y = 0;
 
 		// Check if the window is the root
-		XQueryTree(rDisplay, win.XWin,
-			&root, &parent, &children, &count);
+		XQueryTree(rDisplay, win.XWin, &root, &parent, &children, &count);
 		if (children) { XFree(children); }
 
 		// Retrieve window attributes
@@ -183,9 +180,8 @@ Bounds get_client(uintptr pid, uintptr isHwnd) {
 		XGetWindowAttributes(rDisplay, win.XWin, &attr);
 
 		// Coordinates must be translated
-		if (parent != attr.root){
-			XTranslateCoordinates(rDisplay, win.XWin, attr.root, attr.x,
-			 attr.y, &x, &y, &parent);
+		if (parent != attr.root) {
+			XTranslateCoordinates(rDisplay, win.XWin, attr.root, attr.x, attr.y, &x, &y, &parent);
 		}
 		// Coordinates can be left alone
 		else {
@@ -208,7 +204,6 @@ Bounds get_client(uintptr pid, uintptr isHwnd) {
 		} else {
 			hwnd = (HWND)pid;
 		}
-
 
 		RECT rect = { 0 };
 		GetClientRect(hwnd, &rect);
