@@ -12,7 +12,6 @@
 	#include <stdint.h>
 #endif
 
-
 /* RGB colors in MMBitmaps are stored as BGR for convenience in converting
  * to/from certain formats (mainly OpenGL).
  *
@@ -46,8 +45,7 @@ typedef uint32_t MMRGBHex;
 #define RGB_TO_HEX(red, green, blue) (((red) << 16) | ((green) << 8) | (blue))
 
 /* Convenience wrapper for MMRGBColors. */
-H_INLINE MMRGBHex hexFromMMRGB(MMRGBColor rgb)
-{
+H_INLINE MMRGBHex hexFromMMRGB(MMRGBColor rgb) {
 	return RGB_TO_HEX(rgb.red, rgb.green, rgb.blue);
 }
 
@@ -56,8 +54,7 @@ H_INLINE MMRGBHex hexFromMMRGB(MMRGBColor rgb)
 #define BLUE_FROM_HEX(hex) (hex & 0xFF)
 
 /* Converts hexadecimal color to MMRGBColor. */
-H_INLINE MMRGBColor MMRGBFromHex(MMRGBHex hex)
-{
+H_INLINE MMRGBColor MMRGBFromHex(MMRGBHex hex) {
 	MMRGBColor color;
 	color.red = RED_FROM_HEX(hex);
 	color.green = GREEN_FROM_HEX(hex);
@@ -73,9 +70,7 @@ H_INLINE MMRGBColor MMRGBFromHex(MMRGBHex hex)
 /* Returns whether two colors are similar within the given range, |tolerance|.
  * Tolerance can be in the range 0.0f - 1.0f, where 0 denotes the exact
  * color and 1 denotes any color. */
-H_INLINE int MMRGBColorSimilarToColor(MMRGBColor c1, MMRGBColor c2,
-                                      float tolerance)
-{
+H_INLINE int MMRGBColorSimilarToColor(MMRGBColor c1, MMRGBColor c2, float tolerance) {
 	/* Speedy case */
 	if (tolerance <= 0.0f) {
 		return MMRGBColorEqualToColor(c1, c2);
@@ -87,12 +82,10 @@ H_INLINE int MMRGBColorSimilarToColor(MMRGBColor c1, MMRGBColor c2,
 		            (d2 * d2) +
 		            (d3 * d3)) <= (tolerance * 442.0f);
 	}
-
 }
 
 /* Identical to MMRGBColorSimilarToColor, only for hex values. */
-H_INLINE int MMRGBHexSimilarToColor(MMRGBHex h1, MMRGBHex h2, float tolerance)
-{
+H_INLINE int MMRGBHexSimilarToColor(MMRGBHex h1, MMRGBHex h2, float tolerance) {
 	if (tolerance <= 0.0f) {
 		return h1 == h2;
 	} else {

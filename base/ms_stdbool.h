@@ -10,7 +10,6 @@
 #define __bool_true_false_are_defined 1
 
 #ifndef __cplusplus
-
 	#if defined(true) || defined(false) || defined(bool)
 		#error "Boolean type already defined"
 	#endif
@@ -21,7 +20,6 @@
 	};
 
 	typedef unsigned char bool;
-
 #endif /* !__cplusplus */
 
 #endif /* MS_STDBOOL_H */

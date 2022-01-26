@@ -37,13 +37,10 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id) 
 
 	bufferSize = CFDataGetLength(imageData);
 	buffer = malloc(bufferSize);
-
 	CFDataGetBytes(imageData, CFRangeMake(0, bufferSize), buffer);
 
-	bitmap = createMMBitmap_c(buffer, 
-		CGImageGetWidth(image), CGImageGetHeight(image),
-		CGImageGetBytesPerRow(image), CGImageGetBitsPerPixel(image),
-		CGImageGetBitsPerPixel(image) / 8);
+	bitmap = createMMBitmap_c(buffer, CGImageGetWidth(image), CGImageGetHeight(image),
+		CGImageGetBytesPerRow(image), CGImageGetBitsPerPixel(image),CGImageGetBitsPerPixel(image) / 8);
 
 	CFRelease(imageData);
 	CGImageRelease(image);
@@ -58,16 +55,15 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id) 
 		display = XGetMainDisplay();
 	}
 
-	XImage *image = XGetImage(display, XDefaultRootWindow(display),
+	XImage *image = XGetImage(display, XDefaultRootWindow(display), 
 							(int)rect.origin.x, (int)rect.origin.y,
-	                        (unsigned int)rect.size.w, (unsigned int)rect.size.h,
-	                        AllPlanes, ZPixmap);
+	                        (unsigned int)rect.size.w, (unsigned int)rect.size.h, AllPlanes, ZPixmap);
 	XCloseDisplay(display);
 	if (image == NULL) { return NULL; }
 
 	bitmap = createMMBitmap_c((uint8_t *)image->data, 
-		rect.size.w, rect.size.h, (size_t)image->bytes_per_line, 
-		(uint8_t)image->bits_per_pixel, (uint8_t)image->bits_per_pixel / 8);
+				rect.size.w, rect.size.h, (size_t)image->bytes_per_line, 
+				(uint8_t)image->bits_per_pixel, (uint8_t)image->bits_per_pixel / 8);
 	image->data = NULL; /* Steal ownership of bitmap data so we don't have to copy it. */
 	XDestroyImage(image);
 
@@ -103,9 +99,8 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id) 
    	dib = CreateDIBSection(screen, &bi, DIB_RGB_COLORS, &data, NULL, 0);
 
 	/* Copy the data into a bitmap struct. */
-	if ((screenMem = CreateCompatibleDC(screen)) == NULL ||
-	    SelectObject(screenMem, dib) == NULL ||
-	    !BitBlt(screenMem, (int)0, (int)0, (int)rect.size.w, (int)rect.size.h,
+	if ((screenMem = CreateCompatibleDC(screen)) == NULL || SelectObject(screenMem, dib) == NULL ||
+	    !BitBlt(screenMem, (int)0, (int)0, (int)rect.size.w, (int)rect.size.h, 
 				screen, rect.origin.x, rect.origin.y, SRCCOPY)
 		) {
 
@@ -118,7 +113,7 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id) 
 	}
 
 	bitmap = createMMBitmap_c(NULL, rect.size.w, rect.size.h, 4 * rect.size.w,
-	                        (uint8_t)bi.bmiHeader.biBitCount, 4);
+	                        	(uint8_t)bi.bmiHeader.biBitCount, 4);
 
 	/* Copy the data to our pixel buffer. */
 	if (bitmap != NULL) {

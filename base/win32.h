@@ -30,5 +30,4 @@
 	    // printf("%d\n", info.hWnd);
 	    return info.hWnd;
 	}
-
 #endif

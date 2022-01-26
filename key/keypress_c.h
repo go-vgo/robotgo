@@ -3,7 +3,6 @@
 #include "../base/microsleep.h"
 
 #include <ctype.h> /* For isupper() */
-
 #if defined(IS_MACOSX)
 	#include <ApplicationServices/ApplicationServices.h>
 	#import <IOKit/hidsystem/IOHIDLib.h>
@@ -18,34 +17,29 @@
 	#define WIN32_KEY_EVENT_WAIT(key, flags) \
 		(win32KeyEvent(key, flags), Sleep(DEADBEEF_RANDRANGE(0, 1)))
 #elif defined(USE_X11)
-	#define X_KEY_EVENT(display, key, is_press) \
-		(XTestFakeKeyEvent(display, \
-		                   XKeysymToKeycode(display, key), \
-		                   is_press, CurrentTime), \
-		 XSync(display, false))
-	#define X_KEY_EVENT_WAIT(display, key, is_press) \
-		(X_KEY_EVENT(display, key, is_press), \
-		 microsleep(DEADBEEF_UNIFORM(0.0, 0.5)))
+	#define X_KEY_EVENT(display, key, is_press) ( \
+			XTestFakeKeyEvent(display, XKeysymToKeycode(display, key), is_press, CurrentTime), \
+			XSync(display, false))
+	#define X_KEY_EVENT_WAIT(display, key, is_press) ( \
+			X_KEY_EVENT(display, key, is_press), microsleep(DEADBEEF_UNIFORM(0.0, 0.5)))
 #endif
 
 #if defined(IS_MACOSX)
-static io_connect_t _getAuxiliaryKeyDriver(void){
+static io_connect_t _getAuxiliaryKeyDriver(void) {
 	static mach_port_t sEventDrvrRef = 0;
 	mach_port_t masterPort, service, iter;
 	kern_return_t kr;
 
 	if (!sEventDrvrRef) {
-		kr = IOMasterPort( bootstrap_port, &masterPort );
+		kr = IOMasterPort(bootstrap_port, &masterPort);
 		assert(KERN_SUCCESS == kr);
-		kr = IOServiceGetMatchingServices(masterPort, 
-			IOServiceMatching( kIOHIDSystemClass), &iter );
+		kr = IOServiceGetMatchingServices(masterPort, IOServiceMatching(kIOHIDSystemClass), &iter);
 		assert(KERN_SUCCESS == kr);
 
-		service = IOIteratorNext( iter );
+		service = IOIteratorNext(iter);
 		assert(service);
 		
-		kr = IOServiceOpen(service, 
-			mach_task_self(), kIOHIDParamConnectType, &sEventDrvrRef );
+		kr = IOServiceOpen(service, mach_task_self(), kIOHIDParamConnectType, &sEventDrvrRef);
 		assert(KERN_SUCCESS == kr);
 
 		IOObjectRelease(service);
@@ -56,7 +50,7 @@ static io_connect_t _getAuxiliaryKeyDriver(void){
 #endif
 
 #if defined(IS_WINDOWS)
-void win32KeyEvent(int key, MMKeyFlags flags){
+void win32KeyEvent(int key, MMKeyFlags flags) {
 	int scan = MapVirtualKey(key & 0xff, MAPVK_VK_TO_VSC);
 
 	/* Set the scan code for extended keys */
@@ -103,7 +97,6 @@ void win32KeyEvent(int key, MMKeyFlags flags){
 	// if ( flags & KEYEVENTF_KEYUP ) {
 	// 	scan |= 0x80;
 	// }
-
 	// keybd_event(key, scan, flags, 0);
 	
 	INPUT keyInput;
@@ -118,12 +111,12 @@ void win32KeyEvent(int key, MMKeyFlags flags){
 }
 #endif
 
-void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags){
+void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags) {
 #if defined(IS_MACOSX)
 	/* The media keys all have 1000 added to them to help us detect them. */
 	if (code >= 1000) {
 		code = code - 1000; /* Get the real keycode. */
-		NXEventData   event;
+		NXEventData event;
 		kern_return_t kr;
 
 		IOGPoint loc = { 0, 0 };
@@ -133,12 +126,11 @@ void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags){
 		event.compound.subType = NX_SUBTYPE_AUX_CONTROL_BUTTONS;
 		event.compound.misc.L[0] = evtInfo;
 
-		kr = IOHIDPostEvent( _getAuxiliaryKeyDriver(), 
-			NX_SYSDEFINED, loc, &event, kNXEventDataVersion, 0, FALSE );
-		assert( KERN_SUCCESS == kr );
+		kr = IOHIDPostEvent(_getAuxiliaryKeyDriver(), 
+								NX_SYSDEFINED, loc, &event, kNXEventDataVersion, 0, FALSE);
+		assert(KERN_SUCCESS == kr);
 	} else {
-		CGEventRef keyEvent = CGEventCreateKeyboardEvent(NULL,
-		                            			(CGKeyCode)code, down);
+		CGEventRef keyEvent = CGEventCreateKeyboardEvent(NULL, (CGKeyCode)code, down);
 		assert(keyEvent != NULL);
 
 		CGEventSetType(keyEvent, down ? kCGEventKeyDown : kCGEventKeyUp);
@@ -269,13 +261,11 @@ void toggleUnicode(UniChar ch, const bool down){
 		XFlush(dpy);
 
 		KeyCode code = XKeysymToKeycode(dpy, sym);
-
 		XTestFakeKeyEvent(dpy, code, True, 1);
 		XTestFakeKeyEvent(dpy, code, False, 1);
 
 		XFlush(dpy);
 		XCloseDisplay(dpy);
-
 		return 0;
 	}
 #endif
@@ -313,52 +303,4 @@ void unicodeType(const unsigned value){
 		microsleep(5.0);
 		toggleUniKey(value, false);	
 	#endif
-}
-
-// todo: removed
-void typeStringDelayed(const char *str, const unsigned cpm){
-	
-	/* Characters per second */
-	const double cps = (double)cpm / 60.0;
-
-	/* Average milli-seconds per character */
-	const double mspc = (cps == 0.0) ? 0.0 : 1000.0 / cps;
-
-	unsigned long n;
-	unsigned short c;
-	unsigned short c1;
-	unsigned short c2;
-	unsigned short c3;
-
-	while (*str != '\0') {
-		c = *str++;
-
-		// warning, the following utf8 decoder
-		// doesn't perform validation
-		if (c <= 0x7F) {
-			// 0xxxxxxx one byte
-			n = c;
-		} else if ((c & 0xE0) == 0xC0)  {
-			// 110xxxxx two bytes
-			c1 = (*str++) & 0x3F;
-			n = ((c & 0x1F) << 6) | c1;
-		} else if ((c & 0xF0) == 0xE0) {
-			// 1110xxxx three bytes
-			c1 = (*str++) & 0x3F;
-			c2 = (*str++) & 0x3F;
-			n = ((c & 0x0F) << 12) | (c1 << 6) | c2;
-		} else if ((c & 0xF8) == 0xF0) {
-			// 11110xxx four bytes
-			c1 = (*str++) & 0x3F;
-			c2 = (*str++) & 0x3F;
-			c3 = (*str++) & 0x3F;
-			n = ((c & 0x07) << 18) | (c1 << 12) | (c2 << 6) | c3;
-		}
-
-		unicodeType(n);
-
-		if (mspc > 0) {
-			microsleep(mspc + (DEADBEEF_UNIFORM(0.0, 0.5)));
-		}
-	}
 }
