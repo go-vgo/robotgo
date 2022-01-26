@@ -251,16 +251,16 @@ func main() {
   imgo.Save("test.png", img)
 
   num := robotgo.DisplaysNum()
-	for i := 0; i < num; i++ {
-	  robotgo.DisplayID = i
-		img1 := robotgo.CaptureImg()
+  for i := 0; i < num; i++ {
+    robotgo.DisplayID = i
+    img1 := robotgo.CaptureImg()
     path1 := "save_" + strconv.Itoa(i)
-		robotgo.Save(img1, path1+".png")
-		robotgo.SaveJpeg(img1, path1+".jpeg", 50)
+    robotgo.Save(img1, path1+".png")
+    robotgo.SaveJpeg(img1, path1+".jpeg", 50)
 
-		img2 := robotgo.CaptureImg(10, 10, 20, 20)
-		robotgo.Save(img2, "test_"+strconv.Itoa(i)+".png")
-	}
+    img2 := robotgo.CaptureImg(10, 10, 20, 20)
+    robotgo.Save(img2, "test_"+strconv.Itoa(i)+".png")
+  }
 }
 ```
 

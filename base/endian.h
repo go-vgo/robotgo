@@ -82,7 +82,7 @@
 			#define bitswap16(i) bswap_16(i) /* Linux system function */
 		#else /* Default macro */
 			#define bitswap16(i) (((uint16_t)(i) & 0xFF00) >> 8) | \
- 		                          (((uint16_t)(i) & 0x00FF) << 8)
+		                         (((uint16_t)(i) & 0x00FF) << 8)
 		#endif
 	#endif /* bitswap16 */
 

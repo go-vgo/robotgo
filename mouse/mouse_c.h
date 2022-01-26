@@ -30,18 +30,15 @@
 
 #define MMMouseDownToCGEventType(button) \
 	((button) == (LEFT_BUTTON) ? kCGEventLeftMouseDown \
-	                       : ((button) == RIGHT_BUTTON ? kCGEventRightMouseDown \
-	                                                   : kCGEventOtherMouseDown))
+	                    : ((button) == RIGHT_BUTTON ? kCGEventRightMouseDown : kCGEventOtherMouseDown))
 
 #define MMMouseUpToCGEventType(button) \
 	((button) == LEFT_BUTTON ? kCGEventLeftMouseUp \
-	                         : ((button) == RIGHT_BUTTON ? kCGEventRightMouseUp \
-	                                                     : kCGEventOtherMouseUp))
+	                    	: ((button) == RIGHT_BUTTON ? kCGEventRightMouseUp : kCGEventOtherMouseUp))
 
 #define MMMouseDragToCGEventType(button) \
 	((button) == LEFT_BUTTON ? kCGEventLeftMouseDragged \
-	                         : ((button) == RIGHT_BUTTON ? kCGEventRightMouseDragged \
-	                                                     : kCGEventOtherMouseDragged))
+	                : ((button) == RIGHT_BUTTON ? kCGEventRightMouseDragged : kCGEventOtherMouseDragged))
 
 #elif defined(IS_WINDOWS)
 
@@ -50,13 +47,11 @@
 
 #define MMMouseUpToMEventF(button) \
 	((button) == LEFT_BUTTON ? MOUSEEVENTF_LEFTUP \
-	                         : ((button) == RIGHT_BUTTON ? MOUSEEVENTF_RIGHTUP \
-	                                                     : MOUSEEVENTF_MIDDLEUP))
+	                         : ((button) == RIGHT_BUTTON ? MOUSEEVENTF_RIGHTUP : MOUSEEVENTF_MIDDLEUP))
 
 #define MMMouseDownToMEventF(button) \
 	((button) == LEFT_BUTTON ? MOUSEEVENTF_LEFTDOWN \
-	                         : ((button) == RIGHT_BUTTON ? MOUSEEVENTF_RIGHTDOWN \
-	                                                     : MOUSEEVENTF_MIDDLEDOWN))
+	                         : ((button) == RIGHT_BUTTON ? MOUSEEVENTF_RIGHTDOWN : MOUSEEVENTF_MIDDLEDOWN))
 
 #endif
 
@@ -158,8 +153,8 @@ MMPointInt32 getMousePos(){
 		unsigned int more_garbage;
 
 		Display *display = XGetMainDisplay();
-		XQueryPointer(display, XDefaultRootWindow(display), &garb1, &garb2,
-					&x, &y, &garb_x, &garb_y, &more_garbage);
+		XQueryPointer(display, XDefaultRootWindow(display), &garb1, &garb2, &x, &y, 
+						&garb_x, &garb_y, &more_garbage);
 
 		return MMPointInt32Make(x, y);
 	#elif defined(IS_WINDOWS)
@@ -179,8 +174,7 @@ void toggleMouse(bool down, MMMouseButton button){
 	#if defined(IS_MACOSX)
 		const CGPoint currentPos = CGPointFromMMPoint(getMousePos());
 		const CGEventType mouseType = MMMouseToCGEventType(down, button);
-		CGEventRef event = CGEventCreateMouseEvent(NULL,
-								mouseType, currentPos, (CGMouseButton)button);
+		CGEventRef event = CGEventCreateMouseEvent(NULL, mouseType, currentPos, (CGMouseButton)button);
 
 		CGEventPost(kCGSessionEventTap, event);
 		CFRelease(event);
@@ -215,32 +209,26 @@ void clickMouse(MMMouseButton button){
  */
 void doubleClick(MMMouseButton button){
 	#if defined(IS_MACOSX)
-
 		/* Double click for Mac. */
 		const CGPoint currentPos = CGPointFromMMPoint(getMousePos());
 		const CGEventType mouseTypeDown = MMMouseToCGEventType(true, button);
 		const CGEventType mouseTypeUP = MMMouseToCGEventType(false, button);
 
-		CGEventRef event = CGEventCreateMouseEvent(
-								NULL, mouseTypeDown, currentPos, kCGMouseButtonLeft);
+		CGEventRef event = CGEventCreateMouseEvent(NULL, mouseTypeDown, currentPos, kCGMouseButtonLeft);
 
 		/* Set event to double click. */
 		CGEventSetIntegerValueField(event, kCGMouseEventClickState, 2);
-
 		CGEventPost(kCGHIDEventTap, event);
 
 		CGEventSetType(event, mouseTypeUP);
 		CGEventPost(kCGHIDEventTap, event);
 
 		CFRelease(event);
-
 	#else
-
 		/* Double click for everything else. */
 		clickMouse(button);
 		microsleep(200);
 		clickMouse(button);
-
 	#endif
 }
 
@@ -272,13 +260,9 @@ void scrollMouse(int scrollMagnitude, MMMouseWheelDirection scrollDirection){
 		/* Make scroll magnitude negative if we're scrolling down. */
 		cleanScrollMagnitude = cleanScrollMagnitude * scrollDirection;
 
-		event = CGEventCreateScrollWheelEvent(NULL,
-					kCGScrollEventUnitLine, wheel, cleanScrollMagnitude, 0);
-
+		event = CGEventCreateScrollWheelEvent(NULL, kCGScrollEventUnitLine, wheel, cleanScrollMagnitude, 0);
 		CGEventPost(kCGHIDEventTap, event);
-
 	#elif defined(USE_X11)
-
 		int x;
 		int dir = 4; /* Button 4 is up, 5 is down. */
 		Display *display = XGetMainDisplay();
@@ -293,9 +277,7 @@ void scrollMouse(int scrollMagnitude, MMMouseWheelDirection scrollDirection){
 		}
 
 		XSync(display, false);
-
 	#elif defined(IS_WINDOWS)
-
 		mouseScrollInput.type = INPUT_MOUSE;
 		mouseScrollInput.mi.dx = 0;
 		mouseScrollInput.mi.dy = 0;
@@ -305,7 +287,6 @@ void scrollMouse(int scrollMagnitude, MMMouseWheelDirection scrollDirection){
 		mouseScrollInput.mi.mouseData = WHEEL_DELTA * scrollDirection * cleanScrollMagnitude;
 
 		SendInput(1, &mouseScrollInput, sizeof(mouseScrollInput));
-
 	#endif
 }
 
@@ -322,16 +303,12 @@ void scrollMouseXY(int x, int y) {
 
 	/* Set up the OS specific solution */
 	#if defined(__APPLE__)
-
 		CGEventRef event;
-
 		event = CGEventCreateScrollWheelEvent(NULL, kCGScrollEventUnitPixel, 2, y, x);
 		CGEventPost(kCGHIDEventTap, event);
 
 		CFRelease(event);
-
 	#elif defined(USE_X11)
-
 		int ydir = 4; /* Button 4 is up, 5 is down. */
 		int xdir = 6;
 		Display *display = XGetMainDisplay();
@@ -355,9 +332,7 @@ void scrollMouseXY(int x, int y) {
 		}
 
 		XSync(display, false);
-
 	#elif defined(IS_WINDOWS)
-
 		mouseScrollInputH.type = INPUT_MOUSE;
 		mouseScrollInputH.mi.dx = 0;
 		mouseScrollInputH.mi.dy = 0;
@@ -408,9 +383,7 @@ bool smoothlyMoveMouse(MMPointInt32 endPoint, double lowSpeed, double highSpeed)
 	double velo_x = 0.0, velo_y = 0.0;
 	double distance;
 
-	while ((distance =
-			crude_hypot((double)pos.x - endPoint.x, (double)pos.y - endPoint.y)
-		) > 1.0) {
+	while ((distance =crude_hypot((double)pos.x - endPoint.x, (double)pos.y - endPoint.y)) > 1.0) {
 
 		double gravity = DEADBEEF_UNIFORM(5.0, 500.0);
 		// double gravity = DEADBEEF_UNIFORM(lowSpeed, highSpeed);

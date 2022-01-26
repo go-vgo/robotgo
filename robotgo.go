@@ -1136,25 +1136,6 @@ func PasteStr(str string) string {
 	return KeyTap("v", "control")
 }
 
-// Deprecated: use the TypeStr(),
-//
-// TypeString send a string, support unicode(no linux support)
-// TypeStr(string: The string to send), Wno-deprecated
-//
-// This function will be removed in version v1.0.0
-func TypeString(str string, delay ...int) {
-	tt.Drop("TypeString", "TypeStr")
-	var cdelay C.size_t
-	cstr := C.CString(str)
-	if len(delay) > 0 {
-		cdelay = C.size_t(delay[0])
-	}
-
-	C.type_string_delayed(cstr, cdelay)
-
-	C.free(unsafe.Pointer(cstr))
-}
-
 // TypeStrDelay type string delayed
 func TypeStrDelay(str string, delay int) {
 	TypeStr(str)

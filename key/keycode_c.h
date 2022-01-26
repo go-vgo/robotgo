@@ -1,19 +1,16 @@
 #include "keycode.h"
 
 #if defined(IS_MACOSX)
+	#include <CoreFoundation/CoreFoundation.h>
+	#include <Carbon/Carbon.h> /* For kVK_ constants, and TIS functions. */
 
-#include <CoreFoundation/CoreFoundation.h>
-#include <Carbon/Carbon.h> /* For kVK_ constants, and TIS functions. */
+	/* Returns string representation of key, if it is printable.
+	* Ownership follows the Create Rule; that is, it is the caller's
+	* responsibility to release the returned object. */
+	CFStringRef createStringForKey(CGKeyCode keyCode);
 
-/* Returns string representation of key, if it is printable.
- * Ownership follows the Create Rule; that is, it is the caller's
- * responsibility to release the returned object. */
-CFStringRef createStringForKey(CGKeyCode keyCode);
-
-MMKeyCode keyCodeForCharFallBack(const char c);
-
+	MMKeyCode keyCodeForCharFallBack(const char c);
 #elif defined(USE_X11)
-
 /*
  * Structs to store key mappings not handled by XStringToKeysym() on some
  * Linux systems.
@@ -77,11 +74,9 @@ MMKeyCode keyCodeForChar(const char c){
 		/* Generate table of keycodes and characters. */
 		if (charToCodeDict == NULL) {
 			size_t i;
-			charToCodeDict = CFDictionaryCreateMutable(kCFAllocatorDefault,
-													128,
-													&kCFCopyStringDictionaryKeyCallBacks,
-													NULL);
-			if (charToCodeDict == NULL) return K_NOT_A_KEY;
+			charToCodeDict = CFDictionaryCreateMutable(kCFAllocatorDefault, 128,
+				&kCFCopyStringDictionaryKeyCallBacks, NULL);
+			if (charToCodeDict == NULL) { return K_NOT_A_KEY; }
 
 			/* Loop through every keycode (0 - 127) to find its current mapping. */
 			for (i = 0; i < 128; ++i) {
@@ -135,7 +130,7 @@ MMKeyCode keyCodeForChar(const char c){
 			* mapping table. */
 			struct XSpecialCharacterMapping* xs = XSpecialCharacterTable;
 			while (xs->name) {
-				if (c == xs->name ) {
+				if (c == xs->name) {
 					code = xs->code;
 					// 
 					break;
@@ -152,34 +147,22 @@ MMKeyCode keyCodeForChar(const char c){
 	#endif
 }
 
-
 #if defined(IS_MACOSX)
-
 CFStringRef createStringForKey(CGKeyCode keyCode){
 	TISInputSourceRef currentKeyboard = TISCopyCurrentASCIICapableKeyboardInputSource();
-	CFDataRef layoutData =
-		(CFDataRef)TISGetInputSourceProperty(currentKeyboard,
-		                          kTISPropertyUnicodeKeyLayoutData);
+	CFDataRef layoutData = (CFDataRef) TISGetInputSourceProperty(
+		currentKeyboard, kTISPropertyUnicodeKeyLayoutData);
 
 	if (layoutData == nil) { return 0; }
 
-	const UCKeyboardLayout *keyboardLayout =
-		(const UCKeyboardLayout *)CFDataGetBytePtr(layoutData);
-
+	const UCKeyboardLayout *keyboardLayout = (const UCKeyboardLayout *) CFDataGetBytePtr(layoutData);
 	UInt32 keysDown = 0;
 	UniChar chars[4];
 	UniCharCount realLength;
 
-	UCKeyTranslate(keyboardLayout,
-	               keyCode,
-	               kUCKeyActionDisplay,
-	               0,
-	               LMGetKbdType(),
-	               kUCKeyTranslateNoDeadKeysBit,
-	               &keysDown,
-	               sizeof(chars) / sizeof(chars[0]),
-	               &realLength,
-	               chars);
+	UCKeyTranslate(keyboardLayout, keyCode, kUCKeyActionDisplay, 0, LMGetKbdType(),
+	               kUCKeyTranslateNoDeadKeysBit, &keysDown,
+	               sizeof(chars) / sizeof(chars[0]), &realLength, chars);
 	CFRelease(currentKeyboard);
 
 	return CFStringCreateWithCharacters(kCFAllocatorDefault, chars, 1);

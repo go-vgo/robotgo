@@ -2,14 +2,9 @@
 #include <assert.h>
 #include <string.h>
 
-MMBitmapRef createMMBitmap_c(
-	uint8_t *buffer,
-    size_t width,
-    size_t height,
-    size_t bytewidth,
-    uint8_t bitsPerPixel,
-    uint8_t bytesPerPixel
-){
+MMBitmapRef createMMBitmap_c(uint8_t *buffer, size_t width, size_t height, 
+	size_t bytewidth, uint8_t bitsPerPixel, uint8_t bytesPerPixel
+) {
 	MMBitmapRef bitmap = malloc(sizeof(MMBitmap));
 	if (bitmap == NULL) { return NULL; }
 
