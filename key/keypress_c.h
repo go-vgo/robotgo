@@ -18,7 +18,7 @@
 		(win32KeyEvent(key, flags), Sleep(DEADBEEF_RANDRANGE(0, 1)))
 #elif defined(USE_X11)
 	#define X_KEY_EVENT(display, key, is_press) ( \
-			XTestFakeKeyEvent(display, XKeysymToKeycode(display, key), is_press, CurrentTime), 
+			XTestFakeKeyEvent(display, XKeysymToKeycode(display, key), is_press, CurrentTime), \
 			XSync(display, false))
 	#define X_KEY_EVENT_WAIT(display, key, is_press) ( \
 			X_KEY_EVENT(display, key, is_press), microsleep(DEADBEEF_UNIFORM(0.0, 0.5)))
@@ -36,7 +36,7 @@ static io_connect_t _getAuxiliaryKeyDriver(void) {
 		kr = IOServiceGetMatchingServices(masterPort, IOServiceMatching(kIOHIDSystemClass), &iter);
 		assert(KERN_SUCCESS == kr);
 
-		service = IOIteratorNext( iter );
+		service = IOIteratorNext(iter);
 		assert(service);
 		
 		kr = IOServiceOpen(service, mach_task_self(), kIOHIDParamConnectType, &sEventDrvrRef);
@@ -116,7 +116,7 @@ void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags) {
 	/* The media keys all have 1000 added to them to help us detect them. */
 	if (code >= 1000) {
 		code = code - 1000; /* Get the real keycode. */
-		NXEventData   event;
+		NXEventData event;
 		kern_return_t kr;
 
 		IOGPoint loc = { 0, 0 };
@@ -128,7 +128,7 @@ void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags) {
 
 		kr = IOHIDPostEvent(_getAuxiliaryKeyDriver(), 
 								NX_SYSDEFINED, loc, &event, kNXEventDataVersion, 0, FALSE);
-		assert( KERN_SUCCESS == kr );
+		assert(KERN_SUCCESS == kr);
 	} else {
 		CGEventRef keyEvent = CGEventCreateKeyboardEvent(NULL, (CGKeyCode)code, down);
 		assert(keyEvent != NULL);
