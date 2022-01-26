@@ -532,13 +532,12 @@ char* named(void *result) {
 
 char* get_title_by_hand(MData m_data){
 	// Check if the window is valid
-	if (!IsValid()) {return "IsValid failed.";}
+	if (!IsValid()) { return "IsValid failed."; }
 #if defined(IS_MACOSX)
 	CFStringRef data = NULL;
-
 	// Determine the current title of the window
-	if (AXUIElementCopyAttributeValue(m_data.AxID,
-		kAXTitleAttribute, (CFTypeRef*) &data) == kAXErrorSuccess && data != NULL) {
+	if (AXUIElementCopyAttributeValue(m_data.AxID, kAXTitleAttribute, (CFTypeRef*) &data) == 
+			kAXErrorSuccess && data != NULL) {
 		char conv[512];
 		// Convert result to a C-String
 		CFStringGetCString(data, conv, 512, kCFStringEncodingUTF8);

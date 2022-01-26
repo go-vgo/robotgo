@@ -1401,6 +1401,12 @@ func internalGetBounds(pid int32, hwnd int) (int, int, int, int) {
 	return int(bounds.X), int(bounds.Y), int(bounds.W), int(bounds.H)
 }
 
+// internalGetClient get the window client bounds
+func internalGetClient(pid int32, hwnd int) (int, int, int, int) {
+	bounds := C.get_client(C.uintptr(pid), C.uintptr(hwnd))
+	return int(bounds.X), int(bounds.Y), int(bounds.W), int(bounds.H)
+}
+
 // Is64Bit determine whether the sys is 64bit
 func Is64Bit() bool {
 	b := C.Is64Bit()
