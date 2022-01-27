@@ -312,6 +312,7 @@ import (
 
   "github.com/go-vgo/robotgo"
   "github.com/vcaesar/gcv"
+  "github.com/vcaesar/bitmap"
 )
 
 func main() {
@@ -328,10 +329,10 @@ func opencv() {
   fmt.Println(gcv.FindImgFile(name1, name))
   fmt.Println(gcv.FindAllImgFile(name1, name))
 
-  bit := robotgo.OpenBitmap(name1)
-  defer robotgo.FindBitmap(bit)
+  bit := bitmap.Open(name1)
+  defer robotgo.FreeBitmap(bit)
   fmt.Print("find bitmap: ")
-  fmt.Println(robotgo.FindBitmap(bit))
+  fmt.Println(bitmap.Find(bit))
 
   // bit0 := robotgo.CaptureScreen()
   // img := robotgo.ToImage(bit0)

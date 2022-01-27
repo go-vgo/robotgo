@@ -59,7 +59,7 @@ func TestMoveMouseSmooth(t *testing.T) {
 }
 
 func TestDragMouse(t *testing.T) {
-	DragMouse(500, 500)
+	DragSmooth(500, 500)
 	MilliSleep(50)
 	x, y := GetMousePos()
 
@@ -151,6 +151,23 @@ func TestKeyCode(t *testing.T) {
 	tt.Equal(t, "=", s)
 }
 
+func TestImage(t *testing.T) {
+	bit := CaptureScreen()
+	defer FreeBitmap(bit)
+	tt.NotNil(t, bit)
+
+	img := ToImage(bit)
+	err := SavePng(img, "robot_test.png")
+	tt.Nil(t, err)
+
+	img1 := CaptureImg(10, 10, 20, 20)
+	e := Save(img1, "robot_img.jpeg", 50)
+	tt.Nil(t, e)
+
+	tt.Equal(t, 20, Width(img1))
+	tt.Equal(t, 20, Height(img1))
+}
+
 func TestPs(t *testing.T) {
 	id, err := Pids()
 	tt.Not(t, "[]", id)
@@ -192,6 +209,6 @@ func TestPs(t *testing.T) {
 // 		log.Println("tap...")
 // 	}()
 
-// 	i := ShowAlert("t", "msg")
+// 	i := Alert("t", "msg")
 // 	tt.Zero(t, i)
 // }
