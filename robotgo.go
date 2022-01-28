@@ -48,7 +48,7 @@ package robotgo
 import "C"
 
 import (
-	"fmt"
+	"errors"
 	"image"
 
 	// "os"
@@ -697,7 +697,7 @@ func MovesClick(x, y int, args ...interface{}) {
 // Examples:
 //	robotgo.Toggle("left") // default is down
 //	robotgo.Toggle("left", "up")
-func Toggle(key ...string) int {
+func Toggle(key ...string) error {
 	var button C.MMMouseButton = C.LEFT_BUTTON
 	if len(key) > 0 {
 		button = CheckMouse(key[0])
@@ -710,7 +710,10 @@ func Toggle(key ...string) int {
 	i := C.mouse_toggle(down, button)
 	C.free(unsafe.Pointer(down))
 	MilliSleep(MouseSleep)
-	return int(i)
+	if int(i) == 0 {
+		return nil
+	}
+	return errors.New("Undefined params.")
 }
 
 // Deprecated: use the Toggle(),
@@ -830,6 +833,14 @@ func SetMouseDelay(delay int) {
 
 */
 
+func toErr(str *C.char) error {
+	gstr := C.GoString(str)
+	if gstr == "" {
+		return nil
+	}
+	return errors.New(gstr)
+}
+
 // KeyTap tap the keyboard code;
 //
 // See keys:
@@ -843,7 +854,7 @@ func SetMouseDelay(delay int) {
 //	arr := []string{"alt", "command"}
 //	robotgo.KeyTap("i", arr)
 //
-func KeyTap(tapKey string, args ...interface{}) string {
+func KeyTap(tapKey string, args ...interface{}) error {
 	var (
 		akey     string
 		keyT     = "null"
@@ -876,7 +887,7 @@ func KeyTap(tapKey string, args ...interface{}) string {
 		str := C.key_Taps(zkey,
 			(**C.char)(unsafe.Pointer(&ckeyArr[0])), C.int(num), 0)
 		MilliSleep(KeySleep)
-		return C.GoString(str)
+		return toErr(str)
 	}
 
 	// key delay
@@ -917,7 +928,7 @@ func KeyTap(tapKey string, args ...interface{}) string {
 			C.int(num), C.int(keyDelay))
 
 		MilliSleep(KeySleep)
-		return C.GoString(str)
+		return toErr(str)
 	}
 
 	amod := C.CString(akey)
@@ -928,7 +939,7 @@ func KeyTap(tapKey string, args ...interface{}) string {
 	C.free(unsafe.Pointer(amodt))
 
 	MilliSleep(KeySleep)
-	return C.GoString(str)
+	return toErr(str)
 }
 
 // KeyToggle toggle the keyboard, if there not have args default is "down"
@@ -942,7 +953,7 @@ func KeyTap(tapKey string, args ...interface{}) string {
 //
 //	robotgo.KeyToggle("a", "up", "alt", "cmd")
 //
-func KeyToggle(key string, args ...string) string {
+func KeyToggle(key string, args ...string) error {
 	if len(args) <= 0 {
 		args = append(args, "down")
 	}
@@ -966,7 +977,7 @@ func KeyToggle(key string, args ...string) string {
 
 		str := C.key_Toggles(ckey, (**C.char)(unsafe.Pointer(&ckeyArr[0])), C.int(num))
 		MilliSleep(KeySleep)
-		return C.GoString(str)
+		return toErr(str)
 	}
 
 	// use key_toggle()
@@ -998,24 +1009,27 @@ func KeyToggle(key string, args ...string) string {
 	C.free(unsafe.Pointer(cmKeyT))
 
 	MilliSleep(KeySleep)
-	return C.GoString(str)
+	return toErr(str)
 }
 
 // KeyPress press key string
-func KeyPress(key string) {
-	KeyDown(key)
-	Sleep(1 + rand.Intn(3))
-	KeyUp(key)
+func KeyPress(key string) error {
+	err := KeyDown(key)
+	if err != nil {
+		return err
+	}
+	MilliSleep(1 + rand.Intn(3))
+	return KeyUp(key)
 }
 
 // KeyDown press down a key
-func KeyDown(key string) {
-	KeyToggle(key, "down")
+func KeyDown(key string) error {
+	return KeyToggle(key)
 }
 
 // KeyUp press up a key
-func KeyUp(key string) {
-	KeyToggle(key, "up")
+func KeyUp(key string) error {
+	return KeyToggle(key, "up")
 }
 
 // ReadAll read string from clipboard
@@ -1123,10 +1137,10 @@ func TypeStr(str string, args ...float64) {
 
 // PasteStr paste a string, support UTF-8,
 // write the string to clipboard and tap `cmd + v`
-func PasteStr(str string) string {
+func PasteStr(str string) error {
 	err := clipboard.WriteAll(str)
 	if err != nil {
-		return fmt.Sprint(err)
+		return err
 	}
 
 	if runtime.GOOS == "darwin" {

@@ -102,21 +102,21 @@ func TestMoveSmoothRelative(t *testing.T) {
 
 func TestMouseToggle(t *testing.T) {
 	e := Toggle("right")
-	tt.Zero(t, e)
+	tt.Nil(t, e)
 
 	e = Toggle("right", "up")
-	tt.Zero(t, e)
+	tt.Nil(t, e)
 }
 
 func TestKey(t *testing.T) {
 	e := KeyTap("v", "cmd")
-	tt.Empty(t, e)
+	tt.Nil(t, e)
 
 	e = KeyTap("enter")
-	tt.Empty(t, e)
+	tt.Nil(t, e)
 
 	e = KeyToggle("v", "up")
-	tt.Empty(t, e)
+	tt.Nil(t, e)
 }
 
 func TestClip(t *testing.T) {
@@ -133,7 +133,7 @@ func TestTypeStr(t *testing.T) {
 	tt.Equal(t, 115, c)
 
 	e := PasteStr("s")
-	tt.Empty(t, e)
+	tt.Nil(t, e)
 
 	s1 := "abc\\\\cd/s@世界"
 	uc := ToUC(s1)
@@ -210,5 +210,5 @@ func TestPs(t *testing.T) {
 // 	}()
 
 // 	i := Alert("t", "msg")
-// 	tt.Zero(t, i)
+//	tt.True(t, i)
 // }

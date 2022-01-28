@@ -45,7 +45,7 @@ func keyTap() {
 
 	// hide window
 	err := robotgo.KeyTap("h", "cmd")
-	if err != "" {
+	if err != nil {
 		fmt.Println("robotgo.KeyTap run error is: ", err)
 	}
 
@@ -82,7 +82,7 @@ func keyToggle() {
 	robotgo.KeyToggle("q", "up", "alt", "cmd", "shift")
 
 	err := robotgo.KeyToggle("enter", "down")
-	if err != "" {
+	if err != nil {
 		fmt.Println("robotgo.KeyToggle run error is: ", err)
 	}
 }
