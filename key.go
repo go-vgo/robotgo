@@ -644,29 +644,3 @@ func TypeStringDelayed(str string, delay int) {
 	tt.Drop("TypeStringDelayed", "TypeStrDelay")
 	TypeStrDelay(str, delay)
 }
-
-// SetKeyDelay set keyboard delay
-func SetKeyDelay(delay int) {
-	C.set_keyboard_delay(C.size_t(delay))
-}
-
-// Deprecated: use the SetKeyDelay(),
-//
-// SetKeyboardDelay set keyboard delay, Wno-deprecated,
-//
-// This function will be removed in version v1.0.0
-func SetKeyboardDelay(delay int) {
-	tt.Drop("SetKeyboardDelay", "SetKeyDelay")
-	SetKeyDelay(delay)
-}
-
-// SetDelay set the key and mouse delay
-func SetDelay(d ...int) {
-	v := 10
-	if len(d) > 0 {
-		v = d[0]
-	}
-
-	SetMouseDelay(v)
-	SetKeyDelay(v)
-}
