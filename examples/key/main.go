@@ -49,15 +49,15 @@ func keyTap() {
 		fmt.Println("robotgo.KeyTap run error is: ", err)
 	}
 
-	robotgo.KeyTap("h", "cmd", 12)
+	robotgo.KeyTap("h", "cmd")
 
 	// press "i", "alt", "command" Key combination
 	robotgo.KeyTap("i", "alt", "command")
-	robotgo.KeyTap("i", "alt", "cmd", 11)
+	robotgo.KeyTap("i", "alt", "cmd")
 
 	arr := []string{"alt", "cmd"}
 	robotgo.KeyTap("i", arr)
-	robotgo.KeyTap("i", arr, 12)
+	robotgo.KeyTap("i", arr)
 
 	robotgo.KeyTap("i", "cmd", " alt", "shift")
 
