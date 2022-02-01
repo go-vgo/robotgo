@@ -33,16 +33,12 @@ package robotgo
 #cgo darwin LDFLAGS: -framework Carbon -framework CoreFoundation
 
 #cgo linux CFLAGS: -I/usr/src
-#cgo linux LDFLAGS: -L/usr/src -lX11 -lXtst -lm
-// #cgo linux LDFLAGS: -lX11-xcb -lxcb -lxcb-xkb -lxkbcommon -lxkbcommon-x11
+#cgo linux LDFLAGS: -L/usr/src -lm -lX11 -lXtst
 
-// #cgo windows LDFLAGS: -lgdi32 -luser32 -lpng -lz
 #cgo windows LDFLAGS: -lgdi32 -luser32
 //
-// #include <AppKit/NSEvent.h>
 #include "screen/goScreen.h"
 #include "mouse/goMouse.h"
-#include "key/goKey.h"
 #include "window/goWindow.h"
 */
 import "C"
@@ -50,19 +46,10 @@ import "C"
 import (
 	"errors"
 	"image"
-
-	// "os"
-	"reflect"
 	"runtime"
-	"strconv"
-	"strings"
 	"time"
 	"unsafe"
 
-	// "syscall"
-	"math/rand"
-
-	"github.com/go-vgo/robotgo/clipboard"
 	"github.com/vcaesar/tt"
 )
 
@@ -142,7 +129,7 @@ func Sleep(tm int) {
 	time.Sleep(time.Duration(tm) * time.Second)
 }
 
-// MicroSleep time C.microsleep(tm)
+// MicroSleep time C.microsleep(tm), use the MilliSleep
 func MicroSleep(tm float64) {
 	C.microsleep(C.double(tm))
 }
@@ -351,6 +338,13 @@ func FreeBitmap(bitmap CBitmap) {
 	C.bitmap_dealloc(C.MMBitmapRef(bitmap))
 }
 
+// FreeBitmapArr free and dealloc the C bitmap array
+func FreeBitmapArr(bit ...CBitmap) {
+	for i := 0; i < len(bit); i++ {
+		FreeBitmap(bit[i])
+	}
+}
+
 // ToMMBitmapRef trans CBitmap to C.MMBitmapRef
 func ToMMBitmapRef(bit CBitmap) C.MMBitmapRef {
 	return C.MMBitmapRef(bit)
@@ -396,14 +390,12 @@ func ToRGBA(bit CBitmap) *image.RGBA {
 }
 
 // SetXDisplayName set XDisplay name (Linux)
-func SetXDisplayName(name string) string {
+func SetXDisplayName(name string) error {
 	cname := C.CString(name)
 	str := C.set_XDisplay_name(cname)
-
-	gstr := C.GoString(str)
 	C.free(unsafe.Pointer(cname))
 
-	return gstr
+	return toErr(str)
 }
 
 // GetXDisplayName get XDisplay name (Linux)
@@ -821,375 +813,6 @@ func ScrollRelative(x, y int, args ...int) {
 func SetMouseDelay(delay int) {
 	cdelay := C.size_t(delay)
 	C.set_mouse_delay(cdelay)
-}
-
-/*
- __  ___  ___________    ____ .______     ______        ___      .______       _______
-|  |/  / |   ____\   \  /   / |   _  \   /  __  \      /   \     |   _  \     |       \
-|  '  /  |  |__   \   \/   /  |  |_)  | |  |  |  |    /  ^  \    |  |_)  |    |  .--.  |
-|    <   |   __|   \_    _/   |   _  <  |  |  |  |   /  /_\  \   |      /     |  |  |  |
-|  .  \  |  |____    |  |     |  |_)  | |  `--'  |  /  _____  \  |  |\  \----.|  '--'  |
-|__|\__\ |_______|   |__|     |______/   \______/  /__/     \__\ | _| `._____||_______/
-
-*/
-
-func toErr(str *C.char) error {
-	gstr := C.GoString(str)
-	if gstr == "" {
-		return nil
-	}
-	return errors.New(gstr)
-}
-
-// KeyTap tap the keyboard code;
-//
-// See keys:
-//	https://github.com/go-vgo/robotgo/blob/master/docs/keys.md
-//
-// Examples:
-//	robotgo.KeySleep = 100 // 100 millisecond
-//	robotgo.KeyTap("a")
-//	robotgo.KeyTap("i", "alt", "command")
-//
-//	arr := []string{"alt", "command"}
-//	robotgo.KeyTap("i", arr)
-//
-func KeyTap(tapKey string, args ...interface{}) error {
-	var (
-		akey     string
-		keyT     = "null"
-		keyArr   []string
-		num      int
-		keyDelay int // This is legacy and drop option, use robotgo.KeySleep
-	)
-
-	if _, ok := Special[tapKey]; ok {
-		tapKey = Special[tapKey]
-		if len(args) <= 0 {
-			args = append(args, "shift")
-		}
-	}
-
-	// var ckeyArr []*C.char
-	ckeyArr := make([](*C.char), 0)
-	// zkey := C.CString(args[0])
-	zkey := C.CString(tapKey)
-	defer C.free(unsafe.Pointer(zkey))
-
-	// args not key delay
-	if len(args) > 2 && (reflect.TypeOf(args[2]) != reflect.TypeOf(num)) {
-		num = len(args)
-		for i := 0; i < num; i++ {
-			s := args[i].(string)
-			ckeyArr = append(ckeyArr, (*C.char)(unsafe.Pointer(C.CString(s))))
-		}
-
-		str := C.key_Taps(zkey,
-			(**C.char)(unsafe.Pointer(&ckeyArr[0])), C.int(num), 0)
-		MilliSleep(KeySleep)
-		return toErr(str)
-	}
-
-	// key delay
-	if len(args) > 0 {
-		if reflect.TypeOf(args[0]) == reflect.TypeOf(keyArr) {
-
-			keyArr = args[0].([]string)
-			num = len(keyArr)
-			for i := 0; i < num; i++ {
-				ckeyArr = append(ckeyArr, (*C.char)(unsafe.Pointer(C.CString(keyArr[i]))))
-			}
-
-			if len(args) > 1 {
-				keyDelay = args[1].(int)
-			}
-		} else {
-			akey = args[0].(string)
-
-			if len(args) > 1 {
-				if reflect.TypeOf(args[1]) == reflect.TypeOf(akey) {
-					keyT = args[1].(string)
-					if len(args) > 2 {
-						keyDelay = args[2].(int)
-					}
-				} else {
-					keyDelay = args[1].(int)
-				}
-			}
-		}
-
-	} else {
-		akey = "null"
-		keyArr = []string{"null"}
-	}
-
-	if akey == "" && len(keyArr) != 0 {
-		str := C.key_Taps(zkey, (**C.char)(unsafe.Pointer(&ckeyArr[0])),
-			C.int(num), C.int(keyDelay))
-
-		MilliSleep(KeySleep)
-		return toErr(str)
-	}
-
-	amod := C.CString(akey)
-	amodt := C.CString(keyT)
-	str := C.key_tap(zkey, amod, amodt, C.int(keyDelay))
-
-	C.free(unsafe.Pointer(amod))
-	C.free(unsafe.Pointer(amodt))
-
-	MilliSleep(KeySleep)
-	return toErr(str)
-}
-
-// KeyToggle toggle the keyboard, if there not have args default is "down"
-//
-// See keys:
-//	https://github.com/go-vgo/robotgo/blob/master/docs/keys.md
-//
-// Examples:
-//	robotgo.KeyToggle("a")
-//	robotgo.KeyToggle("a", "up")
-//
-//	robotgo.KeyToggle("a", "up", "alt", "cmd")
-//
-func KeyToggle(key string, args ...string) error {
-	if len(args) <= 0 {
-		args = append(args, "down")
-	}
-
-	if _, ok := Special[key]; ok {
-		key = Special[key]
-		if len(args) <= 1 {
-			args = append(args, "shift")
-		}
-	}
-
-	ckey := C.CString(key)
-	defer C.free(unsafe.Pointer(ckey))
-
-	ckeyArr := make([](*C.char), 0)
-	if len(args) > 3 {
-		num := len(args)
-		for i := 0; i < num; i++ {
-			ckeyArr = append(ckeyArr, (*C.char)(unsafe.Pointer(C.CString(args[i]))))
-		}
-
-		str := C.key_Toggles(ckey, (**C.char)(unsafe.Pointer(&ckeyArr[0])), C.int(num))
-		MilliSleep(KeySleep)
-		return toErr(str)
-	}
-
-	// use key_toggle()
-	var (
-		down, mKey, mKeyT = "null", "null", "null"
-		// keyDelay = 10
-	)
-
-	if len(args) > 0 {
-		down = args[0]
-
-		if len(args) > 1 {
-			mKey = args[1]
-			if len(args) > 2 {
-				mKeyT = args[2]
-			}
-		}
-	}
-
-	cdown := C.CString(down)
-	cmKey := C.CString(mKey)
-	cmKeyT := C.CString(mKeyT)
-
-	str := C.key_toggle(ckey, cdown, cmKey, cmKeyT)
-	// str := C.key_Toggle(ckey, cdown, cmKey, cmKeyT, C.int(keyDelay))
-
-	C.free(unsafe.Pointer(cdown))
-	C.free(unsafe.Pointer(cmKey))
-	C.free(unsafe.Pointer(cmKeyT))
-
-	MilliSleep(KeySleep)
-	return toErr(str)
-}
-
-// KeyPress press key string
-func KeyPress(key string) error {
-	err := KeyDown(key)
-	if err != nil {
-		return err
-	}
-	MilliSleep(1 + rand.Intn(3))
-	return KeyUp(key)
-}
-
-// KeyDown press down a key
-func KeyDown(key string) error {
-	return KeyToggle(key)
-}
-
-// KeyUp press up a key
-func KeyUp(key string) error {
-	return KeyToggle(key, "up")
-}
-
-// ReadAll read string from clipboard
-func ReadAll() (string, error) {
-	return clipboard.ReadAll()
-}
-
-// WriteAll write string to clipboard
-func WriteAll(text string) error {
-	return clipboard.WriteAll(text)
-}
-
-// CharCodeAt char code at utf-8
-func CharCodeAt(s string, n int) rune {
-	i := 0
-	for _, r := range s {
-		if i == n {
-			return r
-		}
-		i++
-	}
-
-	return 0
-}
-
-// UnicodeType tap uint32 unicode
-func UnicodeType(str uint32) {
-	cstr := C.uint(str)
-	C.unicodeType(cstr)
-}
-
-// ToUC trans string to unicode []string
-func ToUC(text string) []string {
-	var uc []string
-
-	for _, r := range text {
-		textQ := strconv.QuoteToASCII(string(r))
-		textUnQ := textQ[1 : len(textQ)-1]
-
-		st := strings.Replace(textUnQ, "\\u", "U", -1)
-		if st == "\\\\" {
-			st = "\\"
-		}
-		if st == `\"` {
-			st = `"`
-		}
-		uc = append(uc, st)
-	}
-
-	return uc
-}
-
-func inputUTF(str string) {
-	cstr := C.CString(str)
-	C.input_utf(cstr)
-
-	C.free(unsafe.Pointer(cstr))
-}
-
-// TypeStr send a string, support UTF-8
-//
-// robotgo.TypeStr(string: The string to send, float64: microsleep time, x11 option)
-//
-// Examples:
-//	robotgo.TypeStr("abc@123, hi, こんにちは")
-//
-func TypeStr(str string, args ...float64) {
-	var tm, tm1 = 0.0, 7.0
-
-	if len(args) > 0 {
-		tm = args[0]
-	}
-	if len(args) > 1 {
-		tm1 = args[1]
-	}
-
-	if runtime.GOOS == "linux" {
-		strUc := ToUC(str)
-		for i := 0; i < len(strUc); i++ {
-			ru := []rune(strUc[i])
-			if len(ru) <= 1 {
-				ustr := uint32(CharCodeAt(strUc[i], 0))
-				UnicodeType(ustr)
-			} else {
-				inputUTF(strUc[i])
-				MicroSleep(tm1)
-			}
-
-			MicroSleep(tm)
-		}
-
-		return
-	}
-
-	for i := 0; i < len([]rune(str)); i++ {
-		ustr := uint32(CharCodeAt(str, i))
-		UnicodeType(ustr)
-
-		// if len(args) > 0 {
-		MicroSleep(tm)
-		// }
-	}
-	MilliSleep(KeySleep)
-}
-
-// PasteStr paste a string, support UTF-8,
-// write the string to clipboard and tap `cmd + v`
-func PasteStr(str string) error {
-	err := clipboard.WriteAll(str)
-	if err != nil {
-		return err
-	}
-
-	if runtime.GOOS == "darwin" {
-		return KeyTap("v", "command")
-	}
-
-	return KeyTap("v", "control")
-}
-
-// TypeStrDelay type string delayed
-func TypeStrDelay(str string, delay int) {
-	TypeStr(str)
-	Sleep(delay)
-}
-
-// Deprecated: use the TypeStr(),
-//
-// TypeStringDelayed type string delayed, Wno-deprecated
-//
-// This function will be removed in version v1.0.0
-func TypeStringDelayed(str string, delay int) {
-	tt.Drop("TypeStringDelayed", "TypeStrDelay")
-	TypeStrDelay(str, delay)
-}
-
-// SetKeyDelay set keyboard delay
-func SetKeyDelay(delay int) {
-	C.set_keyboard_delay(C.size_t(delay))
-}
-
-// Deprecated: use the SetKeyDelay(),
-//
-// SetKeyboardDelay set keyboard delay, Wno-deprecated,
-//
-// This function will be removed in version v1.0.0
-func SetKeyboardDelay(delay int) {
-	tt.Drop("SetKeyboardDelay", "SetKeyDelay")
-	SetKeyDelay(delay)
-}
-
-// SetDelay set the key and mouse delay
-func SetDelay(d ...int) {
-	v := 10
-	if len(d) > 0 {
-		v = d[0]
-	}
-
-	SetMouseDelay(v)
-	SetKeyDelay(v)
 }
 
 /*

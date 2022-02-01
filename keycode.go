@@ -19,6 +19,17 @@ type uMap map[string]uint16
 // MouseMap robotgo hook mouse's code map
 var MouseMap = keycode.MouseMap
 
+const (
+	// Mleft mouse left button
+	Mleft      = "left"
+	Mright     = "right"
+	Center     = "center"
+	WheelDown  = "wheelDown"
+	WheelUp    = "wheelUp"
+	WheelLeft  = "wheelLeft"
+	WheelRight = "wheelRight"
+)
+
 // Keycode robotgo hook key's code map
 var Keycode = keycode.Keycode
 
