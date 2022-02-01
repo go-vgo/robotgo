@@ -307,9 +307,10 @@ func checkKeyCodes(k string) (key C.MMKeyCode, err error) {
 	}
 
 	if len(k) == 1 {
-		val := C.CString(k)
-		key = C.keyCodeForChar(*val)
-		C.free(unsafe.Pointer(val))
+		val1 := C.CString(k)
+		defer C.free(unsafe.Pointer(val1))
+
+		key = C.keyCodeForChar(*val1)
 		if key == C.K_NOT_A_KEY {
 			err = keyErr
 			return

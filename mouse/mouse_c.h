@@ -1,8 +1,5 @@
 #include "mouse.h"
-// #include "../screen/screen.h"
-// #include "../screen/screen_c.h"
-#include "../base/deadbeef_rand_c.h"
-// #include "../deadbeef_rand.h"
+#include "../base/deadbeef_rand.h"
 #include "../base/microsleep.h"
 
 #include <math.h> /* For floor() */

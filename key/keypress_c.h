@@ -1,5 +1,5 @@
 #include "keypress.h"
-// #include "../base/deadbeef_rand_c.h"
+#include "../base/deadbeef_rand_c.h"
 #include "../base/microsleep.h"
 
 #include <ctype.h> /* For isupper() */
