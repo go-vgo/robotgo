@@ -4,11 +4,6 @@
 
 #include "../base/os.h"
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #if defined(IS_MACOSX)
 
 #include <Carbon/Carbon.h> /* Really only need <HIToolbox/Events.h> */
@@ -406,7 +401,3 @@ typedef int MMKeyCode;
 MMKeyCode keyCodeForChar(const char c);
 
 #endif /* KEYCODE_H */
-
-#ifdef __cplusplus
-}
-#endif

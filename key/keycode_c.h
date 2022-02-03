@@ -4,16 +4,13 @@
 	#include <CoreFoundation/CoreFoundation.h>
 	#include <Carbon/Carbon.h> /* For kVK_ constants, and TIS functions. */
 
-	/* Returns string representation of key, if it is printable.
-	* Ownership follows the Create Rule; that is, it is the caller's
-	* responsibility to release the returned object. */
+	/* Returns string representation of key, if it is printable. */
 	CFStringRef createStringForKey(CGKeyCode keyCode);
 #endif
 
 MMKeyCode keyCodeForChar(const char c) {
 	#if defined(IS_MACOSX)
-		/* OS X does not appear to have a built-in function for this, so instead we
-		* have to write our own. */
+		/* OS X does not appear to have a built-in function for this, so instead it. */
 		static CFMutableDictionaryRef charToCodeDict = NULL;
 		CGKeyCode code;
 		UniChar character = c;
@@ -58,17 +55,13 @@ MMKeyCode keyCodeForChar(const char c) {
 
 		return code;
 	#elif defined(USE_X11)
-		MMKeyCode code;
-
 		char buf[2];
 		buf[0] = c;
 		buf[1] = '\0';
 
-		code = XStringToKeysym(buf);
+		MMKeyCode code = XStringToKeysym(buf);
 		if (code == NoSymbol) {
-			/* Some special keys are apparently not handled properly by
-			* XStringToKeysym() on some systems, so search for them instead in our
-			* mapping table. */
+			/* Some special keys are apparently not handled properly */
 			struct XSpecialCharacterMapping* xs = XSpecialCharacterTable;
 			while (xs->name) {
 				if (c == xs->name) {

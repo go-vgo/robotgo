@@ -511,7 +511,9 @@ func KeyDown(key string, args ...string) error {
 
 // KeyUp press up a key
 func KeyUp(key string, args ...string) error {
-	return KeyToggle(key, append(args, "up")...)
+	arr := []string{"up"}
+	arr = append(arr, args...)
+	return KeyToggle(key, arr...)
 }
 
 // ReadAll read string from clipboard
