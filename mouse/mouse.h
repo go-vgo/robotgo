@@ -44,10 +44,4 @@
 	#error "No mouse button constants set for platform"
 #endif
 
-enum __MMMouseWheelDirection {
-	DIRECTION_DOWN 	= -1,
-	DIRECTION_UP	= 1
-};
-typedef int MMMouseWheelDirection;
-
 #endif /* MOUSE_H */

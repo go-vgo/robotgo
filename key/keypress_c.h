@@ -19,7 +19,7 @@
 		Sleep(DEADBEEF_RANDRANGE(0, 1));
 	}
 #elif defined(USE_X11)
-	void X_KEY_EVENT(Display *display, MMKeyCode key, bool is_press) ( 
+	void X_KEY_EVENT(Display *display, MMKeyCode key, bool is_press) {
 		XTestFakeKeyEvent(display, XKeysymToKeycode(display, key), is_press, CurrentTime); 
 		XSync(display, false);
 	}

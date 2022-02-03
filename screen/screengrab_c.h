@@ -95,8 +95,8 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id) 
    	dib = CreateDIBSection(screen, &bi, DIB_RGB_COLORS, &data, NULL, 0);
 
 	/* Copy the data into a bitmap struct. */
-	bool smem = (screenMem = CreateCompatibleDC(screen)) == NULL;
-	bool bitb = BitBlt(screenMem, (int)0, (int)0, (int)rect.size.w, (int)rect.size.h, 
+	BOOL smem = (screenMem = CreateCompatibleDC(screen)) == NULL;
+	BOOL bitb = BitBlt(screenMem, (int)0, (int)0, (int)rect.size.w, (int)rect.size.h, 
 				screen, rect.origin.x, rect.origin.y, SRCCOPY);
 	if (smem || SelectObject(screenMem, dib) == NULL || !bitb) {
 		/* Error copying data. */

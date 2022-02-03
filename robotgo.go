@@ -38,13 +38,12 @@ package robotgo
 #cgo windows LDFLAGS: -lgdi32 -luser32
 //
 #include "screen/goScreen.h"
-#include "mouse/goMouse.h"
+#include "mouse/mouse_c.h"
 #include "window/goWindow.h"
 */
 import "C"
 
 import (
-	"errors"
 	"image"
 	"runtime"
 	"time"
@@ -129,7 +128,7 @@ func Sleep(tm int) {
 	time.Sleep(time.Duration(tm) * time.Second)
 }
 
-// MicroSleep time C.microsleep(tm), use the MilliSleep
+// MicroSleep time C.microsleep(tm), use the MilliSleep()
 func MicroSleep(tm float64) {
 	C.microsleep(C.double(tm))
 }
@@ -250,8 +249,7 @@ func Scaled0(x int, f float64) int {
 
 // GetScreenSize get the screen size
 func GetScreenSize() (int, int) {
-	size := C.get_screen_size()
-	// fmt.Println("...", size, size.width)
+	size := C.getMainDisplaySize()
 	return int(size.w), int(size.h)
 }
 
@@ -368,8 +366,8 @@ func ToBitmap(bit CBitmap) Bitmap {
 func ToCBitmap(bit Bitmap) CBitmap {
 	cbitmap := C.createMMBitmap_c(
 		(*C.uint8_t)(bit.ImgBuf),
-		C.size_t(bit.Width),
-		C.size_t(bit.Height),
+		C.int32_t(bit.Width),
+		C.int32_t(bit.Height),
 		C.size_t(bit.Bytewidth),
 		C.uint8_t(bit.BitsPixel),
 		C.uint8_t(bit.BytesPerPixel),
@@ -411,7 +409,7 @@ func GetXDisplayName() string {
 //
 // ScaleX get the primary display horizontal DPI scale factor, drop
 func ScaleX() int {
-	return int(C.scale_x())
+	return int(C.scaleX())
 }
 
 // Deprecated: use the ScaledF(),
@@ -502,7 +500,7 @@ func Move(x, y int) {
 
 	cx := C.int32_t(x)
 	cy := C.int32_t(y)
-	C.move_mouse(cx, cy)
+	C.moveMouse(C.MMPointInt32Make(cx, cy))
 
 	MilliSleep(MouseSleep)
 }
@@ -532,7 +530,7 @@ func Drag(x, y int, args ...string) {
 		button = CheckMouse(args[0])
 	}
 
-	C.drag_mouse(cx, cy, button)
+	C.dragMouse(C.MMPointInt32Make(cx, cy), button)
 	MilliSleep(MouseSleep)
 }
 
@@ -590,8 +588,8 @@ func MoveSmooth(x, y int, args ...interface{}) bool {
 		high = 3.0
 	}
 
-	cbool := C.move_mouse_smooth(cx, cy, low, high, C.int(mouseDelay))
-	MilliSleep(MouseSleep)
+	cbool := C.smoothlyMoveMouse(C.MMPointInt32Make(cx, cy), low, high)
+	MilliSleep(MouseSleep + mouseDelay)
 
 	return bool(cbool)
 }
@@ -618,7 +616,7 @@ func MoveSmoothRelative(x, y int, args ...interface{}) {
 
 // GetMousePos get the mouse's portion return x, y
 func GetMousePos() (int, int) {
-	pos := C.get_mouse_pos()
+	pos := C.getMousePos()
 	x := int(pos.x)
 	y := int(pos.y)
 
@@ -645,7 +643,7 @@ func MouseClick(args ...interface{}) {
 func Click(args ...interface{}) {
 	var (
 		button C.MMMouseButton = C.LEFT_BUTTON
-		double C.bool
+		double bool
 	)
 
 	if len(args) > 0 {
@@ -653,10 +651,15 @@ func Click(args ...interface{}) {
 	}
 
 	if len(args) > 1 {
-		double = C.bool(args[1].(bool))
+		double = args[1].(bool)
 	}
 
-	C.mouse_click(button, double)
+	if !double {
+		C.clickMouse(button)
+	} else {
+		C.doubleClick(button)
+	}
+
 	MilliSleep(MouseSleep)
 }
 
@@ -694,56 +697,28 @@ func Toggle(key ...string) error {
 	if len(key) > 0 {
 		button = CheckMouse(key[0])
 	}
-	down := C.CString("down")
-	if len(key) > 1 {
-		down = C.CString(key[1])
-	}
 
-	i := C.mouse_toggle(down, button)
-	C.free(unsafe.Pointer(down))
-	MilliSleep(MouseSleep)
-	if int(i) == 0 {
-		return nil
+	down := true
+	if len(key) > 1 && key[1] == "up" {
+		down = false
 	}
-	return errors.New("Undefined params.")
+	C.toggleMouse(C.bool(down), button)
+	MilliSleep(MouseSleep)
+
+	return nil
 }
 
-// Deprecated: use the Toggle(),
-//
-// MouseToggle toggle the mouse
-//
-// Examples:
-// 	robotgo.MouseToggle("down", "right")
-//	robotgo.MouseToggle("up", "right")
-func MouseToggle(togKey string, args ...interface{}) int {
-	var button C.MMMouseButton = C.LEFT_BUTTON
-
-	if len(args) > 0 {
-		button = CheckMouse(args[0].(string))
-	}
-
-	down := C.CString(togKey)
-	i := C.mouse_toggle(down, button)
-
-	C.free(unsafe.Pointer(down))
-	MilliSleep(MouseSleep)
-	return int(i)
+// MouseDown send mouse down event
+func MouseDown(key ...string) error {
+	return Toggle(key...)
 }
 
-// Deprecated: use the Scroll(),
-//
-// ScrollMouse scroll the mouse to (x, "up")
-//
-// Examples:
-//	robotgo.ScrollMouse(10, "down")
-//	robotgo.ScrollMouse(10, "up")
-func ScrollMouse(x int, direction string) {
-	cx := C.size_t(x)
-	cy := C.CString(direction)
-	C.scroll_mouse(cx, cy)
-
-	C.free(unsafe.Pointer(cy))
-	MilliSleep(MouseSleep)
+// MouseUp send mouse up event
+func MouseUp(key ...string) error {
+	if len(key) <= 0 {
+		key = append(key, "left")
+	}
+	return Toggle(append(key, "up")...)
 }
 
 // Scroll scroll the mouse to (x, y)
@@ -760,10 +735,9 @@ func Scroll(x, y int, args ...int) {
 
 	cx := C.int(x)
 	cy := C.int(y)
-	cz := C.int(msDelay)
 
-	C.scroll(cx, cy, cz)
-	MilliSleep(MouseSleep)
+	C.scrollMouseXY(cx, cy)
+	MilliSleep(MouseSleep + msDelay)
 }
 
 // ScrollSmooth scroll the mouse smooth,
@@ -809,12 +783,6 @@ func ScrollRelative(x, y int, args ...int) {
 	Scroll(mx, my, args...)
 }
 
-// SetMouseDelay set mouse delay
-func SetMouseDelay(delay int) {
-	cdelay := C.size_t(delay)
-	C.set_mouse_delay(cdelay)
-}
-
 /*
 ____    __    ____  __  .__   __.  _______   ______   ____    __    ____
 \   \  /  \  /   / |  | |  \ |  | |       \ /  __  \  \   \  /  \  /   /
@@ -850,7 +818,7 @@ func showAlert(title, msg string, args ...string) bool {
 	defaultButton := C.CString(defaultBtn)
 	cancelButton := C.CString(cancelBtn)
 
-	cbool := C.show_alert(cTitle, cMsg, defaultButton, cancelButton)
+	cbool := C.showAlert(cTitle, cMsg, defaultButton, cancelButton)
 	ibool := int(cbool)
 
 	C.free(unsafe.Pointer(cTitle))
@@ -929,13 +897,13 @@ func CloseWindow(args ...int32) {
 		isHwnd = args[1]
 	}
 
-	C.close_window(C.uintptr(hwnd), C.uintptr(isHwnd))
+	C.close_window_by_PId(C.uintptr(hwnd), C.uintptr(isHwnd))
 }
 
 // SetHandle set the window handle
 func SetHandle(hwnd int) {
 	chwnd := C.uintptr(hwnd)
-	C.set_handle(chwnd)
+	C.setHandle(chwnd)
 }
 
 // SetHandlePid set the window handle by pid
@@ -973,14 +941,14 @@ func GetHandle() int {
 // This function will be removed in version v1.0.0
 func GetBHandle() int {
 	tt.Drop("GetBHandle", "GetHandle")
-	hwnd := C.bget_handle()
+	hwnd := C.b_get_handle()
 	ghwnd := int(hwnd)
 	//fmt.Println("gethwnd---", ghwnd)
 	return ghwnd
 }
 
 func cgetTitle(hwnd, isHwnd int32) string {
-	title := C.get_title(C.uintptr(hwnd), C.uintptr(isHwnd))
+	title := C.get_title_by_pid(C.uintptr(hwnd), C.uintptr(isHwnd))
 	gtitle := C.GoString(title)
 
 	return gtitle

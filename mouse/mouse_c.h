@@ -219,56 +219,6 @@ void doubleClick(MMMouseButton button){
 }
 
 /* Function used to scroll the screen in the required direction. */
-void scrollMouse(int scrollMagnitude, MMMouseWheelDirection scrollDirection){
-	#if defined(IS_WINDOWS)
-		// C89 needs variables declared on top of functions (mouseScrollInput)
-		INPUT mouseScrollInput;
-	#endif
-
-	/* Direction should only be considered based on the scrollDirection. This Should not interfere. */
-	int cleanScrollMagnitude = abs(scrollMagnitude);
-	if (!(scrollDirection == DIRECTION_UP || scrollDirection == DIRECTION_DOWN)) {
-		return;
-	}
-
-	/* Set up the OS specific solution */
-	#if defined(__APPLE__)
-		CGWheelCount wheel = 1;
-		CGEventRef event;
-
-		/* Make scroll magnitude negative if we're scrolling down. */
-		cleanScrollMagnitude = cleanScrollMagnitude * scrollDirection;
-
-		event = CGEventCreateScrollWheelEvent(NULL, kCGScrollEventUnitLine, wheel, cleanScrollMagnitude, 0);
-		CGEventPost(kCGHIDEventTap, event);
-	#elif defined(USE_X11)
-		int x;
-		int dir = 4; /* Button 4 is up, 5 is down. */
-		Display *display = XGetMainDisplay();
-
-		if (scrollDirection == DIRECTION_DOWN) {
-			dir = 5;
-		}
-
-		for (x = 0; x < cleanScrollMagnitude; x++) {
-			XTestFakeButtonEvent(display, dir, 1, CurrentTime);
-			XTestFakeButtonEvent(display, dir, 0, CurrentTime);
-		}
-
-		XSync(display, false);
-	#elif defined(IS_WINDOWS)
-		mouseScrollInput.type = INPUT_MOUSE;
-		mouseScrollInput.mi.dx = 0;
-		mouseScrollInput.mi.dy = 0;
-		mouseScrollInput.mi.dwFlags = MOUSEEVENTF_WHEEL;
-		mouseScrollInput.mi.time = 0;
-		mouseScrollInput.mi.dwExtraInfo = 0;
-		mouseScrollInput.mi.mouseData = WHEEL_DELTA * scrollDirection * cleanScrollMagnitude;
-
-		SendInput(1, &mouseScrollInput, sizeof(mouseScrollInput));
-	#endif
-}
-
 void scrollMouseXY(int x, int y) {
 	#if defined(IS_WINDOWS)
 		// Fix for #97, C89 needs variables declared on top of functions (mouseScrollInput)
