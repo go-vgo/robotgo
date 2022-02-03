@@ -379,9 +379,9 @@ func keyTaps(k string, keyArr []string) error {
 }
 
 func keyToggles(k string, keyArr []string) error {
-	down := false
-	if keyArr[0] == "down" {
-		down = true
+	down := true
+	if keyArr[0] == "up" {
+		down = false
 	}
 
 	flags := getFlagsFromValue(keyArr)
@@ -494,24 +494,24 @@ func KeyToggle(key string, args ...string) error {
 }
 
 // KeyPress press key string
-func KeyPress(key string) error {
-	err := KeyDown(key)
+func KeyPress(key string, args ...string) error {
+	err := KeyDown(key, args...)
 	if err != nil {
 		return err
 	}
 
 	MilliSleep(1 + rand.Intn(3))
-	return KeyUp(key)
+	return KeyUp(key, args...)
 }
 
 // KeyDown press down a key
-func KeyDown(key string) error {
-	return KeyToggle(key)
+func KeyDown(key string, args ...string) error {
+	return KeyToggle(key, args...)
 }
 
 // KeyUp press up a key
-func KeyUp(key string) error {
-	return KeyToggle(key, "up")
+func KeyUp(key string, args ...string) error {
+	return KeyToggle(key, append(args, "up")...)
 }
 
 // ReadAll read string from clipboard
@@ -644,4 +644,15 @@ func TypeStrDelay(str string, delay int) {
 func TypeStringDelayed(str string, delay int) {
 	tt.Drop("TypeStringDelayed", "TypeStrDelay")
 	TypeStrDelay(str, delay)
+}
+
+// SetDelay set the key and mouse delay
+func SetDelay(d ...int) {
+	v := 10
+	if len(d) > 0 {
+		v = d[0]
+	}
+
+	KeySleep = v
+	MouseSleep = v
 }
