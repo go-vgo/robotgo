@@ -117,6 +117,14 @@ func TestKey(t *testing.T) {
 
 	e = KeyToggle("v", "up")
 	tt.Nil(t, e)
+
+	e = KeyDown("a")
+	tt.Nil(t, e)
+	e = KeyUp("a")
+	tt.Nil(t, e)
+
+	e = KeyPress("b")
+	tt.Nil(t, e)
 }
 
 func TestClip(t *testing.T) {
@@ -149,6 +157,9 @@ func TestKeyCode(t *testing.T) {
 
 	s := Special["+"]
 	tt.Equal(t, "=", s)
+
+	tt.Equal(t, "0", Key0)
+	tt.Equal(t, "a", KeyA)
 }
 
 func TestImage(t *testing.T) {
