@@ -26,7 +26,7 @@
 
 	void X_KEY_EVENT_WAIT(Display *display, MMKeyCode key, bool is_press) {
 		X_KEY_EVENT(display, key, is_press);
-		microsleep(DEADBEEF_UNIFORM(0.0, 0.5);
+		microsleep(DEADBEEF_UNIFORM(0.0, 0.5));
 	}
 #endif
 

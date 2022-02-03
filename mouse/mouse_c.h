@@ -122,7 +122,7 @@ void dragMouse(MMPointInt32 point, const MMMouseButton button){
 	#if defined(IS_MACOSX)
 		const CGEventType dragType = MMMouseDragToCGEventType(button);
 		CGEventRef drag = CGEventCreateMouseEvent(NULL, dragType, 
-								CGPointFromMMPoint(point), (CGMouseButton)button);
+								CGPointFromMMPointInt32(point), (CGMouseButton)button);
 
 		calculateDeltas(&drag, point);
 
@@ -161,7 +161,7 @@ MMPointInt32 getMousePos() {
 /* Press down a button, or release it. */
 void toggleMouse(bool down, MMMouseButton button) {
 	#if defined(IS_MACOSX)
-		const CGPoint currentPos = CGPointFromMMPoint(getMousePos());
+		const CGPoint currentPos = CGPointFromMMPointInt32(getMousePos());
 		const CGEventType mouseType = MMMouseToCGEventType(down, button);
 		CGEventRef event = CGEventCreateMouseEvent(NULL, mouseType, currentPos, (CGMouseButton)button);
 
@@ -196,7 +196,7 @@ void clickMouse(MMMouseButton button){
 void doubleClick(MMMouseButton button){
 	#if defined(IS_MACOSX)
 		/* Double click for Mac. */
-		const CGPoint currentPos = CGPointFromMMPoint(getMousePos());
+		const CGPoint currentPos = CGPointFromMMPointInt32(getMousePos());
 		const CGEventType mouseTypeDown = MMMouseToCGEventType(true, button);
 		const CGEventType mouseTypeUP = MMMouseToCGEventType(false, button);
 
