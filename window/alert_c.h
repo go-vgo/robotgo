@@ -1,14 +1,13 @@
 // #include "os.h"
-
 #if defined(IS_MACOSX)
 	#include <CoreFoundation/CoreFoundation.h>
 #endif
 
 #if defined(IS_MACOSX)
-	#define CFStringCreateWithUTF8String(string) \
-		((string) == NULL ? NULL : CFStringCreateWithCString(NULL, \
-		                                                     string, \
-		                                                     kCFStringEncodingUTF8))
+	CFStringRef CFStringCreateWithUTF8String(const char *title) {
+		if (title == NULL) { return NULL; }
+		return CFStringCreateWithCString(NULL, title, kCFStringEncodingUTF8);
+	}
 #endif
 
 int showAlert(const char *title, const char *msg, 
@@ -36,7 +35,7 @@ int showAlert(const char *title, const char *msg,
 		/* TODO: Display custom buttons instead of the pre-defined "OK"
 		* and "Cancel". */
 		int response = MessageBox(NULL, msg, title,
-								(cancelButton == NULL) ? MB_OK : MB_OKCANCEL);
+								(cancelButton == NULL) ? MB_OK : MB_OKCANCEL );
 		return (response == IDOK) ? 0 : 1;
 	#endif
 }

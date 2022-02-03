@@ -15,8 +15,7 @@ void deadbeef_srand(uint32_t x) {
 	deadbeef_beef = 0xdeadbeef;
 }
 
-/* Taken directly from the documentation:
- * http://inglorion.net/software/cstuff/deadbeef_rand/ */
+/* Taken directly from the documentation: http://inglorion.net/software/cstuff/deadbeef_rand/ */
 uint32_t deadbeef_generate_seed(void) {
 	  uint32_t t = (uint32_t)time(NULL);
 	  uint32_t c = (uint32_t)clock();

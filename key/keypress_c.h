@@ -14,14 +14,20 @@
 
 /* Convenience wrappers around ugly APIs. */
 #if defined(IS_WINDOWS)
-	#define WIN32_KEY_EVENT_WAIT(key, flags) \
-		(win32KeyEvent(key, flags), Sleep(DEADBEEF_RANDRANGE(0, 1)))
+	void WIN32_KEY_EVENT_WAIT(MMKeyCode key, DWORD flags) {
+		win32KeyEvent(key, flags); 
+		Sleep(DEADBEEF_RANDRANGE(0, 1));
+	}
 #elif defined(USE_X11)
-	#define X_KEY_EVENT(display, key, is_press) ( \
-			XTestFakeKeyEvent(display, XKeysymToKeycode(display, key), is_press, CurrentTime), \
-			XSync(display, false))
-	#define X_KEY_EVENT_WAIT(display, key, is_press) ( \
-			X_KEY_EVENT(display, key, is_press), microsleep(DEADBEEF_UNIFORM(0.0, 0.5)))
+	void X_KEY_EVENT(Display *display, MMKeyCode key, bool is_press) ( 
+		XTestFakeKeyEvent(display, XKeysymToKeycode(display, key), is_press, CurrentTime); 
+		XSync(display, false);
+	}
+
+	void X_KEY_EVENT_WAIT(Display *display, MMKeyCode key, bool is_press) {
+		X_KEY_EVENT(display, key, is_press);
+		microsleep(DEADBEEF_UNIFORM(0.0, 0.5);
+	}
 #endif
 
 #if defined(IS_MACOSX)
@@ -143,10 +149,10 @@ void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags) {
 	const DWORD dwFlags = down ? 0 : KEYEVENTF_KEYUP;
 
 	/* Parse modifier keys. */
-	if (flags & MOD_META) WIN32_KEY_EVENT_WAIT(K_META, dwFlags);
-	if (flags & MOD_ALT) WIN32_KEY_EVENT_WAIT(K_ALT, dwFlags);
-	if (flags & MOD_CONTROL) WIN32_KEY_EVENT_WAIT(K_CONTROL, dwFlags);
-	if (flags & MOD_SHIFT) WIN32_KEY_EVENT_WAIT(K_SHIFT, dwFlags);
+	if (flags & MOD_META) { WIN32_KEY_EVENT_WAIT(K_META, dwFlags); }
+	if (flags & MOD_ALT) { WIN32_KEY_EVENT_WAIT(K_ALT, dwFlags); }
+	if (flags & MOD_CONTROL) { WIN32_KEY_EVENT_WAIT(K_CONTROL, dwFlags); }
+	if (flags & MOD_SHIFT) { WIN32_KEY_EVENT_WAIT(K_SHIFT, dwFlags); }
 
 	win32KeyEvent(code, dwFlags);
 #elif defined(USE_X11)
@@ -154,10 +160,10 @@ void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags) {
 	const Bool is_press = down ? True : False; /* Just to be safe. */
 
 	/* Parse modifier keys. */
-	if (flags & MOD_META) X_KEY_EVENT_WAIT(display, K_META, is_press);
-	if (flags & MOD_ALT) X_KEY_EVENT_WAIT(display, K_ALT, is_press);
-	if (flags & MOD_CONTROL) X_KEY_EVENT_WAIT(display, K_CONTROL, is_press);
-	if (flags & MOD_SHIFT) X_KEY_EVENT_WAIT(display, K_SHIFT, is_press);
+	if (flags & MOD_META) { X_KEY_EVENT_WAIT(display, K_META, is_press); }
+	if (flags & MOD_ALT) { X_KEY_EVENT_WAIT(display, K_ALT, is_press); }
+	if (flags & MOD_CONTROL) { X_KEY_EVENT_WAIT(display, K_CONTROL, is_press); }
+	if (flags & MOD_SHIFT) { X_KEY_EVENT_WAIT(display, K_SHIFT, is_press); }
 
 	X_KEY_EVENT(display, code, is_press);
 #endif
@@ -206,9 +212,9 @@ void toggleKey(char c, const bool down, MMKeyFlags flags){
 
 	#if defined(IS_WINDOWS)
 		modifiers = keyCode >> 8; // Pull out modifers.
-		if ((modifiers & 1) != 0) flags |= MOD_SHIFT; // Uptdate flags from keycode modifiers.
-		if ((modifiers & 2) != 0) flags |= MOD_CONTROL;
-		if ((modifiers & 4) != 0) flags |= MOD_ALT;
+		if ((modifiers & 1) != 0) { flags |= MOD_SHIFT; } // Uptdate flags from keycode modifiers.
+		if ((modifiers & 2) != 0) { flags |= MOD_CONTROL; }
+		if ((modifiers & 4) != 0) { flags |= MOD_ALT; }
 		keyCode = keyCode & 0xff; // Mask out modifiers.
 	#endif
 
@@ -222,12 +228,11 @@ void tapKey(char c, MMKeyFlags flags){
 }
 
 #if defined(IS_MACOSX)
-void toggleUnicode(UniChar ch, const bool down){
-	/* This function relies on the convenient
-	 * CGEventKeyboardSetUnicodeString(), which allows us to not have to
-	 * convert characters to a keycode, but does not support adding modifier
-	 * flags. It is therefore only used in typeStringDelayed()
-	 * -- if you need modifier keys, use the above functions instead. */
+void toggleUnicode(UniChar ch, const bool down) {
+	/* This function relies on the convenient CGEventKeyboardSetUnicodeString(), 
+	convert characters to a keycode, but does not support adding modifier flags. 
+	It is only used in typeString().
+	-- if you need modifier keys, use the above functions instead. */
 	CGEventRef keyEvent = CGEventCreateKeyboardEvent(NULL, 0, down);
 	if (keyEvent == NULL) {
 		fputs("Could not create keyboard event.\n", stderr);

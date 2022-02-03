@@ -14,11 +14,9 @@
 #include "screengrab_c.h"
 #include "screen_c.h"
 #include <stdio.h>
-// #include "../MMBitmap_c.h"
 
 void padHex(MMRGBHex color, char* hex) {
 	// Length needs to be 7 because snprintf includes a terminating null.
-	// Use %06x to pad hex value with leading 0s.
 	snprintf(hex, 7, "%06x", color);
 }
 
@@ -29,7 +27,6 @@ char* pad_hex(MMRGBHex color) {
 
 	char* str = (char*)calloc(100, sizeof(char*));
     if (str) { strcpy(str, hex); }
-
 	return str;
 }
 
@@ -56,7 +53,6 @@ MMRGBHex get_px_color(int32_t x, int32_t y, int32_t display_id) {
 
 	bitmap = copyMMBitmapFromDisplayInRect(MMRectInt32Make(x, y, 1, 1), display_id);
 	// bitmap = MMRectMake(x, y, 1, 1);
-
 	color = MMRGBHexAtPoint(bitmap, 0, 0);
 	destroyMMBitmap(bitmap);
 
@@ -79,7 +75,7 @@ MMSizeInt32 get_screen_size() {
 char* set_XDisplay_name(char* name) {
 	#if defined(USE_X11)
 		setXDisplay(name);
-		return "success";
+		return "";
 	#else
 		return "SetXDisplayName is only supported on Linux";
 	#endif
@@ -88,8 +84,8 @@ char* set_XDisplay_name(char* name) {
 char* get_XDisplay_name() {
 	#if defined(USE_X11)
 		const char* display = getXDisplay();
+		
 		char* sd = (char*)calloc(100, sizeof(char*));
-
 		if (sd) { strcpy(sd, display); }
 		return sd;
 	#else
@@ -126,7 +122,6 @@ void bitmap_dealloc(MMBitmapRef bitmap) {
 // capture_screen capture screen
 MMBitmapRef capture_screen(int32_t x, int32_t y, int32_t w, int32_t h, int32_t display_id) {
 	MMBitmapRef bitmap = copyMMBitmapFromDisplayInRect(MMRectInt32Make(x, y, w, h), display_id);
-	// printf("%s\n", bitmap);
 	return bitmap;
 }
 

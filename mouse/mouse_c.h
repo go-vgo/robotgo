@@ -3,7 +3,6 @@
 #include "../base/microsleep.h"
 
 #include <math.h> /* For floor() */
-
 #if defined(IS_MACOSX)
 	// #include </System/Library/Frameworks/ApplicationServices.framework/Headers/ApplicationServices.h>
 	#include <ApplicationServices/ApplicationServices.h>
@@ -12,58 +11,61 @@
 	#include <X11/Xlib.h>
 	#include <X11/extensions/XTest.h>
 	#include <stdlib.h>
-	// #include "../base/xdisplay_c.h"
-#endif
-
-#if !defined(M_SQRT2)
-	#define M_SQRT2 1.4142135623730950488016887 /* Fix for MSVC. */
 #endif
 
 /* Some convenience macros for converting our enums to the system API types. */
 #if defined(IS_MACOSX)
+CGEventType MMMouseDownToCGEventType(MMMouseButton button) {
+	if (button == LEFT_BUTTON) { 
+		return kCGEventLeftMouseDown;
+	}
+    if (button == RIGHT_BUTTON) { 
+	 	return kCGEventRightMouseDown;
+	} 
+	return kCGEventOtherMouseDown;
+}
 
-#define MMMouseToCGEventType(down, button) \
-	(down ? MMMouseDownToCGEventType(button) : MMMouseUpToCGEventType(button))
+CGEventType MMMouseUpToCGEventType(MMMouseButton button) {
+	if (button == LEFT_BUTTON) { return kCGEventLeftMouseUp; } 
+	if (button == RIGHT_BUTTON) { return kCGEventRightMouseUp; } 					
+	return kCGEventOtherMouseUp;
+}
 
-#define MMMouseDownToCGEventType(button) \
-	((button) == (LEFT_BUTTON) ? kCGEventLeftMouseDown \
-	                    : ((button) == RIGHT_BUTTON ? kCGEventRightMouseDown : kCGEventOtherMouseDown))
+CGEventType MMMouseDragToCGEventType(MMMouseButton button) {
+	if (button == LEFT_BUTTON) { return kCGEventLeftMouseDragged; }
+	if (button == RIGHT_BUTTON) { return kCGEventRightMouseDragged; } 
+	return kCGEventOtherMouseDragged;
+}
 
-#define MMMouseUpToCGEventType(button) \
-	((button) == LEFT_BUTTON ? kCGEventLeftMouseUp \
-	                    	: ((button) == RIGHT_BUTTON ? kCGEventRightMouseUp : kCGEventOtherMouseUp))
-
-#define MMMouseDragToCGEventType(button) \
-	((button) == LEFT_BUTTON ? kCGEventLeftMouseDragged \
-	                : ((button) == RIGHT_BUTTON ? kCGEventRightMouseDragged : kCGEventOtherMouseDragged))
+CGEventType MMMouseToCGEventType(bool down, MMMouseButton button) {
+	if (down) { return MMMouseDownToCGEventType(button); }
+	return MMMouseUpToCGEventType(button);
+}
 
 #elif defined(IS_WINDOWS)
+ 
+DWORD MMMouseUpToMEventF(MMMouseButton button) {
+	if (button == LEFT_BUTTON) { return MOUSEEVENTF_LEFTUP; }
+	if (button == RIGHT_BUTTON) { return MOUSEEVENTF_RIGHTUP; } 
+	return MOUSEEVENTF_MIDDLEUP;
+}
 
-#define MMMouseToMEventF(down, button) \
-	(down ? MMMouseDownToMEventF(button) : MMMouseUpToMEventF(button))
+DWORD MMMouseDownToMEventF(MMMouseButton button) {
+	if (button == LEFT_BUTTON) { return MOUSEEVENTF_LEFTDOWN; }
+	if (button == RIGHT_BUTTON) { return MOUSEEVENTF_RIGHTDOWN; } 
+	return MOUSEEVENTF_MIDDLEDOWN;
+}
 
-#define MMMouseUpToMEventF(button) \
-	((button) == LEFT_BUTTON ? MOUSEEVENTF_LEFTUP \
-	                         : ((button) == RIGHT_BUTTON ? MOUSEEVENTF_RIGHTUP : MOUSEEVENTF_MIDDLEUP))
-
-#define MMMouseDownToMEventF(button) \
-	((button) == LEFT_BUTTON ? MOUSEEVENTF_LEFTDOWN \
-	                         : ((button) == RIGHT_BUTTON ? MOUSEEVENTF_RIGHTDOWN : MOUSEEVENTF_MIDDLEDOWN))
-
+DWORD MMMouseToMEventF(bool down, MMMouseButton button) {
+	if (down) { return MMMouseDownToMEventF(button); }
+	return MMMouseUpToMEventF(button);
+}
 #endif
 
 #if defined(IS_MACOSX)
-/**
- * Calculate the delta for a mouse move and add them to the event.
- * @param event The mouse move event (by ref).
- * @param point The new mouse x and y.
- */
+/* Calculate the delta for a mouse move and add them to the event. */
 void calculateDeltas(CGEventRef *event, MMPointInt32 point){
-	/**
-	 * The next few lines are a workaround for games not detecting mouse moves.
-	 * See this issue for more information:
-	 * https://github.com/go-vgo/robotgo/issues/159
-	 */
+	/* The next few lines are a workaround for games not detecting mouse moves. */
 	CGEventRef get = CGEventCreate(NULL);
 	CGPoint mouse = CGEventGetLocation(get);
 
@@ -78,11 +80,7 @@ void calculateDeltas(CGEventRef *event, MMPointInt32 point){
 }
 #endif
 
-
-/**
- * Move the mouse to a specific point.
- * @param point The coordinates to move the mouse to (x, y).
- */
+/* Move the mouse to a specific point. */
 void moveMouse(MMPointInt32 point){
 	#if defined(IS_MACOSX)
 		CGEventRef move = CGEventCreateMouseEvent(NULL, kCGEventMouseMoved, 
@@ -117,7 +115,6 @@ void moveMouse(MMPointInt32 point){
 		mouseInput.mi.dwExtraInfo = 0;
 		mouseInput.mi.mouseData = 0;
 		SendInput(1, &mouseInput, sizeof(mouseInput));
-
 	#endif
 }
 
@@ -136,7 +133,7 @@ void dragMouse(MMPointInt32 point, const MMMouseButton button){
 	#endif
 }
 
-MMPointInt32 getMousePos(){
+MMPointInt32 getMousePos() {
 	#if defined(IS_MACOSX)
 		CGEventRef event = CGEventCreate(NULL);
 		CGPoint point = CGEventGetLocation(event);
@@ -144,9 +141,9 @@ MMPointInt32 getMousePos(){
 
 		return MMPointInt32FromCGPoint(point);
 	#elif defined(USE_X11)
-		int x, y; /* This is all we care about. Seriously. */
-		Window garb1, garb2; /* Why you can't specify NULL as a parameter */
-		int garb_x, garb_y;  /* is beyond me. */
+		int x, y; 	/* This is all we care about. Seriously. */
+		Window garb1, garb2; 	/* Why you can't specify NULL as a parameter */
+		int garb_x, garb_y;  	/* is beyond me. */
 		unsigned int more_garbage;
 
 		Display *display = XGetMainDisplay();
@@ -157,17 +154,12 @@ MMPointInt32 getMousePos(){
 	#elif defined(IS_WINDOWS)
 		POINT point;
 		GetCursorPos(&point);
-
 		return MMPointInt32FromPOINT(point);
 	#endif
 }
 
-/**
- * Press down a button, or release it.
- * @param down   True for down, false for up.
- * @param button The button to press down or release.
- */
-void toggleMouse(bool down, MMMouseButton button){
+/* Press down a button, or release it. */
+void toggleMouse(bool down, MMMouseButton button) {
 	#if defined(IS_MACOSX)
 		const CGPoint currentPos = CGPointFromMMPoint(getMousePos());
 		const CGEventType mouseType = MMMouseToCGEventType(down, button);
@@ -200,10 +192,7 @@ void clickMouse(MMMouseButton button){
 	toggleMouse(false, button);
 }
 
-/**
- * Special function for sending double clicks, needed for Mac OS X.
- * @param button Button to click.
- */
+/* Special function for sending double clicks, needed for Mac OS X. */
 void doubleClick(MMMouseButton button){
 	#if defined(IS_MACOSX)
 		/* Double click for Mac. */
@@ -229,20 +218,14 @@ void doubleClick(MMMouseButton button){
 	#endif
 }
 
-/**
- * Function used to scroll the screen in the required direction.
- * This uses the magnitude to scroll the required amount in the direction.
- * TODO Requires further fine tuning based on the requirements.
- */
+/* Function used to scroll the screen in the required direction. */
 void scrollMouse(int scrollMagnitude, MMMouseWheelDirection scrollDirection){
 	#if defined(IS_WINDOWS)
-		// Fix for #97 https://github.com/go-vgo/robotgo/issues/97,
 		// C89 needs variables declared on top of functions (mouseScrollInput)
 		INPUT mouseScrollInput;
 	#endif
 
-	/* Direction should only be considered based on the scrollDirection. This
-	 * Should not interfere. */
+	/* Direction should only be considered based on the scrollDirection. This Should not interfere. */
 	int cleanScrollMagnitude = abs(scrollMagnitude);
 	if (!(scrollDirection == DIRECTION_UP || scrollDirection == DIRECTION_DOWN)) {
 		return;
@@ -250,7 +233,6 @@ void scrollMouse(int scrollMagnitude, MMMouseWheelDirection scrollDirection){
 
 	/* Set up the OS specific solution */
 	#if defined(__APPLE__)
-
 		CGWheelCount wheel = 1;
 		CGEventRef event;
 
@@ -289,15 +271,12 @@ void scrollMouse(int scrollMagnitude, MMMouseWheelDirection scrollDirection){
 
 void scrollMouseXY(int x, int y) {
 	#if defined(IS_WINDOWS)
-		// Fix for #97,
-		// C89 needs variables declared on top of functions (mouseScrollInput)
+		// Fix for #97, C89 needs variables declared on top of functions (mouseScrollInput)
 		INPUT mouseScrollInputH;
 		INPUT mouseScrollInputV;
 	#endif
 
-	/* Direction should only be considered based on the scrollDirection. This
-	* Should not interfere. */
-
+	/* Direction should only be considered based on the scrollDirection. This Should not interfere. */
 	/* Set up the OS specific solution */
 	#if defined(__APPLE__)
 		CGEventRef event;
@@ -317,8 +296,7 @@ void scrollMouseXY(int x, int y) {
 			xdir = 7;
 		}
 
-		int xi;
-		int yi;
+		int xi; int yi;
 		for (xi = 0; xi < abs(x); xi++) {
 			XTestFakeButtonEvent(display, xdir, 1, CurrentTime);
 			XTestFakeButtonEvent(display, xdir, 0, CurrentTime);
@@ -351,16 +329,11 @@ void scrollMouseXY(int x, int y) {
 	#endif
 }
 
-/*
- * A crude, fast hypot() approximation to get around the fact that hypot() is
- * not a standard ANSI C function.
- *
- * It is not particularly accurate but that does not matter for our use case.
- *
- * Taken from this StackOverflow answer:
- * http://stackoverflow.com/questions/3506404/fast-hypotenuse-algorithm-for-embedded-processor#3507882
- *
- */
+/* A crude, fast hypot() approximation to get around the fact that hypot() is not a standard ANSI C function. */
+#if !defined(M_SQRT2)
+	#define M_SQRT2 1.4142135623730950488016887 /* Fix for MSVC. */
+#endif
+
 static double crude_hypot(double x, double y){
 	double big = fabs(x); /* max(|x|, |y|) */
 	double small = fabs(y); /* min(|x|, |y|) */
@@ -381,7 +354,6 @@ bool smoothlyMoveMouse(MMPointInt32 endPoint, double lowSpeed, double highSpeed)
 	double distance;
 
 	while ((distance =crude_hypot((double)pos.x - endPoint.x, (double)pos.y - endPoint.y)) > 1.0) {
-
 		double gravity = DEADBEEF_UNIFORM(5.0, 500.0);
 		// double gravity = DEADBEEF_UNIFORM(lowSpeed, highSpeed);
 		double veloDistance;
@@ -396,12 +368,10 @@ bool smoothlyMoveMouse(MMPointInt32 endPoint, double lowSpeed, double highSpeed)
 		pos.x += floor(velo_x + 0.5);
 		pos.y += floor(velo_y + 0.5);
 
-		/* Make sure we are in the screen boundaries!
-		 * (Strange things will happen if we are not.) */
+		/* Make sure we are in the screen boundaries! (Strange things will happen if we are not.) */
 		if (pos.x >= screenSize.w || pos.y >= screenSize.h) {
 			return false;
 		}
-
 		moveMouse(pos);
 
 		/* Wait 1 - 3 milliseconds. */

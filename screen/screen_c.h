@@ -1,4 +1,3 @@
-#include "screen.h"
 //#include "../base/os.h"
 
 #if defined(IS_MACOSX)
@@ -8,7 +7,7 @@
 	// #include "../base/xdisplay_c.h"
 #endif
 
-MMSizeInt32 getMainDisplaySize(void){
+MMSizeInt32 getMainDisplaySize(void) {
 #if defined(IS_MACOSX)
 	CGDirectDisplayID displayID = CGMainDisplayID();
 	CGRect displayRect = CGDisplayBounds(displayID);
@@ -53,8 +52,7 @@ MMRectInt32 getScreenRect(int32_t display_id) {
 	const int screen = DefaultScreen(display);
 
 	return MMRectInt32Make(
-					(int32_t)0,
-					(int32_t)0,
+					(int32_t)0, (int32_t)0,
 					(int32_t)DisplayWidth(display, screen),
 	                (int32_t)DisplayHeight(display, screen));
 #elif defined(IS_WINDOWS)
