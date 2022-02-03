@@ -8,10 +8,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-// #include "../base/os.h"
 #if defined(USE_X11)
-	// #include <X11/Xlib.h>
-	// #include <X11/Xatom.h>
 	#include <X11/Xresource.h>
 #endif
 
@@ -79,7 +76,7 @@ intptr scaleX(){
 Bounds get_bounds(uintptr pid, uintptr isHwnd){
 	// Check if the window is valid
 	Bounds bounds;
-	if (!IsValid()) { return bounds; }
+	if (!is_valid()) { return bounds; }
 
     #if defined(IS_MACOSX)
 		// Bounds bounds;
@@ -153,7 +150,7 @@ Bounds get_bounds(uintptr pid, uintptr isHwnd){
 Bounds get_client(uintptr pid, uintptr isHwnd) {
 	// Check if the window is valid
 	Bounds bounds;
-	if (!IsValid()) { return bounds; }
+	if (!is_valid()) { return bounds; }
 
 	#if defined(IS_MACOSX)
 		return get_bounds(pid, isHwnd);
@@ -182,9 +179,7 @@ Bounds get_client(uintptr pid, uintptr isHwnd) {
 		// Coordinates must be translated
 		if (parent != attr.root) {
 			XTranslateCoordinates(rDisplay, win.XWin, attr.root, attr.x, attr.y, &x, &y, &parent);
-		}
-		// Coordinates can be left alone
-		else {
+		} else {
 			x = attr.x;
 			y = attr.y;
 		}
@@ -200,7 +195,7 @@ Bounds get_client(uintptr pid, uintptr isHwnd) {
 	#elif defined(IS_WINDOWS)
 		HWND hwnd;
 		if (isHwnd == 0) {
-			hwnd= GetHwndByPId(pid);
+			hwnd = GetHwndByPId(pid);
 		} else {
 			hwnd = (HWND)pid;
 		}

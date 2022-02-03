@@ -5,8 +5,7 @@
 /* Python versions under 2.5 don't support this macro, but it's not
  * terribly difficult to replicate: */
 #ifndef PyModule_AddIntMacro
-	#define PyModule_AddIntMacro(module, macro) \
-		PyModule_AddIntConstant(module, #macro, macro)
+	#define PyModule_AddIntMacro(module, macro) PyModule_AddIntConstant(module, #macro, macro)
 #endif /* PyModule_AddIntMacro */
 
 #if !defined(IS_MACOSX) && defined(__APPLE__) && defined(__MACH__)

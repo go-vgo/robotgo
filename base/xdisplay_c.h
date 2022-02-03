@@ -8,6 +8,13 @@ static int registered = 0;
 static char *displayName = NULL;
 static int hasDisplayNameChanged = 0;
 
+void XCloseMainDisplay(void) {
+	if (mainDisplay != NULL) {
+		XCloseDisplay(mainDisplay);
+		mainDisplay = NULL;
+	}
+}
+
 Display *XGetMainDisplay(void) {
 	/* Close the display if displayName has changed */
 	if (hasDisplayNameChanged) {
@@ -38,13 +45,6 @@ Display *XGetMainDisplay(void) {
 	}
 
 	return mainDisplay;
-}
-
-void XCloseMainDisplay(void) {
-	if (mainDisplay != NULL) {
-		XCloseDisplay(mainDisplay);
-		mainDisplay = NULL;
-	}
 }
 
 void setXDisplay(char *name) {

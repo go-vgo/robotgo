@@ -8,13 +8,13 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-// #include "../base/os.h"
 #include "pub.h"
 
 bool setHandle(uintptr handle);
-bool IsValid();
+bool is_valid();
 bool IsAxEnabled(bool options);
-MData GetActive(void);
+
+MData get_active(void);
 void initWindow();
 char* get_title_by_hand(MData m_data);
 void close_window_by_Id(MData m_data);
@@ -74,13 +74,13 @@ void set_handle_pid_mData(uintptr pid, uintptr isHwnd){
 	mData = win;
 }
 
-bool IsValid() {
+bool is_valid() {
 	initWindow(initHandle);
 	if (!IsAxEnabled(true)) {
 		printf("%s\n", "Window: Accessibility API is disabled!\n"
 		"Failed to enable access for assistive devices.");
 	}
-	MData actdata = GetActive();
+	MData actdata = get_active();
 
 #if defined(IS_MACOSX)
 	mData.CgID = actdata.CgID;
@@ -131,16 +131,13 @@ bool IsAxEnabled(bool options){
 	static dispatch_once_t once; dispatch_once (&once,
 	^{
 		// Open the framework
-		void* handle = dlopen("/System/Library/Frameworks/Application"
-			 "Services.framework/ApplicationServices", RTLD_LAZY);
+		void* handle = dlopen("/System/Library/Frameworks/Application" 
+			"Services.framework/ApplicationServices", RTLD_LAZY);
 
 		// Validate the handle
 		if (handle != NULL) {
-			*(void**) (&gAXIsProcessTrustedWithOptions) = 
-				dlsym (handle, "AXIsProcessTrustedWithOptions");
-
-			gkAXTrustedCheckOptionPrompt = 
-				(CFStringRef*) dlsym (handle, "kAXTrustedCheckOptionPrompt");
+			*(void**) (&gAXIsProcessTrustedWithOptions) = dlsym (handle, "AXIsProcessTrustedWithOptions");
+			gkAXTrustedCheckOptionPrompt = (CFStringRef*) dlsym (handle, "kAXTrustedCheckOptionPrompt");
 		}
 	});
 
@@ -207,11 +204,11 @@ bool setHandle(uintptr handle){
 	return false;
 #elif defined(USE_X11)
 	mData.XWin = (Window)handle;
-	if (handle == 0){
+	if (handle == 0) {
 		return true;
 	}
 
-	if (IsValid()){
+	if (is_valid()) {
 		return true;
 	}
 
@@ -223,7 +220,7 @@ bool setHandle(uintptr handle){
 		return true;
 	}
 
-	if (IsValid()) {
+	if (is_valid()) {
 		return true;
 	}
 
@@ -234,7 +231,7 @@ bool setHandle(uintptr handle){
 
 bool IsTopMost(void){
 	// Check the window validity
-	if (!IsValid()) {return false;}
+	if (!is_valid()) { return false; }
 #if defined(IS_MACOSX)
 	return false; // WARNING: Unavailable
 #elif defined(USE_X11)
@@ -248,7 +245,7 @@ bool IsTopMost(void){
 
 bool IsMinimized(void){
 	// Check the window validity
-	if (!IsValid()) {return false;}
+	if (!is_valid()) { return false; }
 #if defined(IS_MACOSX)
 	CFBooleanRef data = NULL;
 	// Determine whether the window is minimized
@@ -273,7 +270,7 @@ bool IsMinimized(void){
 //////
 bool IsMaximized(void){
 	// Check the window validity
-	if (!IsValid()) {return false;}
+	if (!is_valid()) { return false; }
 #if defined(IS_MACOSX)
 	return false; // WARNING: Unavailable
 #elif defined(USE_X11)
@@ -285,16 +282,15 @@ bool IsMaximized(void){
 #endif
 }
 
-void SetActive(const MData win) {
+void set_active(const MData win) {
 	// Check if the window is valid
-	if (!IsValid()) { return; }
+	if (!is_valid()) { return; }
 #if defined(IS_MACOSX)
 	// Attempt to raise the specified window object
 	if (AXUIElementPerformAction(win.AxID, kAXRaiseAction) != kAXErrorSuccess) {
 		pid_t pid = 0;
 		// Attempt to retrieve the PID of the window
-		if (AXUIElementGetPid(win.AxID, &pid)
-					!= kAXErrorSuccess || !pid) {return;}
+		if (AXUIElementGetPid(win.AxID, &pid) != kAXErrorSuccess || !pid) { return; }
 
 		// Ignore deprecated warnings
 		#pragma clang diagnostic push
@@ -309,7 +305,6 @@ void SetActive(const MData win) {
 
 		#pragma clang diagnostic pop
 	}
-
 #elif defined(USE_X11)
 	// Ignore X errors
 	XDismissErrors();
@@ -355,7 +350,7 @@ void SetActive(const MData win) {
 #endif
 }
 
-MData GetActive(void) {
+MData get_active(void) {
 #if defined(IS_MACOSX)
 	MData result;
 	// Ignore deprecated warnings
@@ -372,7 +367,7 @@ MData GetActive(void) {
 
 	// Create accessibility object using focused PID
 	AXUIElementRef focused = AXUIElementCreateApplication(pid);
-	if (focused == NULL) {return result; }// Verify
+	if (focused == NULL) { return result; } // Verify
 
 	AXUIElementRef element;
 	// Retrieve the currently focused window
@@ -449,10 +444,9 @@ MData GetActive(void) {
 #endif
 }
 
-
 void SetTopMost(bool state){
 	// Check window validity
-	if (!IsValid()) {return;}
+	if (!is_valid()) { return; }
 #if defined(IS_MACOSX)
 	// WARNING: Unavailable
 #elif defined(USE_X11)
@@ -465,9 +459,9 @@ void SetTopMost(bool state){
 #endif
 }
 
-void close_main_window (){
+void close_main_window () {
    // Check if the window is valid
-	if (!IsValid()) { return; }
+	if (!is_valid()) { return; }
 
 	close_window_by_Id(mData);
 }
@@ -477,11 +471,10 @@ void close_window_by_PId(uintptr pid, uintptr isHwnd){
 	close_window_by_Id(win);
 }
 
-
 // CloseWindow
 void close_window_by_Id(MData m_data){
 	// Check window validity
-	if (!IsValid()) { return; }
+	if (!is_valid()) { return; }
 #if defined(IS_MACOSX)
 	AXUIElementRef b = NULL;
 	// Retrieve the close button of this window
@@ -506,7 +499,7 @@ void close_window_by_Id(MData m_data){
 
 char* get_main_title(){
 	// Check if the window is valid
-	if (!IsValid()) { return "IsValid failed."; }
+	if (!is_valid()) { return "is_valid failed."; }
 	
 	return get_title_by_hand(mData);
 }
@@ -532,7 +525,7 @@ char* named(void *result) {
 
 char* get_title_by_hand(MData m_data){
 	// Check if the window is valid
-	if (!IsValid()) { return "IsValid failed."; }
+	if (!is_valid()) { return "is_valid failed."; }
 #if defined(IS_MACOSX)
 	CFStringRef data = NULL;
 	// Determine the current title of the window
@@ -591,16 +584,15 @@ char* get_title_by_hand(MData m_data){
 #endif
 }
 
-int32_t WGetPID(void) {
+int32_t get_PID(void) {
 	// Check window validity
-	if (!IsValid()) { return 0; }
+	if (!is_valid()) { return 0; }
 #if defined(IS_MACOSX)
 	pid_t pid = 0;
 	// Attempt to retrieve the window pid
 	if (AXUIElementGetPid(mData.AxID, &pid)== kAXErrorSuccess) {
 		return pid;
 	}
-
 	return 0;
 #elif defined(USE_X11)
 	// Ignore X errors
@@ -620,4 +612,3 @@ int32_t WGetPID(void) {
 	return id;
 #endif
 }
-

@@ -52,7 +52,6 @@ MMRGBHex get_px_color(int32_t x, int32_t y, int32_t display_id) {
 	}
 
 	bitmap = copyMMBitmapFromDisplayInRect(MMRectInt32Make(x, y, 1, 1), display_id);
-	// bitmap = MMRectMake(x, y, 1, 1);
 	color = MMRGBHexAtPoint(bitmap, 0, 0);
 	destroyMMBitmap(bitmap);
 
@@ -64,12 +63,6 @@ char* get_pixel_color(int32_t x, int32_t y, int32_t display_id) {
 
 	char* s = pad_hex(color);
 	return s;
-}
-
-MMSizeInt32 get_screen_size() {
-	// Get display size.
-	MMSizeInt32 displaySize = getMainDisplaySize();
-	return displaySize;
 }
 
 char* set_XDisplay_name(char* name) {
@@ -110,7 +103,6 @@ uint32_t get_num_displays() {
 		return 0;
 	#endif
 }
-
 
 void bitmap_dealloc(MMBitmapRef bitmap) {
 	if (bitmap != NULL) {

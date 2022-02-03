@@ -46,7 +46,6 @@ typedef struct _Bounds Bounds;
 	static AXUIElementRef GetUIElement(CGWindowID win){
 		intptr pid = 0;
 		// double_t pid = 0;
-
 		// Create array storing window
 		CGWindowID window[1] = { win };
 		CFArrayRef wlist = CFArrayCreate(NULL, (const void**)window, 1, NULL);
@@ -59,7 +58,6 @@ typedef struct _Bounds Bounds;
 		if (info != NULL && CFArrayGetCount(info) > 0) {
 			// Retrieve description from info array
 			CFDictionaryRef desc = (CFDictionaryRef)CFArrayGetValueAtIndex(info, 0);
-
 			// Get window PID
 			CFNumberRef data = (CFNumberRef) CFDictionaryGetValue(desc, kCGWindowOwnerPID);
 			if (data != NULL) {
@@ -269,7 +267,6 @@ typedef struct _Bounds Bounds;
 
 
 #elif defined(IS_WINDOWS)
-	//
 	void win_min(HWND hwnd, bool state){
         if (state) {
             ShowWindow(hwnd, SW_MINIMIZE);

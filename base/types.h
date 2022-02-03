@@ -6,6 +6,7 @@
 #include "inline_keywords.h" /* For H_INLINE */
 #include <stddef.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 /* Some generic, cross-platform types. */
 #ifdef RobotGo_64
