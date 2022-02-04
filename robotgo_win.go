@@ -42,14 +42,24 @@ func SendMsg(hwnd win.HWND, msg uint32, wParam, lParam uintptr) uintptr {
 	return win.SendMessage(hwnd, msg, wParam, lParam)
 }
 
-// SetActiveWindow set window active with hwnd
-func SetActiveWindow(hwnd win.HWND) win.HWND {
+// SetActive set window active with hwnd
+func SetActive(hwnd win.HWND) win.HWND {
 	return win.SetActiveWindow(hwnd)
 }
 
 // SetFocus set window focus with hwnd
 func SetFocus(hwnd win.HWND) win.HWND {
 	return win.SetFocus(hwnd)
+}
+
+// GetMian get the main display hwnd
+func GetMain() win.HWND {
+	return win.GetActiveWindow()
+}
+
+// GetMianId get the main display id
+func GetMainId() int {
+	return int(GetMain())
 }
 
 // ScaleF get the system scale val

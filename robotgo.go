@@ -215,6 +215,11 @@ func GetMouseColor(displayId ...int) string {
 	return GetPixelColor(x, y, displayId...)
 }
 
+// IsMain is main display
+func IsMain(displayId int) bool {
+	return displayId == GetMainId()
+}
+
 func displayIdx(id ...int) int {
 	display := -1
 	if DisplayID != -1 {

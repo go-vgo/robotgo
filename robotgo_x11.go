@@ -191,6 +191,25 @@ func DisplaysNum() int {
 	return int(reply.Number)
 }
 
+// GetMianId get the main display id
+func GetMainId() int {
+	conn, err := xgb.NewConn()
+	if err != nil {
+		return -1
+	}
+
+	setup := xproto.Setup(conn)
+	defaultScreen := setup.DefaultScreen(conn)
+	id := -1
+	for i, screen := range setup.Roots {
+		if defaultScreen.Root == screen.Root {
+			id = i
+			break
+		}
+	}
+	return id
+}
+
 // Alert show a alert window
 // Displays alert with the attributes.
 // If cancel button is not given, only the default button is displayed
