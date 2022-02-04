@@ -42,8 +42,8 @@ func SendMsg(hwnd win.HWND, msg uint32, wParam, lParam uintptr) uintptr {
 	return win.SendMessage(hwnd, msg, wParam, lParam)
 }
 
-// SetActive set window active with hwnd
-func SetActive(hwnd win.HWND) win.HWND {
+// SetActiveWindow set window active with hwnd
+func SetActiveWindow(hwnd win.HWND) win.HWND {
 	return win.SetActiveWindow(hwnd)
 }
 
