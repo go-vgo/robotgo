@@ -169,11 +169,11 @@ void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags) {
 #endif
 }
 
-void tapKeyCode(MMKeyCode code, MMKeyFlags flags){
-	toggleKeyCode(code, true, flags);
-	microsleep(5.0);
-	toggleKeyCode(code, false, flags);
-}
+// void tapKeyCode(MMKeyCode code, MMKeyFlags flags){
+// 	toggleKeyCode(code, true, flags);
+// 	microsleep(5.0);
+// 	toggleKeyCode(code, false, flags);
+// }
 
 #if defined(USE_X11)
 	bool toUpper(char c) {
@@ -221,11 +221,11 @@ void toggleKey(char c, const bool down, MMKeyFlags flags){
 	toggleKeyCode(keyCode, down, flags);
 }
 
-void tapKey(char c, MMKeyFlags flags){
-	toggleKey(c, true, flags);
-	microsleep(5.0);
-	toggleKey(c, false, flags);
-}
+// void tapKey(char c, MMKeyFlags flags){
+// 	toggleKey(c, true, flags);
+// 	microsleep(5.0);
+// 	toggleKey(c, false, flags);
+// }
 
 #if defined(IS_MACOSX)
 void toggleUnicode(UniChar ch, const bool down) {
@@ -250,9 +250,7 @@ void toggleUnicode(UniChar ch, const bool down) {
 	#define toggleUniKey(c, down) toggleKey(c, down, MOD_NONE)
 
 	int input_utf(const char *utf) {
-		Display *dpy;
-		dpy = XOpenDisplay(NULL);
-
+		Display *dpy = XOpenDisplay(NULL);
 		KeySym sym = XStringToKeysym(utf);
 		// KeySym sym = XKeycodeToKeysym(dpy, utf);
 

@@ -68,7 +68,9 @@ func get() {
 
 func toggleAndScroll() {
 	// scrolls the mouse either up
-	// robotgo.ScrollMouse(10, "up")
+	robotgo.ScrollMouse(10, "up")
+	robotgo.ScrollMouse(10, "right")
+
 	robotgo.Scroll(100, 10)
 	robotgo.Scroll(0, -10)
 

@@ -128,7 +128,9 @@ func Sleep(tm int) {
 	time.Sleep(time.Duration(tm) * time.Second)
 }
 
-// MicroSleep time C.microsleep(tm), use the MilliSleep()
+// Deprecated: use the MilliSleep(),
+//
+// MicroSleep time C.microsleep(tm)
 func MicroSleep(tm float64) {
 	C.microsleep(C.double(tm))
 }
@@ -738,6 +740,34 @@ func Scroll(x, y int, args ...int) {
 
 	C.scrollMouseXY(cx, cy)
 	MilliSleep(MouseSleep + msDelay)
+}
+
+// ScrollMouse scroll the mouse to (x, "up")
+// supported: "up", "down", "left", "right"
+//
+// Examples:
+//	robotgo.ScrollMouse(10, "down")
+//	robotgo.ScrollMouse(10, "up")
+func ScrollMouse(x int, direction ...string) {
+	d := "down"
+	if len(direction) > 0 {
+		d = direction[0]
+	}
+
+	if d == "down" {
+		Scroll(0, -x)
+	}
+	if d == "up" {
+		Scroll(0, x)
+	}
+
+	if d == "left" {
+		Scroll(x, 0)
+	}
+	if d == "right" {
+		Scroll(-x, 0)
+	}
+	// MilliSleep(MouseSleep)
 }
 
 // ScrollSmooth scroll the mouse smooth,

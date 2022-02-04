@@ -85,7 +85,7 @@ bool is_valid() {
 #if defined(IS_MACOSX)
 	mData.CgID = actdata.CgID;
 	mData.AxID = actdata.AxID;
-	if (mData.CgID == 0 || mData.AxID == 0){ return false; }
+	if (mData.CgID == 0 || mData.AxID == 0) { return false; }
 
 	CFTypeRef r = NULL;
 	// Attempt to get the window role
@@ -153,7 +153,6 @@ bool IsAxEnabled(bool options){
 
 		// Determine whether the process is actually trusted
 		bool result = (*gAXIsProcessTrustedWithOptions)(o);
-
 		// Free memory
 		CFRelease(o);
 		return result;
@@ -336,7 +335,6 @@ void set_active(const MData win) {
 	} else {
 		// Attempt to raise the specified window
 		XRaiseWindow(rDisplay, win.XWin);
-
 		// Set the specified window's input focus
 		XSetInputFocus(rDisplay, win.XWin, RevertToParent, CurrentTime);
 	}

@@ -158,7 +158,11 @@ import (
 )
 
 func main() {
-  // robotgo.ScrollMouse(10, "up")
+  robotgo.MouseSleep = 100
+
+  robotgo.ScrollMouse(10, "up")
+  robotgo.ScrollMouse(20, "right")
+
   robotgo.Scroll(0, -10)
   robotgo.Scroll(100, 0)
 
@@ -166,7 +170,6 @@ func main() {
   robotgo.ScrollSmooth(-10, 6)
   // robotgo.ScrollRelative(10, -100)
 
-  robotgo.MouseSleep = 100
   robotgo.Move(10, 20)
   robotgo.MoveRelative(0, -10)
   robotgo.Drag(10, 10)
@@ -193,7 +196,7 @@ import (
 
 func main() {
   robotgo.TypeStr("Hello World")
-  robotgo.TypeStr("だんしゃり", 1.0)
+  robotgo.TypeStr("だんしゃり", 1)
   // robotgo.TypeStr("テストする")
 
   robotgo.TypeStr("Hi galaxy. こんにちは世界.")
