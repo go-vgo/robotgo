@@ -49,26 +49,32 @@ func get() {
 func findIds() {
 	// find the process id by the process name
 	fpid, err := robotgo.FindIds("Google")
-	if err == nil {
-		fmt.Println("pids...", fpid)
-		if len(fpid) > 0 {
-			robotgo.ActivePID(fpid[0])
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
-			tl := robotgo.GetTitle(fpid[0])
-			fmt.Println("pid[0] title is: ", tl)
-
-			x, y, w, h := robotgo.GetBounds(fpid[0])
-			fmt.Println("GetBounds is: ", x, y, w, h)
-
-			// Windows
-			// hwnd := robotgo.FindWindow("google")
-			// hwnd := robotgo.GetHWND()
-			robotgo.MinWindow(fpid[0])
-			robotgo.MaxWindow(fpid[0])
-			robotgo.CloseWindow(fpid[0])
-
-			robotgo.Kill(fpid[0])
+	fmt.Println("pids...", fpid)
+	if len(fpid) > 0 {
+		err = robotgo.ActivePID(fpid[0])
+		if err != nil {
+			fmt.Println(err)
 		}
+
+		tl := robotgo.GetTitle(fpid[0])
+		fmt.Println("pid[0] title is: ", tl)
+
+		x, y, w, h := robotgo.GetBounds(fpid[0])
+		fmt.Println("GetBounds is: ", x, y, w, h)
+
+		// Windows
+		// hwnd := robotgo.FindWindow("google")
+		// hwnd := robotgo.GetHWND()
+		robotgo.MinWindow(fpid[0])
+		robotgo.MaxWindow(fpid[0])
+		robotgo.CloseWindow(fpid[0])
+
+		robotgo.Kill(fpid[0])
 	}
 }
 

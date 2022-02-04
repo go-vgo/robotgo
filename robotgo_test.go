@@ -68,7 +68,9 @@ func TestDragMouse(t *testing.T) {
 }
 
 func TestScrollMouse(t *testing.T) {
-	// ScrollMouse(120, "up")
+	ScrollMouse(120, "up")
+	ScrollMouse(100, "right")
+
 	Scroll(0, 120)
 	MilliSleep(100)
 
@@ -105,6 +107,12 @@ func TestMouseToggle(t *testing.T) {
 	tt.Nil(t, e)
 
 	e = Toggle("right", "up")
+	tt.Nil(t, e)
+
+	e = MouseDown("left")
+	tt.Nil(t, e)
+
+	e = MouseUp("left")
 	tt.Nil(t, e)
 }
 
@@ -177,6 +185,10 @@ func TestImage(t *testing.T) {
 
 	tt.Equal(t, 20, Width(img1))
 	tt.Equal(t, 20, Height(img1))
+
+	bit1 := ImgToBitmap(img1)
+	tt.Equal(t, bit1.Width, Width(img1))
+	tt.Equal(t, bit1.Height, Height(img1))
 }
 
 func TestPs(t *testing.T) {

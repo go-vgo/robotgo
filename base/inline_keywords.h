@@ -1,7 +1,6 @@
 #pragma once
 
-/* A complicated, portable model for declaring inline functions in
- * header files. */
+/* A complicated, portable model for declaring inline functions in header files. */
 #if !defined(H_INLINE)
     #if defined(__GNUC__)
         #define H_INLINE static __inline__ __attribute__((always_inline))

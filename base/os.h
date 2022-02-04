@@ -2,12 +2,6 @@
 #ifndef OS_H
 #define OS_H
 
-/* Python versions under 2.5 don't support this macro, but it's not
- * terribly difficult to replicate: */
-#ifndef PyModule_AddIntMacro
-	#define PyModule_AddIntMacro(module, macro) PyModule_AddIntConstant(module, #macro, macro)
-#endif /* PyModule_AddIntMacro */
-
 #if !defined(IS_MACOSX) && defined(__APPLE__) && defined(__MACH__)
 	#define IS_MACOSX
 #endif /* IS_MACOSX */
@@ -29,8 +23,7 @@
 	#error "Sorry, this platform isn't supported yet!"
 #endif
 
-/* Interval to align by for large buffers (e.g. bitmaps). */
-/* Must be a power of 2. */
+/* Interval to align by for large buffers (e.g. bitmaps). Must be a power of 2. */
 #ifndef BYTE_ALIGN
 	#define BYTE_ALIGN 4 /* Bytes to align pixel buffers to. */
 	/* #include <stddef.h> */

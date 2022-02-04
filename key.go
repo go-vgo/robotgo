@@ -575,13 +575,13 @@ func inputUTF(str string) {
 
 // TypeStr send a string, support UTF-8
 //
-// robotgo.TypeStr(string: The string to send, float64: microsleep time, x11 option)
+// robotgo.TypeStr(string: The string to send, int: milli_sleep time, x11 option)
 //
 // Examples:
 //	robotgo.TypeStr("abc@123, hi, こんにちは")
 //
-func TypeStr(str string, args ...float64) {
-	var tm, tm1 = 0.0, 7.0
+func TypeStr(str string, args ...int) {
+	var tm, tm1 = 0, 7
 
 	if len(args) > 0 {
 		tm = args[0]
@@ -599,10 +599,10 @@ func TypeStr(str string, args ...float64) {
 				UnicodeType(ustr)
 			} else {
 				inputUTF(strUc[i])
-				MicroSleep(tm1)
+				MilliSleep(tm1)
 			}
 
-			MicroSleep(tm)
+			MilliSleep(tm)
 		}
 		return
 	}
@@ -611,7 +611,7 @@ func TypeStr(str string, args ...float64) {
 		ustr := uint32(CharCodeAt(str, i))
 		UnicodeType(ustr)
 		// if len(args) > 0 {
-		MicroSleep(tm)
+		MilliSleep(tm)
 		// }
 	}
 	MilliSleep(KeySleep)
@@ -635,7 +635,7 @@ func PasteStr(str string) error {
 // TypeStrDelay type string delayed
 func TypeStrDelay(str string, delay int) {
 	TypeStr(str)
-	Sleep(delay)
+	MilliSleep(delay)
 }
 
 // Deprecated: use the TypeStr(),

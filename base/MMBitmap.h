@@ -22,8 +22,8 @@ typedef MMBitmap *MMBitmapRef;
 #define MMBitmapPointInBounds(image, p) ((p).x < (image)->width && (p).y < (image)->height)
 
 /* Get pointer to pixel of MMBitmapRef. No bounds checking is performed */
-#define MMRGBColorRefAtPoint(image, x, y) ( \
-			MMRGBColor *)(assert(MMBitmapPointInBounds(image, MMPointInt32Make(x, y))), \
+#define MMRGBColorRefAtPoint(image, x, y) \
+			(MMRGBColor *)(assert(MMBitmapPointInBounds(image, MMPointInt32Make(x, y))), \
 	        ((image)->imageBuffer) + (((image)->bytewidth * (y)) + ((x) * (image)->bytesPerPixel)))
 
 /* Dereference pixel of MMBitmapRef. Again, no bounds checking is performed. */
