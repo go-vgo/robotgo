@@ -74,7 +74,7 @@ Or the other GCC (But you should compile the "libpng" with yourself when use the
 ```
 GCC
 
-X11 with the XTest extension (and the Xtst library)
+X11 with the XTest extension (the Xtst library)
 
 
 "Bitmap":
@@ -514,7 +514,7 @@ Some discussions and questions, please see [issues/228](https://github.com/go-vg
 - Better multiscreen support
 - Waylad supports
 - Update Window Handle
-- Try support Android, maybe support IOS
+- Try support Android and IOS
 
 ## Contributors
 
