@@ -58,13 +58,6 @@ MMRGBHex get_px_color(int32_t x, int32_t y, int32_t display_id) {
 	return color;
 }
 
-char* get_pixel_color(int32_t x, int32_t y, int32_t display_id) {
-	MMRGBHex color = get_px_color(x, y, display_id);
-
-	char* s = pad_hex(color);
-	return s;
-}
-
 char* set_XDisplay_name(char* name) {
 	#if defined(USE_X11)
 		setXDisplay(name);

@@ -74,15 +74,18 @@ Or the other GCC (But you should compile the "libpng" with yourself when use the
 ```
 GCC
 
+X11 with the XTest extension (and the Xtst library)
+
+
+"Bitmap":
+
 libpng (Just used by bitmap)
 
-X11 with the XTest extension (also known as the Xtst library)
-
-Event:
+"Event":
 
 xcb, xkb, libxkbcommon
 
-Clipboard:
+"Clipboard":
 
 xsel xclip
 ```
@@ -172,7 +175,7 @@ func main() {
 
   robotgo.Move(10, 20)
   robotgo.MoveRelative(0, -10)
-  robotgo.Drag(10, 10)
+  robotgo.DragSmooth(10, 10)
 
   robotgo.Click("wheelRight")
   robotgo.Click("left", true)
@@ -208,9 +211,9 @@ func main() {
   robotgo.KeySleep = 100
   robotgo.KeyTap("enter")
   // robotgo.TypeStr("en")
-  robotgo.KeyTap("i", "alt", "command")
+  robotgo.KeyTap("i", "alt", "cmd")
 
-  arr := []string{"alt", "command"}
+  arr := []string{"alt", "cmd"}
   robotgo.KeyTap("i", arr)
 
   robotgo.MilliSleep(100)
@@ -507,7 +510,9 @@ Some discussions and questions, please see [issues/228](https://github.com/go-vg
 * [Contributors](https://github.com/go-vgo/robotgo/graphs/contributors)
 
 ## Plans
-- Update Find an image on screen, read pixels from an image
+- Refactor some C code to Go (such as x11, windows)
+- Better multiscreen support
+- Waylad supports
 - Update Window Handle
 - Try support Android, maybe support IOS
 

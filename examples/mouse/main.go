@@ -25,8 +25,8 @@ func move() {
 	// move the mouse to 100, 200
 	robotgo.Move(100, 200)
 
-	robotgo.Drag(10, 10)
-	robotgo.Drag(20, 20, "right")
+	// robotgo.Drag(10, 10)
+	// robotgo.Drag(20, 20, "right")
 	//
 	robotgo.DragSmooth(10, 10)
 	robotgo.DragSmooth(100, 200, 1.0, 100.0)
