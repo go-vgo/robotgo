@@ -621,7 +621,7 @@ func MoveSmoothRelative(x, y int, args ...interface{}) {
 	MoveSmooth(mx, my, args...)
 }
 
-// GetMousePos get the mouse's portion return x, y
+// GetMousePos get the mouse's position return x, y
 func GetMousePos() (int, int) {
 	pos := C.getMousePos()
 	x := int(pos.x)
