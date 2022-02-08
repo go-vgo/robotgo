@@ -394,6 +394,17 @@ func ToRGBA(bit CBitmap) *image.RGBA {
 	return ToRGBAGo(bmp1)
 }
 
+// ImgToCBitmap trans image.Image to CBitmap
+func ImgToCBitmap(img image.Image) CBitmap {
+	return ToCBitmap(ImgToBitmap(img))
+}
+
+// ByteToCBitmap trans []byte to CBitmap
+func ByteToCBitmap(by []byte) CBitmap {
+	img, _ := ByteToImg(by)
+	return ImgToCBitmap(img)
+}
+
 // SetXDisplayName set XDisplay name (Linux)
 func SetXDisplayName(name string) error {
 	cname := C.CString(name)
