@@ -39,6 +39,7 @@ func typeStr() {
 func keyTap() {
 	// press "enter"
 	robotgo.KeyTap("enter")
+	robotgo.KeyTap(robotgo.Enter)
 	robotgo.KeySleep = 200
 	robotgo.KeyTap("a")
 	robotgo.MilliSleep(100)
@@ -53,7 +54,7 @@ func keyTap() {
 	robotgo.KeyTap("h", "cmd")
 
 	// press "i", "alt", "command" Key combination
-	robotgo.KeyTap("i", "alt", "command")
+	robotgo.KeyTap(robotgo.KeyI, robotgo.Alt, robotgo.Cmd)
 	robotgo.KeyTap("i", "alt", "cmd")
 
 	arr := []string{"alt", "cmd"}
@@ -74,7 +75,7 @@ func keyTap() {
 
 func keyToggle() {
 	// robotgo.KeySleep = 150
-	robotgo.KeyToggle("a", "down")
+	robotgo.KeyToggle(robotgo.KeyA)
 	robotgo.KeyToggle("a", "down", "alt")
 	robotgo.Sleep(1)
 
@@ -82,7 +83,7 @@ func keyToggle() {
 	robotgo.MilliSleep(100)
 	robotgo.KeyToggle("q", "up", "alt", "cmd", "shift")
 
-	err := robotgo.KeyToggle("enter", "down")
+	err := robotgo.KeyToggle(robotgo.Enter)
 	if err != nil {
 		fmt.Println("robotgo.KeyToggle run error is: ", err)
 	}
