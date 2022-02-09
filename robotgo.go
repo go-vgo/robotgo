@@ -375,7 +375,7 @@ func ToCBitmap(bit Bitmap) CBitmap {
 		(*C.uint8_t)(bit.ImgBuf),
 		C.int32_t(bit.Width),
 		C.int32_t(bit.Height),
-		C.size_t(bit.Bytewidth),
+		C.int32_t(bit.Bytewidth),
 		C.uint8_t(bit.BitsPixel),
 		C.uint8_t(bit.BytesPerPixel),
 	)

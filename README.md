@@ -270,7 +270,7 @@ func main() {
 }
 ```
 
-#### [Bitmap](https://github.com/go-vgo/robotgo/blob/master/examples/bitmap/main.go)
+#### [Bitmap](https://github.com/vcaesar/bitmap/blob/master/examples/main.go)
 
 ```Go
 package main
@@ -370,7 +370,7 @@ func opencv() {
 }
 ```
 
-#### [Event](https://github.com/go-vgo/robotgo/blob/master/examples/gohook/main.go)
+#### [Event](https://github.com/robotn/gohook/blob/master/examples/main.go)
 
 ```Go
 package main

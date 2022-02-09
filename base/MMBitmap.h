@@ -11,7 +11,7 @@ struct _MMBitmap {
 	uint8_t *imageBuffer;  /* Pixels stored in Quad I format; */
 	int32_t width;          /* Never 0, unless image is NULL. */
 	int32_t height;         /* Never 0, unless image is NULL. */
-	size_t bytewidth;      /* The aligned width (width + padding). */
+	int32_t bytewidth;      /* The aligned width (width + padding). */
 	uint8_t bitsPerPixel;  /* Should be either 24 or 32. */
 	uint8_t bytesPerPixel; /* For convenience; should be bitsPerPixel / 8. */
 };

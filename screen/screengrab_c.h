@@ -35,8 +35,9 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id) 
 	buffer = malloc(bufferSize);
 	CFDataGetBytes(imageData, CFRangeMake(0, bufferSize), buffer);
 
-	bitmap = createMMBitmap_c(buffer, CGImageGetWidth(image), CGImageGetHeight(image),
-		CGImageGetBytesPerRow(image), CGImageGetBitsPerPixel(image),CGImageGetBitsPerPixel(image) / 8);
+	bitmap = createMMBitmap_c(buffer, 
+			CGImageGetWidth(image), CGImageGetHeight(image), CGImageGetBytesPerRow(image), 
+			CGImageGetBitsPerPixel(image), CGImageGetBitsPerPixel(image) / 8);
 
 	CFRelease(imageData);
 	CGImageRelease(image);
