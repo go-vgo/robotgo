@@ -140,8 +140,9 @@ void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags) {
 		assert(keyEvent != NULL);
 
 		CGEventSetType(keyEvent, down ? kCGEventKeyDown : kCGEventKeyUp);
-		// CGEventSetFlags(keyEvent, flags);
-		CGEventSetFlags(keyEvent, (int) flags);
+		if (flags != 0) {
+			CGEventSetFlags(keyEvent, (CGEventFlags) flags);
+		}
 		CGEventPost(kCGSessionEventTap, keyEvent);
 		CFRelease(keyEvent);
 	}

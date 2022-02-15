@@ -384,7 +384,7 @@ func keyToggles(k string, keyArr []string) error {
 		down = false
 	}
 
-	flags := getFlagsFromValue(keyArr)
+	flags := getFlagsFromValue(keyArr[1:])
 	key, err := checkKeyCodes(k)
 	if err != nil {
 		return err
