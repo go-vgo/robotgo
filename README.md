@@ -270,7 +270,7 @@ func main() {
 }
 ```
 
-#### [Bitmap](https://github.com/vcaesar/bitmap/blob/master/examples/main.go)
+#### [Bitmap](https://github.com/vcaesar/bitmap/blob/main/examples/main.go)
 
 ```Go
 package main
