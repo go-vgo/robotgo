@@ -1,0 +1,37 @@
+<h1>Type and check the console</h1>
+
+<script>
+    window.onclick = function(events) {
+        console.log({
+            event: "click",
+            altKey: events.altKey,
+            shiftKey: events.shiftKey
+        });
+    };
+
+    window.onkeydown = function(events) {
+        console.log({
+            event: "keydown",
+            key: events.key,
+            keyCode: events.keyCode,
+            keyChar: events.charCode
+        });
+    };
+
+    window.onkeyup = function(events) {
+        console.log({
+            event: "keyup",
+            key: events.key,
+            keyCode: events.keyCode,
+            keyChar: events.charCode
+        });
+    };
+
+    window.onmousemove = function(events) {
+        console.log({
+            event: "move",
+            x: events.x,
+            y: events.y
+        });
+    }
+</script>
