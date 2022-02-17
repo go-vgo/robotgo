@@ -10,7 +10,7 @@
 
 #include "../base/types.h"
 #include "../base/rgb.h"
-#include "../base/win32.h"
+#include "../base/pubs.h"
 #include "screengrab_c.h"
 #include "screen_c.h"
 #include <stdio.h>

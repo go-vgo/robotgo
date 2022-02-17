@@ -14,8 +14,8 @@
 
 /* Convenience wrappers around ugly APIs. */
 #if defined(IS_WINDOWS)
-	void WIN32_KEY_EVENT_WAIT(MMKeyCode key, DWORD flags) {
-		win32KeyEvent(key, flags); 
+	void WIN32_KEY_EVENT_WAIT(MMKeyCode key, DWORD flags, int32_t pid) {
+		win32KeyEvent(key, flags, pid); 
 		Sleep(DEADBEEF_RANDRANGE(0, 1));
 	}
 #elif defined(USE_X11)
@@ -31,6 +31,15 @@
 #endif
 
 #if defined(IS_MACOSX)
+	int SendTo(int32_t pid, CGEventRef event) {
+		if (pid != 0) {
+			CGEventPostToPid(pid, event);
+		} else {
+			CGEventPost(kCGSessionEventTap, event);
+		}
+		return 0;
+	}
+
 static io_connect_t _getAuxiliaryKeyDriver(void) {
 	static mach_port_t sEventDrvrRef = 0;
 	mach_port_t masterPort, service, iter;
@@ -56,7 +65,7 @@ static io_connect_t _getAuxiliaryKeyDriver(void) {
 #endif
 
 #if defined(IS_WINDOWS)
-void win32KeyEvent(int key, MMKeyFlags flags) {
+void win32KeyEvent(int key, MMKeyFlags flags, int32_t pid) {
 	int scan = MapVirtualKey(key & 0xff, MAPVK_VK_TO_VSC);
 
 	/* Set the scan code for extended keys */
@@ -117,7 +126,7 @@ void win32KeyEvent(int key, MMKeyFlags flags) {
 }
 #endif
 
-void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags) {
+void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags, int32_t pid) {
 #if defined(IS_MACOSX)
 	/* The media keys all have 1000 added to them to help us detect them. */
 	if (code >= 1000) {
@@ -143,19 +152,20 @@ void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags) {
 		if (flags != 0) {
 			CGEventSetFlags(keyEvent, (CGEventFlags) flags);
 		}
-		CGEventPost(kCGSessionEventTap, keyEvent);
+		
+		SendTo(pid, keyEvent);
 		CFRelease(keyEvent);
 	}
 #elif defined(IS_WINDOWS)
 	const DWORD dwFlags = down ? 0 : KEYEVENTF_KEYUP;
 
 	/* Parse modifier keys. */
-	if (flags & MOD_META) { WIN32_KEY_EVENT_WAIT(K_META, dwFlags); }
-	if (flags & MOD_ALT) { WIN32_KEY_EVENT_WAIT(K_ALT, dwFlags); }
-	if (flags & MOD_CONTROL) { WIN32_KEY_EVENT_WAIT(K_CONTROL, dwFlags); }
-	if (flags & MOD_SHIFT) { WIN32_KEY_EVENT_WAIT(K_SHIFT, dwFlags); }
+	if (flags & MOD_META) { WIN32_KEY_EVENT_WAIT(K_META, dwFlags, pid); }
+	if (flags & MOD_ALT) { WIN32_KEY_EVENT_WAIT(K_ALT, dwFlags, pid); }
+	if (flags & MOD_CONTROL) { WIN32_KEY_EVENT_WAIT(K_CONTROL, dwFlags, pid); }
+	if (flags & MOD_SHIFT) { WIN32_KEY_EVENT_WAIT(K_SHIFT, dwFlags, pid); }
 
-	win32KeyEvent(code, dwFlags);
+	win32KeyEvent(code, dwFlags, pid);
 #elif defined(USE_X11)
 	Display *display = XGetMainDisplay();
 	const Bool is_press = down ? True : False; /* Just to be safe. */
@@ -193,7 +203,7 @@ void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags) {
 	}
 #endif
 
-void toggleKey(char c, const bool down, MMKeyFlags flags){
+void toggleKey(char c, const bool down, MMKeyFlags flags, int32_t pid) {
 	MMKeyCode keyCode = keyCodeForChar(c);
 
 	//Prevent unused variable warning for Mac and Linux.
@@ -219,7 +229,7 @@ void toggleKey(char c, const bool down, MMKeyFlags flags){
 		keyCode = keyCode & 0xff; // Mask out modifiers.
 	#endif
 
-	toggleKeyCode(keyCode, down, flags);
+	toggleKeyCode(keyCode, down, flags, pid);
 }
 
 // void tapKey(char c, MMKeyFlags flags){
@@ -229,7 +239,7 @@ void toggleKey(char c, const bool down, MMKeyFlags flags){
 // }
 
 #if defined(IS_MACOSX)
-void toggleUnicode(UniChar ch, const bool down) {
+void toggleUnicode(UniChar ch, const bool down, int32_t pid) {
 	/* This function relies on the convenient CGEventKeyboardSetUnicodeString(), 
 	convert characters to a keycode, but does not support adding modifier flags. 
 	It is only used in typeString().
@@ -242,13 +252,13 @@ void toggleUnicode(UniChar ch, const bool down) {
 
 	CGEventKeyboardSetUnicodeString(keyEvent, 1, &ch);
 
-	CGEventPost(kCGSessionEventTap, keyEvent);
+	SendTo(pid, keyEvent);
 	CFRelease(keyEvent);
 }
 #endif
 
 #if defined(USE_X11)
-	#define toggleUniKey(c, down) toggleKey(c, down, MOD_NONE)
+	#define toggleUniKey(c, down) toggleKey(c, down, MOD_NONE, 0)
 
 	int input_utf(const char *utf) {
 		Display *dpy = XOpenDisplay(NULL);
@@ -280,13 +290,13 @@ void toggleUnicode(UniChar ch, const bool down) {
 #endif
 
 // unicode type
-void unicodeType(const unsigned value){
+void unicodeType(const unsigned value, int32_t pid){
 	#if defined(IS_MACOSX)
 		UniChar ch = (UniChar)value; // Convert to unsigned char
 
-		toggleUnicode(ch, true);
+		toggleUnicode(ch, true, pid);
 		microsleep(5.0);
-		toggleUnicode(ch, false);
+		toggleUnicode(ch, false, pid);
 	#elif defined(IS_WINDOWS)
 		INPUT input[2];
         memset(input, 0, sizeof(input));
