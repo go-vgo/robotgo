@@ -591,8 +591,12 @@ func CharCodeAt(s string, n int) rune {
 }
 
 // UnicodeType tap uint32 unicode
-func UnicodeType(str uint32, pid int) {
+func UnicodeType(str uint32, args ...int) {
 	cstr := C.uint(str)
+	pid := 0
+	if len(args) > 0 {
+		pid = args[0]
+	}
 	C.unicodeType(cstr, C.int32_t(pid))
 }
 
