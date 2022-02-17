@@ -258,7 +258,7 @@ void toggleUnicode(UniChar ch, const bool down, int32_t pid) {
 #endif
 
 #if defined(USE_X11)
-	#define toggleUniKey(c, down) toggleKey(c, down, MOD_NONE)
+	#define toggleUniKey(c, down) toggleKey(c, down, MOD_NONE, 0)
 
 	int input_utf(const char *utf) {
 		Display *dpy = XOpenDisplay(NULL);

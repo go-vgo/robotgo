@@ -37,7 +37,7 @@
 
 #if defined(IS_WINDOWS)
 	/* Send win32 key event for given key. */
-	void win32KeyEvent(int key, MMKeyFlags flags);
+	void win32KeyEvent(int key, MMKeyFlags flags, int32_t pid);
 #endif
 
 #endif /* KEYPRESS_H */
