@@ -23,6 +23,7 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"unicode"
 	"unsafe"
 
 	"github.com/go-vgo/robotgo/clipboard"
@@ -444,12 +445,16 @@ func toErr(str *C.char) error {
 //	arr := []string{"alt", "command"}
 //	robotgo.KeyTap("i", arr)
 //
-func KeyTap(tapKey string, args ...interface{}) error {
+func KeyTap(key string, args ...interface{}) error {
 	var keyArr []string
 
-	tapKey = strings.ToLower(tapKey)
-	if _, ok := Special[tapKey]; ok {
-		tapKey = Special[tapKey]
+	if len(key) > 0 && unicode.IsUpper([]rune(key)[0]) {
+		args = append(args, "shift")
+	}
+
+	key = strings.ToLower(key)
+	if _, ok := Special[key]; ok {
+		key = Special[key]
 		if len(args) <= 0 {
 			args = append(args, "shift")
 		}
@@ -463,7 +468,7 @@ func KeyTap(tapKey string, args ...interface{}) error {
 		}
 	}
 
-	return keyTaps(tapKey, keyArr)
+	return keyTaps(key, keyArr)
 }
 
 // KeyToggle toggle the keyboard, if there not have args default is "down"
@@ -480,6 +485,10 @@ func KeyTap(tapKey string, args ...interface{}) error {
 func KeyToggle(key string, args ...string) error {
 	if len(args) <= 0 {
 		args = append(args, "down")
+	}
+
+	if len(key) > 0 && unicode.IsUpper([]rune(key)[0]) {
+		args = append(args, "shift")
 	}
 
 	key = strings.ToLower(key)
@@ -573,12 +582,12 @@ func inputUTF(str string) {
 	C.free(unsafe.Pointer(cstr))
 }
 
-// TypeStr send a string, support UTF-8
+// TypeStr send a string, supported UTF-8
 //
-// robotgo.TypeStr(string: The string to send, int: milli_sleep time, x11 option)
+// robotgo.TypeStr(string: "The string to send", int: "milli_sleep time", "x11 option")
 //
 // Examples:
-//	robotgo.TypeStr("abc@123, hi, こんにちは")
+//	robotgo.TypeStr("abc@123, hi galaxy, こんにちは")
 //
 func TypeStr(str string, args ...int) {
 	var tm, tm1 = 0, 7
