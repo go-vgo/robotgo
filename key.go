@@ -321,10 +321,10 @@ var keyNames = map[string]C.MMKeyCode{
 	// { NULL:              C.K_NOT_A_KEY }
 }
 
-func tapKeyCode(code C.MMKeyCode, flags C.MMKeyFlags) {
-	C.toggleKeyCode(code, true, flags)
+func tapKeyCode(code C.MMKeyCode, flags C.MMKeyFlags, pid C.int32_t) {
+	C.toggleKeyCode(code, true, flags, pid)
 	MilliSleep(5)
-	C.toggleKeyCode(code, false, flags)
+	C.toggleKeyCode(code, false, flags, pid)
 }
 
 var keyErr = errors.New("Invalid key flag specified.")
@@ -394,19 +394,19 @@ func getFlagsFromValue(value []string) (flags C.MMKeyFlags) {
 	return
 }
 
-func keyTaps(k string, keyArr []string) error {
+func keyTaps(k string, keyArr []string, pid int) error {
 	flags := getFlagsFromValue(keyArr)
 	key, err := checkKeyCodes(k)
 	if err != nil {
 		return err
 	}
 
-	tapKeyCode(key, flags)
+	tapKeyCode(key, flags, C.int32_t(pid))
 	MilliSleep(KeySleep)
 	return nil
 }
 
-func keyToggles(k string, keyArr []string) error {
+func keyToggles(k string, keyArr []string, pid int) error {
 	down := true
 	if keyArr[0] == "up" {
 		down = false
@@ -418,7 +418,7 @@ func keyToggles(k string, keyArr []string) error {
 		return err
 	}
 
-	C.toggleKeyCode(key, C.bool(down), flags)
+	C.toggleKeyCode(key, C.bool(down), flags, C.int32_t(pid))
 	MilliSleep(KeySleep)
 	return nil
 }
@@ -487,15 +487,21 @@ func KeyTap(key string, args ...interface{}) error {
 		}
 	}
 
+	pid := 0
 	if len(args) > 0 {
 		if reflect.TypeOf(args[0]) == reflect.TypeOf(keyArr) {
 			keyArr = args[0].([]string)
 		} else {
-			keyArr = ToStrings(args)
+			if reflect.TypeOf(args[0]) == reflect.TypeOf(pid) {
+				pid = args[0].(int)
+				keyArr = ToStrings(args[1:])
+			} else {
+				keyArr = ToStrings(args)
+			}
 		}
 	}
 
-	return keyTaps(key, keyArr)
+	return keyTaps(key, keyArr, pid)
 }
 
 // KeyToggle toggle the keyboard, if there not have args default is "down"
@@ -509,7 +515,7 @@ func KeyTap(key string, args ...interface{}) error {
 //
 //	robotgo.KeyToggle("a", "up", "alt", "cmd")
 //
-func KeyToggle(key string, args ...string) error {
+func KeyToggle(key string, args ...interface{}) error {
 	if len(args) <= 0 {
 		args = append(args, "down")
 	}
@@ -526,11 +532,20 @@ func KeyToggle(key string, args ...string) error {
 		}
 	}
 
-	return keyToggles(key, args)
+	pid := 0
+	var keyArr []string
+	if len(args) > 0 && reflect.TypeOf(args[0]) == reflect.TypeOf(pid) {
+		pid = args[0].(int)
+		keyArr = ToStrings(args[1:])
+	} else {
+		keyArr = ToStrings(args)
+	}
+
+	return keyToggles(key, keyArr, pid)
 }
 
 // KeyPress press key string
-func KeyPress(key string, args ...string) error {
+func KeyPress(key string, args ...interface{}) error {
 	err := KeyDown(key, args...)
 	if err != nil {
 		return err
@@ -541,13 +556,13 @@ func KeyPress(key string, args ...string) error {
 }
 
 // KeyDown press down a key
-func KeyDown(key string, args ...string) error {
+func KeyDown(key string, args ...interface{}) error {
 	return KeyToggle(key, args...)
 }
 
 // KeyUp press up a key
-func KeyUp(key string, args ...string) error {
-	arr := []string{"up"}
+func KeyUp(key string, args ...interface{}) error {
+	arr := []interface{}{"up"}
 	arr = append(arr, args...)
 	return KeyToggle(key, arr...)
 }
@@ -576,9 +591,9 @@ func CharCodeAt(s string, n int) rune {
 }
 
 // UnicodeType tap uint32 unicode
-func UnicodeType(str uint32) {
+func UnicodeType(str uint32, pid int) {
 	cstr := C.uint(str)
-	C.unicodeType(cstr)
+	C.unicodeType(cstr, C.int32_t(pid))
 }
 
 // ToUC trans string to unicode []string
@@ -611,7 +626,7 @@ func inputUTF(str string) {
 
 // TypeStr send a string, supported UTF-8
 //
-// robotgo.TypeStr(string: "The string to send", int: "milli_sleep time", "x11 option")
+// robotgo.TypeStr(string: "The string to send", int: pid, "milli_sleep time", "x11 option")
 //
 // Examples:
 //	robotgo.TypeStr("abc@123, hi galaxy, こんにちは")
@@ -619,11 +634,15 @@ func inputUTF(str string) {
 func TypeStr(str string, args ...int) {
 	var tm, tm1 = 0, 7
 
-	if len(args) > 0 {
+	if len(args) > 1 {
 		tm = args[0]
 	}
-	if len(args) > 1 {
+	if len(args) > 2 {
 		tm1 = args[1]
+	}
+	pid := 0
+	if len(args) > 0 {
+		pid = args[0]
 	}
 
 	if runtime.GOOS == "linux" {
@@ -632,7 +651,7 @@ func TypeStr(str string, args ...int) {
 			ru := []rune(strUc[i])
 			if len(ru) <= 1 {
 				ustr := uint32(CharCodeAt(strUc[i], 0))
-				UnicodeType(ustr)
+				UnicodeType(ustr, pid)
 			} else {
 				inputUTF(strUc[i])
 				MilliSleep(tm1)
@@ -645,7 +664,7 @@ func TypeStr(str string, args ...int) {
 
 	for i := 0; i < len([]rune(str)); i++ {
 		ustr := uint32(CharCodeAt(str, i))
-		UnicodeType(ustr)
+		UnicodeType(ustr, pid)
 		// if len(args) > 0 {
 		MilliSleep(tm)
 		// }
