@@ -19,7 +19,7 @@ import (
 
 func typeStr() {
 	// importing "Hello World"
-	robotgo.TypeStr("Hello World!", 1)
+	robotgo.TypeStr("Hello World!", 0, 1)
 	robotgo.KeySleep = 100
 	robotgo.TypeStr("だんしゃり")
 

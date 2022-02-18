@@ -323,7 +323,7 @@ var keyNames = map[string]C.MMKeyCode{
 
 func tapKeyCode(code C.MMKeyCode, flags C.MMKeyFlags, pid C.int32_t) {
 	C.toggleKeyCode(code, true, flags, pid)
-	MilliSleep(5)
+	MilliSleep(3)
 	C.toggleKeyCode(code, false, flags, pid)
 }
 
@@ -407,12 +407,20 @@ func keyTaps(k string, keyArr []string, pid int) error {
 }
 
 func keyToggles(k string, keyArr []string, pid int) error {
+	if len(keyArr) <= 0 {
+		keyArr = append(keyArr, "down")
+	}
+
 	down := true
 	if keyArr[0] == "up" {
 		down = false
 	}
 
-	flags := getFlagsFromValue(keyArr[1:])
+	if keyArr[0] == "up" || keyArr[0] == "down" {
+		keyArr = keyArr[1:]
+	}
+	flags := getFlagsFromValue(keyArr)
+
 	key, err := checkKeyCodes(k)
 	if err != nil {
 		return err
@@ -516,9 +524,6 @@ func KeyTap(key string, args ...interface{}) error {
 //	robotgo.KeyToggle("a", "up", "alt", "cmd")
 //
 func KeyToggle(key string, args ...interface{}) error {
-	if len(args) <= 0 {
-		args = append(args, "down")
-	}
 
 	if len(key) > 0 && unicode.IsUpper([]rune(key)[0]) {
 		args = append(args, "shift")
@@ -633,16 +638,16 @@ func inputUTF(str string) {
 // robotgo.TypeStr(string: "The string to send", int: pid, "milli_sleep time", "x11 option")
 //
 // Examples:
-//	robotgo.TypeStr("abc@123, hi galaxy, こんにちは")
+//	robotgo.TypeStr("abc@123, Hi galaxy, こんにちは")
 //
 func TypeStr(str string, args ...int) {
 	var tm, tm1 = 0, 7
 
 	if len(args) > 1 {
-		tm = args[0]
+		tm = args[1]
 	}
 	if len(args) > 2 {
-		tm1 = args[1]
+		tm1 = args[2]
 	}
 	pid := 0
 	if len(args) > 0 {

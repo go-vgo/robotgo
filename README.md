@@ -199,7 +199,7 @@ import (
 
 func main() {
   robotgo.TypeStr("Hello World")
-  robotgo.TypeStr("だんしゃり", 1)
+  robotgo.TypeStr("だんしゃり", 0, 1)
   // robotgo.TypeStr("テストする")
 
   robotgo.TypeStr("Hi galaxy. こんにちは世界.")
@@ -448,6 +448,12 @@ func main() {
     fmt.Println("pids... ", fpid)
 
     if len(fpid) > 0 {
+      robotgo.TypeStr("Hi galaxy!", int(fpid[0]))
+      robotgo.KeyTap("a", fpid[0], "cmd")
+
+      robotgo.KeyToggle("a", fpid[0])
+      robotgo.KeyToggle("a", fpid[0], "up")
+
       robotgo.ActivePID(fpid[0])
 
       robotgo.Kill(fpid[0])
