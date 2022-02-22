@@ -15,7 +15,6 @@ package robotgo
 
 import (
 	"errors"
-	"fmt"
 	"log"
 
 	"github.com/robotn/xgb"
