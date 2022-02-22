@@ -224,10 +224,11 @@ func Alert(title, msg string, args ...string) bool {
 		c += cancelBtn + ":1"
 	}
 	c += ` -default ` + defaultBtn
+	c += ` -geometry 400x200`
 
 	out, err := Run(c)
 	if err != nil {
-		fmt.Println("Alert: ", err, ". ", string(out))
+		// fmt.Println("Alert: ", err, ". ", string(out))
 		return false
 	}
 
