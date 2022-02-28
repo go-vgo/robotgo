@@ -85,10 +85,12 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id) 
 	bi.bmiHeader.biClrUsed = 0;
 	bi.bmiHeader.biClrImportant = 0;
 
+	HWND hwnd;
 	if (display_id == -1) {
 		screen = GetDC(NULL); /* Get entire screen */
 	} else {
-		screen = GetDC((HWND) (uintptr) display_id);
+		hwnd = (HWND) (uintptr) display_id;
+		screen = GetDC(hwnd);
 	}
 	if (screen == NULL) { return NULL; }
 
@@ -101,7 +103,7 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id) 
 				screen, rect.origin.x, rect.origin.y, SRCCOPY);
 	if (smem || SelectObject(screenMem, dib) == NULL || !bitb) {
 		/* Error copying data. */
-		ReleaseDC(NULL, screen);
+		ReleaseDC(hwnd, screen);
 		DeleteObject(dib);
 		if (screenMem != NULL) { DeleteDC(screenMem); }
 
@@ -117,7 +119,7 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id) 
 		memcpy(bitmap->imageBuffer, data, bitmap->bytewidth * bitmap->height);
 	}
 
-	ReleaseDC(NULL, screen);
+	ReleaseDC(hwnd, screen);
 	DeleteObject(dib);
 	DeleteDC(screenMem);
 
