@@ -18,15 +18,16 @@ import (
 )
 
 func typeStr() {
-	// importing "Hello World"
+	// typing "Hello World"
 	robotgo.TypeStr("Hello World!", 0, 1)
 	robotgo.KeySleep = 100
 	robotgo.TypeStr("だんしゃり")
 
-	robotgo.TypeStr("Hi galaxy. こんにちは世界. 你好, 再见!")
+	robotgo.TypeStr("Hi galaxy, hi stars, hi MT.Rainier, hi sea. こんにちは世界.")
+	robotgo.TypeStr("So, hi, bye! 你好, 再见!")
 	robotgo.Sleep(1)
 
-	robotgo.TypeStr("So, hi, bye!")
+	robotgo.TypeStr("Hi, Seattle space needle, Gold gate bridge, One world trade center.")
 	robotgo.MilliSleep(100)
 
 	ustr := uint32(robotgo.CharCodeAt("So, hi, bye!", 0))
