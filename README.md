@@ -202,7 +202,8 @@ func main() {
   robotgo.TypeStr("だんしゃり", 0, 1)
   // robotgo.TypeStr("テストする")
 
-  robotgo.TypeStr("Hi galaxy. こんにちは世界.")
+  robotgo.TypeStr("Hi, Seattle space needle, Gold gate bridge, One world trade center.")
+  robotgo.TypeStr("Hi galaxy, hi stars, hi MT.Rainier, hi sea. こんにちは世界.")
   robotgo.Sleep(1)
 
   // ustr := uint32(robotgo.CharCodeAt("Test", 0))
