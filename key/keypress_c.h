@@ -20,7 +20,7 @@
 	}
 #elif defined(USE_X11)
 	Display *XGetMainDisplay(void);
-	
+
 	void X_KEY_EVENT(Display *display, MMKeyCode key, bool is_press) {
 		XTestFakeKeyEvent(display, XKeysymToKeycode(display, key), is_press, CurrentTime); 
 		XSync(display, false);

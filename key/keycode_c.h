@@ -79,6 +79,11 @@ MMKeyCode keyCodeForChar(const char c) {
 		if (code == NoSymbol) {
 			return K_NOT_A_KEY;
 		}
+
+		// x11 key bug
+		if (c == 60) {
+			code = 44;
+		}
 		return code;
 	#endif
 }
