@@ -27,7 +27,7 @@ func typeStr() {
 	robotgo.TypeStr("So, hi, bye! 你好, 再见!")
 	robotgo.Sleep(1)
 
-	robotgo.TypeStr("Hi, Seattle space needle, Gold gate bridge, One world trade center.")
+	robotgo.TypeStr("Hi, Seattle space needle, Golden gate bridge, One world trade center.")
 	robotgo.MilliSleep(100)
 
 	ustr := uint32(robotgo.CharCodeAt("So, hi, bye!", 0))
