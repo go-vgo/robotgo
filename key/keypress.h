@@ -2,7 +2,10 @@
 #ifndef KEYPRESS_H
 #define KEYPRESS_H
 
+#include <stdlib.h>
 #include "../base/os.h"
+#include "../base/types.h"
+
 #include "keycode.h"
 #include <stdbool.h>
 

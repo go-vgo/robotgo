@@ -12,7 +12,7 @@ package robotgo
 
 /*
 // #include "key/keycode.h"
-#include "key/goKey.h"
+#include "key/keypress_c.h"
 */
 import "C"
 

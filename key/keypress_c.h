@@ -1,6 +1,7 @@
 #include "keypress.h"
 #include "../base/deadbeef_rand_c.h"
 #include "../base/microsleep.h"
+#include "keycode_c.h"
 
 #include <ctype.h> /* For isupper() */
 #if defined(IS_MACOSX)
