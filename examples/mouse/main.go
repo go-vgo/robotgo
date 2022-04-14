@@ -25,9 +25,7 @@ func move() {
 	// move the mouse to 100, 200
 	robotgo.Move(100, 200)
 
-	// robotgo.Drag(10, 10)
-	// robotgo.Drag(20, 20, "right")
-	//
+	// drag mouse with smooth
 	robotgo.DragSmooth(10, 10)
 	robotgo.DragSmooth(100, 200, 1.0, 100.0)
 
@@ -37,7 +35,7 @@ func move() {
 	robotgo.MoveSmoothRelative(10, -100, 1.0, 30.0)
 
 	for i := 0; i < 1080; i += 1000 {
-		fmt.Println(i)
+		fmt.Println("i: ", i)
 		// MoveMouse(800, i)
 		robotgo.Move(800, i)
 	}
@@ -73,6 +71,9 @@ func toggleAndScroll() {
 
 	robotgo.Scroll(100, 10)
 	robotgo.Scroll(0, -10)
+
+	robotgo.Toggle("left")
+	robotgo.Toggle("left", "up")
 
 	// toggles the right mouse button
 	robotgo.Toggle("right")
