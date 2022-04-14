@@ -74,6 +74,14 @@ func keyTap() {
 	robotgo.KeyTap("a", "control")
 }
 
+func special() {
+	robotgo.TypeStr("{}")
+	robotgo.KeyTap("[", "]")
+
+	robotgo.KeyToggle("(")
+	robotgo.KeyToggle("(", "up")
+}
+
 func keyToggle() {
 	// robotgo.KeySleep = 150
 	robotgo.KeyToggle(robotgo.KeyA)
@@ -113,6 +121,7 @@ func key() {
 	////////////////////////////////////////////////////////////////////////////////
 
 	typeStr()
+	special()
 
 	keyTap()
 	keyToggle()
