@@ -97,6 +97,15 @@ uint32_t get_num_displays() {
 	#endif
 }
 
+uintptr get_hwnd_by_pid(uintptr pid) {
+	#if defined(IS_WINDOWS)
+		HWND hwnd = GetHwndByPId(pid);
+		return (uintptr)hwnd;
+	#else
+		return 0;
+	#endif
+}
+
 void bitmap_dealloc(MMBitmapRef bitmap) {
 	if (bitmap != NULL) {
 		destroyMMBitmap(bitmap);
