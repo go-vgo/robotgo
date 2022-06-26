@@ -236,6 +236,11 @@ func getNumDisplays() int {
 	return int(C.get_num_displays())
 }
 
+// GetHwndByPId get the hwnd by pid
+func GetHwndByPId(pid int) int {
+	return int(C.get_hwnd_by_pid(C.uintptr(pid)))
+}
+
 // SysScale get the sys scale
 func SysScale(displayId ...int) float64 {
 	display := displayIdx(displayId...)
