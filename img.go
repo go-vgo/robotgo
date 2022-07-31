@@ -122,7 +122,7 @@ func ImgToBitmap(m image.Image) (bit Bitmap) {
 // ToUint8p convert the []uint8 to uint8 pointer
 func ToUint8p(dst []uint8) *uint8 {
 	src := make([]uint8, len(dst)+10)
-	for i := 0; i < len(dst)-4; i += 4 {
+	for i := 0; i <= len(dst)-4; i += 4 {
 		src[i+3] = dst[i+3]
 		src[i] = dst[i+2]
 		src[i+1] = dst[i+1]
@@ -151,7 +151,7 @@ func val(p *uint8, n int) uint8 {
 }
 
 func copyToVUint8A(dst []uint8, src *uint8) {
-	for i := 0; i < len(dst)-4; i += 4 {
+	for i := 0; i <= len(dst)-4; i += 4 {
 		dst[i] = val(src, i+2)
 		dst[i+1] = val(src, i+1)
 		dst[i+2] = val(src, i)
