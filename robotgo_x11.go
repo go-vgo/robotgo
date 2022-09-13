@@ -34,7 +34,7 @@ func GetBounds(pid int32, args ...int) (int, int, int, int) {
 		return internalGetBounds(pid, hwnd)
 	}
 
-	xid, err := GetXId(xu, pid)
+	xid, err := GetXid(xu, pid)
 	if err != nil {
 		log.Println("Get Xid from Pid errors is: ", err)
 		return 0, 0, 0, 0
@@ -51,7 +51,7 @@ func GetClient(pid int32, args ...int) (int, int, int, int) {
 		return internalGetClient(pid, hwnd)
 	}
 
-	xid, err := GetXId(xu, pid)
+	xid, err := GetXid(xu, pid)
 	if err != nil {
 		log.Println("Get Xid from Pid errors is: ", err)
 		return 0, 0, 0, 0
@@ -68,7 +68,7 @@ func internalGetTitle(pid int32, args ...int32) string {
 		return cgetTitle(pid, hwnd)
 	}
 
-	xid, err := GetXId(xu, pid)
+	xid, err := GetXid(xu, pid)
 	if err != nil {
 		log.Println("Get Xid from Pid errors is: ", err)
 		return ""
@@ -77,9 +77,9 @@ func internalGetTitle(pid int32, args ...int32) string {
 	return cgetTitle(int32(xid), hwnd)
 }
 
-// ActivePIDC active the window by PID,
+// ActivePidC active the window by Pid,
 // If args[0] > 0 on the unix platform via a xid to active
-func ActivePIDC(pid int32, args ...int) error {
+func ActivePidC(pid int32, args ...int) error {
 	var hwnd int
 	if len(args) > 0 {
 		hwnd = args[0]
@@ -87,7 +87,7 @@ func ActivePIDC(pid int32, args ...int) error {
 		return nil
 	}
 
-	xid, err := GetXId(xu, pid)
+	xid, err := GetXid(xu, pid)
 	if err != nil {
 		log.Println("Get Xid from Pid errors is: ", err)
 		return err
@@ -97,11 +97,11 @@ func ActivePIDC(pid int32, args ...int) error {
 	return nil
 }
 
-// ActivePID active the window by PID,
+// ActivePid active the window by Pid,
 //
 // If args[0] > 0 on the Windows platform via a window handle to active,
 // If args[0] > 0 on the unix platform via a xid to active
-func ActivePID(pid int32, args ...int) error {
+func ActivePid(pid int32, args ...int) error {
 	if xu == nil {
 		var err error
 		xu, err = xgbutil.NewConn()
@@ -133,8 +133,8 @@ func ActivePID(pid int32, args ...int) error {
 	return nil
 }
 
-// GetXId get the xid return window and error
-func GetXId(xu *xgbutil.XUtil, pid int32) (xproto.Window, error) {
+// GetXid get the xid return window and error
+func GetXid(xu *xgbutil.XUtil, pid int32) (xproto.Window, error) {
 	if xu == nil {
 		var err error
 		xu, err = xgbutil.NewConn()
@@ -148,7 +148,7 @@ func GetXId(xu *xgbutil.XUtil, pid int32) (xproto.Window, error) {
 	return xid, err
 }
 
-// GetXidFromPid get the xide from pid
+// GetXidFromPid get the xid from pid
 func GetXidFromPid(xu *xgbutil.XUtil, pid int32) (xproto.Window, error) {
 	windows, err := ewmh.ClientListGet(xu)
 	if err != nil {
@@ -214,6 +214,7 @@ func GetMainId() int {
 // If cancel button is not given, only the default button is displayed
 //
 // Examples:
+//
 //	robotgo.Alert("hi", "window", "ok", "cancel")
 func Alert(title, msg string, args ...string) bool {
 	defaultBtn, cancelBtn := alertArgs(args...)

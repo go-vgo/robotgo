@@ -57,7 +57,7 @@ func GetMain() win.HWND {
 	return win.GetActiveWindow()
 }
 
-// GetMianId get the main display id
+// GetMainId get the main display id
 func GetMainId() int {
 	return int(GetMain())
 }

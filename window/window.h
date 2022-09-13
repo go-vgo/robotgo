@@ -60,7 +60,7 @@ MData set_handle_pid(uintptr pid, uintptr isHwnd){
 	#elif defined(IS_WINDOWS)
 		// win.HWnd = (HWND)pid;		// Handle to a window HWND
 		if (isHwnd == 0) {
-			win.HWnd = GetHwndByPId(pid);
+			win.HWnd = GetHwndByPid(pid);
 		} else {
 			win.HWnd = (HWND)pid;
 		}

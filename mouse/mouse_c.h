@@ -192,7 +192,7 @@ void clickMouse(MMMouseButton button){
 	toggleMouse(false, button);
 }
 
-/* Special function for sending double clicks, needed for Mac OS X. */
+/* Special function for sending double clicks, needed for MacOS. */
 void doubleClick(MMMouseButton button){
 	#if defined(IS_MACOSX)
 		/* Double click for Mac. */

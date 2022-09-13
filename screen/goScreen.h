@@ -99,7 +99,7 @@ uint32_t get_num_displays() {
 
 uintptr get_hwnd_by_pid(uintptr pid) {
 	#if defined(IS_WINDOWS)
-		HWND hwnd = GetHwndByPId(pid);
+		HWND hwnd = GetHwndByPid(pid);
 		return (uintptr)hwnd;
 	#else
 		return 0;

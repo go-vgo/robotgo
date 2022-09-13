@@ -44,14 +44,15 @@ func internalGetTitle(pid int32, args ...int32) string {
 	return gtitle
 }
 
-// ActivePID active the window by PID,
+// ActivePid active the window by PID,
 //
 // If args[0] > 0 on the Windows platform via a window handle to active
 //
 // Examples:
+//
 //	ids, _ := robotgo.FindIds()
-//	robotgo.ActivePID(ids[0])
-func ActivePID(pid int32, args ...int) error {
+//	robotgo.ActivePid(ids[0])
+func ActivePid(pid int32, args ...int) error {
 	var hwnd int
 	if len(args) > 0 {
 		hwnd = args[0]
@@ -71,6 +72,7 @@ func DisplaysNum() int {
 // If cancel button is not given, only the default button is displayed
 //
 // Examples:
+//
 //	robotgo.Alert("hi", "window", "ok", "cancel")
 func Alert(title, msg string, args ...string) bool {
 	return showAlert(title, msg, args...)

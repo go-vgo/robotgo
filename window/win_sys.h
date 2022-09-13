@@ -130,7 +130,7 @@ Bounds get_bounds(uintptr pid, uintptr isHwnd){
     #elif defined(IS_WINDOWS)
         HWND hwnd;
         if (isHwnd == 0) {
-            hwnd= GetHwndByPId(pid);
+            hwnd= GetHwndByPid(pid);
         } else {
             hwnd = (HWND)pid;
         }
@@ -195,7 +195,7 @@ Bounds get_client(uintptr pid, uintptr isHwnd) {
 	#elif defined(IS_WINDOWS)
 		HWND hwnd;
 		if (isHwnd == 0) {
-			hwnd = GetHwndByPId(pid);
+			hwnd = GetHwndByPid(pid);
 		} else {
 			hwnd = (HWND)pid;
 		}

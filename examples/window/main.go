@@ -28,7 +28,7 @@ func alert() {
 
 func get() {
 	// get the current process id
-	pid := robotgo.GetPID()
+	pid := robotgo.GetPid()
 	fmt.Println("pid----", pid)
 
 	// get current Window Active
@@ -64,7 +64,7 @@ func findIds() {
 
 	fmt.Println("pids...", fpid)
 	if len(fpid) > 0 {
-		err = robotgo.ActivePID(fpid[0])
+		err = robotgo.ActivePid(fpid[0])
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -87,7 +87,7 @@ func findIds() {
 }
 
 func active() {
-	robotgo.ActivePID(100)
+	robotgo.ActivePid(100)
 	// robotgo.Sleep(2)
 	robotgo.ActiveName("code")
 	robotgo.Sleep(1)

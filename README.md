@@ -53,7 +53,7 @@ Golang
 GCC
 ```
 
-#### For Mac OS X:
+#### For MacOS:
 
 Xcode Command Line Tools (And Privacy setting: [#277](https://github.com/go-vgo/robotgo/issues/277) )
 

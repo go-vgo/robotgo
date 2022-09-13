@@ -22,12 +22,12 @@
 	    return TRUE;
 	}
 
-	HWND GetHwndByPId(DWORD dwProcessId) {
+	HWND GetHwndByPid(DWORD dwProcessId) {
 	    WNDINFO info = {0};
 	    info.hWnd = NULL;
 	    info.dwPid = dwProcessId;
 	    EnumWindows(EnumWindowsProc, (LPARAM)&info);
-	    // printf("%d\n", info.hWnd);
+
 	    return info.hWnd;
 	}
 #endif
