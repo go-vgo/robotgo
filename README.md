@@ -519,7 +519,7 @@ Some discussions and questions, please see [issues/228](https://github.com/go-vg
 ## Plans
 - Refactor some C code to Go (such as x11, windows)
 - Better multiscreen support
-- Waylad supports
+- Wayland supports
 - Update Window Handle
 - Try support Android and IOS
 
