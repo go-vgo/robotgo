@@ -16,7 +16,7 @@
 /* Convenience wrappers around ugly APIs. */
 #if defined(IS_WINDOWS)
 	void WIN32_KEY_EVENT_WAIT(MMKeyCode key, DWORD flags, int32_t pid) {
-		win32KeyEvent(key, flags, pid); 
+		win32KeyEvent(key, flags, pid, 0); 
 		Sleep(DEADBEEF_RANDRANGE(0, 1));
 	}
 #elif defined(USE_X11)
@@ -68,7 +68,7 @@ static io_connect_t _getAuxiliaryKeyDriver(void) {
 #endif
 
 #if defined(IS_WINDOWS)
-void win32KeyEvent(int key, MMKeyFlags flags, int32_t pid) {
+void win32KeyEvent(int key, MMKeyFlags flags, int32_t pid, int32_t isPid) {
 	int scan = MapVirtualKey(key & 0xff, MAPVK_VK_TO_VSC);
 
 	/* Set the scan code for extended keys */
@@ -109,6 +109,15 @@ void win32KeyEvent(int key, MMKeyFlags flags, int32_t pid) {
 			flags |= KEYEVENTF_EXTENDEDKEY;
 			break;
 		}
+	}
+
+	if (pid != 0) {
+		HWND hwnd = (HWND) pid;
+		if (isPid == 0) { 
+			hwnd = GetHwndByPid(pid);
+		}
+		SendMessage(hwnd, flags == 0 ? WM_KEYDOWN : WM_KEYUP, key, 0);
+		return;
 	}
 
 	/* Set the scan code for keyup */
@@ -168,7 +177,7 @@ void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags, int32_t pi
 	if (flags & MOD_CONTROL) { WIN32_KEY_EVENT_WAIT(K_CONTROL, dwFlags, pid); }
 	if (flags & MOD_SHIFT) { WIN32_KEY_EVENT_WAIT(K_SHIFT, dwFlags, pid); }
 
-	win32KeyEvent(code, dwFlags, pid);
+	win32KeyEvent(code, dwFlags, pid, 0);
 #elif defined(USE_X11)
 	Display *display = XGetMainDisplay();
 	const Bool is_press = down ? True : False; /* Just to be safe. */
