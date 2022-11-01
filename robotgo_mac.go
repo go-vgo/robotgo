@@ -18,7 +18,7 @@ package robotgo
 */
 import "C"
 
-// GetMianId get the main display id
+// GetMainId get the main display id
 func GetMainId() int {
 	return int(C.CGMainDisplayID())
 }

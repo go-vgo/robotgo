@@ -9,20 +9,22 @@
 // except according to those terms.
 
 /*
-
 Package robotgo Go native cross-platform system automation.
 
 Please make sure Golang, GCC is installed correctly before installing RobotGo;
 
 See Requirements:
+
 	https://github.com/go-vgo/robotgo#requirements
 
 Installation:
 
 With Go module support (Go 1.11+), just import:
+
 	import "github.com/go-vgo/robotgo"
 
 Otherwise, to install the robotgo package, run the command:
+
 	go get -u github.com/go-vgo/robotgo
 */
 package robotgo
@@ -236,8 +238,8 @@ func getNumDisplays() int {
 	return int(C.get_num_displays())
 }
 
-// GetHwndByPId get the hwnd by pid
-func GetHwndByPId(pid int) int {
+// GetHWNDByPid get the hwnd by pid
+func GetHWNDByPid(pid int) int {
 	return int(C.get_hwnd_by_pid(C.uintptr(pid)))
 }
 
@@ -513,8 +515,9 @@ func MoveMouse(x, y int) {
 // Move move the mouse to (x, y)
 //
 // Examples:
-// 	robotgo.MouseSleep = 100  // 100 millisecond
-// 	robotgo.Move(10, 10)
+//
+//	robotgo.MouseSleep = 100  // 100 millisecond
+//	robotgo.Move(10, 10)
 func Move(x, y int) {
 	// if runtime.GOOS == "windows" {
 	// 	f := ScaleF()
@@ -560,6 +563,7 @@ func Drag(x, y int, args ...string) {
 // DragSmooth drag the mouse like smooth to (x, y)
 //
 // Examples:
+//
 //	robotgo.DragSmooth(10, 10)
 func DragSmooth(x, y int, args ...interface{}) {
 	Toggle("left")
@@ -582,6 +586,7 @@ func MoveMouseSmooth(x, y int, args ...interface{}) bool {
 // robotgo.MoveSmooth(x, y int, low, high float64, mouseDelay int)
 //
 // Examples:
+//
 //	robotgo.MoveSmooth(10, 10)
 //	robotgo.MoveSmooth(10, 10, 1.0, 2.0)
 func MoveSmooth(x, y int, args ...interface{}) bool {
@@ -619,7 +624,7 @@ func MoveSmooth(x, y int, args ...interface{}) bool {
 
 // MoveArgs get the mouse relative args
 func MoveArgs(x, y int) (int, int) {
-	mx, my := GetMousePos()
+	mx, my := Location()
 	mx = mx + x
 	my = my + y
 
@@ -637,8 +642,15 @@ func MoveSmoothRelative(x, y int, args ...interface{}) {
 	MoveSmooth(mx, my, args...)
 }
 
+// Deprecated: use the function Location()
+//
 // GetMousePos get the mouse's position return x, y
 func GetMousePos() (int, int) {
+	return Location()
+}
+
+// Location get the mouse location position return x, y
+func Location() (int, int) {
 	pos := C.getMousePos()
 	x := int(pos.x)
 	y := int(pos.y)
@@ -648,7 +660,7 @@ func GetMousePos() (int, int) {
 
 // Deprecated: use the Click(),
 //
-// MouseClick click the mouse
+// # MouseClick click the mouse
 //
 // robotgo.MouseClick(button string, double bool)
 func MouseClick(args ...interface{}) {
@@ -660,7 +672,8 @@ func MouseClick(args ...interface{}) {
 // robotgo.Click(button string, double bool)
 //
 // Examples:
-// 	robotgo.Click() // default is left button
+//
+//	robotgo.Click() // default is left button
 //	robotgo.Click("right")
 //	robotgo.Click("wheelLeft")
 func Click(args ...interface{}) {
@@ -691,6 +704,7 @@ func Click(args ...interface{}) {
 // robotgo.MoveClick(x, y int, button string, double bool)
 //
 // Examples:
+//
 //	robotgo.MouseSleep = 100
 //	robotgo.MoveClick(10, 10)
 func MoveClick(x, y int, args ...interface{}) {
@@ -709,10 +723,12 @@ func MovesClick(x, y int, args ...interface{}) {
 }
 
 // Toggle toggle the mouse, support button:
-//	"left", "center", "right",
-//  "wheelDown", "wheelUp", "wheelLeft", "wheelRight"
+//
+//		"left", "center", "right",
+//	 "wheelDown", "wheelUp", "wheelLeft", "wheelRight"
 //
 // Examples:
+//
 //	robotgo.Toggle("left") // default is down
 //	robotgo.Toggle("left", "up")
 func Toggle(key ...string) error {
@@ -749,6 +765,7 @@ func MouseUp(key ...string) error {
 // robotgo.Scroll(x, y, msDelay int)
 //
 // Examples:
+//
 //	robotgo.Scroll(10, 10)
 func Scroll(x, y int, args ...int) {
 	var msDelay = 10
@@ -763,16 +780,17 @@ func Scroll(x, y int, args ...int) {
 	MilliSleep(MouseSleep + msDelay)
 }
 
-// ScrollMouse scroll the mouse to (x, "up")
+// ScrollDir scroll the mouse with direction to (x, "up")
 // supported: "up", "down", "left", "right"
 //
 // Examples:
-//	robotgo.ScrollMouse(10, "down")
-//	robotgo.ScrollMouse(10, "up")
-func ScrollMouse(x int, direction ...string) {
+//
+//	robotgo.ScrollDir(10, "down")
+//	robotgo.ScrollDir(10, "up")
+func ScrollDir(x int, direction ...interface{}) {
 	d := "down"
 	if len(direction) > 0 {
-		d = direction[0]
+		d = direction[0].(string)
 	}
 
 	if d == "down" {
@@ -797,6 +815,7 @@ func ScrollMouse(x int, direction ...string) {
 // robotgo.ScrollSmooth(toy, num, sleep, tox)
 //
 // Examples:
+//
 //	robotgo.ScrollSmooth(-10)
 //	robotgo.ScrollSmooth(-10, 6, 200, -10)
 func ScrollSmooth(to int, args ...int) {
@@ -828,6 +847,7 @@ func ScrollSmooth(to int, args ...int) {
 // ScrollRelative scroll mouse with relative
 //
 // Examples:
+//
 //	robotgo.ScrollRelative(10, 10)
 func ScrollRelative(x, y int, args ...int) {
 	mx, my := MoveArgs(x, y)
@@ -987,7 +1007,7 @@ func GetHandle() int {
 
 // Deprecated: use the GetHandle(),
 //
-// GetBHandle get the window handle, Wno-deprecated
+// # GetBHandle get the window handle, Wno-deprecated
 //
 // This function will be removed in version v1.0.0
 func GetBHandle() int {
@@ -1008,6 +1028,7 @@ func cgetTitle(hwnd, isHwnd int32) string {
 // GetTitle get the window title return string
 //
 // Examples:
+//
 //	fmt.Println(robotgo.GetTitle())
 //
 //	ids, _ := robotgo.FindIds()
@@ -1026,8 +1047,8 @@ func GetTitle(args ...int32) string {
 	return internalGetTitle(args[0])
 }
 
-// GetPID get the process id return int32
-func GetPID() int32 {
+// GetPid get the process id return int32
+func GetPid() int32 {
 	pid := C.get_PID()
 	return int32(pid)
 }
@@ -1054,9 +1075,9 @@ func internalActive(pid int32, hwnd int) {
 	C.active_PID(C.uintptr(pid), C.uintptr(hwnd))
 }
 
-// ActivePID active the window by PID,
+// ActivePid active the window by Pid,
 // If args[0] > 0 on the Windows platform via a window handle to active
-// func ActivePID(pid int32, args ...int) {
+// func ActivePid(pid int32, args ...int) {
 // 	var hwnd int
 // 	if len(args) > 0 {
 // 		hwnd = args[0]
@@ -1068,11 +1089,12 @@ func internalActive(pid int32, hwnd int) {
 // ActiveName active the window by name
 //
 // Examples:
-// 	robotgo.ActiveName("chrome")
+//
+//	robotgo.ActiveName("chrome")
 func ActiveName(name string) error {
 	pids, err := FindIds(name)
 	if err == nil && len(pids) > 0 {
-		return ActivePID(pids[0])
+		return ActivePid(pids[0])
 	}
 
 	return err

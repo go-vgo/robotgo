@@ -53,7 +53,7 @@ Golang
 GCC
 ```
 
-#### For Mac OS X:
+#### For MacOS:
 
 Xcode Command Line Tools (And Privacy setting: [#277](https://github.com/go-vgo/robotgo/issues/277) )
 
@@ -163,8 +163,8 @@ import (
 func main() {
   robotgo.MouseSleep = 100
 
-  robotgo.ScrollMouse(10, "up")
-  robotgo.ScrollMouse(20, "right")
+  robotgo.ScrollDir(10, "up")
+  robotgo.ScrollDir(20, "right")
 
   robotgo.Scroll(0, -10)
   robotgo.Scroll(100, 0)
@@ -242,7 +242,7 @@ import (
 )
 
 func main() {
-  x, y := robotgo.GetMousePos()
+  x, y := robotgo.Location()
   fmt.Println("pos: ", x, y)
 
   color := robotgo.GetPixelColor(100, 200)
@@ -455,7 +455,7 @@ func main() {
       robotgo.KeyToggle("a", fpid[0])
       robotgo.KeyToggle("a", fpid[0], "up")
 
-      robotgo.ActivePID(fpid[0])
+      robotgo.ActivePid(fpid[0])
 
       robotgo.Kill(fpid[0])
     }
@@ -519,9 +519,9 @@ Some discussions and questions, please see [issues/228](https://github.com/go-vg
 ## Plans
 - Refactor some C code to Go (such as x11, windows)
 - Better multiscreen support
-- Waylad supports
+- Wayland support
 - Update Window Handle
-- Try support Android and IOS
+- Try to support Android and IOS
 
 ## Contributors
 

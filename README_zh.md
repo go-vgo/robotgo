@@ -1,5 +1,7 @@
 # Robotgo
 
+## !!! Warning: this page not updated !!!
+
 [![Build Status](https://github.com/go-vgo/robotgo/workflows/Go/badge.svg)](https://github.com/go-vgo/robotgo/commits/master)
 [![CircleCI Status](https://circleci.com/gh/go-vgo/robotgo.svg?style=shield)](https://circleci.com/gh/go-vgo/robotgo)
 [![Build Status](https://travis-ci.org/go-vgo/robotgo.svg)](https://travis-ci.org/go-vgo/robotgo)
@@ -67,7 +69,7 @@ xcode-select --install
 
 ```
 Or the other GCC (But you should compile the "libpng" with yourself. 
-Or you can removed the bitmap.go )
+Or you can removed the bitmap.go.)
 ```
 
 #### For everything else (Linux 等其他系统):

@@ -24,7 +24,7 @@ void min_window(uintptr pid, bool state, uintptr isHwnd){
 		// SetState((Window)pid, STATE_MINIMIZE, state);
 	#elif defined(IS_WINDOWS)
 		if (isHwnd == 0) {
-			HWND hwnd = GetHwndByPId(pid);
+			HWND hwnd = GetHwndByPid(pid);
 			win_min(hwnd, state);
 		} else {
 			win_min((HWND)pid, state);
@@ -41,7 +41,7 @@ void max_window(uintptr pid, bool state, uintptr isHwnd){
 		// SetState((Window)pid, STATE_MAXIMIZE, state);
 	#elif defined(IS_WINDOWS)
 		if (isHwnd == 0) {
-			HWND hwnd = GetHwndByPId(pid);
+			HWND hwnd = GetHwndByPid(pid);
 			win_max(hwnd, state);
 		} else {
 			win_max((HWND)pid, state);
