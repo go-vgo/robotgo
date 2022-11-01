@@ -68,8 +68,8 @@ func TestDragMouse(t *testing.T) {
 }
 
 func TestScrollMouse(t *testing.T) {
-	ScrollMouse(120, "up")
-	ScrollMouse(100, "right")
+	ScrollDir(120, "up")
+	ScrollDir(100, "right")
 
 	Scroll(0, 120)
 	MilliSleep(100)

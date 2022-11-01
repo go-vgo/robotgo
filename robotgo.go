@@ -624,7 +624,7 @@ func MoveSmooth(x, y int, args ...interface{}) bool {
 
 // MoveArgs get the mouse relative args
 func MoveArgs(x, y int) (int, int) {
-	mx, my := GetMousePos()
+	mx, my := Location()
 	mx = mx + x
 	my = my + y
 
@@ -642,8 +642,15 @@ func MoveSmoothRelative(x, y int, args ...interface{}) {
 	MoveSmooth(mx, my, args...)
 }
 
+// Deprecated: use the function Location()
+//
 // GetMousePos get the mouse's position return x, y
 func GetMousePos() (int, int) {
+	return Location()
+}
+
+// Location get the mouse location position return x, y
+func Location() (int, int) {
 	pos := C.getMousePos()
 	x := int(pos.x)
 	y := int(pos.y)
@@ -773,17 +780,17 @@ func Scroll(x, y int, args ...int) {
 	MilliSleep(MouseSleep + msDelay)
 }
 
-// ScrollMouse scroll the mouse to (x, "up")
+// ScrollDir scroll the mouse with direction to (x, "up")
 // supported: "up", "down", "left", "right"
 //
 // Examples:
 //
-//	robotgo.ScrollMouse(10, "down")
-//	robotgo.ScrollMouse(10, "up")
-func ScrollMouse(x int, direction ...string) {
+//	robotgo.ScrollDir(10, "down")
+//	robotgo.ScrollDir(10, "up")
+func ScrollDir(x int, direction ...interface{}) {
 	d := "down"
 	if len(direction) > 0 {
-		d = direction[0]
+		d = direction[0].(string)
 	}
 
 	if d == "down" {

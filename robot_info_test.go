@@ -33,6 +33,9 @@ func TestGetScreenSize(t *testing.T) {
 
 	rect := robotgo.GetScreenRect()
 	fmt.Println("Get screen rect: ", rect)
+
+	x, y = robotgo.Location()
+	fmt.Println("Get location: ", x, y)
 }
 
 func TestGetSysScale(t *testing.T) {

@@ -55,7 +55,7 @@ func click() {
 
 func get() {
 	// gets the mouse coordinates
-	x, y := robotgo.GetMousePos()
+	x, y := robotgo.Location()
 	fmt.Println("pos:", x, y)
 	if x == 456 && y == 586 {
 		fmt.Println("mouse...", "586")
@@ -66,8 +66,8 @@ func get() {
 
 func toggleAndScroll() {
 	// scrolls the mouse either up
-	robotgo.ScrollMouse(10, "up")
-	robotgo.ScrollMouse(10, "right")
+	robotgo.ScrollDir(10, "up")
+	robotgo.ScrollDir(10, "right")
 
 	robotgo.Scroll(100, 10)
 	robotgo.Scroll(0, -10)
