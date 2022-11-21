@@ -15,7 +15,7 @@
 <!-- [![Release](https://github-release-version.herokuapp.com/github/go-vgo/robotgo/release.svg?style=flat)](https://github.com/go-vgo/robotgo/releases/latest) -->
 <!-- <a href="https://github.com/go-vgo/robotgo/releases"><img src="https://img.shields.io/badge/%20version%20-%206.0.0%20-blue.svg?style=flat-square" alt="Releases"></a> -->
 
-> Golang Desktop Automation. Control the mouse, keyboard, bitmap and image, read the screen, process, Window Handle and global event listener.
+> Golang Desktop Automation. Control the mouse, keyboard, read the screen, process, Window Handle, image and bitmap and global event listener.
 
 RobotGo supports Mac, Windows, and Linux(X11); and robotgo supports arm64 and x86-amd64.
 
@@ -64,6 +64,10 @@ xcode-select --install
 #### For Windows:
 
 [MinGW-w64](https://sourceforge.net/projects/mingw-w64/files) (Use recommended) 
+
+Download the Mingw, then set system environment variables `C:\mingw64\bin` to the Path.
+[Set environment variables to run GCC from command line](https://www.youtube.com/watch?v=1kY5iTK4-H0).
+
 
 ```
 Or the other GCC (But you should compile the "libpng" with yourself when use the bitmap.)
