@@ -220,6 +220,11 @@ func TestPs(t *testing.T) {
 	tt.IsType(t, "[]int32", id)
 	tt.Nil(t, err)
 
+	if len(id) > 0 {
+		e := KeyTap("v", id[0], "cmd")
+		tt.Nil(t, e)
+	}
+
 	// n, e = FindPath(id[0])
 	// tt.NotEmpty(t, n)
 	// tt.Nil(t, e)

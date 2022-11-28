@@ -12,7 +12,7 @@
 #include "window.h"
 #include "win_sys.h"
 
-void min_window(uintptr pid, bool state, uintptr isHwnd){
+void min_window(uintptr pid, bool state, int8_t isPid){
 	#if defined(IS_MACOSX)
 		// return 0;
 		AXUIElementRef axID = AXUIElementCreateApplication(pid);
@@ -23,7 +23,7 @@ void min_window(uintptr pid, bool state, uintptr isHwnd){
 		XDismissErrors();
 		// SetState((Window)pid, STATE_MINIMIZE, state);
 	#elif defined(IS_WINDOWS)
-		if (isHwnd == 0) {
+		if (isPid == 0) {
 			HWND hwnd = GetHwndByPid(pid);
 			win_min(hwnd, state);
 		} else {
@@ -32,7 +32,7 @@ void min_window(uintptr pid, bool state, uintptr isHwnd){
 	#endif
 }
 
-void max_window(uintptr pid, bool state, uintptr isHwnd){
+void max_window(uintptr pid, bool state, int8_t isPid){
 	#if defined(IS_MACOSX)
 		// return 0;
 	#elif defined(USE_X11)
@@ -40,7 +40,7 @@ void max_window(uintptr pid, bool state, uintptr isHwnd){
 		// SetState((Window)pid, STATE_MINIMIZE, false);
 		// SetState((Window)pid, STATE_MAXIMIZE, state);
 	#elif defined(IS_WINDOWS)
-		if (isHwnd == 0) {
+		if (isPid == 0) {
 			HWND hwnd = GetHwndByPid(pid);
 			win_max(hwnd, state);
 		} else {
@@ -71,7 +71,7 @@ uintptr b_get_handle() {
 	#endif
 }
 
-void active_PID(uintptr pid, uintptr isHwnd){
-	MData win = set_handle_pid(pid, isHwnd);
+void active_PID(uintptr pid, int8_t isPid){
+	MData win = set_handle_pid(pid, isPid);
 	set_active(win);
 }
