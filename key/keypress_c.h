@@ -17,7 +17,7 @@
 #if defined(IS_WINDOWS)
 	HWND GetHwndByPid(DWORD dwProcessId);
 
-	void WIN32_KEY_EVENT_WAIT(MMKeyCode key, DWORD flags, uiprint pid) {
+	void WIN32_KEY_EVENT_WAIT(MMKeyCode key, DWORD flags, uintptr pid) {
 		win32KeyEvent(key, flags, pid, 0); 
 		Sleep(DEADBEEF_RANDRANGE(0, 1));
 	}
