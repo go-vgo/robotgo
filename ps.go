@@ -14,17 +14,17 @@ import ps "github.com/vcaesar/gops"
 
 // Nps process struct
 type Nps struct {
-	Pid  int32
+	Pid  int
 	Name string
 }
 
 // Pids get the all process id
-func Pids() ([]int32, error) {
+func Pids() ([]int, error) {
 	return ps.Pids()
 }
 
 // PidExists determine whether the process exists
-func PidExists(pid int32) (bool, error) {
+func PidExists(pid int) (bool, error) {
 	return ps.PidExists(pid)
 }
 
@@ -45,7 +45,7 @@ func Process() ([]Nps, error) {
 }
 
 // FindName find the process name by the process id
-func FindName(pid int32) (string, error) {
+func FindName(pid int) (string, error) {
 	return ps.FindName(pid)
 }
 
@@ -57,12 +57,12 @@ func FindNames() ([]string, error) {
 // FindIds finds the all processes named with a subset
 // of "name" (case insensitive),
 // return matched IDs.
-func FindIds(name string) ([]int32, error) {
+func FindIds(name string) ([]int, error) {
 	return ps.FindIds(name)
 }
 
 // FindPath find the process path by the process pid
-func FindPath(pid int32) (string, error) {
+func FindPath(pid int) (string, error) {
 	return ps.FindPath(pid)
 }
 
@@ -72,6 +72,6 @@ func Run(path string) ([]byte, error) {
 }
 
 // Kill kill the process by PID
-func Kill(pid int32) error {
+func Kill(pid int) error {
 	return ps.Kill(pid)
 }

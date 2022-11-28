@@ -27,11 +27,11 @@ import (
 var xu *xgbutil.XUtil
 
 // GetBounds get the window bounds
-func GetBounds(pid int32, args ...int) (int, int, int, int) {
-	var hwnd int
+func GetBounds(pid int, args ...int) (int, int, int, int) {
+	var isPid int
 	if len(args) > 0 {
-		hwnd = args[0]
-		return internalGetBounds(pid, hwnd)
+		isPid = args[0]
+		return internalGetBounds(pid, isPid)
 	}
 
 	xid, err := GetXid(xu, pid)
@@ -40,15 +40,15 @@ func GetBounds(pid int32, args ...int) (int, int, int, int) {
 		return 0, 0, 0, 0
 	}
 
-	return internalGetBounds(int32(xid), hwnd)
+	return internalGetBounds(int(xid), isPid)
 }
 
 // GetClient get the window client bounds
-func GetClient(pid int32, args ...int) (int, int, int, int) {
-	var hwnd int
+func GetClient(pid int, args ...int) (int, int, int, int) {
+	var isPid int
 	if len(args) > 0 {
-		hwnd = args[0]
-		return internalGetClient(pid, hwnd)
+		isPid = args[0]
+		return internalGetClient(pid, isPid)
 	}
 
 	xid, err := GetXid(xu, pid)
@@ -57,15 +57,15 @@ func GetClient(pid int32, args ...int) (int, int, int, int) {
 		return 0, 0, 0, 0
 	}
 
-	return internalGetClient(int32(xid), hwnd)
+	return internalGetClient(int(xid), isPid)
 }
 
 // internalGetTitle get the window title
-func internalGetTitle(pid int32, args ...int32) string {
-	var hwnd int32
+func internalGetTitle(pid int, args ...int) string {
+	var isPid int
 	if len(args) > 0 {
-		hwnd = args[0]
-		return cgetTitle(pid, hwnd)
+		isPid = args[0]
+		return cgetTitle(pid, isPid)
 	}
 
 	xid, err := GetXid(xu, pid)
@@ -74,16 +74,16 @@ func internalGetTitle(pid int32, args ...int32) string {
 		return ""
 	}
 
-	return cgetTitle(int32(xid), hwnd)
+	return cgetTitle(int(xid), isPid)
 }
 
 // ActivePidC active the window by Pid,
 // If args[0] > 0 on the unix platform via a xid to active
-func ActivePidC(pid int32, args ...int) error {
-	var hwnd int
+func ActivePidC(pid int, args ...int) error {
+	var isPid int
 	if len(args) > 0 {
-		hwnd = args[0]
-		internalActive(pid, hwnd)
+		isPid = args[0]
+		internalActive(pid, isPid)
 		return nil
 	}
 
@@ -93,7 +93,7 @@ func ActivePidC(pid int32, args ...int) error {
 		return err
 	}
 
-	internalActive(int32(xid), hwnd)
+	internalActive(int(xid), isPid)
 	return nil
 }
 
@@ -101,7 +101,7 @@ func ActivePidC(pid int32, args ...int) error {
 //
 // If args[0] > 0 on the Windows platform via a window handle to active,
 // If args[0] > 0 on the unix platform via a xid to active
-func ActivePid(pid int32, args ...int) error {
+func ActivePid(pid int, args ...int) error {
 	if xu == nil {
 		var err error
 		xu, err = xgbutil.NewConn()
@@ -134,7 +134,7 @@ func ActivePid(pid int32, args ...int) error {
 }
 
 // GetXid get the xid return window and error
-func GetXid(xu *xgbutil.XUtil, pid int32) (xproto.Window, error) {
+func GetXid(xu *xgbutil.XUtil, pid int) (xproto.Window, error) {
 	if xu == nil {
 		var err error
 		xu, err = xgbutil.NewConn()
@@ -149,7 +149,7 @@ func GetXid(xu *xgbutil.XUtil, pid int32) (xproto.Window, error) {
 }
 
 // GetXidFromPid get the xid from pid
-func GetXidFromPid(xu *xgbutil.XUtil, pid int32) (xproto.Window, error) {
+func GetXidFromPid(xu *xgbutil.XUtil, pid int) (xproto.Window, error) {
 	windows, err := ewmh.ClientListGet(xu)
 	if err != nil {
 		return 0, err

@@ -52,6 +52,11 @@ func SetFocus(hwnd win.HWND) win.HWND {
 	return win.SetFocus(hwnd)
 }
 
+// SetForeg set the window into the foreground by hwnd
+func SetForeg(hwnd win.HWND) bool {
+	return win.SetForegroundWindow(hwnd)
+}
+
 // GetMian get the main display hwnd
 func GetMain() win.HWND {
 	return win.GetActiveWindow()

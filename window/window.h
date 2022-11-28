@@ -50,7 +50,7 @@ bool Is64Bit() {
 	return false;
 }
 
-MData set_handle_pid(uintptr pid, uintptr isHwnd){
+MData set_handle_pid(uintptr pid, int8_t isPid){
 	MData win;
 	#if defined(IS_MACOSX)
 		// Handle to a AXUIElementRef
@@ -59,7 +59,7 @@ MData set_handle_pid(uintptr pid, uintptr isHwnd){
 		win.XWin = (Window)pid;  // Handle to an X11 window
 	#elif defined(IS_WINDOWS)
 		// win.HWnd = (HWND)pid;		// Handle to a window HWND
-		if (isHwnd == 0) {
+		if (isPid == 0) {
 			win.HWnd = GetHwndByPid(pid);
 		} else {
 			win.HWnd = (HWND)pid;
@@ -69,8 +69,8 @@ MData set_handle_pid(uintptr pid, uintptr isHwnd){
 	return win;
 }
 
-void set_handle_pid_mData(uintptr pid, uintptr isHwnd){
-	MData win = set_handle_pid(pid, isHwnd);
+void set_handle_pid_mData(uintptr pid, int8_t isPid){
+	MData win = set_handle_pid(pid, isPid);
 	mData = win;
 }
 
@@ -464,8 +464,8 @@ void close_main_window () {
 	close_window_by_Id(mData);
 }
 
-void close_window_by_PId(uintptr pid, uintptr isHwnd){
-	MData win = set_handle_pid(pid, isHwnd);
+void close_window_by_PId(uintptr pid, int8_t isPid){
+	MData win = set_handle_pid(pid, isPid);
 	close_window_by_Id(win);
 }
 
@@ -502,8 +502,8 @@ char* get_main_title(){
 	return get_title_by_hand(mData);
 }
 
-char* get_title_by_pid(uintptr pid, uintptr isHwnd){
-	MData win = set_handle_pid(pid, isHwnd);
+char* get_title_by_pid(uintptr pid, int8_t isPid){
+	MData win = set_handle_pid(pid, isPid);
   	return get_title_by_hand(win);
 }
 
