@@ -15,6 +15,8 @@
 
 /* Convenience wrappers around ugly APIs. */
 #if defined(IS_WINDOWS)
+	HWND GetHwndByPid(DWORD dwProcessId);
+
 	void WIN32_KEY_EVENT_WAIT(MMKeyCode key, DWORD flags, int32_t pid) {
 		win32KeyEvent(key, flags, pid, 0); 
 		Sleep(DEADBEEF_RANDRANGE(0, 1));
@@ -34,7 +36,7 @@
 #endif
 
 #if defined(IS_MACOSX)
-	int SendTo(int32_t pid, CGEventRef event) {
+	int SendTo(uintptr pid, CGEventRef event) {
 		if (pid != 0) {
 			CGEventPostToPid(pid, event);
 		} else {
@@ -111,12 +113,15 @@ void win32KeyEvent(int key, MMKeyFlags flags, int32_t pid, int32_t isPid) {
 		}
 	}
 
+	// todo: test this
 	if (pid != 0) {
 		HWND hwnd = (HWND) pid;
 		if (isPid == 0) { 
 			hwnd = GetHwndByPid(pid);
 		}
-		SendMessage(hwnd, flags == 0 ? WM_KEYDOWN : WM_KEYUP, key, 0);
+		int down = (flags == 0 ? WM_KEYDOWN : WM_KEYUP);
+		// SendMessage(hwnd, down, key, 0);
+		PostMessageW(hwnd, down, key, 0);
 		return;
 	}
 
@@ -138,7 +143,7 @@ void win32KeyEvent(int key, MMKeyFlags flags, int32_t pid, int32_t isPid) {
 }
 #endif
 
-void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags, int32_t pid) {
+void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags, uintptr pid) {
 #if defined(IS_MACOSX)
 	/* The media keys all have 1000 added to them to help us detect them. */
 	if (code >= 1000) {
@@ -215,7 +220,7 @@ void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags, int32_t pi
 	}
 #endif
 
-void toggleKey(char c, const bool down, MMKeyFlags flags, int32_t pid) {
+void toggleKey(char c, const bool down, MMKeyFlags flags, uintptr pid) {
 	MMKeyCode keyCode = keyCodeForChar(c);
 
 	//Prevent unused variable warning for Mac and Linux.
@@ -251,7 +256,7 @@ void toggleKey(char c, const bool down, MMKeyFlags flags, int32_t pid) {
 // }
 
 #if defined(IS_MACOSX)
-void toggleUnicode(UniChar ch, const bool down, int32_t pid) {
+void toggleUnicode(UniChar ch, const bool down, uintptr pid) {
 	/* This function relies on the convenient CGEventKeyboardSetUnicodeString(), 
 	convert characters to a keycode, but does not support adding modifier flags. 
 	It is only used in typeString().
@@ -302,7 +307,7 @@ void toggleUnicode(UniChar ch, const bool down, int32_t pid) {
 #endif
 
 // unicode type
-void unicodeType(const unsigned value, int32_t pid){
+void unicodeType(const unsigned value, uintptr pid, int8_t isPid){
 	#if defined(IS_MACOSX)
 		UniChar ch = (UniChar)value; // Convert to unsigned char
 
@@ -310,6 +315,17 @@ void unicodeType(const unsigned value, int32_t pid){
 		microsleep(5.0);
 		toggleUnicode(ch, false, pid);
 	#elif defined(IS_WINDOWS)
+		if (pid != 0) {
+			HWND hwnd = (HWND) pid;
+			if (isPid == 0) { 
+				hwnd = GetHwndByPid(pid);
+			}
+
+			// SendMessage(hwnd, down, value, 0);
+			PostMessageW(hwnd, WM_CHAR, value, 0);
+			return;
+		}
+
 		INPUT input[2];
         memset(input, 0, sizeof(input));
 

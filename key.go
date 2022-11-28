@@ -321,7 +321,7 @@ var keyNames = map[string]C.MMKeyCode{
 	// { NULL:              C.K_NOT_A_KEY }
 }
 
-func tapKeyCode(code C.MMKeyCode, flags C.MMKeyFlags, pid C.int32_t) {
+func tapKeyCode(code C.MMKeyCode, flags C.MMKeyFlags, pid C.uintptr) {
 	C.toggleKeyCode(code, true, flags, pid)
 	MilliSleep(3)
 	C.toggleKeyCode(code, false, flags, pid)
@@ -401,7 +401,7 @@ func keyTaps(k string, keyArr []string, pid int) error {
 		return err
 	}
 
-	tapKeyCode(key, flags, C.int32_t(pid))
+	tapKeyCode(key, flags, C.uintptr(pid))
 	MilliSleep(KeySleep)
 	return nil
 }
@@ -426,7 +426,7 @@ func keyToggles(k string, keyArr []string, pid int) error {
 		return err
 	}
 
-	C.toggleKeyCode(key, C.bool(down), flags, C.int32_t(pid))
+	C.toggleKeyCode(key, C.bool(down), flags, C.uintptr(pid))
 	MilliSleep(KeySleep)
 	return nil
 }
@@ -604,7 +604,13 @@ func UnicodeType(str uint32, args ...int) {
 	if len(args) > 0 {
 		pid = args[0]
 	}
-	C.unicodeType(cstr, C.int32_t(pid))
+
+	isPid := 0
+	if len(args) > 1 {
+		isPid = args[1]
+	}
+
+	C.unicodeType(cstr, C.uintptr(pid), C.int8_t(isPid))
 }
 
 // ToUC trans string to unicode []string
