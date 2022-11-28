@@ -30,6 +30,7 @@ import (
 	"github.com/vcaesar/tt"
 )
 
+// Defining a bunch of constants.
 const (
 	// KeyA define key "a"
 	KeyA = "a"
@@ -321,6 +322,7 @@ var keyNames = map[string]C.MMKeyCode{
 	// { NULL:              C.K_NOT_A_KEY }
 }
 
+// It sends a key press and release to the active application
 func tapKeyCode(code C.MMKeyCode, flags C.MMKeyFlags, pid C.uintptr) {
 	C.toggleKeyCode(code, true, flags, pid)
 	MilliSleep(3)
@@ -459,6 +461,7 @@ func ToStrings(fields []interface{}) []string {
 	return res
 }
 
+// toErr it converts a C string to a Go error
 func toErr(str *C.char) error {
 	gstr := C.GoString(str)
 	if gstr == "" {
@@ -481,6 +484,8 @@ func toErr(str *C.char) error {
 //
 //	arr := []string{"alt", "command"}
 //	robotgo.KeyTap("i", arr)
+//
+//	robotgo.KeyTap("k", pid int)
 func KeyTap(key string, args ...interface{}) error {
 	var keyArr []string
 
@@ -525,6 +530,7 @@ func KeyTap(key string, args ...interface{}) error {
 //	robotgo.KeyToggle("a", "up")
 //
 //	robotgo.KeyToggle("a", "up", "alt", "cmd")
+//	robotgo.KeyToggle("k", pid int)
 func KeyToggle(key string, args ...interface{}) error {
 
 	if len(key) > 0 && unicode.IsUpper([]rune(key)[0]) {
@@ -648,6 +654,7 @@ func inputUTF(str string) {
 // Examples:
 //
 //	robotgo.TypeStr("abc@123, Hi galaxy, こんにちは")
+//	robotgo.TypeStr("To be or not to be, this is questions.", pid int)
 func TypeStr(str string, args ...int) {
 	var tm, tm1 = 0, 7
 

@@ -68,10 +68,9 @@ xcode-select --install
 Download the Mingw, then set system environment variables `C:\mingw64\bin` to the Path.
 [Set environment variables to run GCC from command line](https://www.youtube.com/results?search_query=Set+environment+variables+to+run+GCC+from+command+line).
 
-
-```
+`
 Or the other GCC (But you should compile the "libpng" with yourself when use the bitmap.)
-```
+`
 
 #### For everything else:
 
