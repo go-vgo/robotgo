@@ -17,7 +17,7 @@
 #if defined(IS_WINDOWS)
 	HWND GetHwndByPid(DWORD dwProcessId);
 
-	void WIN32_KEY_EVENT_WAIT(MMKeyCode key, DWORD flags, int32_t pid) {
+	void WIN32_KEY_EVENT_WAIT(MMKeyCode key, DWORD flags, uiprint pid) {
 		win32KeyEvent(key, flags, pid, 0); 
 		Sleep(DEADBEEF_RANDRANGE(0, 1));
 	}
@@ -70,7 +70,7 @@ static io_connect_t _getAuxiliaryKeyDriver(void) {
 #endif
 
 #if defined(IS_WINDOWS)
-void win32KeyEvent(int key, MMKeyFlags flags, int32_t pid, int32_t isPid) {
+void win32KeyEvent(int key, MMKeyFlags flags, uintptr pid, int8_t isPid) {
 	int scan = MapVirtualKey(key & 0xff, MAPVK_VK_TO_VSC);
 
 	/* Set the scan code for extended keys */
