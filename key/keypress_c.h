@@ -1,6 +1,16 @@
-#include "keypress.h"
+// Copyright 2016 The go-vgo Project Developers. See the COPYRIGHT
+// file at the top-level directory of this distribution and at
+// https://github.com/go-vgo/robotgo/blob/master/LICENSE
+//
+// Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
+// http://www.apache.org/licenses/LICENSE-2.0> or the MIT license
+// <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
+// option. This file may not be copied, modified, or distributed
+// except according to those terms.
+
 #include "../base/deadbeef_rand_c.h"
 #include "../base/microsleep.h"
+#include "keypress.h"
 #include "keycode_c.h"
 
 #include <ctype.h> /* For isupper() */
@@ -16,6 +26,14 @@
 /* Convenience wrappers around ugly APIs. */
 #if defined(IS_WINDOWS)
 	HWND GetHwndByPid(DWORD dwProcessId);
+
+	HWND getHwnd(uintptr pid, int8_t isPid) { 
+		HWND hwnd = (HWND) pid;
+		if (isPid == 0) { 
+			hwnd = GetHwndByPid(pid);
+		}
+		return hwnd;	
+	}
 
 	void WIN32_KEY_EVENT_WAIT(MMKeyCode key, DWORD flags, uintptr pid) {
 		win32KeyEvent(key, flags, pid, 0); 
@@ -115,10 +133,8 @@ void win32KeyEvent(int key, MMKeyFlags flags, uintptr pid, int8_t isPid) {
 
 	// todo: test this
 	if (pid != 0) {
-		HWND hwnd = (HWND) pid;
-		if (isPid == 0) { 
-			hwnd = GetHwndByPid(pid);
-		}
+		HWND hwnd = getHwnd(pid, isPid);
+
 		int down = (flags == 0 ? WM_KEYDOWN : WM_KEYUP);
 		// SendMessage(hwnd, down, key, 0);
 		PostMessageW(hwnd, down, key, 0);
@@ -316,10 +332,7 @@ void unicodeType(const unsigned value, uintptr pid, int8_t isPid){
 		toggleUnicode(ch, false, pid);
 	#elif defined(IS_WINDOWS)
 		if (pid != 0) {
-			HWND hwnd = (HWND) pid;
-			if (isPid == 0) { 
-				hwnd = GetHwndByPid(pid);
-			}
+			HWND hwnd = getHwnd(pid, isPid);
 
 			// SendMessage(hwnd, down, value, 0);
 			PostMessageW(hwnd, WM_CHAR, value, 0);

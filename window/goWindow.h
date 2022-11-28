@@ -23,12 +23,8 @@ void min_window(uintptr pid, bool state, int8_t isPid){
 		XDismissErrors();
 		// SetState((Window)pid, STATE_MINIMIZE, state);
 	#elif defined(IS_WINDOWS)
-		if (isPid == 0) {
-			HWND hwnd = GetHwndByPid(pid);
-			win_min(hwnd, state);
-		} else {
-			win_min((HWND)pid, state);
-		}
+        HWND hwnd = getHwnd(pid, isPid);
+		win_min(hwnd, state);
 	#endif
 }
 
@@ -40,12 +36,8 @@ void max_window(uintptr pid, bool state, int8_t isPid){
 		// SetState((Window)pid, STATE_MINIMIZE, false);
 		// SetState((Window)pid, STATE_MAXIMIZE, state);
 	#elif defined(IS_WINDOWS)
-		if (isPid == 0) {
-			HWND hwnd = GetHwndByPid(pid);
-			win_max(hwnd, state);
-		} else {
-			win_max((HWND)pid, state);
-		}
+        HWND hwnd = getHwnd(pid, isPid);
+		win_max(hwnd, state);
 	#endif
 }
 
