@@ -194,7 +194,7 @@ func TestImage(t *testing.T) {
 func TestPs(t *testing.T) {
 	id, err := Pids()
 	tt.Not(t, "[]", id)
-	tt.IsType(t, "[]int32", id)
+	tt.IsType(t, "[]int", id)
 	tt.Nil(t, err)
 
 	ps, e := Process()
@@ -217,7 +217,7 @@ func TestPs(t *testing.T) {
 
 	id, err = FindIds(n1[0])
 	tt.Not(t, "[]", id)
-	tt.IsType(t, "[]int32", id)
+	tt.IsType(t, "[]int", id)
 	tt.Nil(t, err)
 
 	if len(id) > 0 {
