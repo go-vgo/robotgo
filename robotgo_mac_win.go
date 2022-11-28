@@ -14,32 +14,32 @@
 package robotgo
 
 // GetBounds get the window bounds
-func GetBounds(pid int32, args ...int) (int, int, int, int) {
-	var hwnd int
+func GetBounds(pid int, args ...int) (int, int, int, int) {
+	var isPid int
 	if len(args) > 0 {
-		hwnd = args[0]
+		isPid = args[0]
 	}
 
-	return internalGetBounds(pid, hwnd)
+	return internalGetBounds(pid, isPid)
 }
 
 // GetClient get the window client bounds
-func GetClient(pid int32, args ...int) (int, int, int, int) {
-	var hwnd int
+func GetClient(pid int, args ...int) (int, int, int, int) {
+	var isPid int
 	if len(args) > 0 {
-		hwnd = args[0]
+		isPid = args[0]
 	}
 
-	return internalGetClient(pid, hwnd)
+	return internalGetClient(pid, isPid)
 }
 
 // internalGetTitle get the window title
-func internalGetTitle(pid int32, args ...int32) string {
-	var isHwnd int32
+func internalGetTitle(pid int, args ...int) string {
+	var isPid int
 	if len(args) > 0 {
-		isHwnd = args[0]
+		isPid = args[0]
 	}
-	gtitle := cgetTitle(pid, isHwnd)
+	gtitle := cgetTitle(pid, isPid)
 
 	return gtitle
 }
@@ -52,13 +52,13 @@ func internalGetTitle(pid int32, args ...int32) string {
 //
 //	ids, _ := robotgo.FindIds()
 //	robotgo.ActivePid(ids[0])
-func ActivePid(pid int32, args ...int) error {
-	var hwnd int
+func ActivePid(pid int, args ...int) error {
+	var isPid int
 	if len(args) > 0 {
-		hwnd = args[0]
+		isPid = args[0]
 	}
 
-	internalActive(pid, hwnd)
+	internalActive(pid, isPid)
 	return nil
 }
 

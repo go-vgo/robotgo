@@ -12,7 +12,7 @@
 	#include <X11/Xresource.h>
 #endif
 
-Bounds get_client(uintptr pid, uintptr isHwnd);
+Bounds get_client(uintptr pid, int8_t isPid);
 intptr scaleX();
 
 double sys_scale(int32_t display_id) {
@@ -73,7 +73,7 @@ intptr scaleX(){
 	#endif
 }
 
-Bounds get_bounds(uintptr pid, uintptr isHwnd){
+Bounds get_bounds(uintptr pid, int8_t isPid){
 	// Check if the window is valid
 	Bounds bounds;
 	if (!is_valid()) { return bounds; }
@@ -118,7 +118,7 @@ Bounds get_bounds(uintptr pid, uintptr isHwnd){
         MData win;
         win.XWin = (Window)pid;
 
-        Bounds client = get_client(pid, isHwnd);
+        Bounds client = get_client(pid, isPid);
         Bounds frame = GetFrame(win);
 
         bounds.X = client.X - frame.X;
@@ -129,7 +129,7 @@ Bounds get_bounds(uintptr pid, uintptr isHwnd){
         return bounds;
     #elif defined(IS_WINDOWS)
         HWND hwnd;
-        if (isHwnd == 0) {
+        if (isPid == 0) {
             hwnd= GetHwndByPid(pid);
         } else {
             hwnd = (HWND)pid;
@@ -147,13 +147,13 @@ Bounds get_bounds(uintptr pid, uintptr isHwnd){
     #endif
 }
 
-Bounds get_client(uintptr pid, uintptr isHwnd) {
+Bounds get_client(uintptr pid, int8_t isPid) {
 	// Check if the window is valid
 	Bounds bounds;
 	if (!is_valid()) { return bounds; }
 
 	#if defined(IS_MACOSX)
-		return get_bounds(pid, isHwnd);
+		return get_bounds(pid, isPid);
 	#elif defined(USE_X11)
         Display *rDisplay = XOpenDisplay(NULL);
 
@@ -194,7 +194,7 @@ Bounds get_client(uintptr pid, uintptr isHwnd) {
 		return bounds;
 	#elif defined(IS_WINDOWS)
 		HWND hwnd;
-		if (isHwnd == 0) {
+		if (isPid == 0) {
 			hwnd = GetHwndByPid(pid);
 		} else {
 			hwnd = (HWND)pid;

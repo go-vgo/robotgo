@@ -920,55 +920,55 @@ func GetActive() C.MData {
 }
 
 // MinWindow set the window min
-func MinWindow(pid int32, args ...interface{}) {
+func MinWindow(pid int, args ...interface{}) {
 	var (
 		state = true
-		hwnd  int
+		isPid int
 	)
 
 	if len(args) > 0 {
 		state = args[0].(bool)
 	}
 	if len(args) > 1 {
-		hwnd = args[1].(int)
+		isPid = args[1].(int)
 	}
 
-	C.min_window(C.uintptr(pid), C.bool(state), C.uintptr(hwnd))
+	C.min_window(C.uintptr(pid), C.bool(state), C.int8_t(isPid))
 }
 
 // MaxWindow set the window max
-func MaxWindow(pid int32, args ...interface{}) {
+func MaxWindow(pid int, args ...interface{}) {
 	var (
 		state = true
-		hwnd  int
+		isPid int
 	)
 
 	if len(args) > 0 {
 		state = args[0].(bool)
 	}
 	if len(args) > 1 {
-		hwnd = args[1].(int)
+		isPid = args[1].(int)
 	}
 
-	C.max_window(C.uintptr(pid), C.bool(state), C.uintptr(hwnd))
+	C.max_window(C.uintptr(pid), C.bool(state), C.int8_t(isPid))
 }
 
 // CloseWindow close the window
-func CloseWindow(args ...int32) {
+func CloseWindow(args ...int) {
 	if len(args) <= 0 {
 		C.close_main_window()
 		return
 	}
 
-	var hwnd, isHwnd int32
+	var pid, isPid int
 	if len(args) > 0 {
-		hwnd = args[0]
+		pid = args[0]
 	}
 	if len(args) > 1 {
-		isHwnd = args[1]
+		isPid = args[1]
 	}
 
-	C.close_window_by_PId(C.uintptr(hwnd), C.uintptr(isHwnd))
+	C.close_window_by_PId(C.uintptr(pid), C.int8_t(isPid))
 }
 
 // SetHandle set the window handle
@@ -978,23 +978,23 @@ func SetHandle(hwnd int) {
 }
 
 // SetHandlePid set the window handle by pid
-func SetHandlePid(pid int32, args ...int32) {
-	var isHwnd int32
+func SetHandlePid(pid int, args ...int) {
+	var isPid int
 	if len(args) > 0 {
-		isHwnd = args[0]
+		isPid = args[0]
 	}
 
-	C.set_handle_pid_mData(C.uintptr(pid), C.uintptr(isHwnd))
+	C.set_handle_pid_mData(C.uintptr(pid), C.int8_t(isPid))
 }
 
 // GetHandPid get handle mdata by pid
-func GetHandPid(pid int32, args ...int32) C.MData {
-	var isHwnd int32
+func GetHandPid(pid int, args ...int) C.MData {
+	var isPid int
 	if len(args) > 0 {
-		isHwnd = args[0]
+		isPid = args[0]
 	}
 
-	return C.set_handle_pid(C.uintptr(pid), C.uintptr(isHwnd))
+	return C.set_handle_pid(C.uintptr(pid), C.int8_t(isPid))
 }
 
 // GetHandle get the window handle
@@ -1018,8 +1018,8 @@ func GetBHandle() int {
 	return ghwnd
 }
 
-func cgetTitle(hwnd, isHwnd int32) string {
-	title := C.get_title_by_pid(C.uintptr(hwnd), C.uintptr(isHwnd))
+func cgetTitle(pid, isPid int) string {
+	title := C.get_title_by_pid(C.uintptr(pid), C.int8_t(isPid))
 	gtitle := C.GoString(title)
 
 	return gtitle
@@ -1033,7 +1033,7 @@ func cgetTitle(hwnd, isHwnd int32) string {
 //
 //	ids, _ := robotgo.FindIds()
 //	robotgo.GetTitle(ids[0])
-func GetTitle(args ...int32) string {
+func GetTitle(args ...int) string {
 	if len(args) <= 0 {
 		title := C.get_main_title()
 		gtitle := C.GoString(title)
@@ -1048,20 +1048,20 @@ func GetTitle(args ...int32) string {
 }
 
 // GetPid get the process id return int32
-func GetPid() int32 {
+func GetPid() int {
 	pid := C.get_PID()
-	return int32(pid)
+	return int(pid)
 }
 
 // internalGetBounds get the window bounds
-func internalGetBounds(pid int32, hwnd int) (int, int, int, int) {
-	bounds := C.get_bounds(C.uintptr(pid), C.uintptr(hwnd))
+func internalGetBounds(pid, isPid int) (int, int, int, int) {
+	bounds := C.get_bounds(C.uintptr(pid), C.int8_t(isPid))
 	return int(bounds.X), int(bounds.Y), int(bounds.W), int(bounds.H)
 }
 
 // internalGetClient get the window client bounds
-func internalGetClient(pid int32, hwnd int) (int, int, int, int) {
-	bounds := C.get_client(C.uintptr(pid), C.uintptr(hwnd))
+func internalGetClient(pid, isPid int) (int, int, int, int) {
+	bounds := C.get_client(C.uintptr(pid), C.int8_t(isPid))
 	return int(bounds.X), int(bounds.Y), int(bounds.W), int(bounds.H)
 }
 
@@ -1071,19 +1071,19 @@ func Is64Bit() bool {
 	return bool(b)
 }
 
-func internalActive(pid int32, hwnd int) {
-	C.active_PID(C.uintptr(pid), C.uintptr(hwnd))
+func internalActive(pid, isPid int) {
+	C.active_PID(C.uintptr(pid), C.int8_t(isPid))
 }
 
 // ActivePid active the window by Pid,
 // If args[0] > 0 on the Windows platform via a window handle to active
 // func ActivePid(pid int32, args ...int) {
-// 	var hwnd int
+// 	var isPid int
 // 	if len(args) > 0 {
-// 		hwnd = args[0]
+// 		isPid = args[0]
 // 	}
 
-// 	C.active_PID(C.uintptr(pid), C.uintptr(hwnd))
+// 	C.active_PID(C.uintptr(pid), C.uintptr(isPid))
 // }
 
 // ActiveName active the window by name

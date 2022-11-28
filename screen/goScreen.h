@@ -9,8 +9,8 @@
 // except according to those terms.
 
 #include "../base/types.h"
-#include "../base/rgb.h"
 #include "../base/pubs.h"
+#include "../base/rgb.h"
 #include "screengrab_c.h"
 #include "screen_c.h"
 #include <stdio.h>
