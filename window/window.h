@@ -59,11 +59,7 @@ MData set_handle_pid(uintptr pid, int8_t isPid){
 		win.XWin = (Window)pid;  // Handle to an X11 window
 	#elif defined(IS_WINDOWS)
 		// win.HWnd = (HWND)pid;		// Handle to a window HWND
-		if (isPid == 0) {
-			win.HWnd = GetHwndByPid(pid);
-		} else {
-			win.HWnd = (HWND)pid;
-		}
+        win.HWnd = getHwnd(pid, isPid);
 	#endif
 
 	return win;

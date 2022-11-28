@@ -18,6 +18,7 @@ int showAlert(const char *title, const char *msg,
 		CFStringRef defaultButtonTitle = CFStringCreateWithUTF8String(defaultButton);
 		CFStringRef cancelButtonTitle = CFStringCreateWithUTF8String(cancelButton);
 		CFOptionFlags responseFlags;
+		
 		SInt32 err = CFUserNotificationDisplayAlert(
 			0.0, kCFUserNotificationNoteAlertLevel, NULL, NULL, NULL, alertHeader, alertMessage,
 			defaultButtonTitle, cancelButtonTitle, NULL, &responseFlags);

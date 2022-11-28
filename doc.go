@@ -54,7 +54,7 @@ Keys are supported:
 	"f23"
 	"f24"
 
-	"cmd"		is the "win" key for windows
+	"cmd"		this is the "win" key for windows
 	"lcmd"		left command
 	"rcmd"		right command
 	// "command"

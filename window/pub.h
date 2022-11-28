@@ -267,6 +267,8 @@ typedef struct _Bounds Bounds;
 
 
 #elif defined(IS_WINDOWS)
+	HWND getHwnd(uintptr pid, int8_t isPid);
+	
 	void win_min(HWND hwnd, bool state){
         if (state) {
             ShowWindow(hwnd, SW_MINIMIZE);

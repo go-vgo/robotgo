@@ -128,12 +128,7 @@ Bounds get_bounds(uintptr pid, int8_t isPid){
 
         return bounds;
     #elif defined(IS_WINDOWS)
-        HWND hwnd;
-        if (isPid == 0) {
-            hwnd= GetHwndByPid(pid);
-        } else {
-            hwnd = (HWND)pid;
-        }
+        HWND hwnd = getHwnd(pid, isPid);
 
         RECT rect = { 0 };
         GetWindowRect(hwnd, &rect);
@@ -193,12 +188,7 @@ Bounds get_client(uintptr pid, int8_t isPid) {
 		
 		return bounds;
 	#elif defined(IS_WINDOWS)
-		HWND hwnd;
-		if (isPid == 0) {
-			hwnd = GetHwndByPid(pid);
-		} else {
-			hwnd = (HWND)pid;
-		}
+		HWND hwnd = getHwnd(pid, isPid);
 
 		RECT rect = { 0 };
 		GetClientRect(hwnd, &rect);
