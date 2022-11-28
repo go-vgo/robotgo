@@ -40,7 +40,7 @@ func GetBounds(pid int, args ...int) (int, int, int, int) {
 		return 0, 0, 0, 0
 	}
 
-	return internalGetBounds(xid, isPid)
+	return internalGetBounds(int(xid), isPid)
 }
 
 // GetClient get the window client bounds
@@ -57,7 +57,7 @@ func GetClient(pid int, args ...int) (int, int, int, int) {
 		return 0, 0, 0, 0
 	}
 
-	return internalGetClient(xid, isPid)
+	return internalGetClient(int(xid), isPid)
 }
 
 // internalGetTitle get the window title
@@ -74,7 +74,7 @@ func internalGetTitle(pid int, args ...int) string {
 		return ""
 	}
 
-	return cgetTitle(xid, isPid)
+	return cgetTitle(int(xid), isPid)
 }
 
 // ActivePidC active the window by Pid,
@@ -93,7 +93,7 @@ func ActivePidC(pid int, args ...int) error {
 		return err
 	}
 
-	internalActive(xid, isPid)
+	internalActive(int(xid), isPid)
 	return nil
 }
 
