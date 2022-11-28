@@ -66,7 +66,7 @@ xcode-select --install
 [MinGW-w64](https://sourceforge.net/projects/mingw-w64/files) (Use recommended) 
 
 Download the Mingw, then set system environment variables `C:\mingw64\bin` to the Path.
-[Set environment variables to run GCC from command line](https://www.youtube.com/watch?v=1kY5iTK4-H0).
+[Set environment variables to run GCC from command line](https://www.youtube.com/results?search_query=Set+environment+variables+to+run+GCC+from+command+line).
 
 
 ```
@@ -453,7 +453,7 @@ func main() {
     fmt.Println("pids... ", fpid)
 
     if len(fpid) > 0 {
-      robotgo.TypeStr("Hi galaxy!", int(fpid[0]))
+      robotgo.TypeStr("Hi galaxy!", fpid[0])
       robotgo.KeyTap("a", fpid[0], "cmd")
 
       robotgo.KeyToggle("a", fpid[0])
