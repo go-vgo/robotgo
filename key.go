@@ -322,6 +322,15 @@ var keyNames = map[string]C.MMKeyCode{
 	// { NULL:              C.K_NOT_A_KEY }
 }
 
+// CmdCtrl If the operating system is macOS, return the key string "cmd",
+// otherwise return the key string "ctrl
+func CmdCtrl() string {
+	if runtime.GOOS == "darwin" {
+		return "cmd"
+	}
+	return "ctrl"
+}
+
 // It sends a key press and release to the active application
 func tapKeyCode(code C.MMKeyCode, flags C.MMKeyFlags, pid C.uintptr) {
 	C.toggleKeyCode(code, true, flags, pid)

@@ -1,14 +1,14 @@
 package main
 
 import (
-	"io/ioutil"
+	"io"
 	"os"
 
 	"github.com/go-vgo/robotgo/clipboard"
 )
 
 func main() {
-	out, err := ioutil.ReadAll(os.Stdin)
+	out, err := io.ReadAll(os.Stdin)
 	if err != nil {
 		panic(err)
 	}
