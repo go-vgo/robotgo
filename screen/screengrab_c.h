@@ -20,7 +20,7 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id) 
 	size_t bufferSize = 0;
 
 	CGDirectDisplayID displayID = (CGDirectDisplayID) display_id;
-	if (displayID == -1) {
+	if (displayID == -1 || displayID == 0) {
 		displayID = CGMainDisplayID();
 	}
 
@@ -94,11 +94,13 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id) 
 	}
 	if (screen == NULL) { return NULL; }
 
+	// Todo:
+	screenMem = CreateCompatibleDC(screen);
 	/* Get screen data in display device context. */
    	dib = CreateDIBSection(screen, &bi, DIB_RGB_COLORS, &data, NULL, 0);
 
 	/* Copy the data into a bitmap struct. */
-	BOOL b = (screenMem = CreateCompatibleDC(screen)) == NULL || 
+	BOOL b = (screenMem == NULL) || 
 		SelectObject(screenMem, dib) == NULL ||
 	    !BitBlt(screenMem, (int)0, (int)0, (int)rect.size.w, (int)rect.size.h, 
 				screen, rect.origin.x, rect.origin.y, SRCCOPY);
