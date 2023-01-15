@@ -60,6 +60,8 @@
 		} else {
 			CGEventPost(kCGSessionEventTap, event);
 		}
+		
+		CFRelease(event);
 		return 0;
 	}
 
@@ -187,7 +189,6 @@ void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags, uintptr pi
 		}
 		
 		SendTo(pid, keyEvent);
-		CFRelease(keyEvent);
 	}
 #elif defined(IS_WINDOWS)
 	const DWORD dwFlags = down ? 0 : KEYEVENTF_KEYUP;
@@ -239,11 +240,6 @@ void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags, uintptr pi
 void toggleKey(char c, const bool down, MMKeyFlags flags, uintptr pid) {
 	MMKeyCode keyCode = keyCodeForChar(c);
 
-	//Prevent unused variable warning for Mac and Linux.
-	#if defined(IS_WINDOWS)
-		int modifiers;
-	#endif
-
 	#if defined(USE_X11)
 		if (toUpper(c) && !(flags & MOD_SHIFT)) {
 			flags |= MOD_SHIFT; /* Not sure if this is safe for all layouts. */
@@ -255,7 +251,8 @@ void toggleKey(char c, const bool down, MMKeyFlags flags, uintptr pid) {
 	#endif
 
 	#if defined(IS_WINDOWS)
-		modifiers = keyCode >> 8; // Pull out modifers.
+		int modifiers = keyCode >> 8; // Pull out modifers.
+
 		if ((modifiers & 1) != 0) { flags |= MOD_SHIFT; } // Uptdate flags from keycode modifiers.
 		if ((modifiers & 2) != 0) { flags |= MOD_CONTROL; }
 		if ((modifiers & 4) != 0) { flags |= MOD_ALT; }
@@ -286,7 +283,6 @@ void toggleUnicode(UniChar ch, const bool down, uintptr pid) {
 	CGEventKeyboardSetUnicodeString(keyEvent, 1, &ch);
 
 	SendTo(pid, keyEvent);
-	CFRelease(keyEvent);
 }
 #endif
 

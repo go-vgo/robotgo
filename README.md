@@ -4,6 +4,7 @@
 <!--[![Build Status](https://travis-ci.org/go-vgo/robotgo.svg)](https://travis-ci.org/go-vgo/robotgo)
 [![codecov](https://codecov.io/gh/go-vgo/robotgo/branch/master/graph/badge.svg)](https://codecov.io/gh/go-vgo/robotgo)-->
 <!--<a href="https://circleci.com/gh/go-vgo/robotgo/tree/dev"><img src="https://img.shields.io/circleci/project/go-vgo/robotgo/dev.svg" alt="Build Status"></a>-->
+
 [![Build Status](https://github.com/go-vgo/robotgo/workflows/Go/badge.svg)](https://github.com/go-vgo/robotgo/commits/master)
 [![CircleCI Status](https://circleci.com/gh/go-vgo/robotgo.svg?style=shield)](https://circleci.com/gh/go-vgo/robotgo)
 [![Build Status](https://travis-ci.org/go-vgo/robotgo.svg)](https://travis-ci.org/go-vgo/robotgo)
@@ -12,6 +13,7 @@
 [![GoDoc](https://godoc.org/github.com/go-vgo/robotgo?status.svg)](https://godoc.org/github.com/go-vgo/robotgo)
 [![GitHub release](https://img.shields.io/github/release/go-vgo/robotgo.svg)](https://github.com/go-vgo/robotgo/releases/latest)
 [![Join the chat at https://gitter.im/go-vgo/robotgo](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/go-vgo/robotgo?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 <!-- [![Release](https://github-release-version.herokuapp.com/github/go-vgo/robotgo/release.svg?style=flat)](https://github.com/go-vgo/robotgo/releases/latest) -->
 <!-- <a href="https://github.com/go-vgo/robotgo/releases"><img src="https://img.shields.io/badge/%20version%20-%206.0.0%20-blue.svg?style=flat-square" alt="Releases"></a> -->
 
@@ -20,6 +22,7 @@
 RobotGo supports Mac, Windows, and Linux(X11); and robotgo supports arm64 and x86-amd64.
 
 ## Contents
+
 - [Docs](#docs)
 - [Binding](#binding)
 - [Requirements](#requirements)
@@ -34,10 +37,12 @@ RobotGo supports Mac, Windows, and Linux(X11); and robotgo supports arm64 and x8
 - [License](#license)
 
 ## Docs
-  - [GoDoc](https://godoc.org/github.com/go-vgo/robotgo) <br>
-  - [API Docs](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md)  (Deprecated, no updated)
+
+- [GoDoc](https://godoc.org/github.com/go-vgo/robotgo) <br>
+- [API Docs](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) (Deprecated, no updated)
 
 ## Binding:
+
 [ADB](https://github.com/vcaesar/adb), packaging android adb API.
 
 [Robotn](https://github.com/vcaesar/robotn), binding JavaScript and other, support more language.
@@ -47,6 +52,7 @@ RobotGo supports Mac, Windows, and Linux(X11); and robotgo supports arm64 and x8
 Now, Please make sure `Golang, GCC` is installed correctly before installing RobotGo.
 
 ### ALL:
+
 ```
 Golang
 
@@ -63,14 +69,12 @@ xcode-select --install
 
 #### For Windows:
 
-[MinGW-w64](https://sourceforge.net/projects/mingw-w64/files) (Use recommended) 
+[MinGW-w64](https://sourceforge.net/projects/mingw-w64/files) (Use recommended)
 
 Download the Mingw, then set system environment variables `C:\mingw64\bin` to the Path.
 [Set environment variables to run GCC from command line](https://www.youtube.com/results?search_query=Set+environment+variables+to+run+GCC+from+command+line).
 
-`
-Or the other GCC (But you should compile the "libpng" with yourself when use the bitmap.)
-`
+`Or the other GCC (But you should compile the "libpng" with yourself when use the bitmap.)`
 
 #### For everything else:
 
@@ -115,7 +119,7 @@ sudo apt install xsel xclip
 ##### Fedora:
 
 ```yml
-sudo dnf install libXtst-devel 
+sudo dnf install libXtst-devel
 
 # Bitmap
 sudo dnf install libpng-devel
@@ -144,13 +148,13 @@ go get github.com/go-vgo/robotgo
 png.h: No such file or directory? Please see [issues/47](https://github.com/go-vgo/robotgo/issues/47).
 
 ## Update:
+
 ```
 go get -u github.com/go-vgo/robotgo
 ```
 
 Note go1.10.x C file compilation cache problem, [golang #24355](https://github.com/golang/go/issues/24355).
 `go mod vendor` problem, [golang #26366](https://github.com/golang/go/issues/26366).
-
 
 ## [Examples:](https://github.com/go-vgo/robotgo/blob/master/examples)
 
@@ -486,6 +490,7 @@ func main() {
 ## CrossCompiling
 
 ##### Windows64 to windows32
+
 ```Go
 SET CGO_ENABLED=1
 SET GOARCH=386
@@ -495,6 +500,7 @@ go build main.go
 #### Other to windows
 
 Install Requirements (Ubuntu, Just used by bitmap.):
+
 ```bash
 sudo apt install gcc-multilib
 sudo apt install gcc-mingw-w64
@@ -503,6 +509,7 @@ sudo apt install libz-mingw-w64-dev
 ```
 
 Build the binary:
+
 ```Go
 GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ go build -x ./
 ```
@@ -515,11 +522,13 @@ GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64
 Some discussions and questions, please see [issues/228](https://github.com/go-vgo/robotgo/issues/228), [issues/143](https://github.com/go-vgo/robotgo/issues/143).
 
 ## Authors
-* [The author is vz](https://github.com/vcaesar)
-* [Maintainers](https://github.com/orgs/go-vgo/people)
-* [Contributors](https://github.com/go-vgo/robotgo/graphs/contributors)
+
+- [The author is vz](https://github.com/vcaesar)
+- [Maintainers](https://github.com/orgs/go-vgo/people)
+- [Contributors](https://github.com/go-vgo/robotgo/graphs/contributors)
 
 ## Plans
+
 - Refactor some C code to Go (such as x11, windows)
 - Better multiscreen support
 - Wayland support

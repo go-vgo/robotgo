@@ -133,7 +133,7 @@ void dragMouse(MMPointInt32 point, const MMMouseButton button){
 	#endif
 }
 
-MMPointInt32 getMousePos() {
+MMPointInt32 location() {
 	#if defined(IS_MACOSX)
 		CGEventRef event = CGEventCreate(NULL);
 		CGPoint point = CGEventGetLocation(event);
@@ -161,7 +161,7 @@ MMPointInt32 getMousePos() {
 /* Press down a button, or release it. */
 void toggleMouse(bool down, MMMouseButton button) {
 	#if defined(IS_MACOSX)
-		const CGPoint currentPos = CGPointFromMMPointInt32(getMousePos());
+		const CGPoint currentPos = CGPointFromMMPointInt32(location());
 		const CGEventType mouseType = MMMouseToCGEventType(down, button);
 		CGEventRef event = CGEventCreateMouseEvent(NULL, mouseType, currentPos, (CGMouseButton)button);
 
@@ -196,7 +196,7 @@ void clickMouse(MMMouseButton button){
 void doubleClick(MMMouseButton button){
 	#if defined(IS_MACOSX)
 		/* Double click for Mac. */
-		const CGPoint currentPos = CGPointFromMMPointInt32(getMousePos());
+		const CGPoint currentPos = CGPointFromMMPointInt32(location());
 		const CGEventType mouseTypeDown = MMMouseToCGEventType(true, button);
 		const CGEventType mouseTypeUP = MMMouseToCGEventType(false, button);
 
@@ -298,7 +298,7 @@ static double crude_hypot(double x, double y){
 }
 
 bool smoothlyMoveMouse(MMPointInt32 endPoint, double lowSpeed, double highSpeed){
-	MMPointInt32 pos = getMousePos();
+	MMPointInt32 pos = location();
 	MMSizeInt32 screenSize = getMainDisplaySize();
 	double velo_x = 0.0, velo_y = 0.0;
 	double distance;
