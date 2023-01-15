@@ -42,7 +42,7 @@ func TestSize(t *testing.T) {
 func TestMoveMouse(t *testing.T) {
 	Move(20, 20)
 	MilliSleep(50)
-	x, y := GetMousePos()
+	x, y := Location()
 
 	tt.Equal(t, 20, x)
 	tt.Equal(t, 20, y)
@@ -51,7 +51,7 @@ func TestMoveMouse(t *testing.T) {
 func TestMoveMouseSmooth(t *testing.T) {
 	b := MoveSmooth(100, 100)
 	MilliSleep(50)
-	x, y := GetMousePos()
+	x, y := Location()
 
 	tt.True(t, b)
 	tt.Equal(t, 100, x)
@@ -61,7 +61,7 @@ func TestMoveMouseSmooth(t *testing.T) {
 func TestDragMouse(t *testing.T) {
 	DragSmooth(500, 500)
 	MilliSleep(50)
-	x, y := GetMousePos()
+	x, y := Location()
 
 	tt.Equal(t, 500, x)
 	tt.Equal(t, 500, y)
@@ -85,7 +85,7 @@ func TestMoveRelative(t *testing.T) {
 	MoveRelative(10, -10)
 	MilliSleep(50)
 
-	x, y := GetMousePos()
+	x, y := Location()
 	tt.Equal(t, 210, x)
 	tt.Equal(t, 190, y)
 }
@@ -97,7 +97,7 @@ func TestMoveSmoothRelative(t *testing.T) {
 	MoveSmoothRelative(10, -10)
 	MilliSleep(50)
 
-	x, y := GetMousePos()
+	x, y := Location()
 	tt.Equal(t, 210, x)
 	tt.Equal(t, 190, y)
 }

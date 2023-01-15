@@ -22,7 +22,7 @@ func main() {
 	robotx, roboty := 35*s/100, 25*s/100
 	fmt.Println("scale: ", sx, s, " pos: ", robotx, roboty)
 
-	mx, my := robotgo.GetMousePos()
+	mx, my := robotgo.Location()
 	sx, sy := mx*s/100, my*s/100
 
 	rx, ry, rw, rh := sx, sy, robotx, roboty

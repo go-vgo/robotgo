@@ -68,7 +68,7 @@ import (
 )
 
 func main() {
-  x, y := robotgo.GetMousePos()
+  x, y := robotgo.Location()
   fmt.Println("pos:", x, y)
   color := robotgo.GetPixelColor(100, 200)
   fmt.Println("color----", color)

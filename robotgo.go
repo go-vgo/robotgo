@@ -211,9 +211,9 @@ func GetPixelColor(x, y int, displayId ...int) string {
 	return PadHex(GetPxColor(x, y, displayId...))
 }
 
-// GetMouseColor get the mouse pos's color
-func GetMouseColor(displayId ...int) string {
-	x, y := GetMousePos()
+// GetLocationColor get the location pos's color
+func GetLocationColor(displayId ...int) string {
+	x, y := Location()
 	return GetPixelColor(x, y, displayId...)
 }
 
@@ -651,7 +651,7 @@ func GetMousePos() (int, int) {
 
 // Location get the mouse location position return x, y
 func Location() (int, int) {
-	pos := C.getMousePos()
+	pos := C.location()
 	x := int(pos.x)
 	y := int(pos.y)
 
@@ -731,29 +731,31 @@ func MovesClick(x, y int, args ...interface{}) {
 //
 //	robotgo.Toggle("left") // default is down
 //	robotgo.Toggle("left", "up")
-func Toggle(key ...string) error {
+func Toggle(key ...interface{}) error {
 	var button C.MMMouseButton = C.LEFT_BUTTON
 	if len(key) > 0 {
-		button = CheckMouse(key[0])
+		button = CheckMouse(key[0].(string))
 	}
 
 	down := true
-	if len(key) > 1 && key[1] == "up" {
+	if len(key) > 1 && key[1].(string) == "up" {
 		down = false
 	}
 	C.toggleMouse(C.bool(down), button)
-	MilliSleep(MouseSleep)
+	if len(key) > 2 {
+		MilliSleep(MouseSleep)
+	}
 
 	return nil
 }
 
 // MouseDown send mouse down event
-func MouseDown(key ...string) error {
+func MouseDown(key ...interface{}) error {
 	return Toggle(key...)
 }
 
 // MouseUp send mouse up event
-func MouseUp(key ...string) error {
+func MouseUp(key ...interface{}) error {
 	if len(key) <= 0 {
 		key = append(key, "left")
 	}
