@@ -72,14 +72,17 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id) 
 	HBITMAP dib;
 	BITMAPINFO bi;
 
+	int32_t x = rect.origin.x, y = rect.origin.y;
+	int32_t w = rect.size.w, h = rect.size.h;
+
 	/* Initialize bitmap info. */
 	bi.bmiHeader.biSize = sizeof(bi.bmiHeader);
-   	bi.bmiHeader.biWidth = (long)rect.size.w;
-   	bi.bmiHeader.biHeight = -(long)rect.size.h; /* Non-cartesian, please */
+   	bi.bmiHeader.biWidth = (long) w;
+   	bi.bmiHeader.biHeight = -(long) h; /* Non-cartesian, please */
    	bi.bmiHeader.biPlanes = 1;
    	bi.bmiHeader.biBitCount = 32;
    	bi.bmiHeader.biCompression = BI_RGB;
-   	bi.bmiHeader.biSizeImage = (DWORD)(4 * rect.size.w * rect.size.h);
+   	bi.bmiHeader.biSizeImage = (DWORD)(4 * w * h);
 	bi.bmiHeader.biXPelsPerMeter = 0;
 	bi.bmiHeader.biYPelsPerMeter = 0;
 	bi.bmiHeader.biClrUsed = 0;
@@ -102,8 +105,7 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id) 
 	/* Copy the data into a bitmap struct. */
 	BOOL b = (screenMem == NULL) || 
 		SelectObject(screenMem, dib) == NULL ||
-	    !BitBlt(screenMem, (int)0, (int)0, (int)rect.size.w, (int)rect.size.h, 
-				screen, rect.origin.x, rect.origin.y, SRCCOPY);
+	    !BitBlt(screenMem, (int)0, (int)0, (int)w, (int)h, screen, x, y, SRCCOPY);
 	if (b) {
 		/* Error copying data. */
 		ReleaseDC(hwnd, screen);
@@ -113,8 +115,7 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id) 
 		return NULL;
 	}
 
-	bitmap = createMMBitmap_c(NULL, rect.size.w, rect.size.h, 4 * rect.size.w,
-	                        	(uint8_t)bi.bmiHeader.biBitCount, 4);
+	bitmap = createMMBitmap_c(NULL, w, h, 4 * w, (uint8_t)bi.bmiHeader.biBitCount, 4);
 
 	/* Copy the data to our pixel buffer. */
 	if (bitmap != NULL) {
