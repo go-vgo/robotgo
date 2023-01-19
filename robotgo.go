@@ -72,6 +72,9 @@ var (
 
 	// DisplayID set the screen display id
 	DisplayID = -1
+
+	// NotPid used the hwnd not pid in windows
+	NotPid bool
 )
 
 type (
@@ -324,7 +327,11 @@ func CaptureScreen(args ...int) CBitmap {
 		h = C.int32_t(rect.H)
 	}
 
-	bit := C.capture_screen(x, y, w, h, C.int32_t(displayId))
+	isPid := 0
+	if NotPid || len(args) > 5 {
+		isPid = 1
+	}
+	bit := C.capture_screen(x, y, w, h, C.int32_t(displayId), C.int8_t(isPid))
 	return CBitmap(bit)
 }
 

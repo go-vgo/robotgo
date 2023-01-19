@@ -13,7 +13,7 @@
 	#include <string.h>
 #endif
 
-MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id) {
+MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id, int8_t isPid) {
 #if defined(IS_MACOSX)
 	MMBitmapRef bitmap = NULL;
 	uint8_t *buffer = NULL;
@@ -24,8 +24,8 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id) 
 		displayID = CGMainDisplayID();
 	}
 
-	CGImageRef image = CGDisplayCreateImageForRect(displayID,
-		CGRectMake(rect.origin.x, rect.origin.y, rect.size.w, rect.size.h));
+	MMPointInt32 o = rect.origin; MMSizeInt32 s = rect.size;
+	CGImageRef image = CGDisplayCreateImageForRect(displayID, CGRectMake(o.x, o.y, s.w, s.h));
 	if (!image) { return NULL; }
 
 	CFDataRef imageData = CGDataProviderCopyData(CGImageGetDataProvider(image));
@@ -52,14 +52,14 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id) 
 		display = XGetMainDisplay();
 	}
 
+	MMPointInt32 o = rect.origin; MMSizeInt32 s = rect.size;
 	XImage *image = XGetImage(display, XDefaultRootWindow(display), 
-							(int)rect.origin.x, (int)rect.origin.y,
-	                        (unsigned int)rect.size.w, (unsigned int)rect.size.h, AllPlanes, ZPixmap);
+							(int)o.x, (int)o.y, (unsigned int)s.w, (unsigned int)s.h, AllPlanes, ZPixmap);
 	XCloseDisplay(display);
 	if (image == NULL) { return NULL; }
 
 	bitmap = createMMBitmap_c((uint8_t *)image->data, 
-				rect.size.w, rect.size.h, (size_t)image->bytes_per_line, 
+				s.w, s.h, (size_t)image->bytes_per_line, 
 				(uint8_t)image->bits_per_pixel, (uint8_t)image->bits_per_pixel / 8);
 	image->data = NULL; /* Steal ownership of bitmap data so we don't have to copy it. */
 	XDestroyImage(image);
@@ -89,15 +89,17 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id) 
 	bi.bmiHeader.biClrImportant = 0;
 
 	HWND hwnd;
-	if (display_id == -1) {
-		screen = GetDC(NULL); /* Get entire screen */
+	if (display_id == -1 || isPid == 0) {
+	// 	screen = GetDC(NULL); /* Get entire screen */
+		hwnd = GetDesktopWindow();
 	} else {
 		hwnd = (HWND) (uintptr) display_id;
-		screen = GetDC(hwnd);
 	}
+	screen = GetDC(hwnd);
+	
 	if (screen == NULL) { return NULL; }
 
-	// Todo:
+	// Todo: Use DXGI
 	screenMem = CreateCompatibleDC(screen);
 	/* Get screen data in display device context. */
    	dib = CreateDIBSection(screen, &bi, DIB_RGB_COLORS, &data, NULL, 0);
