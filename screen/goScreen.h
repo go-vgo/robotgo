@@ -51,7 +51,7 @@ MMRGBHex get_px_color(int32_t x, int32_t y, int32_t display_id) {
 		return color;
 	}
 
-	bitmap = copyMMBitmapFromDisplayInRect(MMRectInt32Make(x, y, 1, 1), display_id);
+	bitmap = copyMMBitmapFromDisplayInRect(MMRectInt32Make(x, y, 1, 1), display_id, 0);
 	color = MMRGBHexAtPoint(bitmap, 0, 0);
 	destroyMMBitmap(bitmap);
 
@@ -114,8 +114,8 @@ void bitmap_dealloc(MMBitmapRef bitmap) {
 }
 
 // capture_screen capture screen
-MMBitmapRef capture_screen(int32_t x, int32_t y, int32_t w, int32_t h, int32_t display_id) {
-	MMBitmapRef bitmap = copyMMBitmapFromDisplayInRect(MMRectInt32Make(x, y, w, h), display_id);
+MMBitmapRef capture_screen(int32_t x, int32_t y, int32_t w, int32_t h, int32_t display_id, int8_t isPid) {
+	MMBitmapRef bitmap = copyMMBitmapFromDisplayInRect(MMRectInt32Make(x, y, w, h), display_id, isPid);
 	return bitmap;
 }
 

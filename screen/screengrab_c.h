@@ -13,7 +13,7 @@
 	#include <string.h>
 #endif
 
-MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id) {
+MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id, int8_t isPid) {
 #if defined(IS_MACOSX)
 	MMBitmapRef bitmap = NULL;
 	uint8_t *buffer = NULL;
@@ -24,8 +24,8 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id) 
 		displayID = CGMainDisplayID();
 	}
 
-	CGImageRef image = CGDisplayCreateImageForRect(displayID,
-		CGRectMake(rect.origin.x, rect.origin.y, rect.size.w, rect.size.h));
+	MMPointInt32 o = rect.origin; MMSizeInt32 s = rect.size;
+	CGImageRef image = CGDisplayCreateImageForRect(displayID, CGRectMake(o.x, o.y, s.w, s.h));
 	if (!image) { return NULL; }
 
 	CFDataRef imageData = CGDataProviderCopyData(CGImageGetDataProvider(image));
@@ -52,14 +52,14 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id) 
 		display = XGetMainDisplay();
 	}
 
+	MMPointInt32 o = rect.origin; MMSizeInt32 s = rect.size;
 	XImage *image = XGetImage(display, XDefaultRootWindow(display), 
-							(int)rect.origin.x, (int)rect.origin.y,
-	                        (unsigned int)rect.size.w, (unsigned int)rect.size.h, AllPlanes, ZPixmap);
+							(int)o.x, (int)o.y, (unsigned int)s.w, (unsigned int)s.h, AllPlanes, ZPixmap);
 	XCloseDisplay(display);
 	if (image == NULL) { return NULL; }
 
 	bitmap = createMMBitmap_c((uint8_t *)image->data, 
-				rect.size.w, rect.size.h, (size_t)image->bytes_per_line, 
+				s.w, s.h, (size_t)image->bytes_per_line, 
 				(uint8_t)image->bits_per_pixel, (uint8_t)image->bits_per_pixel / 8);
 	image->data = NULL; /* Steal ownership of bitmap data so we don't have to copy it. */
 	XDestroyImage(image);
@@ -72,29 +72,34 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id) 
 	HBITMAP dib;
 	BITMAPINFO bi;
 
+	int32_t x = rect.origin.x, y = rect.origin.y;
+	int32_t w = rect.size.w, h = rect.size.h;
+
 	/* Initialize bitmap info. */
 	bi.bmiHeader.biSize = sizeof(bi.bmiHeader);
-   	bi.bmiHeader.biWidth = (long)rect.size.w;
-   	bi.bmiHeader.biHeight = -(long)rect.size.h; /* Non-cartesian, please */
+   	bi.bmiHeader.biWidth = (long) w;
+   	bi.bmiHeader.biHeight = -(long) h; /* Non-cartesian, please */
    	bi.bmiHeader.biPlanes = 1;
    	bi.bmiHeader.biBitCount = 32;
    	bi.bmiHeader.biCompression = BI_RGB;
-   	bi.bmiHeader.biSizeImage = (DWORD)(4 * rect.size.w * rect.size.h);
+   	bi.bmiHeader.biSizeImage = (DWORD)(4 * w * h);
 	bi.bmiHeader.biXPelsPerMeter = 0;
 	bi.bmiHeader.biYPelsPerMeter = 0;
 	bi.bmiHeader.biClrUsed = 0;
 	bi.bmiHeader.biClrImportant = 0;
 
 	HWND hwnd;
-	if (display_id == -1) {
-		screen = GetDC(NULL); /* Get entire screen */
+	if (display_id == -1 || isPid == 0) {
+	// 	screen = GetDC(NULL); /* Get entire screen */
+		hwnd = GetDesktopWindow();
 	} else {
 		hwnd = (HWND) (uintptr) display_id;
-		screen = GetDC(hwnd);
 	}
+	screen = GetDC(hwnd);
+	
 	if (screen == NULL) { return NULL; }
 
-	// Todo:
+	// Todo: Use DXGI
 	screenMem = CreateCompatibleDC(screen);
 	/* Get screen data in display device context. */
    	dib = CreateDIBSection(screen, &bi, DIB_RGB_COLORS, &data, NULL, 0);
@@ -102,8 +107,7 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id) 
 	/* Copy the data into a bitmap struct. */
 	BOOL b = (screenMem == NULL) || 
 		SelectObject(screenMem, dib) == NULL ||
-	    !BitBlt(screenMem, (int)0, (int)0, (int)rect.size.w, (int)rect.size.h, 
-				screen, rect.origin.x, rect.origin.y, SRCCOPY);
+	    !BitBlt(screenMem, (int)0, (int)0, (int)w, (int)h, screen, x, y, SRCCOPY);
 	if (b) {
 		/* Error copying data. */
 		ReleaseDC(hwnd, screen);
@@ -113,8 +117,7 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id) 
 		return NULL;
 	}
 
-	bitmap = createMMBitmap_c(NULL, rect.size.w, rect.size.h, 4 * rect.size.w,
-	                        	(uint8_t)bi.bmiHeader.biBitCount, 4);
+	bitmap = createMMBitmap_c(NULL, w, h, 4 * w, (uint8_t)bi.bmiHeader.biBitCount, 4);
 
 	/* Copy the data to our pixel buffer. */
 	if (bitmap != NULL) {
