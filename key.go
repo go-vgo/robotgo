@@ -27,7 +27,6 @@ import (
 	"unsafe"
 
 	"github.com/go-vgo/robotgo/clipboard"
-	"github.com/vcaesar/tt"
 )
 
 // Defining a bunch of constants.
@@ -723,22 +722,14 @@ func PasteStr(str string) error {
 }
 
 // TypeStrDelay type string with delayed
+// And you can use robotgo.KeySleep = 100 to delayed not this function
 func TypeStrDelay(str string, delay int) {
 	TypeStr(str)
 	MilliSleep(delay)
 }
 
-// Deprecated: use the TypeStr(),
-//
-// # TypeStringDelayed type string delayed, Wno-deprecated
-//
-// This function will be removed in version v1.0.0
-func TypeStringDelayed(str string, delay int) {
-	tt.Drop("TypeStringDelayed", "TypeStrDelay")
-	TypeStrDelay(str, delay)
-}
-
 // SetDelay sets the key and mouse delay
+// robotgo.SetDelay(100) option the robotgo.KeySleep and robotgo.MouseSleep = d
 func SetDelay(d ...int) {
 	v := 10
 	if len(d) > 0 {

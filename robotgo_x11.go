@@ -29,8 +29,8 @@ var xu *xgbutil.XUtil
 // GetBounds get the window bounds
 func GetBounds(pid int, args ...int) (int, int, int, int) {
 	var isPid int
-	if len(args) > 0 {
-		isPid = args[0]
+	if len(args) > 0 || NotPid {
+		isPid = 1
 		return internalGetBounds(pid, isPid)
 	}
 
@@ -46,8 +46,8 @@ func GetBounds(pid int, args ...int) (int, int, int, int) {
 // GetClient get the window client bounds
 func GetClient(pid int, args ...int) (int, int, int, int) {
 	var isPid int
-	if len(args) > 0 {
-		isPid = args[0]
+	if len(args) > 0 || NotPid {
+		isPid = 1
 		return internalGetClient(pid, isPid)
 	}
 
@@ -63,8 +63,8 @@ func GetClient(pid int, args ...int) (int, int, int, int) {
 // internalGetTitle get the window title
 func internalGetTitle(pid int, args ...int) string {
 	var isPid int
-	if len(args) > 0 {
-		isPid = args[0]
+	if len(args) > 0 || NotPid {
+		isPid = 1
 		return cgetTitle(pid, isPid)
 	}
 
@@ -81,8 +81,8 @@ func internalGetTitle(pid int, args ...int) string {
 // If args[0] > 0 on the unix platform via a xid to active
 func ActivePidC(pid int, args ...int) error {
 	var isPid int
-	if len(args) > 0 {
-		isPid = args[0]
+	if len(args) > 0 || NotPid {
+		isPid = 1
 		internalActive(pid, isPid)
 		return nil
 	}
