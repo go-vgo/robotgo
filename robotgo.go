@@ -331,6 +331,7 @@ func CaptureScreen(args ...int) CBitmap {
 	if NotPid || len(args) > 5 {
 		isPid = 1
 	}
+
 	bit := C.capture_screen(x, y, w, h, C.int32_t(displayId), C.int8_t(isPid))
 	return CBitmap(bit)
 }
@@ -444,45 +445,6 @@ func ScaleX() int {
 	return int(C.scaleX())
 }
 
-// Deprecated: use the ScaledF(),
-//
-// Scale get the screen scale (only windows old), drop
-func Scale() int {
-	dpi := map[int]int{
-		0: 100,
-		// DPI Scaling Level
-		96:  100,
-		120: 125,
-		144: 150,
-		168: 175,
-		192: 200,
-		216: 225,
-		// Custom DPI
-		240: 250,
-		288: 300,
-		384: 400,
-		480: 500,
-	}
-
-	x := ScaleX()
-	return dpi[x]
-}
-
-// Deprecated: use the ScaledF(),
-//
-// Scale0 return ScaleX() / 0.96, drop
-func Scale0() int {
-	return int(float64(ScaleX()) / 0.96)
-}
-
-// Deprecated: use the ScaledF(),
-//
-// Mul mul the scale, drop
-func Mul(x int) int {
-	s := Scale()
-	return x * s / 100
-}
-
 /*
 .___  ___.   ______    __    __       _______. _______
 |   \/   |  /  __  \  |  |  |  |     /       ||   ____|
@@ -512,13 +474,6 @@ func CheckMouse(btn string) C.MMMouseButton {
 	return C.LEFT_BUTTON
 }
 
-// Deprecated: use the Move(),
-//
-// MoveMouse move the mouse
-func MoveMouse(x, y int) {
-	Move(x, y)
-}
-
 // Move move the mouse to (x, y)
 //
 // Examples:
@@ -536,18 +491,6 @@ func Move(x, y int) {
 	C.moveMouse(C.MMPointInt32Make(cx, cy))
 
 	MilliSleep(MouseSleep)
-}
-
-// Deprecated: use the DragSmooth(),
-//
-// DragMouse drag the mouse to (x, y),
-// It's same with the DragSmooth() now
-func DragMouse(x, y int, args ...interface{}) {
-	Toggle("left")
-	MilliSleep(50)
-	// Drag(x, y, args...)
-	MoveSmooth(x, y, args...)
-	Toggle("left", "up")
 }
 
 // Deprecated: use the DragSmooth(),
@@ -577,14 +520,6 @@ func DragSmooth(x, y int, args ...interface{}) {
 	MilliSleep(50)
 	MoveSmooth(x, y, args...)
 	Toggle("left", "up")
-}
-
-// Deprecated: use the MoveSmooth(),
-//
-// MoveMouseSmooth move the mouse smooth,
-// moves mouse to x, y human like, with the mouse button up.
-func MoveMouseSmooth(x, y int, args ...interface{}) bool {
-	return MoveSmooth(x, y, args...)
 }
 
 // MoveSmooth move the mouse smooth,
@@ -649,13 +584,6 @@ func MoveSmoothRelative(x, y int, args ...interface{}) {
 	MoveSmooth(mx, my, args...)
 }
 
-// Deprecated: use the function Location()
-//
-// GetMousePos get the mouse's position return x, y
-func GetMousePos() (int, int) {
-	return Location()
-}
-
 // Location get the mouse location position return x, y
 func Location() (int, int) {
 	pos := C.location()
@@ -663,15 +591,6 @@ func Location() (int, int) {
 	y := int(pos.y)
 
 	return x, y
-}
-
-// Deprecated: use the Click(),
-//
-// # MouseClick click the mouse
-//
-// robotgo.MouseClick(button string, double bool)
-func MouseClick(args ...interface{}) {
-	Click(args...)
 }
 
 // Click click the mouse button
@@ -938,8 +857,8 @@ func MinWindow(pid int, args ...interface{}) {
 	if len(args) > 0 {
 		state = args[0].(bool)
 	}
-	if len(args) > 1 {
-		isPid = args[1].(int)
+	if len(args) > 1 || NotPid {
+		isPid = 1
 	}
 
 	C.min_window(C.uintptr(pid), C.bool(state), C.int8_t(isPid))
@@ -955,8 +874,8 @@ func MaxWindow(pid int, args ...interface{}) {
 	if len(args) > 0 {
 		state = args[0].(bool)
 	}
-	if len(args) > 1 {
-		isPid = args[1].(int)
+	if len(args) > 1 || NotPid {
+		isPid = 1
 	}
 
 	C.max_window(C.uintptr(pid), C.bool(state), C.int8_t(isPid))
@@ -973,8 +892,8 @@ func CloseWindow(args ...int) {
 	if len(args) > 0 {
 		pid = args[0]
 	}
-	if len(args) > 1 {
-		isPid = args[1]
+	if len(args) > 1 || NotPid {
+		isPid = 1
 	}
 
 	C.close_window_by_PId(C.uintptr(pid), C.int8_t(isPid))
@@ -989,8 +908,8 @@ func SetHandle(hwnd int) {
 // SetHandlePid set the window handle by pid
 func SetHandlePid(pid int, args ...int) {
 	var isPid int
-	if len(args) > 0 {
-		isPid = args[0]
+	if len(args) > 0 || NotPid {
+		isPid = 1
 	}
 
 	C.set_handle_pid_mData(C.uintptr(pid), C.int8_t(isPid))
@@ -999,8 +918,8 @@ func SetHandlePid(pid int, args ...int) {
 // GetHandPid get handle mdata by pid
 func GetHandPid(pid int, args ...int) C.MData {
 	var isPid int
-	if len(args) > 0 {
-		isPid = args[0]
+	if len(args) > 0 || NotPid {
+		isPid = 1
 	}
 
 	return C.set_handle_pid(C.uintptr(pid), C.int8_t(isPid))
