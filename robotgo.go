@@ -75,6 +75,8 @@ var (
 
 	// NotPid used the hwnd not pid in windows
 	NotPid bool
+	// Scale option the os screen scale
+	Scale bool
 )
 
 type (
@@ -253,7 +255,7 @@ func SysScale(displayId ...int) float64 {
 	return float64(s)
 }
 
-// Scaled get the screen scaled size
+// Scaled get the screen scaled return scale size
 func Scaled(x int, displayId ...int) int {
 	f := ScaleF(displayId...)
 	return Scaled0(x, f)
@@ -282,7 +284,8 @@ func GetScreenRect(displayId ...int) Rect {
 		int(rect.size.w), int(rect.size.h)
 
 	if runtime.GOOS == "windows" {
-		f := ScaleF(displayId...)
+		// f := ScaleF(displayId...)
+		f := ScaleF()
 		x, y, w, h = Scaled0(x, f), Scaled0(y, f), Scaled0(w, f), Scaled0(h, f)
 	}
 	return Rect{
@@ -474,17 +477,24 @@ func CheckMouse(btn string) C.MMMouseButton {
 	return C.LEFT_BUTTON
 }
 
+// MoveScale calculate the os scale factor x, y
+func MoveScale(x, y int, displayId ...int) (int, int) {
+	if Scale && runtime.GOOS == "windows" {
+		f := ScaleF()
+		x, y = Scaled0(x, f), Scaled0(y, f)
+	}
+
+	return x, y
+}
+
 // Move move the mouse to (x, y)
 //
 // Examples:
 //
 //	robotgo.MouseSleep = 100  // 100 millisecond
 //	robotgo.Move(10, 10)
-func Move(x, y int) {
-	// if runtime.GOOS == "windows" {
-	// 	f := ScaleF()
-	// 	x, y = Scaled0(x, f), Scaled0(y, f)
-	// }
+func Move(x, y int, displayId ...int) {
+	x, y = MoveScale(x, y, displayId...)
 
 	cx := C.int32_t(x)
 	cy := C.int32_t(y)
@@ -498,6 +508,8 @@ func Move(x, y int) {
 // Drag drag the mouse to (x, y),
 // It's not valid now, use the DragSmooth()
 func Drag(x, y int, args ...string) {
+	x, y = MoveScale(x, y)
+
 	var button C.MMMouseButton = C.LEFT_BUTTON
 	cx := C.int32_t(x)
 	cy := C.int32_t(y)
@@ -516,6 +528,8 @@ func Drag(x, y int, args ...string) {
 //
 //	robotgo.DragSmooth(10, 10)
 func DragSmooth(x, y int, args ...interface{}) {
+	x, y = MoveScale(x, y)
+
 	Toggle("left")
 	MilliSleep(50)
 	MoveSmooth(x, y, args...)
@@ -536,6 +550,7 @@ func MoveSmooth(x, y int, args ...interface{}) bool {
 	// 	f := ScaleF()
 	// 	x, y = Scaled0(x, f), Scaled0(y, f)
 	// }
+	x, y = MoveScale(x, y)
 
 	cx := C.int32_t(x)
 	cy := C.int32_t(y)

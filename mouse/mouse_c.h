@@ -101,7 +101,7 @@ void moveMouse(MMPointInt32 point){
 		#define MOUSE_COORD_TO_ABS(coord, width_or_height) ( \
 			((65536 * coord) / width_or_height) + (coord < 0 ? -1 : 1))
 
-		MMRectInt32 rect = getScreenRect(-1);
+		MMRectInt32 rect = getScreenRect(1);
 		int32_t x = MOUSE_COORD_TO_ABS(point.x - rect.origin.x, rect.size.w);
 		int32_t y = MOUSE_COORD_TO_ABS(point.y - rect.origin.y, rect.size.h);
 
@@ -239,12 +239,8 @@ void scrollMouseXY(int x, int y) {
 		int xdir = 6;
 		Display *display = XGetMainDisplay();
 
-		if (y < 0) {
-			ydir = 5;
-		}
-		if (x < 0) {
-			xdir = 7;
-		}
+		if (y < 0) { ydir = 5; }
+		if (x < 0) { xdir = 7; }
 
 		int xi; int yi;
 		for (xi = 0; xi < abs(x); xi++) {
@@ -299,7 +295,7 @@ static double crude_hypot(double x, double y){
 
 bool smoothlyMoveMouse(MMPointInt32 endPoint, double lowSpeed, double highSpeed){
 	MMPointInt32 pos = location();
-	MMSizeInt32 screenSize = getMainDisplaySize();
+	// MMSizeInt32 screenSize = getMainDisplaySize();
 	double velo_x = 0.0, velo_y = 0.0;
 	double distance;
 
@@ -315,13 +311,13 @@ bool smoothlyMoveMouse(MMPointInt32 endPoint, double lowSpeed, double highSpeed)
 		velo_x /= veloDistance;
 		velo_y /= veloDistance;
 
-		pos.x += floor(velo_x + 0.5);
-		pos.y += floor(velo_y + 0.5);
+		pos.x += floor(velo_x + 0.8);
+		pos.y += floor(velo_y + 0.8);
 
 		/* Make sure we are in the screen boundaries! (Strange things will happen if we are not.) */
-		if (pos.x >= screenSize.w || pos.y >= screenSize.h) {
-			return false;
-		}
+		// if (pos.x >= screenSize.w || pos.y >= screenSize.h) {
+		// 	return false;
+		// }
 		moveMouse(pos);
 
 		/* Wait 1 - 3 milliseconds. */

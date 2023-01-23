@@ -50,19 +50,20 @@ MMRectInt32 getScreenRect(int32_t display_id) {
 					(int32_t)DisplayWidth(display, screen),
 	                (int32_t)DisplayHeight(display, screen));
 #elif defined(IS_WINDOWS)
-	// if (GetSystemMetrics(SM_CMONITORS) == 1) {
+	if (GetSystemMetrics(SM_CMONITORS) == 1 
+			|| display_id == -1 || display_id == 0) {
  		return MMRectInt32Make(
 						(int32_t)0,
 						(int32_t)0,
 			 			(int32_t)GetSystemMetrics(SM_CXSCREEN),
  		                (int32_t)GetSystemMetrics(SM_CYSCREEN));
- 	// } else {
- 	// 	return MMRectInt32Make(
-	// 		 			(int32_t)GetSystemMetrics(SM_XVIRTUALSCREEN),
-	// 					(int32_t)GetSystemMetrics(SM_YVIRTUALSCREEN),
-	// 					(int32_t)GetSystemMetrics(SM_CXVIRTUALSCREEN),
- 	// 	                (int32_t)GetSystemMetrics(SM_CYVIRTUALSCREEN));
- 	// }
+ 	} else {
+ 		return MMRectInt32Make(
+			 			(int32_t)GetSystemMetrics(SM_XVIRTUALSCREEN),
+						(int32_t)GetSystemMetrics(SM_YVIRTUALSCREEN),
+						(int32_t)GetSystemMetrics(SM_CXVIRTUALSCREEN),
+ 		                (int32_t)GetSystemMetrics(SM_CYVIRTUALSCREEN));
+ 	}
 #endif
 }
 
