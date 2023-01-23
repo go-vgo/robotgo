@@ -17,8 +17,8 @@ func main() {
 	// robotgo.SaveBitmap(bitmap, "test.png")
 	robotgo.Save(robotgo.ToImage(bitmap), "test.png")
 
-	sx := robotgo.ScaleX()
-	s := robotgo.Scale()
+	sx := robotgo.ScaleX() // Deprecated
+	s := robotgo.Scale1()  // Deprecated, use the ScaleF() function
 	robotx, roboty := 35*s/100, 25*s/100
 	fmt.Println("scale: ", sx, s, " pos: ", robotx, roboty)
 
