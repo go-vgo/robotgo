@@ -57,8 +57,8 @@ func TypeStringDelayed(str string, delay int) {
 
 // Deprecated: use the ScaledF(),
 //
-// Scale get the screen scale (only windows old), drop
-func Scale() int {
+// Scale1 get the screen scale (only windows old), drop
+func Scale1() int {
 	dpi := map[int]int{
 		0: 100,
 		// DPI Scaling Level
@@ -90,6 +90,6 @@ func Scale0() int {
 //
 // Mul mul the scale, drop
 func Mul(x int) int {
-	s := Scale()
+	s := Scale1()
 	return x * s / 100
 }
