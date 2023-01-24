@@ -324,8 +324,10 @@ func CaptureScreen(args ...int) CBitmap {
 	} else {
 		// Get the main screen rect.
 		rect := GetScreenRect(displayId)
-		// x = C.int32_t(rect.X)
-		// y = C.int32_t(rect.Y)
+		if runtime.GOOS == "windows" {
+			x = C.int32_t(rect.X)
+			y = C.int32_t(rect.Y)
+		}
 		w = C.int32_t(rect.W)
 		h = C.int32_t(rect.H)
 	}
