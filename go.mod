@@ -3,6 +3,7 @@ module github.com/go-vgo/robotgo
 go 1.17
 
 require (
+	github.com/kbinani/screenshot v0.0.0-20210720154843-7d3a670d8329
 	github.com/lxn/win v0.0.0-20210218163916-a377121e959e
 	github.com/otiai10/gosseract v2.2.1+incompatible
 	// github.com/robotn/gohook v0.31.3
@@ -16,7 +17,9 @@ require (
 )
 
 require (
+	github.com/gen2brain/shm v0.0.0-20200228170931-49f9650110c5 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
+	github.com/jezek/xgb v0.0.0-20210312150743-0e0f116e1240 // indirect
 	github.com/lufia/plan9stats v0.0.0-20220913051719-115f729f3c8c // indirect
 	github.com/otiai10/mint v1.3.0 // indirect
 	github.com/power-devops/perfstat v0.0.0-20220216144756-c35f1ee13d7c // indirect

@@ -311,8 +311,8 @@ bool smoothlyMoveMouse(MMPointInt32 endPoint, double lowSpeed, double highSpeed)
 		velo_x /= veloDistance;
 		velo_y /= veloDistance;
 
-		pos.x += floor(velo_x + 0.8);
-		pos.y += floor(velo_y + 0.8);
+		pos.x += floor(velo_x + 0.5);
+		pos.y += floor(velo_y + 0.5);
 
 		/* Make sure we are in the screen boundaries! (Strange things will happen if we are not.) */
 		// if (pos.x >= screenSize.w || pos.y >= screenSize.h) {
