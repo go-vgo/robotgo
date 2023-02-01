@@ -20,7 +20,9 @@ import (
 
 func bitmap() {
 	bit := robotgo.CaptureScreen()
+	defer robotgo.FreeBitmap(bit)
 	fmt.Println("abitMap...", bit)
+
 	gbit := robotgo.ToBitmap(bit)
 	fmt.Println("bitmap...", gbit.Width)
 
