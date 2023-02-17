@@ -13,7 +13,7 @@ require (
 	github.com/vcaesar/imgo v0.30.1
 	github.com/vcaesar/keycode v0.10.0
 	github.com/vcaesar/tt v0.20.0
-	golang.org/x/image v0.1.0 // indirect
+	golang.org/x/image v0.5.0 // indirect
 )
 
 require (
