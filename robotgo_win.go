@@ -71,14 +71,16 @@ func GetMainId() int {
 // if "displayId == -2" this function will get the desktop scale value
 func ScaleF(displayId ...int) (f float64) {
 	if len(displayId) > 0 && displayId[0] != -1 {
-		dpi := GetDPI(win.HWND(displayId[0]))
-		f = float64(dpi) / 96.0
-	} else {
-		if displayId == -2 {
-			f = float64(GetDPI(GetDesktopWindow())) / 96.0
-		} else {
-			f = float64(GetMainDPI()) / 96.0
+		if displayId[0] >= 0 {
+			dpi := GetDPI(win.HWND(displayId[0]))
+			f = float64(dpi) / 96.0
 		}
+
+		if displayId[0] == -2 {
+			f = float64(GetDPI(GetDesktopWindow())) / 96.0
+		}
+	} else {
+		f = float64(GetMainDPI()) / 96.0
 	}
 
 	if f == 0.0 {
