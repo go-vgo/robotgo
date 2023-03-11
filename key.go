@@ -482,7 +482,7 @@ func toErr(str *C.char) error {
 
 // KeyTap taps the keyboard code;
 //
-// See keys:
+// See keys supported:
 //
 //	https://github.com/go-vgo/robotgo/blob/master/docs/keys.md
 //
@@ -613,7 +613,7 @@ func CharCodeAt(s string, n int) rune {
 	return 0
 }
 
-// UnicodeType tap uint32 unicode
+// UnicodeType tap the uint32 unicode
 func UnicodeType(str uint32, args ...int) {
 	cstr := C.uint(str)
 	pid := 0
