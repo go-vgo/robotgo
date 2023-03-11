@@ -29,6 +29,7 @@ RobotGo supports Mac, Windows, and Linux(X11); and robotgo supports arm64 and x8
 - [Installation](#installation)
 - [Update](#update)
 - [Examples](#examples)
+- [Type Conversion](#type-conversion)
 - [Cross-Compiling](#crosscompiling)
 - [Authors](#authors)
 - [Plans](#plans)
@@ -486,6 +487,28 @@ func main() {
   fmt.Println("title@@@ ", title)
 }
 ```
+
+## Type Conversion
+
+|     | type conversion	    |  func
+|-----|---------------------|----------------------
+|	*	| robotgo.Bitmap -> robotgo.CBitmap | robotgo.ToCBitmap()
+|		| robotgo.Bitmap -> *image.RGBA | robotgo.ToRGBAGo()
+|	*	| robotgo.CBitmap -> C.MMBitmapRef | robotgo.ToMMBitmapRef()
+|		| robotgo.CBitmap -> robotgo.Bitmap | robotgo.ToBitmap()
+|		| robotgo.CBitmap -> image.Image | robotgo.ToImage()
+|		| robotgo.CBitmap -> *image.RGBA | robotgo.ToRGBA()
+|	*	| C.MMBitmapRef -> robotgo.CBitmap | robotgo.CBitmap()
+|	*	| image.Image -> robotgo.Bitmap | robotgo.ImgToBitmap()
+|		| image.Image -> robotgo.CBitmap | robotgo.ImgToCBitmap()
+|		| image.Image -> []byte | robotgo.ToByteImg()
+|		| image.Image -> string | robotgo.ToStringImg()
+|	*	| *image.RGBA -> robotgo.Bitmap | robotgo.RGBAToBitmap()
+|	*	| []byte -> image.Image | robotgo.ByteToImg()
+|		| []byte-> robotgo.CBitmap | robotgo.ByteToCBitmap()
+|		| []byte -> string | string()
+|	*	| string -> image.Image | robotgo.StrToImg()
+|		| string -> byte | []byte()
 
 ## CrossCompiling
 
