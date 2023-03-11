@@ -88,7 +88,11 @@ type (
 	CBitmap C.MMBitmapRef
 )
 
-// Bitmap is Bitmap struct
+// Bitmap define the go Bitmap struct
+//
+// The common type conversion of bitmap:
+//
+//	https://github.com/go-vgo/robotgo/blob/master/docs/keys.md
 type Bitmap struct {
 	ImgBuf        *uint8
 	Width, Height int
