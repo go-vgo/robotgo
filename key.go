@@ -484,7 +484,7 @@ func toErr(str *C.char) error {
 //
 // See keys supported:
 //
-//	https://github.com/go-vgo/robotgo/blob/master/docs/keys.md
+//	https://github.com/go-vgo/robotgo/blob/master/docs/keys.md#keys
 //
 // Examples:
 //
@@ -532,7 +532,7 @@ func KeyTap(key string, args ...interface{}) error {
 //
 // See keys:
 //
-//	https://github.com/go-vgo/robotgo/blob/master/docs/keys.md
+//	https://github.com/go-vgo/robotgo/blob/master/docs/keys.md#keys
 //
 // Examples:
 //
