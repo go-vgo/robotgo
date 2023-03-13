@@ -92,7 +92,7 @@ type (
 //
 // The common type conversion of bitmap:
 //
-//	https://github.com/go-vgo/robotgo/blob/master/docs/keys.md
+//	https://github.com/go-vgo/robotgo/blob/master/docs/keys.md#type-conversion
 type Bitmap struct {
 	ImgBuf        *uint8
 	Width, Height int
@@ -270,6 +270,11 @@ func Scaled0(x int, f float64) int {
 	return int(float64(x) * f)
 }
 
+// Scaled1 return int(x / f)
+func Scaled1(x int, f float64) int {
+	return int(float64(x) / f)
+}
+
 // GetScreenSize get the screen size
 func GetScreenSize() (int, int) {
 	size := C.getMainDisplaySize()
@@ -332,6 +337,7 @@ func CaptureScreen(args ...int) CBitmap {
 			x = C.int32_t(rect.X)
 			y = C.int32_t(rect.Y)
 		}
+
 		w = C.int32_t(rect.W)
 		h = C.int32_t(rect.H)
 	}
@@ -487,7 +493,7 @@ func CheckMouse(btn string) C.MMMouseButton {
 func MoveScale(x, y int, displayId ...int) (int, int) {
 	if Scale && runtime.GOOS == "windows" {
 		f := ScaleF()
-		x, y = Scaled0(x, f), Scaled0(y, f)
+		x, y = Scaled1(x, f), Scaled1(y, f)
 	}
 
 	return x, y
@@ -610,6 +616,11 @@ func Location() (int, int) {
 	pos := C.location()
 	x := int(pos.x)
 	y := int(pos.y)
+
+	if runtime.GOOS == "windows" {
+		f := ScaleF()
+		x, y = Scaled0(x, f), Scaled0(y, f)
+	}
 
 	return x, y
 }
