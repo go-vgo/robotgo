@@ -30,7 +30,7 @@ RobotGo supports Mac, Windows, and Linux(X11); and robotgo supports arm64 and x8
 - [Update](#update)
 - [Examples](#examples)
 - [Type Conversion and keys](https://github.com/go-vgo/robotgo/blob/master/docs/keys.md)
-- [Cross-Compiling](#crosscompiling)
+- [Cross-Compiling](https://github.com/go-vgo/robotgo/blob/master/docs/install.md#crosscompiling)
 - [Authors](#authors)
 - [Plans](#plans)
 - [Donate](#donate)
@@ -84,18 +84,13 @@ GCC
 
 X11 with the XTest extension (the Xtst library)
 
+"Clipboard": xsel xclip
 
-"Bitmap":
 
-libpng (Just used by bitmap)
+"Bitmap": libpng (Just used by the bitmap.)
 
-"Event":
+"Event": xcb, xkb, libxkbcommon (Just used by the hook.)
 
-xcb, xkb, libxkbcommon
-
-"Clipboard":
-
-xsel xclip
 ```
 
 ##### Ubuntu:
@@ -107,29 +102,34 @@ sudo apt install gcc libc6-dev
 # x11
 sudo apt install libx11-dev xorg-dev libxtst-dev
 
+# Clipboard
+sudo apt install xsel xclip
+
+#
 # Bitmap
 sudo apt install libpng++-dev
 
 # Hook
 sudo apt install xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev libxkbcommon-dev
 
-# Clipboard
-sudo apt install xsel xclip
 ```
 
 ##### Fedora:
 
 ```yml
+# x11
 sudo dnf install libXtst-devel
 
+# Clipboard
+sudo dnf install xsel xclip
+
+#
 # Bitmap
 sudo dnf install libpng-devel
 
 # Hook
 sudo dnf install libxkbcommon-devel libxkbcommon-x11-devel xorg-x11-xkb-utils-devel
 
-# Clipboard
-sudo dnf install xsel xclip
 ```
 
 ## Installation:
@@ -487,40 +487,6 @@ func main() {
   fmt.Println("title@@@ ", title)
 }
 ```
-
-## CrossCompiling
-
-##### Windows64 to windows32
-
-```Go
-SET CGO_ENABLED=1
-SET GOARCH=386
-go build main.go
-```
-
-#### Other to windows
-
-Install Requirements (Ubuntu, Just used by bitmap.):
-
-```bash
-sudo apt install gcc-multilib
-sudo apt install gcc-mingw-w64
-# fix err: zlib.h: No such file or directory
-sudo apt install libz-mingw-w64-dev
-```
-
-Build the binary:
-
-```Go
-GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ go build -x ./
-```
-
-```
-// CC=mingw-w64\x86_64-7.2.0-win32-seh-rt_v5-rev1\mingw64\bin\gcc.exe
-// CXX=mingw-w64\x86_64-7.2.0-win32-seh-rt_v5-rev1\mingw64\bin\g++.exe
-```
-
-Some discussions and questions, please see [issues/228](https://github.com/go-vgo/robotgo/issues/228), [issues/143](https://github.com/go-vgo/robotgo/issues/143).
 
 ## Authors
 
