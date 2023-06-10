@@ -104,7 +104,10 @@ bool is_valid() {
 
 	// Get the window PID property
 	void* result = GetWindowProperty(mData, WM_PID,NULL);
-	if (result == NULL) { return false; }
+	if (result == NULL) {
+		XCloseDisplay(rDisplay);
+		return false;
+	}
 
 	// Free result and return true
 	XFree(result);
@@ -405,6 +408,7 @@ MData get_active(void) {
 		if (window != 0) {
 			// Set and return the foreground window
 			result.XWin = (Window)window;
+			XCloseDisplay(rDisplay);
 			return result;
 		}
 	}
