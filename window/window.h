@@ -104,7 +104,10 @@ bool is_valid() {
 
 	// Get the window PID property
 	void* result = GetWindowProperty(mData, WM_PID,NULL);
-	if (result == NULL) { return false; }
+	if (result == NULL) {
+		XCloseDisplay(rDisplay);
+		return false;
+	}
 
 	// Free result and return true
 	XFree(result);
@@ -405,6 +408,7 @@ MData get_active(void) {
 		if (window != 0) {
 			// Set and return the foreground window
 			result.XWin = (Window)window;
+			XCloseDisplay(rDisplay);
 			return result;
 		}
 	}
@@ -494,13 +498,13 @@ void close_window_by_Id(MData m_data){
 char* get_main_title(){
 	// Check if the window is valid
 	if (!is_valid()) { return "is_valid failed."; }
-	
+
 	return get_title_by_hand(mData);
 }
 
 char* get_title_by_pid(uintptr pid, int8_t isPid){
 	MData win = set_handle_pid(pid, isPid);
-  	return get_title_by_hand(win);
+	return get_title_by_hand(win);
 }
 
 char* named(void *result) {

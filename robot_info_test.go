@@ -43,5 +43,13 @@ func TestGetSysScale(t *testing.T) {
 	log.Println("SysScale: ", s)
 
 	f := robotgo.ScaleF()
-	log.Println("sclae: ", f)
+	log.Println("scale: ", f)
+}
+
+func TestGetTitle(t *testing.T) {
+	// just exercise the function, it used to crash with a segfault + "Maximum
+	// number of clients reached"
+	for i := 0; i < 128; i++ {
+		robotgo.GetTitle()
+	}
 }

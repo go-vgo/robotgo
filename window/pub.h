@@ -191,6 +191,7 @@ typedef struct _Bounds Bounds;
 				if (items != NULL) {
 					*items = (uint32_t) nItems;
 				}
+				XCloseDisplay(rDisplay);
 				return result;
 			}
 		}
