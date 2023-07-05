@@ -88,7 +88,7 @@ func screen() {
 		fmt.Println("ScaleF: ", s1)
 	}
 	sx, sy = robotgo.GetScaleSize()
-	fmt.Println("get screen sclae size: ", sx, sy)
+	fmt.Println("get screen scale size: ", sx, sy)
 
 	color()
 }
