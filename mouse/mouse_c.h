@@ -15,69 +15,69 @@
 
 /* Some convenience macros for converting our enums to the system API types. */
 #if defined(IS_MACOSX)
-CGEventType MMMouseDownToCGEventType(MMMouseButton button) {
-	if (button == LEFT_BUTTON) { 
-		return kCGEventLeftMouseDown;
+	CGEventType MMMouseDownToCGEventType(MMMouseButton button) {
+		if (button == LEFT_BUTTON) {
+			return kCGEventLeftMouseDown;
+		}
+		if (button == RIGHT_BUTTON) { 
+			return kCGEventRightMouseDown;
+		}
+		return kCGEventOtherMouseDown;
 	}
-    if (button == RIGHT_BUTTON) { 
-	 	return kCGEventRightMouseDown;
-	} 
-	return kCGEventOtherMouseDown;
-}
 
-CGEventType MMMouseUpToCGEventType(MMMouseButton button) {
-	if (button == LEFT_BUTTON) { return kCGEventLeftMouseUp; } 
-	if (button == RIGHT_BUTTON) { return kCGEventRightMouseUp; } 					
-	return kCGEventOtherMouseUp;
-}
+	CGEventType MMMouseUpToCGEventType(MMMouseButton button) {
+		if (button == LEFT_BUTTON) { return kCGEventLeftMouseUp; }
+		if (button == RIGHT_BUTTON) { return kCGEventRightMouseUp; }		
+		return kCGEventOtherMouseUp;
+	}
 
-CGEventType MMMouseDragToCGEventType(MMMouseButton button) {
-	if (button == LEFT_BUTTON) { return kCGEventLeftMouseDragged; }
-	if (button == RIGHT_BUTTON) { return kCGEventRightMouseDragged; } 
-	return kCGEventOtherMouseDragged;
-}
+	CGEventType MMMouseDragToCGEventType(MMMouseButton button) {
+		if (button == LEFT_BUTTON) { return kCGEventLeftMouseDragged; }
+		if (button == RIGHT_BUTTON) { return kCGEventRightMouseDragged; }
+		return kCGEventOtherMouseDragged;
+	}
 
-CGEventType MMMouseToCGEventType(bool down, MMMouseButton button) {
-	if (down) { return MMMouseDownToCGEventType(button); }
-	return MMMouseUpToCGEventType(button);
-}
+	CGEventType MMMouseToCGEventType(bool down, MMMouseButton button) {
+		if (down) { return MMMouseDownToCGEventType(button); }
+		return MMMouseUpToCGEventType(button);
+	}
 
 #elif defined(IS_WINDOWS)
  
-DWORD MMMouseUpToMEventF(MMMouseButton button) {
-	if (button == LEFT_BUTTON) { return MOUSEEVENTF_LEFTUP; }
-	if (button == RIGHT_BUTTON) { return MOUSEEVENTF_RIGHTUP; } 
-	return MOUSEEVENTF_MIDDLEUP;
-}
+	DWORD MMMouseUpToMEventF(MMMouseButton button) {
+		if (button == LEFT_BUTTON) { return MOUSEEVENTF_LEFTUP; }
+		if (button == RIGHT_BUTTON) { return MOUSEEVENTF_RIGHTUP; } 
+		return MOUSEEVENTF_MIDDLEUP;
+	}
 
-DWORD MMMouseDownToMEventF(MMMouseButton button) {
-	if (button == LEFT_BUTTON) { return MOUSEEVENTF_LEFTDOWN; }
-	if (button == RIGHT_BUTTON) { return MOUSEEVENTF_RIGHTDOWN; } 
-	return MOUSEEVENTF_MIDDLEDOWN;
-}
+	DWORD MMMouseDownToMEventF(MMMouseButton button) {
+		if (button == LEFT_BUTTON) { return MOUSEEVENTF_LEFTDOWN; }
+		if (button == RIGHT_BUTTON) { return MOUSEEVENTF_RIGHTDOWN; } 
+		return MOUSEEVENTF_MIDDLEDOWN;
+	}
 
-DWORD MMMouseToMEventF(bool down, MMMouseButton button) {
-	if (down) { return MMMouseDownToMEventF(button); }
-	return MMMouseUpToMEventF(button);
-}
+	DWORD MMMouseToMEventF(bool down, MMMouseButton button) {
+		if (down) { return MMMouseDownToMEventF(button); }
+		return MMMouseUpToMEventF(button);
+	}
 #endif
 
 #if defined(IS_MACOSX)
-/* Calculate the delta for a mouse move and add them to the event. */
-void calculateDeltas(CGEventRef *event, MMPointInt32 point){
-	/* The next few lines are a workaround for games not detecting mouse moves. */
-	CGEventRef get = CGEventCreate(NULL);
-	CGPoint mouse = CGEventGetLocation(get);
+	/* Calculate the delta for a mouse move and add them to the event. */
+	void calculateDeltas(CGEventRef *event, MMPointInt32 point) {
+		/* The next few lines are a workaround for games not detecting mouse moves. */
+		CGEventRef get = CGEventCreate(NULL);
+		CGPoint mouse = CGEventGetLocation(get);
 
-	// Calculate the deltas.
-	int64_t deltaX = point.x - mouse.x;
-	int64_t deltaY = point.y - mouse.y;
+		// Calculate the deltas.
+		int64_t deltaX = point.x - mouse.x;
+		int64_t deltaY = point.y - mouse.y;
 
-	CGEventSetIntegerValueField(*event, kCGMouseEventDeltaX, deltaX);
-	CGEventSetIntegerValueField(*event, kCGMouseEventDeltaY, deltaY);
+		CGEventSetIntegerValueField(*event, kCGMouseEventDeltaX, deltaX);
+		CGEventSetIntegerValueField(*event, kCGMouseEventDeltaY, deltaY);
 
-	CFRelease(get);
-}
+		CFRelease(get);
+	}
 #endif
 
 /* Move the mouse to a specific point. */

@@ -54,7 +54,8 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id, 
 
 	MMPointInt32 o = rect.origin; MMSizeInt32 s = rect.size;
 	XImage *image = XGetImage(display, XDefaultRootWindow(display), 
-							(int)o.x, (int)o.y, (unsigned int)s.w, (unsigned int)s.h, AllPlanes, ZPixmap);
+							(int)o.x, (int)o.y, (unsigned int)s.w, (unsigned int)s.h, 
+							AllPlanes, ZPixmap);
 	XCloseDisplay(display);
 	if (image == NULL) { return NULL; }
 
