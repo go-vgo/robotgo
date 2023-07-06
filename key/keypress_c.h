@@ -65,100 +65,99 @@
 		return 0;
 	}
 
-static io_connect_t _getAuxiliaryKeyDriver(void) {
-	static mach_port_t sEventDrvrRef = 0;
-	mach_port_t masterPort, service, iter;
-	kern_return_t kr;
+	static io_connect_t _getAuxiliaryKeyDriver(void) {
+		static mach_port_t sEventDrvrRef = 0;
+		mach_port_t masterPort, service, iter;
+		kern_return_t kr;
 
-	if (!sEventDrvrRef) {
-		kr = IOMasterPort(bootstrap_port, &masterPort);
-		assert(KERN_SUCCESS == kr);
-		kr = IOServiceGetMatchingServices(masterPort, IOServiceMatching(kIOHIDSystemClass), &iter);
-		assert(KERN_SUCCESS == kr);
+		if (!sEventDrvrRef) {
+			kr = IOMasterPort(bootstrap_port, &masterPort);
+			assert(KERN_SUCCESS == kr);
+			kr = IOServiceGetMatchingServices(masterPort, IOServiceMatching(kIOHIDSystemClass), &iter);
+			assert(KERN_SUCCESS == kr);
 
-		service = IOIteratorNext(iter);
-		assert(service);
-		
-		kr = IOServiceOpen(service, mach_task_self(), kIOHIDParamConnectType, &sEventDrvrRef);
-		assert(KERN_SUCCESS == kr);
+			service = IOIteratorNext(iter);
+			assert(service);
 
-		IOObjectRelease(service);
-		IOObjectRelease(iter);
-	}
-	return sEventDrvrRef;
-}
-#endif
+			kr = IOServiceOpen(service, mach_task_self(), kIOHIDParamConnectType, &sEventDrvrRef);
+			assert(KERN_SUCCESS == kr);
 
-#if defined(IS_WINDOWS)
-void win32KeyEvent(int key, MMKeyFlags flags, uintptr pid, int8_t isPid) {
-	int scan = MapVirtualKey(key & 0xff, MAPVK_VK_TO_VSC);
-
-	/* Set the scan code for extended keys */
-	switch (key){
-		case VK_RCONTROL:
-		case VK_SNAPSHOT: /* Print Screen */
-		case VK_RMENU: /* Right Alt / Alt Gr */
-		case VK_PAUSE: /* Pause / Break */
-		case VK_HOME:
-		case VK_UP:
-		case VK_PRIOR: /* Page up */
-		case VK_LEFT:
-		case VK_RIGHT:
-		case VK_END:
-		case VK_DOWN:
-		case VK_NEXT: /* 'Page Down' */
-		case VK_INSERT:
-		case VK_DELETE:
-		case VK_LWIN:
-		case VK_RWIN:
-		case VK_APPS: /* Application */
-		case VK_VOLUME_MUTE:
-		case VK_VOLUME_DOWN:
-		case VK_VOLUME_UP:
-		case VK_MEDIA_NEXT_TRACK:
-		case VK_MEDIA_PREV_TRACK:
-		case VK_MEDIA_STOP:
-		case VK_MEDIA_PLAY_PAUSE:
-		case VK_BROWSER_BACK:
-		case VK_BROWSER_FORWARD:
-		case VK_BROWSER_REFRESH:
-		case VK_BROWSER_STOP:
-		case VK_BROWSER_SEARCH:
-		case VK_BROWSER_FAVORITES:
-		case VK_BROWSER_HOME:
-		case VK_LAUNCH_MAIL:
-		{
-			flags |= KEYEVENTF_EXTENDEDKEY;
-			break;
+			IOObjectRelease(service);
+			IOObjectRelease(iter);
 		}
+		return sEventDrvrRef;
 	}
+#elif defined(IS_WINDOWS)
 
-	// todo: test this
-	if (pid != 0) {
-		HWND hwnd = getHwnd(pid, isPid);
+	void win32KeyEvent(int key, MMKeyFlags flags, uintptr pid, int8_t isPid) {
+		int scan = MapVirtualKey(key & 0xff, MAPVK_VK_TO_VSC);
 
-		int down = (flags == 0 ? WM_KEYDOWN : WM_KEYUP);
-		// SendMessage(hwnd, down, key, 0);
-		PostMessageW(hwnd, down, key, 0);
-		return;
+		/* Set the scan code for extended keys */
+		switch (key){
+			case VK_RCONTROL:
+			case VK_SNAPSHOT: /* Print Screen */
+			case VK_RMENU: /* Right Alt / Alt Gr */
+			case VK_PAUSE: /* Pause / Break */
+			case VK_HOME:
+			case VK_UP:
+			case VK_PRIOR: /* Page up */
+			case VK_LEFT:
+			case VK_RIGHT:
+			case VK_END:
+			case VK_DOWN:
+			case VK_NEXT: /* 'Page Down' */
+			case VK_INSERT:
+			case VK_DELETE:
+			case VK_LWIN:
+			case VK_RWIN:
+			case VK_APPS: /* Application */
+			case VK_VOLUME_MUTE:
+			case VK_VOLUME_DOWN:
+			case VK_VOLUME_UP:
+			case VK_MEDIA_NEXT_TRACK:
+			case VK_MEDIA_PREV_TRACK:
+			case VK_MEDIA_STOP:
+			case VK_MEDIA_PLAY_PAUSE:
+			case VK_BROWSER_BACK:
+			case VK_BROWSER_FORWARD:
+			case VK_BROWSER_REFRESH:
+			case VK_BROWSER_STOP:
+			case VK_BROWSER_SEARCH:
+			case VK_BROWSER_FAVORITES:
+			case VK_BROWSER_HOME:
+			case VK_LAUNCH_MAIL:
+			{
+				flags |= KEYEVENTF_EXTENDEDKEY;
+				break;
+			}
+		}
+
+		// todo: test this
+		if (pid != 0) {
+			HWND hwnd = getHwnd(pid, isPid);
+
+			int down = (flags == 0 ? WM_KEYDOWN : WM_KEYUP);
+			// SendMessage(hwnd, down, key, 0);
+			PostMessageW(hwnd, down, key, 0);
+			return;
+		}
+
+		/* Set the scan code for keyup */
+		// if ( flags & KEYEVENTF_KEYUP ) {
+		// 	scan |= 0x80;
+		// }
+		// keybd_event(key, scan, flags, 0);
+		
+		INPUT keyInput;
+
+		keyInput.type = INPUT_KEYBOARD;
+		keyInput.ki.wVk = key;
+		keyInput.ki.wScan = scan;
+		keyInput.ki.dwFlags = flags;
+		keyInput.ki.time = 0;
+		keyInput.ki.dwExtraInfo = 0;
+		SendInput(1, &keyInput, sizeof(keyInput));
 	}
-
-	/* Set the scan code for keyup */
-	// if ( flags & KEYEVENTF_KEYUP ) {
-	// 	scan |= 0x80;
-	// }
-	// keybd_event(key, scan, flags, 0);
-	
-	INPUT keyInput;
-
-	keyInput.type = INPUT_KEYBOARD;
-	keyInput.ki.wVk = key;
-	keyInput.ki.wScan = scan;
-	keyInput.ki.dwFlags = flags;
-	keyInput.ki.time = 0;
-	keyInput.ki.dwExtraInfo = 0;
-	SendInput(1, &keyInput, sizeof(keyInput));
-}
 #endif
 
 void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags, uintptr pid) {
@@ -269,57 +268,27 @@ void toggleKey(char c, const bool down, MMKeyFlags flags, uintptr pid) {
 // }
 
 #if defined(IS_MACOSX)
-void toggleUnicode(UniChar ch, const bool down, uintptr pid) {
-	/* This function relies on the convenient CGEventKeyboardSetUnicodeString(), 
-	convert characters to a keycode, but does not support adding modifier flags. 
-	It is only used in typeString().
-	-- if you need modifier keys, use the above functions instead. */
-	CGEventRef keyEvent = CGEventCreateKeyboardEvent(NULL, 0, down);
-	if (keyEvent == NULL) {
-		fputs("Could not create keyboard event.\n", stderr);
-		return;
+	void toggleUnicode(UniChar ch, const bool down, uintptr pid) {
+		/* This function relies on the convenient CGEventKeyboardSetUnicodeString(), 
+		convert characters to a keycode, but does not support adding modifier flags. 
+		It is only used in typeString().
+		-- if you need modifier keys, use the above functions instead. */
+		CGEventRef keyEvent = CGEventCreateKeyboardEvent(NULL, 0, down);
+		if (keyEvent == NULL) {
+			fputs("Could not create keyboard event.\n", stderr);
+			return;
+		}
+
+		CGEventKeyboardSetUnicodeString(keyEvent, 1, &ch);
+
+		SendTo(pid, keyEvent);
 	}
-
-	CGEventKeyboardSetUnicodeString(keyEvent, 1, &ch);
-
-	SendTo(pid, keyEvent);
-}
-#endif
-
-#if defined(USE_X11)
+#else
 	#define toggleUniKey(c, down) toggleKey(c, down, MOD_NONE, 0)
-
-	int input_utf(const char *utf) {
-		Display *dpy = XOpenDisplay(NULL);
-		KeySym sym = XStringToKeysym(utf);
-		// KeySym sym = XKeycodeToKeysym(dpy, utf);
-
-		int min, max, numcodes;
-		XDisplayKeycodes(dpy, &min, &max);
-		KeySym *keysym;
-		keysym = XGetKeyboardMapping(dpy, min, max-min+1, &numcodes);
-		keysym[(max-min-1)*numcodes] = sym;
-		XChangeKeyboardMapping(dpy, min, numcodes, keysym, (max-min));
-		XFree(keysym);
-		XFlush(dpy);
-
-		KeyCode code = XKeysymToKeycode(dpy, sym);
-		XTestFakeKeyEvent(dpy, code, True, 1);
-		XTestFakeKeyEvent(dpy, code, False, 1);
-
-		XFlush(dpy);
-		XCloseDisplay(dpy);
-		return 0;
-	}
-#endif
-#if !defined(USE_X11)
-	int input_utf(const char *utf){
-		return 0;
-	}
 #endif
 
 // unicode type
-void unicodeType(const unsigned value, uintptr pid, int8_t isPid){
+void unicodeType(const unsigned value, uintptr pid, int8_t isPid) {
 	#if defined(IS_MACOSX)
 		UniChar ch = (UniChar)value; // Convert to unsigned char
 
@@ -355,3 +324,32 @@ void unicodeType(const unsigned value, uintptr pid, int8_t isPid){
 		toggleUniKey(value, false);	
 	#endif
 }
+
+#if defined(USE_X11)
+	int input_utf(const char *utf) {
+		Display *dpy = XOpenDisplay(NULL);
+		KeySym sym = XStringToKeysym(utf);
+		// KeySym sym = XKeycodeToKeysym(dpy, utf);
+
+		int min, max, numcodes;
+		XDisplayKeycodes(dpy, &min, &max);
+		KeySym *keysym;
+		keysym = XGetKeyboardMapping(dpy, min, max-min+1, &numcodes);
+		keysym[(max-min-1)*numcodes] = sym;
+		XChangeKeyboardMapping(dpy, min, numcodes, keysym, (max-min));
+		XFree(keysym);
+		XFlush(dpy);
+
+		KeyCode code = XKeysymToKeycode(dpy, sym);
+		XTestFakeKeyEvent(dpy, code, True, 1);
+		XTestFakeKeyEvent(dpy, code, False, 1);
+
+		XFlush(dpy);
+		XCloseDisplay(dpy);
+		return 0;
+	}
+#else
+	int input_utf(const char *utf){
+		return 0;
+	}
+#endif
