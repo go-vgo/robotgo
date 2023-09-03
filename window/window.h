@@ -15,7 +15,7 @@ bool is_valid();
 bool IsAxEnabled(bool options);
 
 MData get_active(void);
-void initWindow();
+void initWindow(uintptr handle);
 char* get_title_by_hand(MData m_data);
 void close_window_by_Id(MData m_data);
 

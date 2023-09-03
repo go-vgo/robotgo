@@ -55,7 +55,7 @@ func SaveJpeg(img image.Image, path string, quality ...int) error {
 
 // ToByteImg convert image.Image to []byte
 func ToByteImg(img image.Image, fm ...string) []byte {
-	return imgo.ToByteImg(img, fm...)
+	return imgo.ToByte(img, fm...)
 }
 
 // ToStringImg convert image.Image to string
