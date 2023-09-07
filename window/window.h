@@ -367,11 +367,11 @@ MData get_active(void) {
 	if (focused == NULL) { return result; } // Verify
 
 	AXUIElementRef element;
+	CGWindowID win = 0;
 	// Retrieve the currently focused window
 	if (AXUIElementCopyAttributeValue(focused, kAXFocusedWindowAttribute, (CFTypeRef*) &element) 
 		== kAXErrorSuccess && element) {
 
-		CGWindowID win = 0;
 		// Use undocumented API to get WID
 		if (_AXUIElementGetWindow(element, &win) == kAXErrorSuccess && win) {
 			// Manually set internals
@@ -380,6 +380,9 @@ MData get_active(void) {
 		} else {
 			CFRelease(element);
 		}
+	} else {
+		result.CgID = win;
+		result.AxID = element;
 	}
 	CFRelease(focused);
 
