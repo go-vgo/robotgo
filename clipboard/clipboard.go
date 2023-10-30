@@ -3,7 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package clipboard read/write on clipboard
 */
 package clipboard
