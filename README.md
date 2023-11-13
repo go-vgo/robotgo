@@ -70,12 +70,12 @@ xcode-select --install
 
 #### For Windows:
 
-[MinGW-w64](https://sourceforge.net/projects/mingw-w64/files) (Use recommended)
+[MinGW-w64](https://sourceforge.net/projects/mingw-w64/files) (Use recommended) or others Mingw [llvm-mingw](https://github.com/mstorsjo/llvm-mingw)
 
 Download the Mingw, then set system environment variables `C:\mingw64\bin` to the Path.
 [Set environment variables to run GCC from command line](https://www.youtube.com/results?search_query=Set+environment+variables+to+run+GCC+from+command+line).
 
-`Or the other GCC (But you should compile the "libpng" with yourself when use the bitmap.)`
+`Or the other GCC` (But you should compile the "libpng" with yourself when use the [bitmap](https://github.com/vcaesar/bitmap).)
 
 #### For everything else:
 
