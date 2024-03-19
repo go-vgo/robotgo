@@ -366,12 +366,12 @@ MData get_active(void) {
 	AXUIElementRef focused = AXUIElementCreateApplication(pid);
 	if (focused == NULL) { return result; } // Verify
 
-	AXUIElementRef element;
+	/*AXUIElementRef element;
 	CGWindowID win = 0;
 	// Retrieve the currently focused window
 	if (AXUIElementCopyAttributeValue(focused, kAXFocusedWindowAttribute, (CFTypeRef*) &element) 
 		== kAXErrorSuccess && element) {
-
+			
 		// Use undocumented API to get WID
 		if (_AXUIElementGetWindow(element, &win) == kAXErrorSuccess && win) {
 			// Manually set internals
@@ -383,7 +383,32 @@ MData get_active(void) {
 	} else {
 		result.CgID = win;
 		result.AxID = element;
+	}*/
+
+	AXUIElementRef focused = NULL;
+	AXUIElementRef windowElement = NULL;
+	CGWindowID win = 0;
+
+	// Retrieve the currently focused window
+	if (AXUIElementCopyAttributeValue(focused, kAXFocusedWindowAttribute, (CFTypeRef*) &windowElement) == kAXErrorSuccess && windowElement) {
+    	// Use AXUIElementCopyAttributeValue to get parent window
+    	CFTypeRef cfWindow = NULL;
+    	if (AXUIElementCopyAttributeValue(windowElement, kAXParentAttribute, &cfWindow) == kAXErrorSuccess && cfWindow != NULL) {
+        	AXUIElementRef parentWindow = (AXUIElementRef)cfWindow;
+        	if (AXUIElementCopyAttributeValue(parentWindow, kAXWindowAttribute, (CFTypeRef*)&win) == kAXErrorSuccess && win) {
+            	// Manually set internals
+            	result.CgID = win;
+            	result.AxID = windowElement;
+        	} else {
+            	CFRelease(parentWindow);
+        	}
+    	}
+    	CFRelease(windowElement);
+	} else {
+    	result.CgID = 0;
+    	result.AxID = NULL;
 	}
+
 	CFRelease(focused);
 
 	return result;

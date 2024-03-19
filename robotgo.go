@@ -41,6 +41,7 @@ package robotgo
 //
 #include "screen/goScreen.h"
 #include "mouse/mouse_c.h"
+#include "window/goWindow.h"
 */
 import "C"
 
