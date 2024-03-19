@@ -385,7 +385,6 @@ MData get_active(void) {
 		result.AxID = element;
 	}*/
 
-	AXUIElementRef focused = NULL;
 	AXUIElementRef windowElement = NULL;
 	CGWindowID win = 0;
 
