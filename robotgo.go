@@ -540,8 +540,6 @@ func Drag(x, y int, args ...string) {
 //
 //	robotgo.DragSmooth(10, 10)
 func DragSmooth(x, y int, args ...interface{}) {
-	x, y = MoveScale(x, y)
-
 	Toggle("left")
 	MilliSleep(50)
 	MoveSmooth(x, y, args...)
