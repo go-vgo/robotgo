@@ -16,13 +16,13 @@ import (
 	"github.com/kbinani/screenshot"
 )
 
-// GetScreenBound gets the display screen bounds
+// GetDisplayBounds gets the display screen bounds
 func GetDisplayBounds(i int) (x, y, w, h int) {
 	bs := screenshot.GetDisplayBounds(i)
 	return bs.Min.X, bs.Min.Y, bs.Dx(), bs.Dy()
 }
 
-// GetDisplayBounds gets the display rect
+// GetDisplayRect gets the display rect
 func GetDisplayRect(i int) Rect {
 	x, y, w, h := GetDisplayBounds(i)
 	return Rect{
