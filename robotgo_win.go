@@ -57,7 +57,7 @@ func SetForeg(hwnd win.HWND) bool {
 	return win.SetForegroundWindow(hwnd)
 }
 
-// GetMian get the main display hwnd
+// GetMain get the main display hwnd
 func GetMain() win.HWND {
 	return win.GetActiveWindow()
 }
