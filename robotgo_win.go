@@ -11,7 +11,7 @@
 //go:build windows
 // +build windows
 
-package robotgo
+package keyboard
 
 import (
 	"syscall"

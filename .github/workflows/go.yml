@@ -1,12 +1,16 @@
-name: Go
-on: [push]
+name: Build
+on:
+  pull_request:
+    branches:
+      - "**"
+  workflow_dispatch:
 jobs:
-  test:
+  build-latest:
     # name: build
     strategy:
       matrix:
         # go: [1.12.x, 1.13.x]
-        os: [macOS-latest, windows-latest] # ubuntu-latest
+        os: [macOS-latest, windows-latest, ubuntu-latest] # ubuntu-latest
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -22,9 +26,9 @@ jobs:
       - name: Get dependencies
         run: |
           go get -v -t -d ./...
+          go build -v ./...
 
       - name: Build
         run: go build -v .
       - name: Test
         run: go test -v robot_info_test.go
-        # run: go test -v .

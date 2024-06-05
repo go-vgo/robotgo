@@ -11,7 +11,7 @@
 //go:build darwin || windows
 // +build darwin windows
 
-package robotgo
+package keyboard
 
 // GetBounds get the window bounds
 func GetBounds(pid int, args ...int) (int, int, int, int) {

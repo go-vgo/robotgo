@@ -27,7 +27,7 @@ Otherwise, to install the robotgo package, run the command:
 
 	go get -u github.com/go-vgo/robotgo
 */
-package robotgo
+package keyboard
 
 /*
 #cgo darwin CFLAGS: -x objective-c -Wno-deprecated-declarations

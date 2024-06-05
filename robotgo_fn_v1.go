@@ -1,4 +1,4 @@
-package robotgo
+package keyboard
 
 import "github.com/vcaesar/tt"
 

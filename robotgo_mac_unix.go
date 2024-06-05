@@ -11,7 +11,7 @@
 //go:build !windows
 // +build !windows
 
-package robotgo
+package keyboard
 
 // ScaleF get the system scale val
 func ScaleF(displayId ...int) float64 {

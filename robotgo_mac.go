@@ -11,7 +11,7 @@
 //go:build darwin
 // +build darwin
 
-package robotgo
+package keyboard
 
 /*
 #include <CoreGraphics/CoreGraphics.h>

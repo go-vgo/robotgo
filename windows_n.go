@@ -1,2 +1,2 @@
 // +bulid windows,next
-package robotgo
+package keyboard
