@@ -17,7 +17,8 @@ import (
 	"syscall"
 	"unsafe"
 
-	"github.com/lxn/win"
+	// "github.com/lxn/win"
+	"github.com/tailscale/win"
 )
 
 // FindWindow find window hwnd by name
