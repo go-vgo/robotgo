@@ -46,6 +46,7 @@ package robotgo
 import "C"
 
 import (
+	"errors"
 	"image"
 	"runtime"
 	"time"
@@ -360,11 +361,14 @@ func CaptureGo(args ...int) Bitmap {
 }
 
 // CaptureImg capture the screen and return image.Image
-func CaptureImg(args ...int) image.Image {
+func CaptureImg(args ...int) (image.Image, error) {
 	bit := CaptureScreen(args...)
+	if bit == nil {
+		return nil, errors.New("capture error")
+	}
 	defer FreeBitmap(bit)
 
-	return ToImage(bit)
+	return ToImage(bit), nil
 }
 
 // FreeBitmap free and dealloc the C bitmap
