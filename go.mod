@@ -3,7 +3,6 @@ module github.com/go-vgo/robotgo
 go 1.17
 
 require (
-	github.com/otiai10/gosseract/v2 v2.4.1
 	// github.com/robotn/gohook v0.31.3
 	github.com/robotn/xgb v0.0.0-20190912153532-2cb92d044934
 	github.com/robotn/xgbutil v0.0.0-20190912154524-c861d6f87770
@@ -28,8 +27,15 @@ require (
 	github.com/tklauser/go-sysconf v0.3.12 // indirect
 	github.com/tklauser/numcpus v0.6.1 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
-	golang.org/x/image v0.17.0 // indirect
-	golang.org/x/sys v0.20.0 // indirect
+	golang.org/x/image v0.18.0 // indirect
+	golang.org/x/sys v0.21.0 // indirect
+)
+
+require github.com/otiai10/gosseract v2.2.1+incompatible
+
+require (
+	github.com/otiai10/mint v1.6.3 // indirect
+	golang.org/x/net v0.26.0 // indirect
 )
 
 // replace golang.org/x/sys => github.com/golang/sys v0.0.0-20190109145017-48ac38b7c8cb
