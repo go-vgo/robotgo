@@ -60,8 +60,8 @@ github.com/tklauser/numcpus v0.6.1 h1:ng9scYS7az0Bk4OZLvrNXNSAO2Pxr1XXRAPyjhIx+F
 github.com/tklauser/numcpus v0.6.1/go.mod h1:1XfjsgE2zo8GVw7POkMbHENHzVg3GzmoZ9fESEdAacY=
 github.com/vcaesar/gops v0.40.0 h1:I+1RCGiV+LkZJUYNzAd373xs0uM2UyeFdZBmow8HfCM=
 github.com/vcaesar/gops v0.40.0/go.mod h1:3u/USW7JovqUK6i13VOD3qWfvXXd2TIIKE4PYIv4TOM=
-github.com/vcaesar/imgo v0.40.1 h1:OSX+qV8SgbVJksXXZkzfDNm6+oi2H3t8Y2Sl0QO0q70=
-github.com/vcaesar/imgo v0.40.1/go.mod h1:8gotN26eyM0ITbSuse0EU6GFweKW/zgfTT2fQir1qOo=
+github.com/vcaesar/imgo v0.40.2 h1:5GWScRLdBCMtO1v2I1bs+ZmDLZFINxYSMZ+mtUw5qPM=
+github.com/vcaesar/imgo v0.40.2/go.mod h1:MVCl+FxHI2gTgmiHoi0n5xNCbYcfv9SVtdEOUC92+eo=
 github.com/vcaesar/keycode v0.10.1 h1:0DesGmMAPWpYTCYddOFiCMKCDKgNnwiQa2QXindVUHw=
 github.com/vcaesar/keycode v0.10.1/go.mod h1:JNlY7xbKsh+LAGfY2j4M3znVrGEm5W1R8s/Uv6BJcfQ=
 github.com/vcaesar/tt v0.20.1 h1:D/jUeeVCNbq3ad8M7hhtB3J9x5RZ6I1n1eZ0BJp7M+4=
@@ -77,8 +77,8 @@ golang.org/x/crypto v0.19.0/go.mod h1:Iy9bg/ha4yyC70EfRS8jz+B6ybOBKMaSxLj6P6oBDf
 golang.org/x/crypto v0.23.0/go.mod h1:CKFgDieR+mRhux2Lsu27y0fO304Db0wZe70UKqHu0v8=
 golang.org/x/exp v0.0.0-20230127140709-cafedaf64729 h1:H2kBA039yqxDv2DScpuC0knhZXO6Evfmt7mN8sGMh/4=
 golang.org/x/exp v0.0.0-20230127140709-cafedaf64729/go.mod h1:CxIveKay+FTh1D0yPZemJVgC/95VzuuOLq5Qi4xnoYc=
-golang.org/x/image v0.17.0 h1:nTRVVdajgB8zCMZVsViyzhnMKPwYeroEERRC64JuLco=
-golang.org/x/image v0.17.0/go.mod h1:4yyo5vMFQjVjUcVk4jEQcU9MGy/rulF5WvUILseCM2E=
+golang.org/x/image v0.18.0 h1:jGzIakQa/ZXI1I0Fxvaa9W7yP25TqT6cHIHn+6CqvSQ=
+golang.org/x/image v0.18.0/go.mod h1:4yyo5vMFQjVjUcVk4jEQcU9MGy/rulF5WvUILseCM2E=
 golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod h1:jJ57K6gSWd91VN4djpZkiMVwK6gcyfeH4XE8wZrZaV4=
 golang.org/x/mod v0.6.0/go.mod h1:4mET923SAdbXp2ki8ey+zGs1SLqsuM2Y0uvdZR/fUNI=
 golang.org/x/mod v0.8.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
