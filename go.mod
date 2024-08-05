@@ -9,7 +9,7 @@ require (
 	github.com/robotn/xgbutil v0.0.0-20190912154524-c861d6f87770
 	github.com/tailscale/win v0.0.0-20240403170916-6580b55d49ca
 	github.com/vcaesar/gops v0.40.0
-	github.com/vcaesar/imgo v0.40.1
+	github.com/vcaesar/imgo v0.40.2
 	github.com/vcaesar/keycode v0.10.1
 	github.com/vcaesar/tt v0.20.1
 )
@@ -28,7 +28,7 @@ require (
 	github.com/tklauser/go-sysconf v0.3.12 // indirect
 	github.com/tklauser/numcpus v0.6.1 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
-	golang.org/x/image v0.17.0 // indirect
+	golang.org/x/image v0.18.0 // indirect
 	golang.org/x/sys v0.20.0 // indirect
 )
 
