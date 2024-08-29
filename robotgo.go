@@ -39,7 +39,6 @@ package robotgo
 
 #cgo windows LDFLAGS: -lgdi32 -luser32
 //
-#include "screen/goScreen.h"
 #include "mouse/mouse_c.h"
 #include "window/goWindow.h"
 */
