@@ -2,9 +2,7 @@ module github.com/yarda7/robotgo
 
 go 1.17
 
-require github.com/go-vgo/robotgo v0.110.2
-
-replace github.com/go-vgo/robotgo => github.com/yarda7/robotgo v0.110.3
+require     github.com/yarda7/robotgo v0.110.4
 
 require (
 	// github.com/robotn/gohook v0.31.3
@@ -35,4 +33,3 @@ require (
 
 // replace golang.org/x/sys => github.com/golang/sys v0.0.0-20190109145017-48ac38b7c8cb
 
-// go 1.13
