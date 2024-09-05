@@ -5,12 +5,56 @@
 	#include <OpenGL/OpenGL.h>
 	#include <OpenGL/gl.h>
 	#include <ApplicationServices/ApplicationServices.h>
+	#include <ScreenCaptureKit/ScreenCaptureKit.h>
 #elif defined(USE_X11)
 	#include <X11/Xlib.h>
 	#include <X11/Xutil.h>
 	#include "../base/xdisplay_c.h"
 #elif defined(IS_WINDOWS)
 	#include <string.h>
+#endif
+
+#if defined(IS_MACOSX) && __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ > MAC_OS_VERSION_14_4
+	static CGImageRef capture15(CGDirectDisplayID id, CGRect diIntersectDisplayLocal, CGColorSpaceRef colorSpace) {
+		dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+		__block CGImageRef image1 = nil;
+		[SCShareableContent getShareableContentWithCompletionHandler:^(SCShareableContent* content, NSError* error) {
+			@autoreleasepool {
+				if (error) {
+					dispatch_semaphore_signal(semaphore);
+					return;
+				}
+				SCDisplay* target = nil;
+				for (SCDisplay *display in content.displays) {
+					if (display.displayID == id) {
+						target = display;
+						break;
+					}
+				}
+				if (!target) {
+					dispatch_semaphore_signal(semaphore);
+					return;
+				}
+
+				SCContentFilter* filter = [[SCContentFilter alloc] initWithDisplay:target excludingWindows:@[]];
+				SCStreamConfiguration* config = [[SCStreamConfiguration alloc] init];
+				config.sourceRect = diIntersectDisplayLocal;
+				config.width = diIntersectDisplayLocal.size.width;
+				config.height = diIntersectDisplayLocal.size.height;
+				[SCScreenshotManager captureImageWithFilter:filter
+										configuration:config
+										completionHandler:^(CGImageRef img, NSError* error) {
+					if (!error) {
+						image1 = CGImageCreateCopyWithColorSpace(img, colorSpace);
+					}
+					dispatch_semaphore_signal(semaphore);
+				}];
+			}
+		}];
+		dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+		dispatch_release(semaphore);
+		return image1;
+	}
 #endif
 
 MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id, int8_t isPid) {
@@ -25,9 +69,16 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id, 
 	}
 
 	MMPointInt32 o = rect.origin; MMSizeInt32 s = rect.size;
-	CGImageRef image = CGDisplayCreateImageForRect(displayID, CGRectMake(o.x, o.y, s.w, s.h));
+	#if __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ > MAC_OS_VERSION_14_4
+		CGColorSpaceRef color = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
+		CGImageRef image = capture15(displayID, CGRectMake(o.x, o.y, s.w, s.h), color);
+		CGColorSpaceRelease(color);
+	#else
+		// This API is deprecated in macos 15, use ScreenCaptureKit's captureScreenshot
+		CGImageRef image = CGDisplayCreateImageForRect(displayID, CGRectMake(o.x, o.y, s.w, s.h));
+	#endif
 	if (!image) { return NULL; }
-
+	
 	CFDataRef imageData = CGDataProviderCopyData(CGImageGetDataProvider(image));
 	if (!imageData) { return NULL; }
 
