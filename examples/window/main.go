@@ -34,6 +34,9 @@ func get() {
 	// get current Window Active
 	mdata := robotgo.GetActive()
 
+	// get current Window Active , return CMData
+	cmdata := robotgo.GetActiveCMData()
+
 	// get current Window Handle
 	hwnd := robotgo.GetHandle()
 	fmt.Println("hwnd---", hwnd)
@@ -44,6 +47,9 @@ func get() {
 
 	// set Window Active
 	robotgo.SetActive(mdata)
+
+	// set Window Active by CMData
+	robotgo.SetActiveByCMData(cmdata)
 }
 
 func findIds() {

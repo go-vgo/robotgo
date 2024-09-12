@@ -90,6 +90,7 @@ type (
 	CHex C.MMRGBHex
 	// CBitmap define CBitmap as C.MMBitmapRef type
 	CBitmap C.MMBitmapRef
+	CMData  C.MData
 )
 
 // Bitmap define the go Bitmap struct
@@ -874,11 +875,23 @@ func SetActive(win C.MData) {
 	C.set_active(win)
 }
 
+// SetActiveByCMData set the window active by CMData
+func SetActiveByCMData(win CMData) {
+	C.set_active((C.MData)(win))
+}
+
 // GetActive get the active window
 func GetActive() C.MData {
 	mdata := C.get_active()
 	// fmt.Println("active----", mdata)
 	return mdata
+}
+
+// GetActiveCMData get the active window, return CMData
+func GetActiveCMData() CMData {
+	mdata := C.get_active()
+	// fmt.Println("active----", mdata)
+	return (CMData)(mdata)
 }
 
 // MinWindow set the window min
