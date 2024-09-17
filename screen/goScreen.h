@@ -79,6 +79,14 @@ char* get_XDisplay_name() {
 	#endif
 }
 
+void close_main_display() {
+	#if defined(USE_X11)
+		XCloseMainDisplay();
+	#else
+		// 
+	#endif
+}
+
 uint32_t get_num_displays() {
 	#if defined(IS_MACOSX)
 		uint32_t count = 0;

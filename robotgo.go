@@ -457,6 +457,11 @@ func GetXDisplayName() string {
 	return gname
 }
 
+// CloseMainDisplay close the main X11 display
+func CloseMainDisplay() {
+	C.close_main_display()
+}
+
 // Deprecated: use the ScaledF(),
 //
 // ScaleX get the primary display horizontal DPI scale factor, drop
