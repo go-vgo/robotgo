@@ -90,6 +90,8 @@ type (
 	CHex C.MMRGBHex
 	// CBitmap define CBitmap as C.MMBitmapRef type
 	CBitmap C.MMBitmapRef
+	// Handle define window Handle as C.MData type
+	Handle C.MData
 )
 
 // Bitmap define the go Bitmap struct
@@ -875,12 +877,22 @@ func IsValid() bool {
 }
 
 // SetActive set the window active
-func SetActive(win C.MData) {
+func SetActive(win Handle) {
+	SetActiveC(C.MData(win))
+}
+
+// SetActiveC set the window active
+func SetActiveC(win C.MData) {
 	C.set_active(win)
 }
 
 // GetActive get the active window
-func GetActive() C.MData {
+func GetActive() Handle {
+	return Handle(GetActiveC())
+}
+
+// GetActiveC get the active window
+func GetActiveC() C.MData {
 	mdata := C.get_active()
 	// fmt.Println("active----", mdata)
 	return mdata
@@ -954,8 +966,29 @@ func SetHandlePid(pid int, args ...int) {
 	C.set_handle_pid_mData(C.uintptr(pid), C.int8_t(isPid))
 }
 
+// GetHandById get handle mdata by id
+func GetHandById(id int, args ...int) Handle {
+	isPid := 1
+	if len(args) > 0 {
+		isPid = args[0]
+	}
+	return GetHandByPid(id, isPid)
+}
+
+// GetHandByPid get handle mdata by pid
+func GetHandByPid(pid int, args ...int) Handle {
+	return Handle(GetHandByPidC(pid, args...))
+}
+
+// Deprecated: use the GetHandByPid(),
+//
 // GetHandPid get handle mdata by pid
-func GetHandPid(pid int, args ...int) C.MData {
+func GetHandPid(pid int, args ...int) Handle {
+	return GetHandByPid(pid, args...)
+}
+
+// GetHandByPidC get handle mdata by pid
+func GetHandByPidC(pid int, args ...int) C.MData {
 	var isPid int
 	if len(args) > 0 || NotPid {
 		isPid = 1
