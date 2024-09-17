@@ -24,6 +24,7 @@
 					dispatch_semaphore_signal(semaphore);
 					return;
 				}
+				
 				SCDisplay* target = nil;
 				for (SCDisplay *display in content.displays) {
 					if (display.displayID == id) {
@@ -41,16 +42,18 @@
 				config.sourceRect = diIntersectDisplayLocal;
 				config.width = diIntersectDisplayLocal.size.width;
 				config.height = diIntersectDisplayLocal.size.height;
+
 				[SCScreenshotManager captureImageWithFilter:filter
-										configuration:config
-										completionHandler:^(CGImageRef img, NSError* error) {
-					if (!error) {
-						image1 = CGImageCreateCopyWithColorSpace(img, colorSpace);
-					}
-					dispatch_semaphore_signal(semaphore);
+					configuration:config
+					completionHandler:^(CGImageRef img, NSError* error) {
+						if (!error) {
+							image1 = CGImageCreateCopyWithColorSpace(img, colorSpace);
+						}
+						dispatch_semaphore_signal(semaphore);
 				}];
 			}
 		}];
+
 		dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
 		dispatch_release(semaphore);
 		return image1;
