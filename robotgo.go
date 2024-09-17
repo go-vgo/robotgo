@@ -891,7 +891,7 @@ func GetActive() Handle {
 	return Handle(GetActiveC())
 }
 
-// GetActive get the active window
+// GetActiveC get the active window
 func GetActiveC() C.MData {
 	mdata := C.get_active()
 	// fmt.Println("active----", mdata)
