@@ -28,7 +28,7 @@ struct _MData{
 };
 
 typedef struct _MData MData;
-MData mData;
+MData pub_mData;
 
 struct _Bounds {
 	int32_t		X;				// Top left X coordinate
