@@ -366,11 +366,11 @@ func CaptureGo(args ...int) Bitmap {
 	return ToBitmap(bit)
 }
 
-// CaptureImg capture the screen and return image.Image
+// CaptureImg capture the screen and return image.Image, error
 func CaptureImg(args ...int) (image.Image, error) {
 	bit := CaptureScreen(args...)
 	if bit == nil {
-		return nil, errors.New("capture error")
+		return nil, errors.New("Capture image not found.")
 	}
 	defer FreeBitmap(bit)
 
