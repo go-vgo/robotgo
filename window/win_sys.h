@@ -8,9 +8,9 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-#if defined(USE_X11)
-	#include <X11/Xresource.h>
-#endif
+// #if defined(USE_X11)
+// 	#include <X11/Xresource.h>
+// #endif
 
 Bounds get_client(uintptr pid, int8_t isPid);
 

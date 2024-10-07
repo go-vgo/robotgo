@@ -4,6 +4,7 @@
 	#include <ApplicationServices/ApplicationServices.h>
 #elif defined(USE_X11)
 	#include <X11/Xlib.h>
+	#include <X11/Xresource.h>
 	// #include "../base/xdisplay_c.h"
 #endif
 
