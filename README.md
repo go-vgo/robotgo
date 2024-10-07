@@ -277,9 +277,9 @@ func main() {
     robotgo.Save(img2, "test_"+strconv.Itoa(i)+".png")
 
     x, y, w, h := robotgo.GetDisplayBounds(i)
-		img3, err := robotgo.CaptureImg(x, y, w, h)
-		fmt.Println("Capture error: ", err)
-		robotgo.Save(img3, path1+"_1.png")
+    img3, err := robotgo.CaptureImg(x, y, w, h)
+    fmt.Println("Capture error: ", err)
+    robotgo.Save(img3, path1+"_1.png")
   }
 }
 ```
