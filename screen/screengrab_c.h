@@ -1,5 +1,4 @@
 #include "../base/bitmap_free_c.h"
-#include "screen_c.h"
 #include <stdlib.h> /* malloc() */
 
 #if defined(IS_MACOSX)
@@ -14,6 +13,7 @@
 #elif defined(IS_WINDOWS)
 	#include <string.h>
 #endif
+#include "screen_c.h"
 
 #if defined(IS_MACOSX) && __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ > MAC_OS_VERSION_14_4
 	static CGImageRef capture15(CGDirectDisplayID id, CGRect diIntersectDisplayLocal, CGColorSpaceRef colorSpace) {
