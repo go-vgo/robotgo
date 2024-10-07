@@ -55,11 +55,11 @@ uintptr get_handle(){
 
 uintptr b_get_handle() {
 	#if defined(IS_MACOSX)
-		return (uintptr)mData.CgID;
+		return (uintptr)pub_mData.CgID;
 	#elif defined(USE_X11)
-		return (uintptr)mData.XWin;
+		return (uintptr)pub_mData.XWin;
 	#elif defined(IS_WINDOWS)
-		return (uintptr)mData.HWnd;
+		return (uintptr)pub_mData.HWnd;
 	#endif
 }
 

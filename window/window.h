@@ -24,8 +24,8 @@ uintptr initHandle = 0;
 
 void initWindow(uintptr handle){
 #if defined(IS_MACOSX)
-	mData.CgID = 0;
-	mData.AxID = 0;
+	pub_mData.CgID = 0;
+	pub_mData.AxID = 0;
 #elif defined(USE_X11)
 	Display *rDisplay = XOpenDisplay(NULL);
 	// If atoms loaded
@@ -34,10 +34,10 @@ void initWindow(uintptr handle){
 		if (rDisplay != NULL) {LoadAtoms();}
 	}
 
-	mData.XWin = 0;
+	pub_mData.XWin = 0;
 	XCloseDisplay(rDisplay);
 #elif defined(IS_WINDOWS)
-	mData.HWnd = 0;
+	pub_mData.HWnd = 0;
 #endif
 	setHandle(handle);
 }
@@ -67,33 +67,33 @@ MData set_handle_pid(uintptr pid, int8_t isPid){
 
 void set_handle_pid_mData(uintptr pid, int8_t isPid){
 	MData win = set_handle_pid(pid, isPid);
-	mData = win;
+	pub_mData = win;
 }
 
 bool is_valid() {
 	initWindow(initHandle);
 	if (!IsAxEnabled(true)) {
-		printf("%s\n", "Window: Accessibility API is disabled!\n"
-		"Failed to enable access for assistive devices.");
+		printf("%s\n", "Window: Accessibility API is disabled! "
+		"Failed to enable access for assistive devices. \n");
 	}
 	MData actdata = get_active();
 
 #if defined(IS_MACOSX)
-	mData.CgID = actdata.CgID;
-	mData.AxID = actdata.AxID;
-	if (mData.CgID == 0 || mData.AxID == 0) { return false; }
+	pub_mData.CgID = actdata.CgID;
+	pub_mData.AxID = actdata.AxID;
+	if (pub_mData.CgID == 0 || pub_mData.AxID == 0) { return false; }
 
 	CFTypeRef r = NULL;
 	// Attempt to get the window role
-	if (AXUIElementCopyAttributeValue(mData.AxID, kAXRoleAttribute, &r) == kAXErrorSuccess && r){
+	if (AXUIElementCopyAttributeValue(pub_mData.AxID, kAXRoleAttribute, &r) == kAXErrorSuccess && r){
 			CFRelease(r);
 			return true;
 	}
 
 	return false;
 #elif defined(USE_X11)
-	mData.XWin = actdata.XWin;
-	if (mData.XWin == 0) { return false; }
+	pub_mData.XWin = actdata.XWin;
+	if (pub_mData.XWin == 0) { return false; }
 
 	Display *rDisplay = XOpenDisplay(NULL);
 	// Check for a valid X-Window display
@@ -103,7 +103,7 @@ bool is_valid() {
 	XDismissErrors();
 
 	// Get the window PID property
-	void* result = GetWindowProperty(mData, WM_PID,NULL);
+	void* result = GetWindowProperty(pub_mData, WM_PID,NULL);
 	if (result == NULL) {
 		XCloseDisplay(rDisplay);
 		return false;
@@ -115,12 +115,12 @@ bool is_valid() {
 
 	return true;
 #elif defined(IS_WINDOWS)
-	mData.HWnd = actdata.HWnd;
-	if (mData.HWnd == 0) {
+	pub_mData.HWnd = actdata.HWnd;
+	if (pub_mData.HWnd == 0) {
 		return false;
 	}
 
-	return IsWindow(mData.HWnd) != 0;
+	return IsWindow(pub_mData.HWnd) != 0;
 #endif
 }
 
@@ -175,13 +175,13 @@ bool IsAxEnabled(bool options){
 bool setHandle(uintptr handle){
 #if defined(IS_MACOSX)
 	// Release the AX element
-	if (mData.AxID != NULL) {
-		CFRelease(mData.AxID);
+	if (pub_mData.AxID != NULL) {
+		CFRelease(pub_mData.AxID);
 	}
 
 	// Reset both values
-	mData.CgID = 0;
-	mData.AxID = 0;
+	pub_mData.CgID = 0;
+	pub_mData.AxID = 0;
 
 	if (handle == 0) {
 		// return 0;
@@ -192,8 +192,8 @@ bool setHandle(uintptr handle){
 	CGWindowID cgID = (CGWindowID)handle;
 	AXUIElementRef axID = GetUIElement(cgID);
 	if (axID != NULL){
-		mData.CgID = cgID;
-		mData.AxID = axID;
+		pub_mData.CgID = cgID;
+		pub_mData.AxID = axID;
 		// return 0;
 		return true;
 	}
@@ -201,7 +201,7 @@ bool setHandle(uintptr handle){
 	// return 1;
 	return false;
 #elif defined(USE_X11)
-	mData.XWin = (Window)handle;
+	pub_mData.XWin = (Window)handle;
 	if (handle == 0) {
 		return true;
 	}
@@ -210,10 +210,10 @@ bool setHandle(uintptr handle){
 		return true;
 	}
 
-	mData.XWin = 0;
+	pub_mData.XWin = 0;
 	return false;
 #elif defined(IS_WINDOWS)
-	mData.HWnd = (HWND)handle;
+	pub_mData.HWnd = (HWND)handle;
 	if (handle == 0) {
 		return true;
 	}
@@ -222,7 +222,7 @@ bool setHandle(uintptr handle){
 		return true;
 	}
 
-	mData.HWnd = 0;
+	pub_mData.HWnd = 0;
 	return false;
 #endif
 }
@@ -237,7 +237,7 @@ bool IsTopMost(void){
 	// XDismissErrors ();
 	// return GetState (mData.XWin, STATE_TOPMOST);
 #elif defined(IS_WINDOWS)
-	return (GetWindowLongPtr(mData.HWnd, GWL_EXSTYLE) & WS_EX_TOPMOST) != 0;
+	return (GetWindowLongPtr(pub_mData.HWnd, GWL_EXSTYLE) & WS_EX_TOPMOST) != 0;
 #endif
 }
 
@@ -247,7 +247,7 @@ bool IsMinimized(void){
 #if defined(IS_MACOSX)
 	CFBooleanRef data = NULL;
 	// Determine whether the window is minimized
-	if (AXUIElementCopyAttributeValue(mData.AxID, kAXMinimizedAttribute, 
+	if (AXUIElementCopyAttributeValue(pub_mData.AxID, kAXMinimizedAttribute, 
 	(CFTypeRef*) &data) == kAXErrorSuccess && data != NULL) {
 		// Convert resulting data into a bool
 		bool result = CFBooleanGetValue(data);
@@ -261,7 +261,7 @@ bool IsMinimized(void){
 	// XDismissErrors();
 	// return GetState(mData.XWin, STATE_MINIMIZE);
 #elif defined(IS_WINDOWS)
-	return (GetWindowLongPtr(mData.HWnd, GWL_STYLE) & WS_MINIMIZE) != 0;
+	return (GetWindowLongPtr(pub_mData.HWnd, GWL_STYLE) & WS_MINIMIZE) != 0;
 #endif
 }
 
@@ -276,7 +276,7 @@ bool IsMaximized(void){
 	// XDismissErrors();
 	// return GetState(mData.XWin, STATE_MAXIMIZE);
 #elif defined(IS_WINDOWS)
-	return (GetWindowLongPtr(mData.HWnd, GWL_STYLE) & WS_MAXIMIZE) != 0;
+	return (GetWindowLongPtr(pub_mData.HWnd, GWL_STYLE) & WS_MAXIMIZE) != 0;
 #endif
 }
 
@@ -453,9 +453,9 @@ void SetTopMost(bool state){
 #elif defined(USE_X11)
 	// Ignore X errors
 	// XDismissErrors();
-	// SetState(mData.XWin, STATE_TOPMOST, state);
+	// SetState(pub_mData.XWin, STATE_TOPMOST, state);
 #elif defined(IS_WINDOWS)
-	SetWindowPos(mData.HWnd, state ? HWND_TOPMOST : HWND_NOTOPMOST,
+	SetWindowPos(pub_mData.HWnd, state ? HWND_TOPMOST : HWND_NOTOPMOST,
 		0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 #endif
 }
@@ -464,7 +464,7 @@ void close_main_window () {
    // Check if the window is valid
 	if (!is_valid()) { return; }
 
-	close_window_by_Id(mData);
+	close_window_by_Id(pub_mData);
 }
 
 void close_window_by_PId(uintptr pid, int8_t isPid){
@@ -502,7 +502,7 @@ char* get_main_title(){
 	// Check if the window is valid
 	if (!is_valid()) { return "is_valid failed."; }
 
-	return get_title_by_hand(mData);
+	return get_title_by_hand(pub_mData);
 }
 
 char* get_title_by_pid(uintptr pid, int8_t isPid){
@@ -591,7 +591,7 @@ int32_t get_PID(void) {
 #if defined(IS_MACOSX)
 	pid_t pid = 0;
 	// Attempt to retrieve the window pid
-	if (AXUIElementGetPid(mData.AxID, &pid)== kAXErrorSuccess) {
+	if (AXUIElementGetPid(pub_mData.AxID, &pid)== kAXErrorSuccess) {
 		return pid;
 	}
 	return 0;
@@ -600,7 +600,7 @@ int32_t get_PID(void) {
 	XDismissErrors();
 
 	// Get the window PID
-	long* result = (long*)GetWindowProperty(mData, WM_PID,NULL);
+	long* result = (long*)GetWindowProperty(pub_mData, WM_PID,NULL);
 	// Check result and convert it
 	if (result == NULL) { return 0; }
 	
@@ -609,7 +609,7 @@ int32_t get_PID(void) {
 	return pid;
 #elif defined(IS_WINDOWS)
 	DWORD id = 0;
-	GetWindowThreadProcessId(mData.HWnd, &id);
+	GetWindowThreadProcessId(pub_mData.HWnd, &id);
 	return id;
 #endif
 }
