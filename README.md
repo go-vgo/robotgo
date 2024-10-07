@@ -268,13 +268,18 @@ func main() {
   num := robotgo.DisplaysNum()
   for i := 0; i < num; i++ {
     robotgo.DisplayID = i
-    img1 := robotgo.CaptureImg()
+    img1, _ := robotgo.CaptureImg()
     path1 := "save_" + strconv.Itoa(i)
     robotgo.Save(img1, path1+".png")
     robotgo.SaveJpeg(img1, path1+".jpeg", 50)
 
-    img2 := robotgo.CaptureImg(10, 10, 20, 20)
+    img2, _ := robotgo.CaptureImg(10, 10, 20, 20)
     robotgo.Save(img2, "test_"+strconv.Itoa(i)+".png")
+
+    x, y, w, h := robotgo.GetDisplayBounds(i)
+		img3, err := robotgo.CaptureImg(x, y, w, h)
+		fmt.Println("Capture error: ", err)
+		robotgo.Save(img3, path1+"_1.png")
   }
 }
 ```
@@ -354,8 +359,8 @@ func opencv() {
   // bit1 := robotgo.CaptureScreen(10, 10, 30, 30)
   // img1 := robotgo.ToImage(bit1)
   // defer robotgo.FreeBitmapArr(bit0, bit1)
-  img := robotgo.CaptureImg()
-  img1 := robotgo.CaptureImg(10, 10, 30, 30)
+  img, _ := robotgo.CaptureImg()
+  img1, _ := robotgo.CaptureImg(10, 10, 30, 30)
 
   fmt.Print("gcv find image: ")
   fmt.Println(gcv.FindImg(img1, img))
