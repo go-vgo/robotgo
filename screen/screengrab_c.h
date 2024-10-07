@@ -1,4 +1,5 @@
 #include "../base/bitmap_free_c.h"
+#include "screen_c.h"
 #include <stdlib.h> /* malloc() */
 
 #if defined(IS_MACOSX)
@@ -39,9 +40,12 @@
 
 				SCContentFilter* filter = [[SCContentFilter alloc] initWithDisplay:target excludingWindows:@[]];
 				SCStreamConfiguration* config = [[SCStreamConfiguration alloc] init];
+				config.queueDepth = 5;
 				config.sourceRect = diIntersectDisplayLocal;
-				config.width = diIntersectDisplayLocal.size.width;
-				config.height = diIntersectDisplayLocal.size.height;
+				config.width = diIntersectDisplayLocal.size.width * sys_scale(id);
+				config.height = diIntersectDisplayLocal.size.height * sys_scale(id);
+				config.scalesToFit = false;
+				config.captureResolution = 1;
 
 				[SCScreenshotManager captureImageWithFilter:filter
 					configuration:config
