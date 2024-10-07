@@ -12,7 +12,6 @@
 #include "../base/pubs.h"
 #include "../base/rgb.h"
 #include "screengrab_c.h"
-#include "screen_c.h"
 #include <stdio.h>
 
 void padHex(MMRGBHex color, char* hex) {

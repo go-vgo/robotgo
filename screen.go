@@ -11,6 +11,7 @@
 package robotgo
 
 import (
+	"errors"
 	"image"
 
 	"github.com/kbinani/screenshot"
@@ -53,9 +54,9 @@ func Capture(args ...int) (*image.RGBA, error) {
 
 // SaveCapture capture screen and save the screenshot to image
 func SaveCapture(path string, args ...int) error {
-	img, err := Capture(args...)
-	if err != nil {
-		return err
+	img := CaptureImg(args...)
+	if img == nil {
+		return errors.New("Capture image not found")
 	}
 
 	return Save(img, path)

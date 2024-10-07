@@ -13,6 +13,7 @@
 #elif defined(IS_WINDOWS)
 	#include <string.h>
 #endif
+#include "screen_c.h"
 
 #if defined(IS_MACOSX) && __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ > MAC_OS_VERSION_14_4
 	static CGImageRef capture15(CGDirectDisplayID id, CGRect diIntersectDisplayLocal, CGColorSpaceRef colorSpace) {
@@ -39,9 +40,12 @@
 
 				SCContentFilter* filter = [[SCContentFilter alloc] initWithDisplay:target excludingWindows:@[]];
 				SCStreamConfiguration* config = [[SCStreamConfiguration alloc] init];
+				config.queueDepth = 5;
 				config.sourceRect = diIntersectDisplayLocal;
-				config.width = diIntersectDisplayLocal.size.width;
-				config.height = diIntersectDisplayLocal.size.height;
+				config.width = diIntersectDisplayLocal.size.width * sys_scale(id);
+				config.height = diIntersectDisplayLocal.size.height * sys_scale(id);
+				config.scalesToFit = false;
+				config.captureResolution = 1;
 
 				[SCScreenshotManager captureImageWithFilter:filter
 					configuration:config
