@@ -76,12 +76,25 @@ MMSizeInt32 getMainDisplaySize(void) {
 	CGSize size = displayRect.size;
 	return MMSizeInt32Make((int32_t)size.width, (int32_t)size.height);
 #elif defined(USE_X11)
-	Display *display = XGetMainDisplay();
-	const int screen = DefaultScreen(display);
+	// Display *display = XGetMainDisplay();
+	// const int screen = DefaultScreen(display);
 
-	return MMSizeInt32Make(
-						(int32_t)DisplayWidth(display, screen),
-	                	(int32_t)DisplayHeight(display, screen));
+	// return MMSizeInt32Make(
+	// 					(int32_t)DisplayWidth(display, screen),
+	//                 	(int32_t)DisplayHeight(display, screen));
+	    Display *display = XOpenDisplay(NULL);
+    if (display == NULL) {
+        return MMSizeInt32Make(0, 0); // Return an invalid size if unable to open display
+    }
+
+    const int screen = DefaultScreen(display);
+    MMSizeInt32 resolution = MMSizeInt32Make(
+        (int32_t)DisplayWidth(display, screen),
+        (int32_t)DisplayHeight(display, screen)
+    );
+
+    XCloseDisplay(display);
+    return resolution;
 #elif defined(IS_WINDOWS)
 	return MMSizeInt32Make(
  						(int32_t)GetSystemMetrics(SM_CXSCREEN),
