@@ -90,7 +90,7 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id, 
 	if (!imageData) { return NULL; }
 
 	bufferSize = CFDataGetLength(imageData);
-	buffer = malloc(bufferSize);
+	buffer = (uint8_t *)malloc(bufferSize);
 	CFDataGetBytes(imageData, CFRangeMake(0, bufferSize), buffer);
 
 	bitmap = createMMBitmap_c(buffer, 
