@@ -42,7 +42,7 @@ typedef struct _Bounds Bounds;
 	static Boolean(*gAXIsProcessTrustedWithOptions) (CFDictionaryRef);
 	static CFStringRef* gkAXTrustedCheckOptionPrompt;
 
-	AXError _AXUIElementGetWindow(AXUIElementRef, CGWindowID* out);
+	//AXError _AXUIElementGetWindow(AXUIElementRef, CGWindowID* out);
 	static AXUIElementRef GetUIElement(CGWindowID win){
 		intptr pid = 0;
 		// double_t pid = 0;
@@ -90,13 +90,25 @@ typedef struct _Bounds Bounds;
 				AXUIElementRef element = (AXUIElementRef) CFArrayGetValueAtIndex(windows, i);
 				CGWindowID temp = 0;
 				// Use undocumented API to get WindowID
-				_AXUIElementGetWindow(element, &temp);
+				/*_AXUIElementGetWindow(element, &temp);
 
 				if (temp == win) {
 					// Retain element
 					CFRetain(element);
 					result = element;
 					break;
+				}*/
+				CFTypeRef cfWindow = NULL;
+				if (AXUIElementCopyAttributeValue(element, kAXWindowAttribute, &cfWindow) == kAXErrorSuccess && cfWindow != NULL) {
+   					temp = *(CGWindowID*)CFDataGetBytePtr(cfWindow);
+    				CFRelease(cfWindow);
+
+    				if (temp == win) {
+       					// Retain element
+        				CFRetain(element);
+        				result = element;
+        				break;
+    				}
 				}
 			}
 
