@@ -99,7 +99,7 @@ void moveMouse(MMPointInt32 point){
 		// Mouse motion is now done using SendInput with MOUSEINPUT.
 		// We use Absolute mouse positioning
 		#define MOUSE_COORD_TO_ABS(coord, width_or_height) ( \
-			((65536 * coord) / width_or_height) + (coord < 0 ? -1 : 1))
+			((65536 * (coord)) / (width_or_height)) + ((coord) < 0 ? (-1) : 1))
 
 		MMRectInt32 rect = getScreenRect(1);
 		int32_t x = MOUSE_COORD_TO_ABS(point.x - rect.origin.x, rect.size.w);
