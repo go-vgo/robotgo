@@ -244,6 +244,7 @@ package main
 
 import (
   "fmt"
+  "strconv"
 
   "github.com/go-vgo/robotgo"
   "github.com/vcaesar/imgo"
