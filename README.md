@@ -128,7 +128,7 @@ sudo dnf install xsel xclip
 sudo dnf install libpng-devel
 
 # GoHook
-sudo dnf install libxkbcommon-devel libxkbcommon-x11-devel xorg-x11-xkb-utils-devel
+sudo dnf install libxkbcommon-devel libxkbcommon-x11-devel xkbcomp-devel
 
 ```
 
