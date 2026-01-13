@@ -114,6 +114,7 @@ const (
 	Pageup   = "pageup"
 	Pagedown = "pagedown"
 
+	Fn  = "fn"
 	F1  = "f1"
 	F2  = "f2"
 	F3  = "f3"
@@ -220,6 +221,7 @@ var keyNames = map[string]C.MMKeyCode{
 	"pageup":   C.K_PAGEUP,
 	"pagedown": C.K_PAGEDOWN,
 	//
+	"fn":  C.K_Fn,
 	"f1":  C.K_F1,
 	"f2":  C.K_F2,
 	"f3":  C.K_F3,
