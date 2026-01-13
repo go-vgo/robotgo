@@ -149,8 +149,9 @@ func TestTypeStr(t *testing.T) {
 	c := CharCodeAt("s", 0)
 	tt.Equal(t, 115, c)
 
-	e := PasteStr("s")
+	l, e := PasteStr("s")
 	tt.Nil(t, e)
+	tt.Equal(t, 1, l)
 
 	s1 := "abc\\\\cd/s@世界"
 	uc := ToUC(s1)

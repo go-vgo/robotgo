@@ -104,15 +104,15 @@ const (
 	Enter     = "enter"
 	Tab       = "tab"
 	Esc       = "esc"
-	Escape    = "escape"
-	Up        = "up"    // Up arrow key
-	Down      = "down"  // Down arrow key
-	Right     = "right" // Right arrow key
-	Left      = "left"  // Left arrow key
-	Home      = "home"
-	End       = "end"
-	Pageup    = "pageup"
-	Pagedown  = "pagedown"
+	// Escape    = "escape"
+	Up       = "up"    // Up arrow key
+	Down     = "down"  // Down arrow key
+	Right    = "right" // Right arrow key
+	Left     = "left"  // Left arrow key
+	Home     = "home"
+	End      = "end"
+	Pageup   = "pageup"
+	Pagedown = "pagedown"
 
 	F1  = "f1"
 	F2  = "f2"
@@ -140,21 +140,22 @@ const (
 	F24 = "f24"
 
 	Cmd  = "cmd"  // is the "win" key for windows
-	Lcmd = "lcmd" // left command
-	Rcmd = "rcmd" // right command
+	CmdL = "cmdl" // left command
+	CmdR = "cmdr" // right command
 	// "command"
-	Alt     = "alt"
-	Lalt    = "lalt" // left alt
-	Ralt    = "ralt" // right alt
-	Ctrl    = "ctrl"
-	Lctrl   = "lctrl" // left ctrl
-	Rctrl   = "rctrl" // right ctrl
-	Control = "control"
-	Shift   = "shift"
-	Lshift  = "lshift" // left shift
-	Rshift  = "rshift" // right shift
-	// "right_shift"
-	Capslock    = "capslock"
+	Alt   = "alt"
+	AltL  = "altl" // left alt
+	AltR  = "altr" // right alt
+	Ctrl  = "ctrl"
+	CtrlL = "ctrll" // left ctrl
+	CtrlR = "ctrlr" // right ctrl
+	// Control = "control"
+	Shift  = "shift"
+	ShiftL = "shiftl" // left shift
+	ShiftR = "shiftr" // right shift
+	// "right_shift", capslock
+	Caps        = "caps"
+	Capslock    = "caps"
 	Space       = "space"
 	Print       = "print"
 	Printscreen = "printscreen" // No Mac support
@@ -209,15 +210,15 @@ var keyNames = map[string]C.MMKeyCode{
 	"enter":     C.K_RETURN,
 	"tab":       C.K_TAB,
 	"esc":       C.K_ESCAPE,
-	"escape":    C.K_ESCAPE,
-	"up":        C.K_UP,
-	"down":      C.K_DOWN,
-	"right":     C.K_RIGHT,
-	"left":      C.K_LEFT,
-	"home":      C.K_HOME,
-	"end":       C.K_END,
-	"pageup":    C.K_PAGEUP,
-	"pagedown":  C.K_PAGEDOWN,
+	// "escape":    C.K_ESCAPE,
+	"up":       C.K_UP,
+	"down":     C.K_DOWN,
+	"right":    C.K_RIGHT,
+	"left":     C.K_LEFT,
+	"home":     C.K_HOME,
+	"end":      C.K_END,
+	"pageup":   C.K_PAGEUP,
+	"pagedown": C.K_PAGEDOWN,
 	//
 	"f1":  C.K_F1,
 	"f2":  C.K_F2,
@@ -244,22 +245,22 @@ var keyNames = map[string]C.MMKeyCode{
 	"f23": C.K_F23,
 	"f24": C.K_F24,
 	//
-	"cmd":         C.K_META,
-	"lcmd":        C.K_LMETA,
-	"rcmd":        C.K_RMETA,
-	"command":     C.K_META,
-	"alt":         C.K_ALT,
-	"lalt":        C.K_LALT,
-	"ralt":        C.K_RALT,
-	"ctrl":        C.K_CONTROL,
-	"lctrl":       C.K_LCONTROL,
-	"rctrl":       C.K_RCONTROL,
-	"control":     C.K_CONTROL,
-	"shift":       C.K_SHIFT,
-	"lshift":      C.K_LSHIFT,
-	"rshift":      C.K_RSHIFT,
-	"right_shift": C.K_RSHIFT,
-	"capslock":    C.K_CAPSLOCK,
+	"cmd":  C.K_META,
+	"cmdl": C.K_LMETA,
+	"cmdr": C.K_RMETA,
+	// "command":     C.K_META,
+	"alt":   C.K_ALT,
+	"altl":  C.K_LALT,
+	"altr":  C.K_RALT,
+	"ctrl":  C.K_CONTROL,
+	"ctrll": C.K_LCONTROL,
+	"ctrlr": C.K_RCONTROL,
+	// "control":     C.K_CONTROL,
+	"shift":  C.K_SHIFT,
+	"shiftl": C.K_LSHIFT,
+	"shiftr": C.K_RSHIFT,
+	// "right_shift": C.K_RSHIFT,
+	"caps":        C.K_CAPSLOCK,
 	"space":       C.K_SPACE,
 	"print":       C.K_PRINTSCREEN,
 	"printscreen": C.K_PRINTSCREEN,
@@ -322,6 +323,59 @@ var keyNames = map[string]C.MMKeyCode{
 	// { NULL:              C.K_NOT_A_KEY }
 }
 
+// macCharToKeyCode maps ASCII characters to macOS virtual key codes (kVK_ANSI_*)
+// This avoids calling C.keyCodeForChar which can cause SIGTRAP on macOS
+var macCharToKeyCode = map[byte]C.MMKeyCode{
+	'a': 0x00, 'A': 0x00,
+	's': 0x01, 'S': 0x01,
+	'd': 0x02, 'D': 0x02,
+	'f': 0x03, 'F': 0x03,
+	'h': 0x04, 'H': 0x04,
+	'g': 0x05, 'G': 0x05,
+	'z': 0x06, 'Z': 0x06,
+	'x': 0x07, 'X': 0x07,
+	'c': 0x08, 'C': 0x08,
+	'v': 0x09, 'V': 0x09,
+	'b': 0x0B, 'B': 0x0B,
+	'q': 0x0C, 'Q': 0x0C,
+	'w': 0x0D, 'W': 0x0D,
+	'e': 0x0E, 'E': 0x0E,
+	'r': 0x0F, 'R': 0x0F,
+	'y': 0x10, 'Y': 0x10,
+	't': 0x11, 'T': 0x11,
+	'1': 0x12, '!': 0x12,
+	'2': 0x13, '@': 0x13,
+	'3': 0x14, '#': 0x14,
+	'4': 0x15, '$': 0x15,
+	'6': 0x16, '^': 0x16,
+	'5': 0x17, '%': 0x17,
+	'=': 0x18, '+': 0x18,
+	'9': 0x19, '(': 0x19,
+	'7': 0x1A, '&': 0x1A,
+	'-': 0x1B, '_': 0x1B,
+	'8': 0x1C, '*': 0x1C,
+	'0': 0x1D, ')': 0x1D,
+	']': 0x1E, '}': 0x1E,
+	'o': 0x1F, 'O': 0x1F,
+	'u': 0x20, 'U': 0x20,
+	'[': 0x21, '{': 0x21,
+	'i': 0x22, 'I': 0x22,
+	'p': 0x23, 'P': 0x23,
+	'l': 0x25, 'L': 0x25,
+	'j': 0x26, 'J': 0x26,
+	'\'': 0x27, '"': 0x27,
+	'k': 0x28, 'K': 0x28,
+	';': 0x29, ':': 0x29,
+	'\\': 0x2A, '|': 0x2A,
+	',': 0x2B, '<': 0x2B,
+	'/': 0x2C, '?': 0x2C,
+	'n': 0x2D, 'N': 0x2D,
+	'm': 0x2E, 'M': 0x2E,
+	'.': 0x2F, '>': 0x2F,
+	'`': 0x32, '~': 0x32,
+	' ': 0x31, // kVK_Space
+}
+
 // CmdCtrl If the operating system is macOS, return the key string "cmd",
 // otherwise return the key string "ctrl
 func CmdCtrl() string {
@@ -346,6 +400,17 @@ func checkKeyCodes(k string) (key C.MMKeyCode, err error) {
 	}
 
 	if len(k) == 1 {
+		c := k[0]
+		// On macOS, use Go lookup table to avoid SIGTRAP in CGO
+		if runtime.GOOS == "darwin" {
+			if code, ok := macCharToKeyCode[c]; ok {
+				key = code
+				return
+			}
+			err = keyErr
+			return
+		}
+
 		val1 := C.CString(k)
 		defer C.free(unsafe.Pointer(val1))
 
@@ -685,7 +750,7 @@ func TypeStr(str string, args ...int) {
 //
 //	robotgo.Type("abc@123, Hi galaxy, こんにちは")
 //	robotgo.Type("To be or not to be, this is questions.", pid int)
-func Type(str string, args ...int) {
+func Type(str string, args ...int) int {
 	var tm, tm1 = 0, 7
 
 	if len(args) > 1 {
@@ -713,10 +778,11 @@ func Type(str string, args ...int) {
 
 			MilliSleep(tm)
 		}
-		return
+		return len(strUc)
 	}
 
-	for i := 0; i < len([]rune(str)); i++ {
+	l1 := len([]rune(str))
+	for i := 0; i < l1; i++ {
 		ustr := uint32(CharCodeAt(str, i))
 		UnicodeType(ustr, pid)
 		// if len(args) > 0 {
@@ -724,32 +790,43 @@ func Type(str string, args ...int) {
 		// }
 	}
 	MilliSleep(KeySleep)
+	return l1
 }
 
 // PasteStr paste a string
 //
 // Deprecated: use the Paste()
-func PasteStr(str string) error {
+func PasteStr(str string) (int, error) {
 	return Paste(str)
+}
+
+func Pastes(str string, pid ...int) int {
+	l, _ := Paste(str, pid...)
+	return l
 }
 
 // Paste paste a string (supported UTF-8),
 // write the string to clipboard and tap `cmd + v`
-func Paste(str string) error {
+func Paste(str string, pid ...int) (int, error) {
 	err := clipboard.WriteAll(str)
 	if err != nil {
-		return err
+		return 0, err
 	}
-	return CmdV()
+	err = CmdV(pid...)
+	return len(str), err
 }
 
 // CmdV tap key command + v or control + v
-func CmdV() error {
-	if runtime.GOOS == "darwin" {
-		return KeyTap("v", "command")
+func CmdV(pid ...int) error {
+	pid1 := 0
+	if len(pid) > 0 {
+		pid1 = pid[0]
 	}
 
-	return KeyTap("v", "control")
+	if runtime.GOOS == "darwin" {
+		return KeyTap("v", pid1, "cmd")
+	}
+	return KeyTap("v", pid1, "ctrl")
 }
 
 // TypeStrDelay type string width delay
