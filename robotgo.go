@@ -659,7 +659,7 @@ func Location() (int, int) {
 	return x, y
 }
 
-// Click click the mouse button
+// ClickV1 click the mouse button
 //
 // robotgo.Click(button string, double bool)
 //
@@ -668,7 +668,7 @@ func Location() (int, int) {
 //	robotgo.Click() // default is left button
 //	robotgo.Click("right")
 //	robotgo.Click("wheelLeft")
-func Click(args ...interface{}) {
+func ClickV1(args ...interface{}) {
 	var (
 		button C.MMMouseButton = C.LEFT_BUTTON
 		double bool
@@ -685,24 +685,25 @@ func Click(args ...interface{}) {
 	if !double {
 		C.clickMouse(button)
 	} else {
-		C.doubleClick(button)
+		C.doubleClick(button, 2)
 	}
 
 	MilliSleep(MouseSleep)
 }
 
-// ClickE click the mouse button and return error
+// Click click the mouse button and return error
 //
-// robotgo.ClickE(button string, double bool)
+// robotgo.Click(button string, double bool)
 //
 // Examples:
 //
-//	err := robotgo.ClickE() // default is left button
-//	err := robotgo.ClickE("right")
-func ClickE(args ...interface{}) error {
+//	err := robotgo.Click() // default is left button
+//	err := robotgo.Click("right")
+func Click(args ...interface{}) error {
 	var (
 		button C.MMMouseButton = C.LEFT_BUTTON
 		double bool
+		count  int
 	)
 
 	if len(args) > 0 {
@@ -720,30 +721,54 @@ func ClickE(args ...interface{}) error {
 		}
 		double = dbl
 	}
-
-	defer MilliSleep(MouseSleep)
-
-	if !double {
-		if code := C.toggleMouseErr(true, button); code != 0 {
-			return formatClickError(int(code), button, "down", false)
-		}
-
-		// match clickMouse timing
-		C.microsleep(C.double(5.0))
-
-		if code := C.toggleMouseErr(false, button); code != 0 {
-			return formatClickError(int(code), button, "up", false)
-		}
-	} else {
-		if code := C.doubleClickErr(button); code != 0 {
-			return formatClickError(int(code), button, "double", true)
-		}
+	if len(args) > 2 {
+		count = args[2].(int)
 	}
 
+	defer MilliSleep(MouseSleep)
+	if !double {
+		if code := C.toggleMouse(true, button); code != 0 {
+			return formatClickError(int(code), button, "down", count)
+		}
+		MilliSleep(5)
+		if code := C.toggleMouse(false, button); code != 0 {
+			return formatClickError(int(code), button, "up", count)
+		}
+	} else {
+		if code := C.doubleClick(button, 2); code != 0 {
+			return formatClickError(int(code), button, "double", 2)
+		}
+	}
 	return nil
 }
 
-func formatClickError(code int, button C.MMMouseButton, stage string, double bool) error {
+// MultiClick performs multiple clicks and returns error
+//
+// robotgo.MultiClick(button string, count int)
+func MultiClick(button string, count int, click ...bool) error {
+	if count < 1 {
+		return nil
+	}
+	defer MilliSleep(MouseSleep)
+
+	if runtime.GOOS == "darwin" && len(click) <= 0 {
+		btn := CheckMouse(button)
+		code := C.doubleClick(btn, C.int(count))
+		return formatClickError(int(code), btn, "down", count)
+	}
+
+	for i := 0; i < count; i++ {
+		if err := Click(button, false, i+1); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func formatClickError(code int, button C.MMMouseButton, stage string, count int) error {
+	if code == 0 {
+		return nil
+	}
 	btnName := MouseButtonString(button)
 	detail := ""
 
@@ -776,10 +801,9 @@ func formatClickError(code int, button C.MMMouseButton, stage string, double boo
 	}
 
 	if detail != "" {
-		return fmt.Errorf("click %s failed (%s, double=%v): %s (code=%d)", stage, btnName, double, detail, code)
+		return fmt.Errorf("click %s failed (%s, count=%d): %s (code=%d)", stage, btnName, count, detail, code)
 	}
-
-	return fmt.Errorf("click %s failed (%s, double=%v), code=%d", stage, btnName, double, code)
+	return fmt.Errorf("click %s failed (%s, count=%d), code=%d", stage, btnName, count, code)
 }
 
 // MoveClick move and click the mouse
@@ -824,12 +848,12 @@ func Toggle(key ...interface{}) error {
 	if len(key) > 1 && key[1].(string) == "up" {
 		down = false
 	}
-	C.toggleMouse(C.bool(down), button)
+
+	code := C.toggleMouse(C.bool(down), button)
 	if len(key) > 2 {
 		MilliSleep(MouseSleep)
 	}
-
-	return nil
+	return formatClickError(int(code), button, "down", 1)
 }
 
 // MouseDown send mouse down event
