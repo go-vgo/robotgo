@@ -391,10 +391,13 @@ func CmdCtrl() string {
 }
 
 // It sends a key press and release to the active application
-func tapKeyCode(code C.MMKeyCode, flags C.MMKeyFlags, pid C.uintptr) {
-	C.toggleKeyCode(code, true, flags, pid)
+func tapKeyCode(code C.MMKeyCode, flags C.MMKeyFlags, pid C.uintptr) (int, string) {
+	c1 := C.toggleKeyCode(code, true, flags, pid)
+	if c1 != 0 {
+		return int(c1), "down"
+	}
 	MilliSleep(3)
-	C.toggleKeyCode(code, false, flags, pid)
+	return int(C.toggleKeyCode(code, false, flags, pid)), "up"
 }
 
 var keyErr = errors.New("Invalid key flag specified.")
@@ -405,9 +408,9 @@ func checkKeyCodes(k string) (key C.MMKeyCode, err error) {
 	}
 
 	if len(k) == 1 {
-		c := k[0]
 		// On macOS, use Go lookup table to avoid SIGTRAP in CGO
 		if runtime.GOOS == "darwin" {
+			c := k[0]
 			if code, ok := macCharToKeyCode[c]; ok {
 				key = code
 				return
@@ -440,17 +443,17 @@ func checkKeyCodes(k string) (key C.MMKeyCode, err error) {
 func checkKeyFlags(f string) (flags C.MMKeyFlags) {
 	m := map[string]C.MMKeyFlags{
 		"alt":    C.MOD_ALT,
-		"ralt":   C.MOD_ALT,
-		"lalt":   C.MOD_ALT,
+		"altr":   C.MOD_ALT,
+		"altl":   C.MOD_ALT,
 		"cmd":    C.MOD_META,
-		"rcmd":   C.MOD_META,
-		"lcmd":   C.MOD_META,
+		"cmdr":   C.MOD_META,
+		"cmdl":   C.MOD_META,
 		"ctrl":   C.MOD_CONTROL,
-		"rctrl":  C.MOD_CONTROL,
-		"lctrl":  C.MOD_CONTROL,
+		"ctrlr":  C.MOD_CONTROL,
+		"ctrll":  C.MOD_CONTROL,
 		"shift":  C.MOD_SHIFT,
-		"rshift": C.MOD_SHIFT,
-		"lshift": C.MOD_SHIFT,
+		"shiftr": C.MOD_SHIFT,
+		"shiftl": C.MOD_SHIFT,
 		"none":   C.MOD_NONE,
 	}
 
@@ -471,7 +474,6 @@ func getFlagsFromValue(value []string) (flags C.MMKeyFlags) {
 		f = checkKeyFlags(value[i])
 		flags = (C.MMKeyFlags)(flags | f)
 	}
-
 	return
 }
 
@@ -489,7 +491,10 @@ func keyTaps(k string, keyArr []string, pid int) error {
 		return err
 	}
 
-	tapKeyCode(key, flags, C.uintptr(pid))
+	c1, down := tapKeyCode(key, flags, C.uintptr(pid))
+	if c1 != 0 {
+		return formatClickError(c1, k, down, 1)
+	}
 	MilliSleep(KeySleep)
 	upKeyArr(keyArr, pid)
 	return nil
@@ -511,6 +516,13 @@ func getKeyDown(keyArr []string) (bool, []string) {
 	return down, keyArr
 }
 
+func getDown(down bool) string {
+	if down {
+		return "down"
+	}
+	return "up"
+}
+
 func keyTogglesB(k string, down bool, keyArr []string, pid int) error {
 	flags := getFlagsFromValue(keyArr)
 	key, err := checkKeyCodes(k)
@@ -518,7 +530,10 @@ func keyTogglesB(k string, down bool, keyArr []string, pid int) error {
 		return err
 	}
 
-	C.toggleKeyCode(key, C.bool(down), flags, C.uintptr(pid))
+	c1 := C.toggleKeyCode(key, C.bool(down), flags, C.uintptr(pid))
+	if c1 != 0 {
+		return formatClickError(int(c1), k, getDown(down), 1)
+	}
 	MilliSleep(KeySleep)
 	if !down {
 		upKeyArr(keyArr, pid)

@@ -34,8 +34,8 @@ func typeStr() {
 	ustr := uint32(robotgo.CharCodeAt("So, hi, bye!", 0))
 	robotgo.UnicodeType(ustr)
 
-	err := robotgo.Paste("paste string")
-	fmt.Println("PasteStr: ", err)
+	l, err := robotgo.Paste("paste string")
+	fmt.Println("PasteStr: ", err, l)
 }
 
 func keyTap() {

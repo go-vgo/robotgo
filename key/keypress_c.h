@@ -29,16 +29,30 @@
 	HWND GetHwndByPid(DWORD dwProcessId);
 
 	HWND getHwnd(uintptr pid, int8_t isPid) { 
-		HWND hwnd = (HWND) pid;
 		if (isPid == 0) { 
-			hwnd = GetHwndByPid(pid);
+			return GetHwndByPid((DWORD)pid);
 		}
-		return hwnd;	
+		return (HWND)pid;	
+	}
+
+	// Construct lParam for WM_KEYDOWN/WM_KEYUP messages
+	LPARAM makeKeyLParam(int scanCode, BOOL isExtended, BOOL isKeyUp) {
+		LPARAM lParam = 1; // repeat count = 1
+		lParam |= (scanCode & 0xFF) << 16; // scan code
+		if (isExtended) {
+			lParam |= (1 << 24); // extended key flag
+		}
+		if (isKeyUp) {
+			lParam |= (1 << 30); // previous key state (was down)
+			lParam |= (1 << 31); // transition state (being released)
+		}
+		return lParam;
 	}
 
 	void WIN32_KEY_EVENT_WAIT(MMKeyCode key, DWORD flags, uintptr pid) {
-		win32KeyEvent(key, flags, pid, 0); 
+		int ret = win32KeyEvent(key, flags, pid, 0); 
 		Sleep(DEADBEEF_RANDRANGE(0, 1));
+		return ret;
 	}
 #elif defined(USE_X11)
 	Display *XGetMainDisplay(void);
@@ -72,14 +86,18 @@
 		kern_return_t kr;
 
 		if (!sEventDrvrRef) {
-			kr = IOMasterPort(bootstrap_port, &masterPort);
+			#if __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ <= 12000
+				kr = IOMasterPort(bootstrap_port, &masterPort); // waring deprecated
+			#else
+				kr = IOMainPort(bootstrap_port, &masterPort);
+			#endif
+
 			assert(KERN_SUCCESS == kr);
 			kr = IOServiceGetMatchingServices(masterPort, IOServiceMatching(kIOHIDSystemClass), &iter);
 			assert(KERN_SUCCESS == kr);
 
 			service = IOIteratorNext(iter);
 			assert(service);
-
 			kr = IOServiceOpen(service, mach_task_self(), kIOHIDParamConnectType, &sEventDrvrRef);
 			assert(KERN_SUCCESS == kr);
 
@@ -89,8 +107,7 @@
 		return sEventDrvrRef;
 	}
 #elif defined(IS_WINDOWS)
-
-	void win32KeyEvent(int key, MMKeyFlags flags, uintptr pid, int8_t isPid) {
+	int win32KeyEvent(int key, MMKeyFlags flags, uintptr pid, int8_t isPid) {
 		int scan = MapVirtualKey(key & 0xff, MAPVK_VK_TO_VSC);
 
 		/* Set the scan code for extended keys */
@@ -136,11 +153,17 @@
 		// todo: test this
 		if (pid != 0) {
 			HWND hwnd = getHwnd(pid, isPid);
+			if (hwnd == NULL) {
+				return -5; /* Window not found */
+			}
 
-			int down = (flags == 0 ? WM_KEYDOWN : WM_KEYUP);
+			// int down = (flags == 0 ? WM_KEYDOWN : WM_KEYUP);
+			BOOL isKeyUp = (flags & KEYEVENTF_KEYUP) != 0;
+			UINT msg = isKeyUp ? WM_KEYUP : WM_KEYDOWN;
+			LPARAM lParam = makeKeyLParam(scan, isExtended, isKeyUp);
 			// SendMessage(hwnd, down, key, 0);
-			PostMessageW(hwnd, down, key, 0);
-			return;
+			UINT sent = PostMessageW(hwnd, down, key, lParam);
+			return sent == 1 ? 0 : (int)GetLastError();
 		}
 
 		/* Set the scan code for keyup */
@@ -157,11 +180,12 @@
 		keyInput.ki.dwFlags = flags;
 		keyInput.ki.time = 0;
 		keyInput.ki.dwExtraInfo = 0;
-		SendInput(1, &keyInput, sizeof(keyInput));
+		UINT sent = SendInput(1, &keyInput, sizeof(keyInput));
+		return sent == 1 ? 0 : (int)GetLastError();
 	}
 #endif
 
-void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags, uintptr pid) {
+int toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags, uintptr pid) {
 #if defined(IS_MACOSX)
 	/* The media keys all have 1000 added to them to help us detect them. */
 	if (code >= 1000) {
@@ -176,13 +200,23 @@ void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags, uintptr pi
 		event.compound.subType = NX_SUBTYPE_AUX_CONTROL_BUTTONS;
 		event.compound.misc.L[0] = evtInfo;
 
-		kr = IOHIDPostEvent(_getAuxiliaryKeyDriver(), 
-								NX_SYSDEFINED, loc, &event, kNXEventDataVersion, 0, FALSE);
-		assert(KERN_SUCCESS == kr);
+		io_connect_t auxDriver = _getAuxiliaryKeyDriver();
+		if (auxDriver == 0) {
+			return -1;
+		}
+		kr = IOHIDPostEvent(auxDriver, NX_SYSDEFINED, loc, &event, kNXEventDataVersion, 0, FALSE);
+		// assert(KERN_SUCCESS == kr);
+		if (kr != KERN_SUCCESS) {
+			return kr;
+		}
 	} else {
 		CGEventSourceRef source = CGEventSourceCreate(kCGEventSourceStateHIDSystemState);
 		CGEventRef keyEvent = CGEventCreateKeyboardEvent(source, (CGKeyCode)code, down);
-		assert(keyEvent != NULL);
+		// assert(keyEvent != NULL);
+		if (keyEvent == NULL) {
+			CFRelease(source);
+			return (int)kCGErrorCannotComplete;
+		}
 
 		CGEventSetType(keyEvent, down ? kCGEventKeyDown : kCGEventKeyUp);
 		if (flags != 0) {
@@ -192,6 +226,7 @@ void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags, uintptr pi
 		SendTo(pid, keyEvent);
 		CFRelease(source);
 	}
+	return 0;
 #elif defined(IS_WINDOWS)
 	const DWORD dwFlags = down ? 0 : KEYEVENTF_KEYUP;
 
@@ -201,9 +236,12 @@ void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags, uintptr pi
 	if (flags & MOD_CONTROL) { WIN32_KEY_EVENT_WAIT(K_CONTROL, dwFlags, pid); }
 	if (flags & MOD_SHIFT) { WIN32_KEY_EVENT_WAIT(K_SHIFT, dwFlags, pid); }
 
-	win32KeyEvent(code, dwFlags, pid, 0);
+	return win32KeyEvent(code, dwFlags, pid, 0);
 #elif defined(USE_X11)
 	Display *display = XGetMainDisplay();
+	if (display == NULL) {
+		return -8;
+	}
 	const Bool is_press = down ? True : False; /* Just to be safe. */
 
 	/* Parse modifier keys. */
@@ -212,7 +250,7 @@ void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags, uintptr pi
 	if (flags & MOD_CONTROL) { X_KEY_EVENT_WAIT(display, K_CONTROL, is_press); }
 	if (flags & MOD_SHIFT) { X_KEY_EVENT_WAIT(display, K_SHIFT, is_press); }
 
-	X_KEY_EVENT(display, code, is_press);
+	return X_KEY_EVENT(display, code, is_press);
 #endif
 }
 
@@ -239,7 +277,7 @@ void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags, uintptr pi
 	}
 #endif
 
-void toggleKey(char c, const bool down, MMKeyFlags flags, uintptr pid) {
+int toggleKey(char c, const bool down, MMKeyFlags flags, uintptr pid) {
 	MMKeyCode keyCode = keyCodeForChar(c);
 
 	#if defined(USE_X11)
@@ -261,7 +299,7 @@ void toggleKey(char c, const bool down, MMKeyFlags flags, uintptr pid) {
 		keyCode = keyCode & 0xff; // Mask out modifiers.
 	#endif
 
-	toggleKeyCode(keyCode, down, flags, pid);
+	return toggleKeyCode(keyCode, down, flags, pid);
 }
 
 // void tapKey(char c, MMKeyFlags flags){
@@ -271,42 +309,39 @@ void toggleKey(char c, const bool down, MMKeyFlags flags, uintptr pid) {
 // }
 
 #if defined(IS_MACOSX)
-	void toggleUnicode(UniChar ch, const bool down, uintptr pid) {
-		/* This function relies on the convenient CGEventKeyboardSetUnicodeString(), 
-		convert characters to a keycode, but does not support adding modifier flags. 
-		It is only used in typeString().
-		-- if you need modifier keys, use the above functions instead. */
+	int toggleUnicode(UniChar ch, const bool down, uintptr pid) {
+		/* This function relies on the convenient CGEventKeyboardSetUnicodeString()*/
 		CGEventSourceRef source = CGEventSourceCreate(kCGEventSourceStateHIDSystemState);
 		CGEventRef keyEvent = CGEventCreateKeyboardEvent(source, 0, down);
 		if (keyEvent == NULL) {
-			fputs("Could not create keyboard event.\n", stderr);
-			return;
+			CFRelease(source);
+			return (int)kCGErrorCannotComplete;
 		}
 
 		CGEventKeyboardSetUnicodeString(keyEvent, 1, &ch);
-
 		SendTo(pid, keyEvent);
 		CFRelease(source);
+		return 0;
 	}
 #else
 	#define toggleUniKey(c, down) toggleKey(c, down, MOD_NONE, 0)
 #endif
 
 // unicode type
-void unicodeType(const unsigned value, uintptr pid, int8_t isPid) {
+int unicodeType(const unsigned value, uintptr pid, int8_t isPid) {
 	#if defined(IS_MACOSX)
 		UniChar ch = (UniChar)value; // Convert to unsigned char
 
 		toggleUnicode(ch, true, pid);
 		microsleep(5.0);
-		toggleUnicode(ch, false, pid);
+		return toggleUnicode(ch, false, pid);
 	#elif defined(IS_WINDOWS)
 		if (pid != 0) {
 			HWND hwnd = getHwnd(pid, isPid);
 
 			// SendMessage(hwnd, down, value, 0);
-			PostMessageW(hwnd, WM_CHAR, value, 0);
-			return;
+			UINT sent = PostMessageW(hwnd, WM_CHAR, value, 0);
+			return sent == 1 ? 0 : (int)GetLastError();
 		}
 
 		INPUT input[2];
@@ -322,11 +357,12 @@ void unicodeType(const unsigned value, uintptr pid, int8_t isPid) {
   		input[1].ki.wScan = value;
   		input[1].ki.dwFlags = KEYEVENTF_KEYUP | 0x4; // KEYEVENTF_UNICODE;
 
-  		SendInput(2, input, sizeof(INPUT));
+  		UINT sent = SendInput(2, input, sizeof(INPUT));
+		return sent == 1 ? 0 : (int)GetLastError();
 	#elif defined(USE_X11)
 		toggleUniKey(value, true);
 		microsleep(5.0);
-		toggleUniKey(value, false);	
+		return toggleUniKey(value, false);
 	#endif
 }
 

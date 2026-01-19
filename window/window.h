@@ -125,6 +125,19 @@ bool is_valid() {
 #endif
 }
 
+bool checkAccessibility(bool prompt) {
+#if defined(IS_MACOSX)
+    NSDictionary *opts = @{
+        (__bridge NSString *)kAXTrustedCheckOptionPrompt: @(prompt)
+    };
+    return AXIsProcessTrustedWithOptions((__bridge CFDictionaryRef)opts);
+#elif defined(USE_X11)
+	return true;
+#elif defined(IS_WINDOWS)
+	return true;
+#endif
+}
+
 bool IsAxEnabled(bool options){
 #if defined(IS_MACOSX)
 	// Statically load all required functions one time
@@ -145,7 +158,6 @@ bool IsAxEnabled(bool options){
 	if (gAXIsProcessTrustedWithOptions) {
 		// Check whether to show prompt
 		CFBooleanRef displayPrompt = options ? kCFBooleanTrue : kCFBooleanFalse;
-
 		// Convert display prompt value into a dictionary
 		const void* k[] = { *gkAXTrustedCheckOptionPrompt };
 		const void* v[] = { displayPrompt };
@@ -153,18 +165,17 @@ bool IsAxEnabled(bool options){
 
 		// Determine whether the process is actually trusted
 		bool result = (*gAXIsProcessTrustedWithOptions)(o);
-		// Free memory
 		CFRelease(o);
 		return result;
-	} else {
-		// Ignore deprecated warnings
-		#pragma clang diagnostic push
-		#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-
-		// Check whether we have accessibility access
-		return AXAPIEnabled() || AXIsProcessTrusted();
-		#pragma clang diagnostic pop
 	}
+
+	// Ignore deprecated warnings
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
+	// Check whether we have accessibility access
+	return AXAPIEnabled() || AXIsProcessTrusted();
+	#pragma clang diagnostic pop
 #elif defined(USE_X11)
 	return true;
 #elif defined(IS_WINDOWS)
