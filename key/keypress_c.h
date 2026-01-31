@@ -49,7 +49,7 @@
 		return lParam;
 	}
 
-	void WIN32_KEY_EVENT_WAIT(MMKeyCode key, DWORD flags, uintptr pid) {
+	int WIN32_KEY_EVENT_WAIT(MMKeyCode key, DWORD flags, uintptr pid) {
 		int ret = win32KeyEvent(key, flags, pid, 0); 
 		Sleep(DEADBEEF_RANDRANGE(0, 1));
 		return ret;
@@ -109,6 +109,7 @@
 #elif defined(IS_WINDOWS)
 	int win32KeyEvent(int key, MMKeyFlags flags, uintptr pid, int8_t isPid) {
 		int scan = MapVirtualKey(key & 0xff, MAPVK_VK_TO_VSC);
+		BOOL isExtended = FALSE;
 
 		/* Set the scan code for extended keys */
 		switch (key){
@@ -146,6 +147,7 @@
 			case VK_LAUNCH_MAIL:
 			{
 				flags |= KEYEVENTF_EXTENDEDKEY;
+				isExtended = TRUE;
 				break;
 			}
 		}
@@ -159,7 +161,7 @@
 
 			// int down = (flags == 0 ? WM_KEYDOWN : WM_KEYUP);
 			BOOL isKeyUp = (flags & KEYEVENTF_KEYUP) != 0;
-			UINT msg = isKeyUp ? WM_KEYUP : WM_KEYDOWN;
+			UINT down = isKeyUp ? WM_KEYUP : WM_KEYDOWN;
 			LPARAM lParam = makeKeyLParam(scan, isExtended, isKeyUp);
 			// SendMessage(hwnd, down, key, 0);
 			UINT sent = PostMessageW(hwnd, down, key, lParam);
@@ -314,6 +316,7 @@ int toggleKey(char c, const bool down, MMKeyFlags flags, uintptr pid) {
 		CGEventSourceRef source = CGEventSourceCreate(kCGEventSourceStateHIDSystemState);
 		CGEventRef keyEvent = CGEventCreateKeyboardEvent(source, 0, down);
 		if (keyEvent == NULL) {
+			// fputs("Could not create keyboard event.\n", stderr);
 			CFRelease(source);
 			return (int)kCGErrorCannotComplete;
 		}
@@ -362,7 +365,7 @@ int unicodeType(const unsigned value, uintptr pid, int8_t isPid) {
 	#elif defined(USE_X11)
 		toggleUniKey(value, true);
 		microsleep(5.0);
-		return toggleUniKey(value, false);
+		return toggleUniKey(value, false);	
 	#endif
 }
 

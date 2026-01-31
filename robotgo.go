@@ -373,7 +373,7 @@ func CaptureGo(args ...int) Bitmap {
 // CaptureImg capture the screen and return image.Image, error
 func CaptureImg(args ...int) (image.Image, error) {
 	bit := CaptureScreen(args...)
-	if bit == nil {
+	if unsafe.Pointer(bit) == nil {
 		return nil, errors.New("Capture image not found.")
 	}
 	defer FreeBitmap(bit)
