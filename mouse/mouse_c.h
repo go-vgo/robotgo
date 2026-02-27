@@ -310,7 +310,8 @@ static double crude_hypot(double x, double y){
 	return ((M_SQRT2 - 1.0) * small) + big;
 }
 
-bool smoothlyMoveMouse(MMPointInt32 endPoint, double lowSpeed, double highSpeed){
+static bool smoothlyMoveMouseImpl(MMPointInt32 endPoint, double lowSpeed, double highSpeed,
+		bool drag, MMMouseButton button){
 	MMPointInt32 pos = location();
 	// MMSizeInt32 screenSize = getMainDisplaySize();
 	double velo_x = 0.0, velo_y = 0.0;
@@ -335,11 +336,24 @@ bool smoothlyMoveMouse(MMPointInt32 endPoint, double lowSpeed, double highSpeed)
 		// if (pos.x >= screenSize.w || pos.y >= screenSize.h) { 
 		// 	return false;
 		// }
-		moveMouse(pos);
+		if (drag) {
+			dragMouse(pos, button);
+		} else {
+			moveMouse(pos);
+		}
 
 		/* Wait 1 - 3 milliseconds. */
 		microsleep(DEADBEEF_UNIFORM(lowSpeed, highSpeed));
 		// microsleep(DEADBEEF_UNIFORM(1.0, 3.0));
 	}
 	return true;
+}
+
+bool smoothlyMoveMouse(MMPointInt32 endPoint, double lowSpeed, double highSpeed){
+	return smoothlyMoveMouseImpl(endPoint, lowSpeed, highSpeed, false, LEFT_BUTTON);
+}
+
+bool smoothlyDragMouse(MMPointInt32 endPoint, double lowSpeed, double highSpeed,
+		MMMouseButton button){
+	return smoothlyMoveMouseImpl(endPoint, lowSpeed, highSpeed, true, button);
 }

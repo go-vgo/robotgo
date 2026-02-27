@@ -579,24 +579,11 @@ func Drag(x, y int, args ...string) {
 func DragSmooth(x, y int, args ...interface{}) {
 	Toggle("left")
 	MilliSleep(50)
-	MoveSmooth(x, y, args...)
+	smoothMove(x, y, true, args...)
 	Toggle("left", "up")
 }
 
-// MoveSmooth move the mouse smooth,
-// moves mouse to x, y human like, with the mouse button up.
-//
-// robotgo.MoveSmooth(x, y int, low, high float64, mouseDelay int)
-//
-// Examples:
-//
-//	robotgo.MoveSmooth(10, 10)
-//	robotgo.MoveSmooth(10, 10, 1.0, 2.0)
-func MoveSmooth(x, y int, args ...interface{}) bool {
-	// if runtime.GOOS == "windows" {
-	// 	f := ScaleF()
-	// 	x, y = Scaled0(x, f), Scaled0(y, f)
-	// }
+func smoothMove(x, y int, drag bool, args ...interface{}) bool {
 	x, y = MoveScale(x, y)
 
 	cx := C.int32_t(x)
@@ -620,10 +607,28 @@ func MoveSmooth(x, y int, args ...interface{}) bool {
 		high = 3.0
 	}
 
-	cbool := C.smoothlyMoveMouse(C.MMPointInt32Make(cx, cy), low, high)
+	var cbool C.bool
+	if drag {
+		cbool = C.smoothlyDragMouse(C.MMPointInt32Make(cx, cy), low, high, C.LEFT_BUTTON)
+	} else {
+		cbool = C.smoothlyMoveMouse(C.MMPointInt32Make(cx, cy), low, high)
+	}
 	MilliSleep(MouseSleep + mouseDelay)
 
 	return bool(cbool)
+}
+
+// MoveSmooth move the mouse smooth,
+// moves mouse to x, y human like, with the mouse button up.
+//
+// robotgo.MoveSmooth(x, y int, low, high float64, mouseDelay int)
+//
+// Examples:
+//
+//	robotgo.MoveSmooth(10, 10)
+//	robotgo.MoveSmooth(10, 10, 1.0, 2.0)
+func MoveSmooth(x, y int, args ...interface{}) bool {
+	return smoothMove(x, y, false, args...)
 }
 
 // MoveArgs get the mouse relative args
@@ -731,6 +736,7 @@ func Click(args ...interface{}) error {
 		if code := C.toggleMouse(true, button); code != 0 {
 			return formatClickError(int(code), button, "down", count)
 		}
+
 		MilliSleep(5)
 		code := C.toggleMouse(false, button)
 		return formatClickError(int(code), button, "up", count)

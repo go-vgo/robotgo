@@ -25,11 +25,7 @@ func MoveMouse(x, y int) {
 // DragMouse drag the mouse to (x, y),
 // It's same with the DragSmooth() now
 func DragMouse(x, y int, args ...interface{}) {
-	Toggle("left")
-	MilliSleep(50)
-	// Drag(x, y, args...)
-	MoveSmooth(x, y, args...)
-	Toggle("left", "up")
+	DragSmooth(x, y, args...)
 }
 
 // Deprecated: use the MoveSmooth(),
