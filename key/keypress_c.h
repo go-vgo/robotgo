@@ -66,6 +66,29 @@
 		return 0;
 	}
 
+	static CGEventSourceRef CreateKeyboardEventSource(void) {
+		return CGEventSourceCreate(kCGEventSourceStateCombinedSessionState);
+	}
+
+	static CGEventFlags modifierFlagForKeyCode(MMKeyCode code) {
+		if (code == K_META || code == K_LMETA || code == K_RMETA) {
+			return kCGEventFlagMaskCommand;
+		}
+		if (code == K_ALT || code == K_LALT || code == K_RALT) {
+			return kCGEventFlagMaskAlternate;
+		}
+		if (code == K_CONTROL || code == K_LCONTROL || code == K_RCONTROL) {
+			return kCGEventFlagMaskControl;
+		}
+		if (code == K_SHIFT || code == K_LSHIFT || code == K_RSHIFT) {
+			return kCGEventFlagMaskShift;
+		}
+		if (code == K_CAPSLOCK) {
+			return kCGEventFlagMaskAlphaShift;
+		}
+		return 0;
+	}
+
 	static io_connect_t _getAuxiliaryKeyDriver(void) {
 		static mach_port_t sEventDrvrRef = 0;
 		mach_port_t masterPort, service, iter;
@@ -176,19 +199,27 @@ void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags, uintptr pi
 		event.compound.subType = NX_SUBTYPE_AUX_CONTROL_BUTTONS;
 		event.compound.misc.L[0] = evtInfo;
 
-		kr = IOHIDPostEvent(_getAuxiliaryKeyDriver(), 
+		kr = IOHIDPostEvent(_getAuxiliaryKeyDriver(),
 								NX_SYSDEFINED, loc, &event, kNXEventDataVersion, 0, FALSE);
 		assert(KERN_SUCCESS == kr);
 	} else {
-		CGEventSourceRef source = CGEventSourceCreate(kCGEventSourceStateHIDSystemState);
+		CGEventFlags modifierFlag = modifierFlagForKeyCode(code);
+		CGEventFlags eventFlags = (CGEventFlags)flags;
+		CGEventType eventType = down ? kCGEventKeyDown : kCGEventKeyUp;
+		if (modifierFlag != 0) {
+			eventType = kCGEventFlagsChanged;
+			if (eventFlags == 0 && down) {
+				eventFlags = modifierFlag;
+			}
+		}
+
+		CGEventSourceRef source = CreateKeyboardEventSource();
 		CGEventRef keyEvent = CGEventCreateKeyboardEvent(source, (CGKeyCode)code, down);
 		assert(keyEvent != NULL);
 
-		CGEventSetType(keyEvent, down ? kCGEventKeyDown : kCGEventKeyUp);
-		if (flags != 0) {
-			CGEventSetFlags(keyEvent, (CGEventFlags) flags);
-		}
-		
+		CGEventSetType(keyEvent, eventType);
+		CGEventSetFlags(keyEvent, eventFlags);
+
 		SendTo(pid, keyEvent);
 		CFRelease(source);
 	}
@@ -276,7 +307,7 @@ void toggleKey(char c, const bool down, MMKeyFlags flags, uintptr pid) {
 		convert characters to a keycode, but does not support adding modifier flags. 
 		It is only used in typeString().
 		-- if you need modifier keys, use the above functions instead. */
-		CGEventSourceRef source = CGEventSourceCreate(kCGEventSourceStateHIDSystemState);
+		CGEventSourceRef source = CreateKeyboardEventSource();
 		CGEventRef keyEvent = CGEventCreateKeyboardEvent(source, 0, down);
 		if (keyEvent == NULL) {
 			fputs("Could not create keyboard event.\n", stderr);

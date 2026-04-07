@@ -372,19 +372,21 @@ func checkKeyCodes(k string) (key C.MMKeyCode, err error) {
 
 func checkKeyFlags(f string) (flags C.MMKeyFlags) {
 	m := map[string]C.MMKeyFlags{
-		"alt":    C.MOD_ALT,
-		"ralt":   C.MOD_ALT,
-		"lalt":   C.MOD_ALT,
-		"cmd":    C.MOD_META,
-		"rcmd":   C.MOD_META,
-		"lcmd":   C.MOD_META,
-		"ctrl":   C.MOD_CONTROL,
-		"rctrl":  C.MOD_CONTROL,
-		"lctrl":  C.MOD_CONTROL,
-		"shift":  C.MOD_SHIFT,
-		"rshift": C.MOD_SHIFT,
-		"lshift": C.MOD_SHIFT,
-		"none":   C.MOD_NONE,
+		"alt":     C.MOD_ALT,
+		"ralt":    C.MOD_ALT,
+		"lalt":    C.MOD_ALT,
+		"cmd":     C.MOD_META,
+		"command": C.MOD_META,
+		"rcmd":    C.MOD_META,
+		"lcmd":    C.MOD_META,
+		"ctrl":    C.MOD_CONTROL,
+		"control": C.MOD_CONTROL,
+		"rctrl":   C.MOD_CONTROL,
+		"lctrl":   C.MOD_CONTROL,
+		"shift":   C.MOD_SHIFT,
+		"rshift":  C.MOD_SHIFT,
+		"lshift":  C.MOD_SHIFT,
+		"none":    C.MOD_NONE,
 	}
 
 	if v, ok := m[f]; ok {
@@ -408,6 +410,51 @@ func getFlagsFromValue(value []string) (flags C.MMKeyFlags) {
 	return
 }
 
+func modifierFlagForKeyName(key string) (C.MMKeyFlags, bool) {
+	flag := checkKeyFlags(key)
+	return flag, flag != C.MOD_NONE
+}
+
+func modifierKeyEventDownDarwin(keyArr []string, pid int) C.MMKeyFlags {
+	var active C.MMKeyFlags
+
+	for _, key := range keyArr {
+		flag, ok := modifierFlagForKeyName(key)
+		if !ok {
+			continue
+		}
+
+		keyCode, err := checkKeyCodes(key)
+		if err != nil {
+			continue
+		}
+
+		active |= flag
+		C.toggleKeyCode(keyCode, true, active, C.uintptr(pid))
+		MilliSleep(1)
+	}
+
+	return active
+}
+
+func modifierKeyEventUpDarwin(keyArr []string, pid int, active C.MMKeyFlags) {
+	for i := len(keyArr) - 1; i >= 0; i-- {
+		flag, ok := modifierFlagForKeyName(keyArr[i])
+		if !ok {
+			continue
+		}
+
+		keyCode, err := checkKeyCodes(keyArr[i])
+		if err != nil {
+			continue
+		}
+
+		active &^= flag
+		C.toggleKeyCode(keyCode, false, active, C.uintptr(pid))
+		MilliSleep(1)
+	}
+}
+
 func upKeyArr(keyArr []string, pid int) {
 	for i := 0; i < len(keyArr); i++ {
 		key1, _ := checkKeyCodes(keyArr[i])
@@ -420,6 +467,14 @@ func keyTaps(k string, keyArr []string, pid int) error {
 	key, err := checkKeyCodes(k)
 	if err != nil {
 		return err
+	}
+
+	if runtime.GOOS == "darwin" && len(keyArr) > 0 {
+		active := modifierKeyEventDownDarwin(keyArr, pid)
+		tapKeyCode(key, active, C.uintptr(pid))
+		MilliSleep(KeySleep)
+		modifierKeyEventUpDarwin(keyArr, pid, active)
+		return nil
 	}
 
 	tapKeyCode(key, flags, C.uintptr(pid))
@@ -449,6 +504,20 @@ func keyTogglesB(k string, down bool, keyArr []string, pid int) error {
 	key, err := checkKeyCodes(k)
 	if err != nil {
 		return err
+	}
+
+	if runtime.GOOS == "darwin" && len(keyArr) > 0 {
+		if down {
+			active := modifierKeyEventDownDarwin(keyArr, pid)
+			C.toggleKeyCode(key, C.bool(down), active, C.uintptr(pid))
+			MilliSleep(KeySleep)
+			return nil
+		}
+
+		C.toggleKeyCode(key, C.bool(down), flags, C.uintptr(pid))
+		MilliSleep(KeySleep)
+		modifierKeyEventUpDarwin(keyArr, pid, flags)
+		return nil
 	}
 
 	C.toggleKeyCode(key, C.bool(down), flags, C.uintptr(pid))
