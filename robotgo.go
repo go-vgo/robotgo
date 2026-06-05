@@ -73,9 +73,14 @@ func GetVersion() string {
 }
 
 var (
+
 	// MouseSleep set the mouse default millisecond sleep time
+	//
+	// Deprecated: use the  SetDelay(d ...int). It will no longer be exported.
 	MouseSleep = 0
 	// KeySleep set the key default millisecond sleep time
+	//
+	// Deprecated: use the  SetDelay(d ...int). It will no longer be exported.
 	KeySleep = 10
 
 	// DisplayID set the screen display id

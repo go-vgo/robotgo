@@ -103,6 +103,9 @@ Keys are supported:
 	"num9"
 	"num_lock"
 
+	"scroll_lock"
+	"pause_break"
+
 	"num."
 	"num+"
 	"num-"

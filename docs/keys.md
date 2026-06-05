@@ -100,7 +100,6 @@
 	"audio_repeat"      Linux only
 	"audio_random"      Linux only
 
-
 	"num0"
 	"num1"
 	"num2"
@@ -112,6 +111,9 @@
 	"num8"
 	"num9"
 	"num_lock"
+
+	"scroll_lock"
+	"pause_break"
 
 	"num."
 	"num+"
