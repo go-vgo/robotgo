@@ -162,7 +162,7 @@ func TestTypeStr(t *testing.T) {
 	uc := ToUC(s1)
 	tt.Equal(t, "[a b c \\ \\ c d / s @ U4e16 U754c]", uc)
 
-	s2 := "ABC_ЇҐЯфыж+₴€$" // cyrillic amd currency sign (2 bytes UTF, 3 bytes UTFs)
+	s2 := "ABC_ЇҐЯфыж+₴€$"
 	uc2 := ToUC(s2)
 	tt.Equal(t, "[A B C _ U0407 U0490 U042f U0444 U044b U0436 + U20b4 U20ac $]", uc2)
 

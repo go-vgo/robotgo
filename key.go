@@ -493,9 +493,9 @@ func ToInterfaces(fields []string) []interface{} {
 
 // ToStrings convert []interface{} to []string
 func ToStrings(fields []interface{}) []string {
-	res := make([]string, len(fields))
-	for i, s := range fields {
-		res[i] = s.(string)
+	res := make([]string, 0, len(fields))
+	for _, s := range fields {
+		res = append(res, s.(string))
 	}
 	return res
 }
@@ -626,10 +626,12 @@ func WriteAll(text string) error {
 
 // CharCodeAt char code at utf-8
 func CharCodeAt(s string, n int) rune {
-	for i, r := range s {
+	i := 0
+	for _, r := range s {
 		if i == n {
 			return r
 		}
+		i++
 	}
 
 	return 0
@@ -695,16 +697,17 @@ func TypeStr(str string, args ...int) {
 //	robotgo.Type("abc@123, Hi galaxy, こんにちは")
 //	robotgo.Type("To be or not to be, this is questions.", pid int)
 func Type(str string, args ...int) {
-	pid, tm, tm1 := 0, 0, 7
+	var tm, tm1 = 0, 7
 
-	if len(args) > 0 {
-		pid = args[0]
-	}
 	if len(args) > 1 {
 		tm = args[1]
 	}
 	if len(args) > 2 {
 		tm1 = args[2]
+	}
+	pid := 0
+	if len(args) > 0 {
+		pid = args[0]
 	}
 
 	if runtime.GOOS == "linux" {
@@ -718,6 +721,7 @@ func Type(str string, args ...int) {
 				inputUTF(strUc[i])
 				MilliSleep(tm1)
 			}
+
 			MilliSleep(tm)
 		}
 		return
@@ -728,6 +732,7 @@ func Type(str string, args ...int) {
 		UnicodeType(ustr, pid)
 		// if len(args) > 0 {
 		MilliSleep(tm)
+		// }
 	}
 	MilliSleep(KeySleep)
 }
@@ -762,7 +767,7 @@ func TypeStrDelay(str string, delay int) {
 }
 
 // TypeDelay type string with delayed
-// And you can use robotgo.SetDelay(100) to delayed not this function
+// And you can use robotgo.KeySleep = 100 to delayed not this function
 func TypeDelay(str string, delay int) {
 	Type(str)
 	MilliSleep(delay)
