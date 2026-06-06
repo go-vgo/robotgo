@@ -92,16 +92,17 @@ const (
 	Enter     = "enter"
 	Tab       = "tab"
 	Esc       = "esc"
-	Escape    = "escape"
-	Up        = "up"    // Up arrow key
-	Down      = "down"  // Down arrow key
-	Right     = "right" // Right arrow key
-	Left      = "left"  // Left arrow key
-	Home      = "home"
-	End       = "end"
-	Pageup    = "pageup"
-	Pagedown  = "pagedown"
+	// Escape    = "escape"
+	Up       = "up"    // Up arrow key
+	Down     = "down"  // Down arrow key
+	Right    = "right" // Right arrow key
+	Left     = "left"  // Left arrow key
+	Home     = "home"
+	End      = "end"
+	Pageup   = "pageup"
+	Pagedown = "pagedown"
 
+	Fn  = "fn"
 	F1  = "f1"
 	F2  = "f2"
 	F3  = "f3"
@@ -131,18 +132,19 @@ const (
 	CmdL = "cmdl" // left command
 	CmdR = "cmdr" // right command
 	// "command"
-	Alt     = "alt"
-	AltL    = "altl" // left alt
-	AltR    = "altr" // right alt
-	Ctrl    = "ctrl"
-	CtrlL   = "ctrll" // left ctrl
-	CtrlR   = "ctrlr" // right ctrl
-	Control = "control"
-	Shift   = "shift"
-	ShiftL  = "shiftl" // left shift
-	ShiftR  = "shiftr" // right shift
-	// "right_shift"
-	Capslock    = "capslock"
+	Alt   = "alt"
+	AltL  = "altl" // left alt
+	AltR  = "altr" // right alt
+	Ctrl  = "ctrl"
+	CtrlL = "ctrll" // left ctrl
+	CtrlR = "ctrlr" // right ctrl
+	// Control = "control"
+	Shift  = "shift"
+	ShiftL = "shiftl" // left shift
+	ShiftR = "shiftr" // right shift
+	// "right_shift", capslock
+	Caps = "caps"
+	// Capslock    = "caps"
 	Space       = "space"
 	Print       = "print"
 	Printscreen = "printscreen" // No Mac support

@@ -113,8 +113,12 @@ func CmdCtrl() string {
 }
 
 // CmdV tap key command + v or control + v
-func CmdV() error {
-	return KeyTap("v", CmdCtrl())
+func CmdV(pid ...int) error {
+	pid1 := 0
+	if len(pid) > 0 {
+		pid1 = pid[0]
+	}
+	return KeyTap("v", pid1, CmdCtrl())
 }
 
 // Scaled0 return int(x * f)
@@ -213,18 +217,24 @@ func WriteAll(text string) error {
 // PasteStr paste a string
 //
 // Deprecated: use the Paste()
-func PasteStr(str string) error {
+func PasteStr(str string) (int, error) {
 	return Paste(str)
+}
+
+func Pastes(str string, pid ...int) int {
+	l, _ := Paste(str, pid...)
+	return l
 }
 
 // Paste paste a string (supported UTF-8),
 // write the string to clipboard and tap `cmd + v`
-func Paste(str string) error {
+func Paste(str string, pid ...int) (int, error) {
 	err := clipboard.WriteAll(str)
 	if err != nil {
-		return err
+		return 0, err
 	}
-	return CmdV()
+	err = CmdV(pid...)
+	return len(str), err
 }
 
 // TypeStrDelay type string width delay
