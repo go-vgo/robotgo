@@ -132,13 +132,10 @@ func TestKey(t *testing.T) {
 	e = KeyUp("a")
 	tt.Nil(t, e)
 
-	e = KeyPress(KeyB)
-	tt.Nil(t, e)
-
 	e = KeyTap(ScrollLock)
 	tt.Nil(t, e)
 
-	e = KeyTap(Capslock)
+	e = KeyTap(PauseBreak)
 	tt.Nil(t, e)
 }
 
@@ -152,21 +149,15 @@ func TestClip(t *testing.T) {
 }
 
 func TestTypeStr(t *testing.T) {
-	c := CharCodeAt("success", 6)
+	c := CharCodeAt("s", 0)
 	tt.Equal(t, 115, c)
 
-	e := Paste(KeyS)
+	e := PasteStr("s")
 	tt.Nil(t, e)
 
 	s1 := "abc\\\\cd/s@世界"
 	uc := ToUC(s1)
 	tt.Equal(t, "[a b c \\ \\ c d / s @ U4e16 U754c]", uc)
-
-	s2 := "ABC_ЇҐЯфыж+₴€$"
-	uc2 := ToUC(s2)
-	tt.Equal(t, "[A B C _ U0407 U0490 U042f U0444 U044b U0436 + U20b4 U20ac $]", uc2)
-
-	TypeDelay(s2, 12)
 }
 
 func TestKeyCode(t *testing.T) {

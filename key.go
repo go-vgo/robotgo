@@ -210,96 +210,95 @@ const (
 
 // keyNames define a map of key names to MMKeyCode
 var keyNames = map[string]C.MMKeyCode{
-	Backspace: C.K_BACKSPACE,
-	Delete:    C.K_DELETE,
-	Enter:     C.K_RETURN,
-	Tab:       C.K_TAB,
-	Esc:       C.K_ESCAPE,
-	Escape:    C.K_ESCAPE,
-	Up:        C.K_UP,
-	Down:      C.K_DOWN,
-	Right:     C.K_RIGHT,
-	Left:      C.K_LEFT,
-	Home:      C.K_HOME,
-	End:       C.K_END,
-	Pageup:    C.K_PAGEUP,
-	Pagedown:  C.K_PAGEDOWN,
+	"backspace": C.K_BACKSPACE,
+	"delete":    C.K_DELETE,
+	"enter":     C.K_RETURN,
+	"tab":       C.K_TAB,
+	"esc":       C.K_ESCAPE,
+	"escape":    C.K_ESCAPE,
+	"up":        C.K_UP,
+	"down":      C.K_DOWN,
+	"right":     C.K_RIGHT,
+	"left":      C.K_LEFT,
+	"home":      C.K_HOME,
+	"end":       C.K_END,
+	"pageup":    C.K_PAGEUP,
+	"pagedown":  C.K_PAGEDOWN,
 	//
-	F1:  C.K_F1,
-	F2:  C.K_F2,
-	F3:  C.K_F3,
-	F4:  C.K_F4,
-	F5:  C.K_F5,
-	F6:  C.K_F6,
-	F7:  C.K_F7,
-	F8:  C.K_F8,
-	F9:  C.K_F9,
-	F10: C.K_F10,
-	F11: C.K_F11,
-	F12: C.K_F12,
-	F13: C.K_F13,
-	F14: C.K_F14,
-	F15: C.K_F15,
-	F16: C.K_F16,
-	F17: C.K_F17,
-	F18: C.K_F18,
-	F19: C.K_F19,
-	F20: C.K_F20,
-	F21: C.K_F21,
-	F22: C.K_F22,
-	F23: C.K_F23,
-	F24: C.K_F24,
+	"f1":  C.K_F1,
+	"f2":  C.K_F2,
+	"f3":  C.K_F3,
+	"f4":  C.K_F4,
+	"f5":  C.K_F5,
+	"f6":  C.K_F6,
+	"f7":  C.K_F7,
+	"f8":  C.K_F8,
+	"f9":  C.K_F9,
+	"f10": C.K_F10,
+	"f11": C.K_F11,
+	"f12": C.K_F12,
+	"f13": C.K_F13,
+	"f14": C.K_F14,
+	"f15": C.K_F15,
+	"f16": C.K_F16,
+	"f17": C.K_F17,
+	"f18": C.K_F18,
+	"f19": C.K_F19,
+	"f20": C.K_F20,
+	"f21": C.K_F21,
+	"f22": C.K_F22,
+	"f23": C.K_F23,
+	"f24": C.K_F24,
 	//
-	Cmd:           C.K_META,
-	Lcmd:          C.K_LMETA,
-	Rcmd:          C.K_RMETA,
+	"cmd":         C.K_META,
+	"lcmd":        C.K_LMETA,
+	"rcmd":        C.K_RMETA,
 	"command":     C.K_META,
-	Alt:           C.K_ALT,
-	Lalt:          C.K_LALT,
-	Ralt:          C.K_RALT,
-	Ctrl:          C.K_CONTROL,
-	Lctrl:         C.K_LCONTROL,
-	Rctrl:         C.K_RCONTROL,
-	Control:       C.K_CONTROL,
-	Shift:         C.K_SHIFT,
-	Lshift:        C.K_LSHIFT,
-	"left_shift":  C.K_LSHIFT,
-	Rshift:        C.K_RSHIFT,
+	"alt":         C.K_ALT,
+	"lalt":        C.K_LALT,
+	"ralt":        C.K_RALT,
+	"ctrl":        C.K_CONTROL,
+	"lctrl":       C.K_LCONTROL,
+	"rctrl":       C.K_RCONTROL,
+	"control":     C.K_CONTROL,
+	"shift":       C.K_SHIFT,
+	"lshift":      C.K_LSHIFT,
+	"rshift":      C.K_RSHIFT,
 	"right_shift": C.K_RSHIFT,
-	Capslock:      C.K_CAPSLOCK,
-	Space:         C.K_SPACE,
-	Print:         C.K_PRINTSCREEN,
-	Printscreen:   C.K_PRINTSCREEN,
-	Insert:        C.K_INSERT,
-	Menu:          C.K_MENU,
+	"capslock":    C.K_CAPSLOCK,
+	"space":       C.K_SPACE,
+	"print":       C.K_PRINTSCREEN,
+	"printscreen": C.K_PRINTSCREEN,
+	"insert":      C.K_INSERT,
+	"menu":        C.K_MENU,
 
-	AudioMute:    C.K_AUDIO_VOLUME_MUTE,
-	AudioVolDown: C.K_AUDIO_VOLUME_DOWN,
-	AudioVolUp:   C.K_AUDIO_VOLUME_UP,
-	AudioPlay:    C.K_AUDIO_PLAY,
-	AudioStop:    C.K_AUDIO_STOP,
-	AudioPause:   C.K_AUDIO_PAUSE,
-	AudioPrev:    C.K_AUDIO_PREV,
-	AudioNext:    C.K_AUDIO_NEXT,
-	AudioRewind:  C.K_AUDIO_REWIND,
-	AudioForward: C.K_AUDIO_FORWARD,
-	AudioRepeat:  C.K_AUDIO_REPEAT,
-	AudioRandom:  C.K_AUDIO_RANDOM,
+	"audio_mute":     C.K_AUDIO_VOLUME_MUTE,
+	"audio_vol_down": C.K_AUDIO_VOLUME_DOWN,
+	"audio_vol_up":   C.K_AUDIO_VOLUME_UP,
+	"audio_play":     C.K_AUDIO_PLAY,
+	"audio_stop":     C.K_AUDIO_STOP,
+	"audio_pause":    C.K_AUDIO_PAUSE,
+	"audio_prev":     C.K_AUDIO_PREV,
+	"audio_next":     C.K_AUDIO_NEXT,
+	"audio_rewind":   C.K_AUDIO_REWIND,
+	"audio_forward":  C.K_AUDIO_FORWARD,
+	"audio_repeat":   C.K_AUDIO_REPEAT,
+	"audio_random":   C.K_AUDIO_RANDOM,
 
-	Num0:    C.K_NUMPAD_0,
-	Num1:    C.K_NUMPAD_1,
-	Num2:    C.K_NUMPAD_2,
-	Num3:    C.K_NUMPAD_3,
-	Num4:    C.K_NUMPAD_4,
-	Num5:    C.K_NUMPAD_5,
-	Num6:    C.K_NUMPAD_6,
-	Num7:    C.K_NUMPAD_7,
-	Num8:    C.K_NUMPAD_8,
-	Num9:    C.K_NUMPAD_9,
-	NumLock: C.K_NUMPAD_LOCK,
+	"num0":     C.K_NUMPAD_0,
+	"num1":     C.K_NUMPAD_1,
+	"num2":     C.K_NUMPAD_2,
+	"num3":     C.K_NUMPAD_3,
+	"num4":     C.K_NUMPAD_4,
+	"num5":     C.K_NUMPAD_5,
+	"num6":     C.K_NUMPAD_6,
+	"num7":     C.K_NUMPAD_7,
+	"num8":     C.K_NUMPAD_8,
+	"num9":     C.K_NUMPAD_9,
+	"num_lock": C.K_NUMPAD_LOCK,
 
-	ScrollLock: C.K_SCROLL_LOCK,
-	PauseBreak: C.K_PAUSE,
+	"scroll_lock": C.K_SCROLL_LOCK,
+	"pause_break": C.K_PAUSE,
 
 	// todo: removed
 	"numpad_0":    C.K_NUMPAD_0,
@@ -314,20 +313,20 @@ var keyNames = map[string]C.MMKeyCode{
 	"numpad_9":    C.K_NUMPAD_9,
 	"numpad_lock": C.K_NUMPAD_LOCK,
 
-	NumDecimal: C.K_NUMPAD_DECIMAL,
-	NumPlus:    C.K_NUMPAD_PLUS,
-	NumMinus:   C.K_NUMPAD_MINUS,
-	NumMul:     C.K_NUMPAD_MUL,
-	NumDiv:     C.K_NUMPAD_DIV,
-	NumClear:   C.K_NUMPAD_CLEAR,
-	NumEnter:   C.K_NUMPAD_ENTER,
-	NumEqual:   C.K_NUMPAD_EQUAL,
+	"num.":      C.K_NUMPAD_DECIMAL,
+	"num+":      C.K_NUMPAD_PLUS,
+	"num-":      C.K_NUMPAD_MINUS,
+	"num*":      C.K_NUMPAD_MUL,
+	"num/":      C.K_NUMPAD_DIV,
+	"num_clear": C.K_NUMPAD_CLEAR,
+	"num_enter": C.K_NUMPAD_ENTER,
+	"num_equal": C.K_NUMPAD_EQUAL,
 
-	LightsMonUp:     C.K_LIGHTS_MON_UP,
-	LightsMonDown:   C.K_LIGHTS_MON_DOWN,
-	LightsKbdToggle: C.K_LIGHTS_KBD_TOGGLE,
-	LightsKbdUp:     C.K_LIGHTS_KBD_UP,
-	LightsKbdDown:   C.K_LIGHTS_KBD_DOWN,
+	"lights_mon_up":     C.K_LIGHTS_MON_UP,
+	"lights_mon_down":   C.K_LIGHTS_MON_DOWN,
+	"lights_kbd_toggle": C.K_LIGHTS_KBD_TOGGLE,
+	"lights_kbd_up":     C.K_LIGHTS_KBD_UP,
+	"lights_kbd_down":   C.K_LIGHTS_KBD_DOWN,
 
 	// { NULL:              C.K_NOT_A_KEY }
 }
@@ -336,9 +335,9 @@ var keyNames = map[string]C.MMKeyCode{
 // otherwise return the key string "ctrl
 func CmdCtrl() string {
 	if runtime.GOOS == "darwin" {
-		return Cmd
+		return "cmd"
 	}
-	return Ctrl
+	return "ctrl"
 }
 
 // It sends a key press and release to the active application
@@ -379,20 +378,19 @@ func checkKeyCodes(k string) (key C.MMKeyCode, err error) {
 
 func checkKeyFlags(f string) (flags C.MMKeyFlags) {
 	m := map[string]C.MMKeyFlags{
-		Alt:     C.MOD_ALT,
-		Ralt:    C.MOD_ALT,
-		Lalt:    C.MOD_ALT,
-		Cmd:     C.MOD_META,
-		Rcmd:    C.MOD_META,
-		Lcmd:    C.MOD_META,
-		Ctrl:    C.MOD_CONTROL,
-		Control: C.MOD_CONTROL,
-		Rctrl:   C.MOD_CONTROL,
-		Lctrl:   C.MOD_CONTROL,
-		Shift:   C.MOD_SHIFT,
-		Rshift:  C.MOD_SHIFT,
-		Lshift:  C.MOD_SHIFT,
-		"none":  C.MOD_NONE,
+		"alt":    C.MOD_ALT,
+		"ralt":   C.MOD_ALT,
+		"lalt":   C.MOD_ALT,
+		"cmd":    C.MOD_META,
+		"rcmd":   C.MOD_META,
+		"lcmd":   C.MOD_META,
+		"ctrl":   C.MOD_CONTROL,
+		"rctrl":  C.MOD_CONTROL,
+		"lctrl":  C.MOD_CONTROL,
+		"shift":  C.MOD_SHIFT,
+		"rshift": C.MOD_SHIFT,
+		"lshift": C.MOD_SHIFT,
+		"none":   C.MOD_NONE,
 	}
 
 	if v, ok := m[f]; ok {
@@ -756,7 +754,11 @@ func Paste(str string) error {
 
 // CmdV tap key command + v or control + v
 func CmdV() error {
-	return KeyTap(KeyV, CmdCtrl())
+	if runtime.GOOS == "darwin" {
+		return KeyTap("v", "command")
+	}
+
+	return KeyTap("v", "control")
 }
 
 // TypeStrDelay type string width delay
@@ -769,7 +771,7 @@ func TypeStrDelay(str string, delay int) {
 // TypeDelay type string with delayed
 // And you can use robotgo.KeySleep = 100 to delayed not this function
 func TypeDelay(str string, delay int) {
-	Type(str)
+	TypeStr(str)
 	MilliSleep(delay)
 }
 
