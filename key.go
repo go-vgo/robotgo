@@ -385,6 +385,7 @@ func checkKeyFlags(f string) (flags C.MMKeyFlags) {
 		"rcmd":   C.MOD_META,
 		"lcmd":   C.MOD_META,
 		"ctrl":   C.MOD_CONTROL,
+		"control":   C.MOD_CONTROL,
 		"rctrl":  C.MOD_CONTROL,
 		"lctrl":  C.MOD_CONTROL,
 		"shift":  C.MOD_SHIFT,
