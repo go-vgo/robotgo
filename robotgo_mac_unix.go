@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2025 AtomAI, All rights reserved.
+// Copyright (c) 2016-2026 AtomAI, All rights reserved.
 //
 // See the COPYRIGHT file at the top-level directory of this distribution and at
 // https://github.com/go-vgo/robotgo/blob/master/LICENSE
@@ -9,8 +9,8 @@
 // This file may not be copied, modified, or distributed
 // except according to those terms.
 
-//go:build !windows
-// +build !windows
+//go:build !windows && !wayland && !libei
+// +build !windows,!wayland,!libei
 
 package robotgo
 

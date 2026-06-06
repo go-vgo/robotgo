@@ -56,7 +56,7 @@ Since the `master` branch is a tip version, if you wish to use Robotgo in produc
 Code that you contribute should use the standard copyright header:
 
 ```
-// Copyright (c) 2016-2025 AtomAI, All rights reserved.
+// Copyright (c) 2016-2026 AtomAI, All rights reserved.
 //
 // See the COPYRIGHT file at the top-level directory of this distribution and at
 // https://github.com/go-vgo/robotgo/blob/master/LICENSE

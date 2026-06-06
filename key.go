@@ -1,4 +1,7 @@
-// Copyright (c) 2016-2025 AtomAI, All rights reserved.
+//go:build !wayland && !win && !libei
+// +build !wayland,!win,!libei
+
+// Copyright (c) 2016-2026 AtomAI, All rights reserved.
 //
 // See the COPYRIGHT file at the top-level directory of this distribution and at
 // https://github.com/go-vgo/robotgo/blob/master/LICENSE
@@ -22,12 +25,9 @@ import (
 	"math/rand"
 	"reflect"
 	"runtime"
-	"strconv"
 	"strings"
 	"unicode"
 	"unsafe"
-
-	"github.com/go-vgo/robotgo/clipboard"
 )
 
 // keyNames define a map of key names to MMKeyCode
@@ -73,27 +73,29 @@ var keyNames = map[string]C.MMKeyCode{
 	"f23": C.K_F23,
 	"f24": C.K_F24,
 	//
-	"cmd":  C.K_META,
-	"cmdl": C.K_LMETA,
-	"cmdr": C.K_RMETA,
-	// "command":     C.K_META,
-	"alt":   C.K_ALT,
-	"altl":  C.K_LALT,
-	"altr":  C.K_RALT,
-	"ctrl":  C.K_CONTROL,
-	"ctrll": C.K_LCONTROL,
-	"ctrlr": C.K_RCONTROL,
-	// "control":     C.K_CONTROL,
-	"shift":  C.K_SHIFT,
-	"shiftl": C.K_LSHIFT,
-	"shiftr": C.K_RSHIFT,
-	// "right_shift": C.K_RSHIFT,
-	"caps":        C.K_CAPSLOCK,
+	"cmd":         C.K_META,
+	"cmdl":        C.K_LMETA,
+	"cmdr":        C.K_RMETA,
+	"command":     C.K_META,
+	"alt":         C.K_ALT,
+	"altl":        C.K_LALT,
+	"altr":        C.K_RALT,
+	"ctrl":        C.K_CONTROL,
+	"ctrll":       C.K_LCONTROL,
+	"ctrlr":       C.K_RCONTROL,
+	"control":     C.K_CONTROL,
+	"shift":       C.K_SHIFT,
+	"shiftl":      C.K_LSHIFT,
+	"shiftr":      C.K_RSHIFT,
+	"right_shift": C.K_RSHIFT,
+	"capslock":    C.K_CAPSLOCK,
 	"space":       C.K_SPACE,
 	"print":       C.K_PRINTSCREEN,
 	"printscreen": C.K_PRINTSCREEN,
 	"insert":      C.K_INSERT,
 	"menu":        C.K_MENU,
+	"scroll_lock": C.K_SCROLL_LOCK,
+	"pause_break": C.K_PAUSE,
 
 	"audio_mute":     C.K_AUDIO_VOLUME_MUTE,
 	"audio_vol_down": C.K_AUDIO_VOLUME_DOWN,
@@ -151,68 +153,6 @@ var keyNames = map[string]C.MMKeyCode{
 	// { NULL:              C.K_NOT_A_KEY }
 }
 
-// macCharToKeyCode maps ASCII characters to macOS virtual key codes (kVK_ANSI_*)
-// This avoids calling C.keyCodeForChar which can cause SIGTRAP on macOS
-var macCharToKeyCode = map[byte]C.MMKeyCode{
-	'a': 0x00, 'A': 0x00,
-	's': 0x01, 'S': 0x01,
-	'd': 0x02, 'D': 0x02,
-	'f': 0x03, 'F': 0x03,
-	'h': 0x04, 'H': 0x04,
-	'g': 0x05, 'G': 0x05,
-	'z': 0x06, 'Z': 0x06,
-	'x': 0x07, 'X': 0x07,
-	'c': 0x08, 'C': 0x08,
-	'v': 0x09, 'V': 0x09,
-	'b': 0x0B, 'B': 0x0B,
-	'q': 0x0C, 'Q': 0x0C,
-	'w': 0x0D, 'W': 0x0D,
-	'e': 0x0E, 'E': 0x0E,
-	'r': 0x0F, 'R': 0x0F,
-	'y': 0x10, 'Y': 0x10,
-	't': 0x11, 'T': 0x11,
-	'1': 0x12, '!': 0x12,
-	'2': 0x13, '@': 0x13,
-	'3': 0x14, '#': 0x14,
-	'4': 0x15, '$': 0x15,
-	'6': 0x16, '^': 0x16,
-	'5': 0x17, '%': 0x17,
-	'=': 0x18, '+': 0x18,
-	'9': 0x19, '(': 0x19,
-	'7': 0x1A, '&': 0x1A,
-	'-': 0x1B, '_': 0x1B,
-	'8': 0x1C, '*': 0x1C,
-	'0': 0x1D, ')': 0x1D,
-	']': 0x1E, '}': 0x1E,
-	'o': 0x1F, 'O': 0x1F,
-	'u': 0x20, 'U': 0x20,
-	'[': 0x21, '{': 0x21,
-	'i': 0x22, 'I': 0x22,
-	'p': 0x23, 'P': 0x23,
-	'l': 0x25, 'L': 0x25,
-	'j': 0x26, 'J': 0x26,
-	'\'': 0x27, '"': 0x27,
-	'k': 0x28, 'K': 0x28,
-	';': 0x29, ':': 0x29,
-	'\\': 0x2A, '|': 0x2A,
-	',': 0x2B, '<': 0x2B,
-	'/': 0x2C, '?': 0x2C,
-	'n': 0x2D, 'N': 0x2D,
-	'm': 0x2E, 'M': 0x2E,
-	'.': 0x2F, '>': 0x2F,
-	'`': 0x32, '~': 0x32,
-	' ': 0x31, // kVK_Space
-}
-
-// CmdCtrl If the operating system is macOS, return the key string "cmd",
-// otherwise return the key string "ctrl
-func CmdCtrl() string {
-	if runtime.GOOS == "darwin" {
-		return "cmd"
-	}
-	return "ctrl"
-}
-
 // It sends a key press and release to the active application
 func tapKeyCode(code C.MMKeyCode, flags C.MMKeyFlags, pid C.uintptr) (int, string) {
 	c1 := C.toggleKeyCode(code, true, flags, pid)
@@ -265,19 +205,21 @@ func checkKeyCodes(k string) (key C.MMKeyCode, err error) {
 
 func checkKeyFlags(f string) (flags C.MMKeyFlags) {
 	m := map[string]C.MMKeyFlags{
-		"alt":    C.MOD_ALT,
-		"altr":   C.MOD_ALT,
-		"altl":   C.MOD_ALT,
-		"cmd":    C.MOD_META,
-		"cmdr":   C.MOD_META,
-		"cmdl":   C.MOD_META,
-		"ctrl":   C.MOD_CONTROL,
-		"ctrlr":  C.MOD_CONTROL,
-		"ctrll":  C.MOD_CONTROL,
-		"shift":  C.MOD_SHIFT,
-		"shiftr": C.MOD_SHIFT,
-		"shiftl": C.MOD_SHIFT,
-		"none":   C.MOD_NONE,
+		"alt":     C.MOD_ALT,
+		"altr":    C.MOD_ALT,
+		"altl":    C.MOD_ALT,
+		"cmd":     C.MOD_META,
+		"command": C.MOD_META,
+		"cmdr":    C.MOD_META,
+		"cmdl":    C.MOD_META,
+		"ctrl":    C.MOD_CONTROL,
+		"control": C.MOD_CONTROL,
+		"ctrlr":   C.MOD_CONTROL,
+		"ctrll":   C.MOD_CONTROL,
+		"shift":   C.MOD_SHIFT,
+		"shiftr":  C.MOD_SHIFT,
+		"shiftl":  C.MOD_SHIFT,
+		"none":    C.MOD_NONE,
 	}
 
 	if v, ok := m[f]; ok {
@@ -378,24 +320,6 @@ func keyToggles(k string, keyArr []string, pid int) error {
 |__|\__\ |_______|   |__|     |______/   \______/  /__/     \__\ | _| `._____||_______/
 
 */
-
-// ToInterfaces convert []string to []interface{}
-func ToInterfaces(fields []string) []interface{} {
-	res := make([]interface{}, 0, len(fields))
-	for _, s := range fields {
-		res = append(res, s)
-	}
-	return res
-}
-
-// ToStrings convert []interface{} to []string
-func ToStrings(fields []interface{}) []string {
-	res := make([]string, 0, len(fields))
-	for _, s := range fields {
-		res = append(res, s.(string))
-	}
-	return res
-}
 
 // toErr it converts a C string to a Go error
 func toErr(str *C.char) error {
@@ -511,29 +435,6 @@ func KeyUp(key string, args ...interface{}) error {
 	return KeyToggle(key, arr...)
 }
 
-// ReadAll read string from clipboard
-func ReadAll() (string, error) {
-	return clipboard.ReadAll()
-}
-
-// WriteAll write string to clipboard
-func WriteAll(text string) error {
-	return clipboard.WriteAll(text)
-}
-
-// CharCodeAt char code at utf-8
-func CharCodeAt(s string, n int) rune {
-	i := 0
-	for _, r := range s {
-		if i == n {
-			return r
-		}
-		i++
-	}
-
-	return 0
-}
-
 // UnicodeType tap the uint32 unicode
 func UnicodeType(str uint32, args ...int) {
 	cstr := C.uint(str)
@@ -548,27 +449,6 @@ func UnicodeType(str uint32, args ...int) {
 	}
 
 	C.unicodeType(cstr, C.uintptr(pid), C.int8_t(isPid))
-}
-
-// ToUC trans string to unicode []string
-func ToUC(text string) []string {
-	var uc []string
-
-	for _, r := range text {
-		textQ := strconv.QuoteToASCII(string(r))
-		textUnQ := textQ[1 : len(textQ)-1]
-
-		st := strings.Replace(textUnQ, "\\u", "U", -1)
-		if st == "\\\\" {
-			st = "\\"
-		}
-		if st == `\"` {
-			st = `"`
-		}
-		uc = append(uc, st)
-	}
-
-	return uc
 }
 
 func inputUTF(str string) {
@@ -634,66 +514,4 @@ func Type(str string, args ...int) int {
 	}
 	MilliSleep(KeySleep)
 	return l1
-}
-
-// PasteStr paste a string
-//
-// Deprecated: use the Paste()
-func PasteStr(str string) (int, error) {
-	return Paste(str)
-}
-
-func Pastes(str string, pid ...int) int {
-	l, _ := Paste(str, pid...)
-	return l
-}
-
-// Paste paste a string (supported UTF-8),
-// write the string to clipboard and tap `cmd + v`
-func Paste(str string, pid ...int) (int, error) {
-	err := clipboard.WriteAll(str)
-	if err != nil {
-		return 0, err
-	}
-	err = CmdV(pid...)
-	return len(str), err
-}
-
-// CmdV tap key command + v or control + v
-func CmdV(pid ...int) error {
-	pid1 := 0
-	if len(pid) > 0 {
-		pid1 = pid[0]
-	}
-
-	if runtime.GOOS == "darwin" {
-		return KeyTap("v", pid1, "cmd")
-	}
-	return KeyTap("v", pid1, "ctrl")
-}
-
-// TypeStrDelay type string width delay
-//
-// Deprecated: use the TypeDelay()
-func TypeStrDelay(str string, delay int) {
-	TypeDelay(str, delay)
-}
-
-// TypeDelay type string with delayed
-// And you can use robotgo.KeySleep = 100 to delayed not this function
-func TypeDelay(str string, delay int) {
-	TypeStr(str)
-	MilliSleep(delay)
-}
-
-// SetDelay sets the key and mouse delay
-// robotgo.SetDelay(100) option the robotgo.KeySleep and robotgo.MouseSleep = d
-func SetDelay(d ...int) {
-	v := 10
-	if len(d) > 0 {
-		v = d[0]
-	}
-
-	KeySleep = v
-	MouseSleep = v
 }

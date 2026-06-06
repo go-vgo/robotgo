@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2025 AtomAI, All rights reserved.
+// Copyright (c) 2016-2026 AtomAI, All rights reserved.
 //
 // See the COPYRIGHT file at the top-level directory of this distribution and at
 // https://github.com/go-vgo/robotgo/blob/master/LICENSE
@@ -56,19 +56,19 @@ Keys are supported:
 	"f24"
 
 	"cmd"		this is the "win" key for windows
-	"lcmd"		left command
-	"rcmd"		right command
+	"cmdl"		left command
+	"cmdr"		right command
 	// "command"
 	"alt"
-	"lalt"		left alt
-	"ralt"		right alt
+	"altl"		left alt
+	"altr"		right alt
 	"ctrl"
-	"lctrl"		left ctrl
-	"rctrl"		right ctrl
+	"ctrll"		left ctrl
+	"ctrlr"		right ctrl
 	"control"
 	"shift"
-	"lshift"	left shift
-	"rshift"	right shift
+	"shiftl"	left shift
+	"shiftr"	right shift
 	// "right_shift"
 	"capslock"
 	"space"
@@ -102,6 +102,9 @@ Keys are supported:
 	"num8"
 	"num9"
 	"num_lock"
+
+	"scroll_lock"
+	"pause_break"
 
 	"num."
 	"num+"

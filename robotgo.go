@@ -1,4 +1,7 @@
-// Copyright (c) 2016-2025 AtomAI, All rights reserved.
+//go:build !wayland && !win && !libei
+// +build !wayland,!win,!libei
+
+// Copyright (c) 2016-2026 AtomAI, All rights reserved.
 //
 // See the COPYRIGHT file at the top-level directory of this distribution and at
 // https://github.com/go-vgo/robotgo/blob/master/LICENSE
@@ -57,35 +60,9 @@ import (
 	"reflect"
 	"runtime"
 	"syscall"
-	"time"
 	"unsafe"
 
 	"github.com/vcaesar/tt"
-)
-
-const (
-	// Version get the robotgo version
-	Version = "v1.00.0.1189, MT. Baker!"
-)
-
-// GetVersion get the robotgo version
-func GetVersion() string {
-	return Version
-}
-
-var (
-	// MouseSleep set the mouse default millisecond sleep time
-	MouseSleep = 0
-	// KeySleep set the key default millisecond sleep time
-	KeySleep = 10
-
-	// DisplayID set the screen display id
-	DisplayID = -1
-
-	// NotPid used the hwnd not pid in windows
-	NotPid bool
-	// Scale option the os screen scale
-	Scale bool
 )
 
 type (
@@ -98,57 +75,6 @@ type (
 	// Handle define window Handle as C.MData type
 	Handle C.MData
 )
-
-// Bitmap define the go Bitmap struct
-//
-// The common type conversion of bitmap:
-//
-//	https://github.com/go-vgo/robotgo/blob/master/docs/keys.md#type-conversion
-type Bitmap struct {
-	ImgBuf        *uint8
-	Width, Height int
-
-	Bytewidth     int
-	BitsPixel     uint8
-	BytesPerPixel uint8
-}
-
-// Point is point struct
-type Point struct {
-	X int
-	Y int
-}
-
-// Size is size structure
-type Size struct {
-	W, H int
-}
-
-// Rect is rect structure
-type Rect struct {
-	Point
-	Size
-}
-
-// Try handler(err)
-func Try(fun func(), handler func(interface{})) {
-	defer func() {
-		if err := recover(); err != nil {
-			handler(err)
-		}
-	}()
-	fun()
-}
-
-// MilliSleep sleep tm milli second
-func MilliSleep(tm int) {
-	time.Sleep(time.Duration(tm) * time.Millisecond)
-}
-
-// Sleep time.Sleep tm second
-func Sleep(tm int) {
-	time.Sleep(time.Duration(tm) * time.Second)
-}
 
 // Deprecated: use the MilliSleep(),
 //
@@ -276,16 +202,6 @@ func Scaled(x int, displayId ...int) int {
 	return Scaled0(x, f)
 }
 
-// Scaled0 return int(x * f)
-func Scaled0(x int, f float64) int {
-	return int(float64(x) * f)
-}
-
-// Scaled1 return int(x / f)
-func Scaled1(x int, f float64) int {
-	return int(float64(x) / f)
-}
-
 // GetScreenSize get the screen size
 func GetScreenSize() (int, int) {
 	size := C.getMainDisplaySize()
@@ -379,6 +295,16 @@ func CaptureImg(args ...int) (image.Image, error) {
 	defer FreeBitmap(bit)
 
 	return ToImage(bit), nil
+}
+
+// SaveCapture capture screen and save the screenshot to image
+func SaveCapture(path string, args ...int) error {
+	img, err := CaptureImg(args...)
+	if err != nil {
+		return err
+	}
+
+	return Save(img, path)
 }
 
 // FreeBitmap free and dealloc the C bitmap
@@ -631,26 +557,6 @@ func MoveSmooth(x, y int, args ...interface{}) bool {
 	return smoothMove(x, y, false, args...)
 }
 
-// MoveArgs get the mouse relative args
-func MoveArgs(x, y int) (int, int) {
-	mx, my := Location()
-	mx = mx + x
-	my = my + y
-
-	return mx, my
-}
-
-// MoveRelative move mouse with relative
-func MoveRelative(x, y int) {
-	Move(MoveArgs(x, y))
-}
-
-// MoveSmoothRelative move mouse smooth with relative
-func MoveSmoothRelative(x, y int, args ...interface{}) {
-	mx, my := MoveArgs(x, y)
-	MoveSmooth(mx, my, args...)
-}
-
 // Location get the mouse location position return x, y
 func Location() (int, int) {
 	pos := C.location()
@@ -829,15 +735,6 @@ func MoveClick(x, y int, args ...interface{}) {
 	Click(args...)
 }
 
-// MovesClick move smooth and click the mouse
-//
-// use the `robotgo.MouseSleep = 100`
-func MovesClick(x, y int, args ...interface{}) {
-	MoveSmooth(x, y)
-	MilliSleep(50)
-	Click(args...)
-}
-
 // Toggle toggle the mouse, support button:
 //
 //		"left", "center", "right",
@@ -960,16 +857,6 @@ func ScrollSmooth(to int, args ...int) {
 		}
 	}
 	MilliSleep(MouseSleep)
-}
-
-// ScrollRelative scroll mouse with relative
-//
-// Examples:
-//
-//	robotgo.ScrollRelative(10, 10)
-func ScrollRelative(x, y int, args ...int) {
-	mx, my := MoveArgs(x, y)
-	Scroll(mx, my, args...)
 }
 
 /*

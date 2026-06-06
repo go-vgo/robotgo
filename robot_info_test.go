@@ -1,4 +1,7 @@
-// Copyright (c) 2016-2025 AtomAI, All rights reserved.
+//go:build !wayland && !win && !libei
+// +build !wayland,!win,!libei
+
+// Copyright (c) 2016-2026 AtomAI, All rights reserved.
 //
 // See the COPYRIGHT file at the top-level directory of this distribution and at
 // https://github.com/go-vgo/robotgo/blob/master/LICENSE

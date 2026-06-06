@@ -5,17 +5,28 @@
 
 [![Build Status](https://github.com/go-vgo/robotgo/workflows/Go/badge.svg)](https://github.com/go-vgo/robotgo/commits/master)
 [![CircleCI Status](https://circleci.com/gh/go-vgo/robotgo.svg?style=shield)](https://circleci.com/gh/go-vgo/robotgo)
-<!-- ![Appveyor](https://ci.appveyor.com/api/projects/status/github/go-vgo/robotgo?branch=master&svg=true) -->
 [![Go Report Card](https://goreportcard.com/badge/github.com/go-vgo/robotgo)](https://goreportcard.com/report/github.com/go-vgo/robotgo)
 [![GoDoc](https://pkg.go.dev/badge/github.com/go-vgo/robotgo?status.svg)](https://pkg.go.dev/github.com/go-vgo/robotgo?tab=doc)
 [![GitHub release](https://img.shields.io/github/release/go-vgo/robotgo.svg)](https://github.com/go-vgo/robotgo/releases/latest)
+<a href="https://discord.gg/npPb3NzE4A"><img src="https://img.shields.io/discord/1484658282777018551.svg?logo=discord&logoColor=white&label=Discord&color=5865F2" alt="Join the Discord chat at https://discord.gg/npPb3NzE4A"></a>
+
+English | [简体中文](lang/README.zh.md) | [繁體中文](lang/README.zht.md) | [日本語](lang/README.ja.md) | [한국어](lang/README.ko.md) | [Français](lang/README.fr.md) | [Deutsch](lang/README.de.md) | [Español](lang/README.es.md) | [Русский](lang/README.ru.md) | [Português](lang/README.pt.md)
 
 > Golang Desktop Automation, auto test and AI Computer Use. <br>
 > Control the mouse, keyboard, read the screen, process, Window Handle, image and bitmap and global event listener.
 
-RobotGo supports Mac, Windows, and Linux (X11); and robotgo supports arm64 and x86-amd64.
+RobotGo supports Mac, Windows, and Linux; and robotgo supports arm64 and x86-amd64.
 
-[RobotGo-Pro](https://github.com/vcaesar/robotgo-pro) get the JavaScript, Python, Lua and others version, tech supports, new features and newest robotgo version (such as Wayland support, "no open-source version forever").
+I build [Codg](https://github.com/vcaesar/codg) now, Easy code and work AI agent system: auto, asynchronous, concurrency, efficiently and High accuracy
+
+<p align="center">
+<a href="https://github.com/vcaesar/codg" rel="nofollow">
+<!-- <img width="800" alt="Codg Demo" src="https://github.com/vcaesar/codg/raw/main/demo/26-04.png" /> -->
+<img width="800" alt="Codg Demo" src="https://github.com/vcaesar/codg/raw/main/demo/26-04-1.png" />
+</a>
+</p>
+
+[RobotGo-Pro](https://github.com/vcaesar/robotgo-pro) get the JavaScript, Python, Lua and others version, tech supports, new features and newest robotgo version ("no open-source version now").
 
 ## Contents
 
@@ -24,6 +35,7 @@ RobotGo supports Mac, Windows, and Linux (X11); and robotgo supports arm64 and x
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Update](#update)
+- [Cgo-free Builds](#cgo-free-builds)
 - [Examples](#examples)
 - [Type Conversion and keys](https://github.com/go-vgo/robotgo/blob/master/docs/keys.md)
 - [Cross-Compiling](https://github.com/go-vgo/robotgo/blob/master/docs/install.md#crosscompiling)
@@ -138,8 +150,38 @@ sudo dnf install xsel xclip
 sudo dnf install libpng-devel
 
 # GoHook
-sudo dnf install libxkbcommon-devel libxkbcommon-x11-devel xorg-x11-xkb-utils-devel
+sudo dnf install libxkbcommon-devel libxkbcommon-x11-devel xkbcomp-devel
+xorg-x11-xkb-utils-devel (< Fedora 34)
 ```
+
+#### Wayland
+
+The Wayland backend is a **pure-Go (Cgo-free)** implementation, so no system C
+libraries are required. It needs a wlroots-based compositor (Sway, Hyprland,
+Wayfire, ...) that supports the following protocols:
+
+```
+zwlr_virtual_pointer_v1            (mouse control)
+zwp_virtual_keyboard_v1            (keyboard control)
+zwlr_screencopy_v1                 (screen capture)
+zwlr_foreign_toplevel_management_v1 (window management)
+```
+
+GNOME and KDE do **not** support these protocols natively.
+
+#### libei (GNOME / KDE)
+
+The libei backend is also a **pure-Go (Cgo-free)** implementation. It drives input
+through the freedesktop `xdg-desktop-portal` RemoteDesktop interface, so it works
+on GNOME and KDE (unlike the wlroots Wayland backend). It requires:
+
+```
+xdg-desktop-portal               (the portal D-Bus service)
+xdg-desktop-portal-gnome / -kde  (your desktop's portal backend)
+```
+
+Note: the libei backend handles mouse and keyboard input only. Screen capture and
+window management report `ErrNotSupported`.
 
 ## Installation:
 
@@ -165,6 +207,36 @@ go get -u github.com/go-vgo/robotgo
 
 Note go1.10.x C file compilation cache problem, [golang #24355](https://github.com/golang/go/issues/24355).
 `go mod vendor` problem, [golang #26366](https://github.com/golang/go/issues/26366).
+
+## Cgo-free Builds:
+
+RobotGo ships **pure-Go (Cgo-free)** backends for Windows, Wayland and libei
+(Linux), it's experimental. They expose the same `robotgo` API, so your code needs no changes —
+only a build tag. These backends cross-compile with `CGO_ENABLED=0` (no GCC,
+MinGW, or X11 headers required).
+
+| Backend                         | Build tag | Go package                          |
+| ------------------------------- | --------- | ----------------------------------- |
+| Windows (Cgo-free)              | `win`     | `github.com/go-vgo/robotgo/win`     |
+| Wayland (Linux, wlroots)        | `wayland` | `github.com/go-vgo/robotgo/wayland` |
+| libei (Linux, GNOME/KDE portal) | `libei`   | `github.com/go-vgo/robotgo/libei`   |
+
+```sh
+# Windows, no Cgo / no MinGW required
+CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags win ./...
+
+# Wayland, wlroots-based compositor (Sway, Hyprland, Wayfire, ...)
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags wayland ./...
+
+# libei, GNOME/KDE via xdg-desktop-portal RemoteDesktop
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags libei ./...
+```
+
+Under the `win` tag the default Cgo/Win32 backend is excluded and calls are
+forwarded to the pure-Go `win` package; under the `wayland` tag the Cgo/X11
+backend is excluded and calls are forwarded to the pure-Go `wayland` package;
+under the `libei` tag both the Cgo/X11 and wlroots Wayland backends are excluded
+and calls are forwarded to the pure-Go `libei` package.
 
 ## [Examples:](https://github.com/go-vgo/robotgo/blob/master/examples)
 

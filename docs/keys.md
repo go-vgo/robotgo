@@ -66,19 +66,19 @@
 	"f24"
 
 	"cmd"		is the "win" key for windows
-	"lcmd"		left command
-	"rcmd"		right command
+	"cmdl"		left command
+	"cmdr"		right command
 	// "command"
 	"alt"
-	"lalt"		left alt
-	"ralt"		right alt
+	"altl"		left alt
+	"altr"		right alt
 	"ctrl"
-	"lctrl"		left ctrl
-	"rctrl"		right ctrl
+	"ctrll"		left ctrl
+	"ctrlr"		right ctrl
 	"control"
 	"shift"
-	"lshift"	left shift
-	"rshift"	right shift
+	"shiftl"	left shift
+	"shiftr"	right shift
 	// "right_shift"
 	"capslock"
 	"space"
@@ -100,7 +100,6 @@
 	"audio_repeat"      Linux only
 	"audio_random"      Linux only
 
-
 	"num0"
 	"num1"
 	"num2"
@@ -112,6 +111,9 @@
 	"num8"
 	"num9"
 	"num_lock"
+
+	"scroll_lock"
+	"pause_break"
 
 	"num."
 	"num+"

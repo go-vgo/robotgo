@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2025 AtomAI, All rights reserved.
+// Copyright (c) 2016-2026 AtomAI, All rights reserved.
 //
 // See the COPYRIGHT file at the top-level directory of this distribution and at
 // https://github.com/go-vgo/robotgo/blob/master/LICENSE
@@ -53,9 +53,9 @@ func Capture(args ...int) (*image.RGBA, error) {
 	return screenshot.Capture(x, y, w, h)
 }
 
-// SaveCapture capture screen and save the screenshot to image
-func SaveCapture(path string, args ...int) error {
-	img, err := CaptureImg(args...)
+// SaveCaptureGo capture screen and save the screenshot to image
+func SaveCaptureGo(path string, args ...int) error {
+	img, err := Capture(args...)
 	if err != nil {
 		return err
 	}

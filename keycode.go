@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2025 AtomAI, All rights reserved.
+// Copyright (c) 2016-2026 AtomAI, All rights reserved.
 //
 // See the COPYRIGHT file at the top-level directory of this distribution and at
 // https://github.com/go-vgo/robotgo/blob/master/LICENSE
@@ -92,17 +92,16 @@ const (
 	Enter     = "enter"
 	Tab       = "tab"
 	Esc       = "esc"
-	// Escape    = "escape"
-	Up       = "up"    // Up arrow key
-	Down     = "down"  // Down arrow key
-	Right    = "right" // Right arrow key
-	Left     = "left"  // Left arrow key
-	Home     = "home"
-	End      = "end"
-	Pageup   = "pageup"
-	Pagedown = "pagedown"
+	Escape    = "escape"
+	Up        = "up"    // Up arrow key
+	Down      = "down"  // Down arrow key
+	Right     = "right" // Right arrow key
+	Left      = "left"  // Left arrow key
+	Home      = "home"
+	End       = "end"
+	Pageup    = "pageup"
+	Pagedown  = "pagedown"
 
-	Fn  = "fn"
 	F1  = "f1"
 	F2  = "f2"
 	F3  = "f3"
@@ -132,24 +131,25 @@ const (
 	CmdL = "cmdl" // left command
 	CmdR = "cmdr" // right command
 	// "command"
-	Alt   = "alt"
-	AltL  = "altl" // left alt
-	AltR  = "altr" // right alt
-	Ctrl  = "ctrl"
-	CtrlL = "ctrll" // left ctrl
-	CtrlR = "ctrlr" // right ctrl
-	// Control = "control"
-	Shift  = "shift"
-	ShiftL = "shiftl" // left shift
-	ShiftR = "shiftr" // right shift
-	// "right_shift", capslock
-	Caps        = "caps"
-	Capslock    = "caps"
+	Alt     = "alt"
+	AltL    = "altl" // left alt
+	AltR    = "altr" // right alt
+	Ctrl    = "ctrl"
+	CtrlL   = "ctrll" // left ctrl
+	CtrlR   = "ctrlr" // right ctrl
+	Control = "control"
+	Shift   = "shift"
+	ShiftL  = "shiftl" // left shift
+	ShiftR  = "shiftr" // right shift
+	// "right_shift"
+	Capslock    = "capslock"
 	Space       = "space"
 	Print       = "print"
 	Printscreen = "printscreen" // No Mac support
 	Insert      = "insert"
 	Menu        = "menu" // Windows only
+	ScrollLock  = "scroll_lock"
+	PauseBreak  = "pause_break"
 
 	AudioMute    = "audio_mute"     // Mute the volume
 	AudioVolDown = "audio_vol_down" // Lower the volume
