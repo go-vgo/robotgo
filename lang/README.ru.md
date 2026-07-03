@@ -207,20 +207,28 @@ go get -u github.com/go-vgo/robotgo
 
 ## Cgo-free Builds:
 
-RobotGo предоставляет **чистые Go-бэкенды (без Cgo)** для Windows, Wayland и
-libei (Linux). Они предоставляют тот же API `robotgo`, поэтому ваш код не нуждается в
+RobotGo предоставляет **чистые Go-бэкенды (без Cgo)** для Windows, macOS, X11,
+Wayland и libei (Linux). Они предоставляют тот же API `robotgo`, поэтому ваш код не нуждается в
 изменениях — достаточно тега сборки. Эти бэкенды кросс-компилируются с
-`CGO_ENABLED=0` (без GCC, MinGW или заголовков X11).
+`CGO_ENABLED=0` (без GCC, MinGW, Xcode или заголовков X11).
 
 | Бэкенд                          | Тег сборки | Go-пакет                            |
 | ------------------------------- | ---------- | ----------------------------------- |
 | Windows (без Cgo)               | `win`      | `github.com/go-vgo/robotgo/win`     |
+| macOS (Quartz через purego)    | `mac`      | `github.com/go-vgo/robotgo/darwin`  |
+| X11 (Linux, чистый Go X-протокол) | `x11`  | `github.com/go-vgo/robotgo/x11`     |
 | Wayland (Linux, wlroots)        | `wayland`  | `github.com/go-vgo/robotgo/wayland` |
 | libei (Linux, portal GNOME/KDE) | `libei`    | `github.com/go-vgo/robotgo/libei`   |
 
 ```sh
 # Windows, без Cgo / без MinGW
 CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags win ./...
+
+# macOS, Quartz/CoreGraphics загружается во время выполнения через purego (без Xcode)
+CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -tags mac ./...
+
+# X11, чистый Go X-протокол (XTEST) — без заголовков X11
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags x11 ./...
 
 # Wayland, композитор на основе wlroots (Sway, Hyprland, Wayfire и др.)
 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags wayland ./...
@@ -230,10 +238,13 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags libei ./...
 ```
 
 С тегом `win` бэкенд Cgo/Win32 по умолчанию исключается, а вызовы
-перенаправляются в чистый Go-пакет `win`; с тегом `wayland` исключается бэкенд
-Cgo/X11, а вызовы перенаправляются в чистый Go-пакет `wayland`; с тегом `libei`
-исключаются как бэкенд Cgo/X11, так и wlroots Wayland бэкенд, а вызовы
-перенаправляются в чистый Go-пакет `libei`.
+перенаправляются в чистый Go-пакет `win`; с тегом `mac` исключается бэкенд
+Cgo/Quartz по умолчанию, а вызовы перенаправляются в чистый Go-пакет `darwin`
+(управление окнами возвращает `ErrNotSupported`); с тегом `x11` исключается
+бэкенд Cgo/X11, а вызовы перенаправляются в чистый Go-пакет `x11`; с тегом
+`wayland` исключается бэкенд Cgo/X11, а вызовы перенаправляются в чистый
+Go-пакет `wayland`; с тегом `libei` исключаются как бэкенд Cgo/X11, так и
+wlroots Wayland бэкенд, а вызовы перенаправляются в чистый Go-пакет `libei`.
 
 ## [Examples:](https://github.com/go-vgo/robotgo/blob/master/examples)
 

@@ -27,6 +27,19 @@ import (
 // KeySleep is the global keyboard delay in milliseconds.
 var KeySleep = 10
 
+// NotPid, when true, makes the pid argument of the keyboard APIs be treated as
+// a window handle (HWND) directly instead of a process id, mirroring the
+// default Cgo backend's robotgo.NotPid behavior on Windows.
+var NotPid bool
+
+// Window messages used to post key events to a specific window (pid-directed
+// input), mirroring the PostMessageW path in key/keypress_c.h.
+const (
+	wmKeyDown = 0x0100
+	wmKeyUp   = 0x0101
+	wmChar    = 0x0102
+)
+
 // Key constants matching robotgo's API.
 const (
 	KeyA = "a"
@@ -201,12 +214,60 @@ func sendUnicode(u uint16, up bool) {
 	win.SendInput(1, unsafe.Pointer(&in), int32(unsafe.Sizeof(in)))
 }
 
-// KeyTap taps a key (press + release). Optional trailing modifiers.
+// hwndByPid returns the first top-level window owned by pid. It mirrors the C
+// GetHwndByPid helper in base/pubs.h and does not require the window to be
+// visible.
+func hwndByPid(pid int) win.HWND {
+	var found win.HWND
+	enumWindows(func(hwnd win.HWND) bool {
+		if windowPid(hwnd) == pid {
+			found = hwnd
+			return false // stop
+		}
+		return true
+	})
+	return found
+}
+
+// keyHwnd resolves the target window for pid-directed key input. When NotPid is
+// set the value is treated as an HWND directly (matching robotgo.NotPid in the
+// default backend); otherwise the first window owned by that pid is returned.
+func keyHwnd(pid int) win.HWND {
+	if NotPid {
+		return win.HWND(uintptr(pid))
+	}
+	return hwndByPid(pid)
+}
+
+// postKey posts a WM_KEYDOWN/WM_KEYUP message for a virtual-key code to a
+// window, mirroring the PostMessageW path in key/keypress_c.h.
+func postKey(hwnd win.HWND, vk uint16, up bool) {
+	msg := uintptr(wmKeyDown)
+	if up {
+		msg = wmKeyUp
+	}
+	procPostMessageW.Call(uintptr(hwnd), msg, uintptr(vk), 0)
+}
+
+// postChar posts a WM_CHAR message carrying a single UTF-16 code unit to a
+// window, mirroring unicodeType()'s PostMessageW path in key/keypress_c.h.
+func postChar(hwnd win.HWND, u uint16) {
+	procPostMessageW.Call(uintptr(hwnd), uintptr(wmChar), uintptr(u), 0)
+}
+
+// KeyTap taps a key (press + release). Optional trailing modifiers and an int
+// pid: when a pid is supplied the key (and its modifiers) is posted to that
+// process's window via PostMessageW, mirroring the Windows path in
+// key/keypress_c.h; otherwise it is injected into the focused window via
+// SendInput. Set NotPid to pass an HWND instead of a pid.
 //
 //	KeyTap("a")
 //	KeyTap("a", "ctrl")
 //	KeyTap("a", "ctrl", "shift")
+//	KeyTap("a", pid)
+//	KeyTap("a", pid, "ctrl")
 func KeyTap(key string, args ...interface{}) error {
+	pid := extractPid(args)
 	modifiers := extractModifiers(args)
 
 	vk, autoMods, ok := keyToVK(key)
@@ -224,6 +285,29 @@ func KeyTap(key string, args ...interface{}) error {
 	}
 	if autoMods&4 != 0 {
 		modifiers = appendUniqueMod(modifiers, "alt")
+	}
+
+	// pid-directed input: post the key (and its modifiers) to the target
+	// window via PostMessageW, mirroring key/keypress_c.h.
+	if pid != 0 {
+		hwnd := keyHwnd(pid)
+		if hwnd == 0 {
+			return ErrNotFound
+		}
+		for _, mod := range modifiers {
+			if mvk, _, ok := keyToVK(mod); ok {
+				postKey(hwnd, mvk, false)
+			}
+		}
+		postKey(hwnd, vk, false)
+		time.Sleep(time.Duration(KeySleep) * time.Millisecond)
+		postKey(hwnd, vk, true)
+		for i := len(modifiers) - 1; i >= 0; i-- {
+			if mvk, _, ok := keyToVK(modifiers[i]); ok {
+				postKey(hwnd, mvk, true)
+			}
+		}
+		return nil
 	}
 
 	// Press modifiers.
@@ -257,7 +341,13 @@ func appendUniqueMod(mods []string, mod string) []string {
 	return append(mods, mod)
 }
 
-// KeyToggle toggles a key. Default is "down"; pass "up" to release.
+// KeyToggle toggles a key. Default is "down"; pass "up" to release. An optional
+// int pid posts the event to that process's window via PostMessageW, mirroring
+// key/keypress_c.h; otherwise SendInput is used. Set NotPid to pass an HWND.
+//
+//	KeyToggle("a")
+//	KeyToggle("a", "up")
+//	KeyToggle("a", pid)
 func KeyToggle(key string, args ...interface{}) error {
 	up := false
 	for _, arg := range args {
@@ -265,9 +355,18 @@ func KeyToggle(key string, args ...interface{}) error {
 			up = true
 		}
 	}
+	pid := extractPid(args)
 	vk, _, ok := keyToVK(key)
 	if !ok {
 		return errors.New("robotgo: unknown key: " + key)
+	}
+	if pid != 0 {
+		hwnd := keyHwnd(pid)
+		if hwnd == 0 {
+			return ErrNotFound
+		}
+		postKey(hwnd, vk, up)
+		return nil
 	}
 	sendVK(vk, up)
 	return nil
@@ -291,8 +390,32 @@ func KeyPress(key string, args ...interface{}) error {
 }
 
 // Type types a string using Unicode key events, supporting any character
-// (including those not present on the current keyboard layout).
+// (including those not present on the current keyboard layout). An optional
+// first int argument is the target pid: when non-zero each character is posted
+// to that process's window as a WM_CHAR message, mirroring unicodeType() in
+// key/keypress_c.h; otherwise it is injected into the focused window via
+// SendInput. Set NotPid to pass an HWND instead of a pid.
+//
+//	Type("hello")
+//	Type("hello", pid)
 func Type(str string, args ...int) {
+	pid := 0
+	if len(args) > 0 {
+		pid = args[0]
+	}
+	if pid != 0 {
+		hwnd := keyHwnd(pid)
+		if hwnd == 0 {
+			return
+		}
+		for _, u := range utf16.Encode([]rune(str)) {
+			postChar(hwnd, u)
+			if KeySleep > 0 {
+				time.Sleep(time.Duration(KeySleep) * time.Millisecond)
+			}
+		}
+		return
+	}
 	for _, u := range utf16.Encode([]rune(str)) {
 		sendUnicode(u, false)
 		sendUnicode(u, true)
@@ -344,4 +467,16 @@ func extractModifiers(args []interface{}) []string {
 		}
 	}
 	return mods
+}
+
+// extractPid returns the first int argument as the target pid (0 means inject
+// into the focused window via SendInput), matching the default robotgo
+// backend's pid handling.
+func extractPid(args []interface{}) int {
+	for _, arg := range args {
+		if v, ok := arg.(int); ok {
+			return v
+		}
+	}
+	return 0
 }

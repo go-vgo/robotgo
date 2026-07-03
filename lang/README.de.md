@@ -208,21 +208,29 @@ Beachten Sie das Problem mit dem Kompilierungs-Cache für C-Dateien in go1.10.x,
 
 ## Cgo-free Builds:
 
-RobotGo bietet **reine Go-Backends (ohne Cgo)** für Windows, Wayland und libei
-(Linux).
+RobotGo bietet **reine Go-Backends (ohne Cgo)** für Windows, macOS, X11,
+Wayland und libei (Linux).
 Sie stellen dieselbe `robotgo`-API bereit, sodass dein Code nicht geändert werden
 muss — nur ein Build-Tag ist nötig. Diese Backends lassen sich mit
-`CGO_ENABLED=0` cross-kompilieren (ohne GCC, MinGW oder X11-Header).
+`CGO_ENABLED=0` cross-kompilieren (ohne GCC, MinGW, Xcode oder X11-Header).
 
-| Backend                         | Build-Tag | Go-Paket                            |
-| ------------------------------- | --------- | ----------------------------------- |
-| Windows (ohne Cgo)              | `win`     | `github.com/go-vgo/robotgo/win`     |
-| Wayland (Linux, wlroots)        | `wayland` | `github.com/go-vgo/robotgo/wayland` |
-| libei (Linux, GNOME/KDE-Portal) | `libei`   | `github.com/go-vgo/robotgo/libei`   |
+| Backend                          | Build-Tag | Go-Paket                            |
+| -------------------------------- | --------- | ----------------------------------- |
+| Windows (ohne Cgo)               | `win`     | `github.com/go-vgo/robotgo/win`     |
+| macOS (Quartz über purego)       | `mac`     | `github.com/go-vgo/robotgo/darwin`  |
+| X11 (Linux, reines Go-X-Protokoll) | `x11`   | `github.com/go-vgo/robotgo/x11`     |
+| Wayland (Linux, wlroots)         | `wayland` | `github.com/go-vgo/robotgo/wayland` |
+| libei (Linux, GNOME/KDE-Portal)  | `libei`   | `github.com/go-vgo/robotgo/libei`   |
 
 ```sh
 # Windows, ohne Cgo / ohne MinGW
 CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags win ./...
+
+# macOS, Quartz/CoreGraphics zur Laufzeit über purego geladen (ohne Xcode)
+CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -tags mac ./...
+
+# X11, reines Go-X-Protokoll (XTEST) — ohne X11-Header
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags x11 ./...
 
 # Wayland, wlroots-basierter Compositor (Sway, Hyprland, Wayfire, ...)
 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags wayland ./...
@@ -232,11 +240,15 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags libei ./...
 ```
 
 Mit dem Tag `win` wird das standardmäßige Cgo/Win32-Backend ausgeschlossen und
-Aufrufe werden an das reine Go-Paket `win` weitergeleitet; mit dem Tag `wayland`
-wird das Cgo/X11-Backend ausgeschlossen und Aufrufe werden an das reine Go-Paket
-`wayland` weitergeleitet; mit dem Tag `libei` werden sowohl das Cgo/X11- als auch
-das wlroots-Wayland-Backend ausgeschlossen und Aufrufe werden an das reine
-Go-Paket `libei` weitergeleitet.
+Aufrufe werden an das reine Go-Paket `win` weitergeleitet; mit dem Tag `mac`
+wird das standardmäßige Cgo/Quartz-Backend ausgeschlossen und Aufrufe werden an
+das reine Go-Paket `darwin` weitergeleitet (Fensterverwaltung meldet
+`ErrNotSupported`); mit dem Tag `x11` wird das Cgo/X11-Backend ausgeschlossen
+und Aufrufe werden an das reine Go-Paket `x11` weitergeleitet; mit dem Tag
+`wayland` wird das Cgo/X11-Backend ausgeschlossen und Aufrufe werden an das
+reine Go-Paket `wayland` weitergeleitet; mit dem Tag `libei` werden sowohl das
+Cgo/X11- als auch das wlroots-Wayland-Backend ausgeschlossen und Aufrufe werden
+an das reine Go-Paket `libei` weitergeleitet.
 
 ## [Examples:](https://github.com/go-vgo/robotgo/blob/master/examples)
 

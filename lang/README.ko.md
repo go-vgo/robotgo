@@ -206,19 +206,27 @@ go1.10.x의 C 파일 컴파일 캐시 문제에 주의하세요, [golang #24355]
 
 ## Cgo-free Builds:
 
-RobotGo는 Windows, Wayland, libei(Linux)용 **순수 Go(Cgo 없음)** 백엔드를 제공합니다.
+RobotGo는 Windows, macOS, X11, Wayland, libei(Linux)용 **순수 Go(Cgo 없음)** 백엔드를 제공합니다.
 동일한 `robotgo` API를 노출하므로 코드를 변경할 필요 없이 빌드 태그만 지정하면
-됩니다. 이 백엔드는 `CGO_ENABLED=0`으로 크로스 컴파일됩니다(GCC, MinGW, X11 헤더 불필요).
+됩니다. 이 백엔드는 `CGO_ENABLED=0`으로 크로스 컴파일됩니다(GCC, MinGW, Xcode, X11 헤더 불필요).
 
 | 백엔드                         | 빌드 태그 | Go 패키지                           |
 | ------------------------------ | --------- | ----------------------------------- |
 | Windows(Cgo 없음)              | `win`     | `github.com/go-vgo/robotgo/win`     |
+| macOS(purego를 통한 Quartz)    | `mac`     | `github.com/go-vgo/robotgo/darwin`  |
+| X11(Linux, 순수 Go X 프로토콜) | `x11`     | `github.com/go-vgo/robotgo/x11`     |
 | Wayland(Linux, wlroots)        | `wayland` | `github.com/go-vgo/robotgo/wayland` |
 | libei(Linux, GNOME/KDE portal) | `libei`   | `github.com/go-vgo/robotgo/libei`   |
 
 ```sh
 # Windows, Cgo / MinGW 불필요
 CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags win ./...
+
+# macOS, purego를 통해 런타임에 Quartz/CoreGraphics 로드(Xcode 불필요)
+CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -tags mac ./...
+
+# X11, 순수 Go X 프로토콜(XTEST) — X11 헤더 불필요
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags x11 ./...
 
 # Wayland, wlroots 기반 컴포지터(Sway, Hyprland, Wayfire 등)
 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags wayland ./...
@@ -228,9 +236,12 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags libei ./...
 ```
 
 `win` 태그에서는 기본 Cgo/Win32 백엔드가 제외되고 호출이 순수 Go `win` 패키지로
-전달됩니다. `wayland` 태그에서는 Cgo/X11 백엔드가 제외되고 호출이 순수 Go `wayland`
-패키지로 전달됩니다. `libei` 태그에서는 Cgo/X11과 wlroots Wayland 백엔드가 모두
-제외되고 호출이 순수 Go `libei` 패키지로 전달됩니다.
+전달됩니다. `mac` 태그에서는 기본 Cgo/Quartz 백엔드가 제외되고 호출이 순수 Go `darwin`
+패키지로 전달됩니다(창 관리는 `ErrNotSupported`를 반환합니다). `x11` 태그에서는
+Cgo/X11 백엔드가 제외되고 호출이 순수 Go `x11` 패키지로 전달됩니다. `wayland`
+태그에서는 Cgo/X11 백엔드가 제외되고 호출이 순수 Go `wayland` 패키지로 전달됩니다.
+`libei` 태그에서는 Cgo/X11과 wlroots Wayland 백엔드가 모두 제외되고 호출이 순수 Go
+`libei` 패키지로 전달됩니다.
 
 ## [Examples:](https://github.com/go-vgo/robotgo/blob/master/examples)
 

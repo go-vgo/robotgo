@@ -1,5 +1,5 @@
-//go:build !wayland && !win && !libei
-// +build !wayland,!win,!libei
+//go:build !wayland && !win && !libei && !mac && !x11
+// +build !wayland,!win,!libei,!mac,!x11
 
 // Copyright (c) 2016-2026 AtomAI, All rights reserved.
 //

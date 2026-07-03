@@ -12,7 +12,7 @@
 // This file may not be copied, modified, or distributed
 // except according to those terms.
 
-package libei
+package x11
 
 import (
 	"errors"
@@ -22,9 +22,9 @@ import (
 	"strings"
 )
 
-// Process management — pure Go, reads /proc, no portal dependency.
+// Process management — pure Go, reading /proc.
 
-// Pids returns all process IDs by reading /proc.
+// Pids returns all process IDs.
 func Pids() ([]int, error) {
 	entries, err := os.ReadDir("/proc")
 	if err != nil {
@@ -44,7 +44,7 @@ func Pids() ([]int, error) {
 	return pids, nil
 }
 
-// PidExists checks if a process exists.
+// PidExists reports whether a process exists.
 func PidExists(pid int) (bool, error) {
 	_, err := os.Stat("/proc/" + strconv.Itoa(pid))
 	if err == nil {
@@ -56,7 +56,7 @@ func PidExists(pid int) (bool, error) {
 	return false, err
 }
 
-// FindName returns the process name for a given PID.
+// FindName returns the process name for a PID.
 func FindName(pid int) (string, error) {
 	data, err := os.ReadFile("/proc/" + strconv.Itoa(pid) + "/comm")
 	if err != nil {
@@ -125,7 +125,9 @@ func Process() ([]Nps, error) {
 }
 
 // GetPid returns the current process's PID.
-func GetPid() int { return os.Getpid() }
+func GetPid() int {
+	return os.Getpid()
+}
 
 // Kill kills a process by PID.
 func Kill(pid int) error {
@@ -140,7 +142,7 @@ func Kill(pid int) error {
 	return p.Kill()
 }
 
-// Run runs a shell command and returns its output.
+// Run runs a shell command and returns its combined output.
 func Run(path string) ([]byte, error) {
 	return exec.Command("sh", "-c", path).CombinedOutput()
 }

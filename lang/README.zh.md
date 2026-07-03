@@ -204,19 +204,27 @@ go get -u github.com/go-vgo/robotgo
 
 ## Cgo-free Builds:
 
-RobotGo 为 Windows、Wayland 和 libei（Linux）提供了 **纯 Go（无 Cgo）** 后端。
+RobotGo 为 Windows、macOS、X11、Wayland 和 libei（Linux）提供了 **纯 Go（无 Cgo）** 后端。
 它们暴露相同的 `robotgo` API，因此你的代码无需改动 —— 只需一个构建标签。
-这些后端可在 `CGO_ENABLED=0` 下交叉编译（无需 GCC、MinGW 或 X11 头文件）。
+这些后端可在 `CGO_ENABLED=0` 下交叉编译（无需 GCC、MinGW、Xcode 或 X11 头文件）。
 
 | 后端                             | 构建标签  | Go 包                               |
 | -------------------------------- | --------- | ----------------------------------- |
 | Windows（无 Cgo）                | `win`     | `github.com/go-vgo/robotgo/win`     |
+| macOS（通过 purego 调用 Quartz） | `mac`     | `github.com/go-vgo/robotgo/darwin`  |
+| X11（Linux，纯 Go X 协议）       | `x11`     | `github.com/go-vgo/robotgo/x11`     |
 | Wayland（Linux，wlroots）        | `wayland` | `github.com/go-vgo/robotgo/wayland` |
 | libei（Linux，GNOME/KDE portal） | `libei`   | `github.com/go-vgo/robotgo/libei`   |
 
 ```sh
 # Windows，无需 Cgo / 无需 MinGW
 CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags win ./...
+
+# macOS，通过 purego 在运行时加载 Quartz/CoreGraphics（无需 Xcode）
+CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -tags mac ./...
+
+# X11，纯 Go 实现的 X 协议（XTEST）—— 无需 X11 头文件
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags x11 ./...
 
 # Wayland，基于 wlroots 的合成器（Sway、Hyprland、Wayfire 等）
 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags wayland ./...
@@ -226,6 +234,8 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags libei ./...
 ```
 
 在 `win` 标签下，默认的 Cgo/Win32 后端被排除，调用转发到纯 Go 的 `win` 包；
+在 `mac` 标签下，默认的 Cgo/Quartz 后端被排除，调用转发到纯 Go 的 `darwin` 包（窗口管理返回 `ErrNotSupported`）；
+在 `x11` 标签下，Cgo/X11 后端被排除，调用转发到纯 Go 的 `x11` 包；
 在 `wayland` 标签下，Cgo/X11 后端被排除，调用转发到纯 Go 的 `wayland` 包；
 在 `libei` 标签下，Cgo/X11 和 wlroots Wayland 后端均被排除，调用转发到纯 Go 的 `libei` 包。
 

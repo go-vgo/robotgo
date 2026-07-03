@@ -113,6 +113,66 @@ func TestExtractModifiers(t *testing.T) {
 	}
 }
 
+// TestPidIgnored documents that an int pid argument is accepted for API parity
+// but ignored: it must not be mistaken for a modifier (Wayland injects into the
+// focused surface, mirroring the X11 path in key/keypress_c.h).
+func TestPidIgnored(t *testing.T) {
+	got := extractModifiers([]interface{}{"ctrl", 1234, "shift"})
+	want := []string{"ctrl", "shift"}
+	if len(got) != len(want) {
+		t.Fatalf("extractModifiers dropped/added entries: got %v, want %v", got, want)
+	}
+	for i := range got {
+		if got[i] != want[i] {
+			t.Errorf("extractModifiers[%d]: got %q, want %q", i, got[i], want[i])
+		}
+	}
+}
+
+// TestReleaseKeys verifies the upKeyArr-equivalent helper: modifiers are
+// keyed up in reverse order, every code gets a release attempt even after a
+// failure, and errors are propagated.
+func TestReleaseKeys(t *testing.T) {
+	var got []uint32
+	err := releaseKeys([]uint32{29, 42, 56}, func(code uint32) error {
+		got = append(got, code)
+		return nil
+	})
+	if err != nil {
+		t.Fatalf("releaseKeys: unexpected error %v", err)
+	}
+	want := []uint32{56, 42, 29}
+	if len(got) != len(want) {
+		t.Fatalf("releaseKeys: got %v, want %v", got, want)
+	}
+	for i := range want {
+		if got[i] != want[i] {
+			t.Errorf("releaseKeys[%d]: got %d, want %d (reverse order)", i, got[i], want[i])
+		}
+	}
+
+	// A failing release must not stop the remaining releases.
+	got = nil
+	failOn := uint32(42)
+	err = releaseKeys([]uint32{29, 42, 56}, func(code uint32) error {
+		got = append(got, code)
+		if code == failOn {
+			return ErrNotSupported
+		}
+		return nil
+	})
+	if err == nil {
+		t.Error("releaseKeys: expected error to propagate")
+	}
+	if len(got) != 3 {
+		t.Errorf("releaseKeys: released %v, want all 3 despite failure", got)
+	}
+
+	if err := releaseKeys(nil, func(uint32) error { return ErrNotSupported }); err != nil {
+		t.Errorf("releaseKeys(nil): got %v, want nil", err)
+	}
+}
+
 func TestShiftedChars(t *testing.T) {
 	// Verify all shifted chars map to valid evdev keys
 	for ch, baseKey := range shiftedChars {

@@ -1,3 +1,6 @@
+//go:build darwin
+// +build darwin
+
 // Copyright (c) 2016-2026 AtomAI, All rights reserved.
 //
 // See the COPYRIGHT file at the top-level directory of this distribution and at
@@ -9,16 +12,13 @@
 // This file may not be copied, modified, or distributed
 // except according to those terms.
 
-//go:build !windows && !wayland && !libei && !mac && !x11
-// +build !windows,!wayland,!libei,!mac,!x11
+package darwin
 
-package robotgo
+import "errors"
 
-// ScaleF get the system scale val
-func ScaleF(displayId ...int) float64 {
-	f := SysScale(displayId...)
-	if f == 0.0 {
-		f = 1.0
-	}
-	return f
-}
+// ErrNotFound is returned when no matching window or element is found.
+var ErrNotFound = errors.New("robotgo: not found")
+
+// ErrNotSupported is returned when an operation is not supported by this
+// pure-Go backend.
+var ErrNotSupported = errors.New("robotgo: operation not supported")

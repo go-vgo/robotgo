@@ -210,20 +210,28 @@ Note go1.10.x C file compilation cache problem, [golang #24355](https://github.c
 
 ## Cgo-free Builds:
 
-RobotGo ships **pure-Go (Cgo-free)** backends for Windows, Wayland and libei
-(Linux), it's experimental. They expose the same `robotgo` API, so your code needs no changes —
+RobotGo ships **pure-Go (Cgo-free)** backends for Windows, macOS, X11, Wayland
+and libei (Linux), it's experimental. They expose the same `robotgo` API, so your code needs no changes —
 only a build tag. These backends cross-compile with `CGO_ENABLED=0` (no GCC,
-MinGW, or X11 headers required).
+MinGW, Xcode, or X11 headers required).
 
 | Backend                         | Build tag | Go package                          |
 | ------------------------------- | --------- | ----------------------------------- |
 | Windows (Cgo-free)              | `win`     | `github.com/go-vgo/robotgo/win`     |
+| macOS (Quartz via purego)       | `mac`     | `github.com/go-vgo/robotgo/darwin`  |
+| X11 (Linux, pure-Go X protocol) | `x11`     | `github.com/go-vgo/robotgo/x11`     |
 | Wayland (Linux, wlroots)        | `wayland` | `github.com/go-vgo/robotgo/wayland` |
 | libei (Linux, GNOME/KDE portal) | `libei`   | `github.com/go-vgo/robotgo/libei`   |
 
 ```sh
 # Windows, no Cgo / no MinGW required
 CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags win ./...
+
+# macOS, Quartz/CoreGraphics loaded at runtime via purego (no Xcode required)
+CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -tags mac ./...
+
+# X11, pure-Go X protocol (XTEST) — no X11 headers required
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags x11 ./...
 
 # Wayland, wlroots-based compositor (Sway, Hyprland, Wayfire, ...)
 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags wayland ./...
@@ -233,10 +241,14 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags libei ./...
 ```
 
 Under the `win` tag the default Cgo/Win32 backend is excluded and calls are
-forwarded to the pure-Go `win` package; under the `wayland` tag the Cgo/X11
-backend is excluded and calls are forwarded to the pure-Go `wayland` package;
-under the `libei` tag both the Cgo/X11 and wlroots Wayland backends are excluded
-and calls are forwarded to the pure-Go `libei` package.
+forwarded to the pure-Go `win` package; under the `mac` tag the default
+Cgo/Quartz backend is excluded and calls are forwarded to the pure-Go `darwin`
+package (window management reports `ErrNotSupported`); under the `x11` tag the
+Cgo/X11 backend is excluded and calls are forwarded to the pure-Go `x11`
+package; under the `wayland` tag the Cgo/X11 backend is excluded and calls are
+forwarded to the pure-Go `wayland` package; under the `libei` tag both the
+Cgo/X11 and wlroots Wayland backends are excluded and calls are forwarded to
+the pure-Go `libei` package.
 
 ## [Examples:](https://github.com/go-vgo/robotgo/blob/master/examples)
 

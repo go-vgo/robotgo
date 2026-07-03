@@ -63,13 +63,8 @@ func Type(str string, args ...int) { win.Type(str, args...) }
 // TypeStr type a string.
 func TypeStr(str string, args ...int) { win.TypeStr(str, args...) }
 
-// TypeDelay type a string with delay.
-func TypeDelay(str string, delay int) { win.TypeDelay(str, delay) }
-
-// SetDelay set the default typing delay.
-func SetDelay(d ...int) { win.SetDelay(d...) }
-
-// CmdCtrl lives in robotgo_pub.go (build-tag-free), so it is NOT re-declared here.
+// TypeDelay, SetDelay and CmdCtrl live in robotgo_pub.go (build-tag-free), so
+// they are NOT re-declared here.
 
 // --- Mouse ---
 

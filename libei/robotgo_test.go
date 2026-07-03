@@ -112,6 +112,49 @@ func TestExtractModifiers(t *testing.T) {
 	}
 }
 
+// TestReleaseKeys verifies the upKeyArr-equivalent helper: modifiers are
+// keyed up in reverse order, every code gets a release attempt even after a
+// failure, and errors are propagated.
+func TestReleaseKeys(t *testing.T) {
+	var got []int32
+	err := releaseKeys([]int32{29, 42, 56}, func(code int32) error {
+		got = append(got, code)
+		return nil
+	})
+	if err != nil {
+		t.Fatalf("releaseKeys: unexpected error %v", err)
+	}
+	want := []int32{56, 42, 29}
+	if len(got) != len(want) {
+		t.Fatalf("releaseKeys: got %v, want %v", got, want)
+	}
+	for i := range want {
+		if got[i] != want[i] {
+			t.Errorf("releaseKeys[%d]: got %d, want %d (reverse order)", i, got[i], want[i])
+		}
+	}
+
+	// A failing release must not stop the remaining releases.
+	got = nil
+	err = releaseKeys([]int32{29, 42, 56}, func(code int32) error {
+		got = append(got, code)
+		if code == 42 {
+			return ErrNotSupported
+		}
+		return nil
+	})
+	if err == nil {
+		t.Error("releaseKeys: expected error to propagate")
+	}
+	if len(got) != 3 {
+		t.Errorf("releaseKeys: released %v, want all 3 despite failure", got)
+	}
+
+	if err := releaseKeys(nil, func(int32) error { return ErrNotSupported }); err != nil {
+		t.Errorf("releaseKeys(nil): got %v, want nil", err)
+	}
+}
+
 func TestRuneToKeysym(t *testing.T) {
 	tests := []struct {
 		r    rune

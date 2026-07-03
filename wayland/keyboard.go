@@ -102,11 +102,16 @@ const (
 	keyStatePressed  = 1
 )
 
-// KeyTap taps a key (press + release). Optional modifiers or pid.
+// KeyTap taps a key (press + release). Trailing arguments may be modifier
+// names and an int pid. The pid is accepted for API parity with the other
+// backends but is ignored on Wayland: the virtual keyboard injects into the
+// compositor's focused surface and the protocol exposes no pid mapping,
+// mirroring the X11 path in key/keypress_c.h which also ignores pid.
 //
 //	robotgo.KeyTap("a")
 //	robotgo.KeyTap("a", "ctrl")
 //	robotgo.KeyTap("a", "ctrl", "shift")
+//	robotgo.KeyTap("a", pid) // pid accepted but ignored
 func KeyTap(key string, args ...interface{}) error {
 	c, err := ensureConn()
 	if err != nil {
@@ -116,28 +121,35 @@ func KeyTap(key string, args ...interface{}) error {
 		return ErrNotSupported
 	}
 
-	modifiers := extractModifiers(args)
-
-	// Press modifiers
-	for _, mod := range modifiers {
-		code, ok := keyToEvdev(mod)
-		if !ok {
-			continue
-		}
-		if err := c.keyboard.Key(timestamp(), code, keyStatePressed); err != nil {
-			return err
-		}
-	}
-
-	// Press and release the key
+	// Resolve the key first so an unknown key can never leave modifiers held.
 	code, ok := keyToEvdev(key)
 	if !ok {
 		return errors.New("robotgo: unknown key: " + key)
 	}
 
+	// Press modifiers, remembering the ones that actually went down so they
+	// are always released (the upKeyArr behavior of the C backend), even when
+	// a later injection fails.
+	var pressed []uint32
+	upMods := func() error {
+		return releaseKeys(pressed, func(mc uint32) error {
+			return c.keyboard.Key(timestamp(), mc, keyStateReleased)
+		})
+	}
+	for _, mod := range extractModifiers(args) {
+		mc, ok := keyToEvdev(mod)
+		if !ok {
+			continue
+		}
+		if err := c.keyboard.Key(timestamp(), mc, keyStatePressed); err != nil {
+			return errors.Join(err, upMods())
+		}
+		pressed = append(pressed, mc)
+	}
+
 	ts := timestamp()
 	if err := c.keyboard.Key(ts, code, keyStatePressed); err != nil {
-		return err
+		return errors.Join(err, upMods())
 	}
 	// Clamp the delay to a non-negative value: a negative KeySleep would skip
 	// the sleep but, more importantly, wrap uint32(KeySleep) into a huge value
@@ -147,28 +159,32 @@ func KeyTap(key string, args ...interface{}) error {
 		ks = 0
 	}
 	time.Sleep(time.Duration(ks) * time.Millisecond)
-	if err := c.keyboard.Key(ts+uint32(ks), code, keyStateReleased); err != nil {
-		return err
-	}
+	err = c.keyboard.Key(ts+uint32(ks), code, keyStateReleased)
 
-	// Release modifiers (reverse order)
-	for i := len(modifiers) - 1; i >= 0; i-- {
-		code, ok := keyToEvdev(modifiers[i])
-		if !ok {
-			continue
-		}
-		if err := c.keyboard.Key(timestamp(), code, keyStateReleased); err != nil {
-			return err
-		}
-	}
-
-	return nil
+	// Release modifiers in reverse order (upKeyArr) even if the key release
+	// failed, so no modifier is left stuck down.
+	return errors.Join(err, upMods())
 }
 
-// KeyToggle toggles a key. Default is "down".
+// releaseKeys keys up the given evdev codes in reverse order via send,
+// mirroring the C backend's upKeyArr(). It keeps going past failures so every
+// key gets a release attempt, and returns the errors it hit (joined).
+func releaseKeys(codes []uint32, send func(code uint32) error) error {
+	var errs []error
+	for i := len(codes) - 1; i >= 0; i-- {
+		if err := send(codes[i]); err != nil {
+			errs = append(errs, err)
+		}
+	}
+	return errors.Join(errs...)
+}
+
+// KeyToggle toggles a key. Default is "down". An int pid may be supplied for
+// API parity but is ignored on Wayland (see KeyTap).
 //
 //	robotgo.KeyToggle("a")        // press
 //	robotgo.KeyToggle("a", "up")  // release
+//	robotgo.KeyToggle("a", pid)   // pid accepted but ignored
 func KeyToggle(key string, args ...interface{}) error {
 	c, err := ensureConn()
 	if err != nil {
@@ -193,14 +209,16 @@ func KeyToggle(key string, args ...interface{}) error {
 	return c.keyboard.Key(timestamp(), code, state)
 }
 
-// KeyDown presses a key down.
+// KeyDown presses a key down. Extra args are forwarded to KeyToggle for API
+// parity with the other backends.
 func KeyDown(key string, args ...interface{}) error {
-	return KeyToggle(key, "down")
+	return KeyToggle(key, append([]interface{}{"down"}, args...)...)
 }
 
-// KeyUp releases a key.
+// KeyUp releases a key. Extra args are forwarded to KeyToggle for API parity
+// with the other backends.
 func KeyUp(key string, args ...interface{}) error {
-	return KeyToggle(key, "up")
+	return KeyToggle(key, append([]interface{}{"up"}, args...)...)
 }
 
 // KeyPress presses a key (down + delay + up).
@@ -208,8 +226,10 @@ func KeyPress(key string, args ...interface{}) error {
 	return KeyTap(key, args...)
 }
 
-// Type types a string character by character.
-// Uses evdev key codes for ASCII characters.
+// Type types a string character by character using evdev key codes for ASCII
+// characters. An optional first int argument (pid) is accepted for API parity
+// but ignored on Wayland: input is injected into the focused surface (see
+// KeyTap), mirroring the X11 path in key/keypress_c.h.
 func Type(str string, args ...int) {
 	for _, ch := range str {
 		key := string(ch)

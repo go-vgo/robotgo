@@ -70,6 +70,39 @@ func TestExtractModifiers(t *testing.T) {
 	}
 }
 
+func TestExtractPid(t *testing.T) {
+	tests := []struct {
+		name string
+		args []interface{}
+		want int
+	}{
+		{"no args", []interface{}{}, 0},
+		{"only modifiers", []interface{}{"ctrl", "shift"}, 0},
+		{"pid first", []interface{}{1234}, 1234},
+		{"pid after modifier", []interface{}{"ctrl", 4321}, 4321},
+		{"first int wins", []interface{}{42, 99}, 42},
+		{"mixed types", []interface{}{"alt", true, 7, "shift"}, 7},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := extractPid(tt.args); got != tt.want {
+				t.Errorf("extractPid(%v): got %d, want %d", tt.args, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestKeyHwndNotPid(t *testing.T) {
+	// With NotPid set, the pid value is treated as an HWND directly.
+	old := NotPid
+	NotPid = true
+	defer func() { NotPid = old }()
+
+	if got := keyHwnd(0x1234); uintptr(got) != 0x1234 {
+		t.Errorf("keyHwnd(0x1234) with NotPid: got %#x, want %#x", uintptr(got), 0x1234)
+	}
+}
+
 func TestMouseButtonFlags(t *testing.T) {
 	tests := []string{"left", "right", "center", "middle", "", "unknown"}
 	for _, btn := range tests {

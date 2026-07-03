@@ -207,21 +207,29 @@ Problema de `go mod vendor`, [golang #26366](https://github.com/golang/go/issues
 
 ## Cgo-free Builds:
 
-RobotGo ofrece backends **100 % Go (sin Cgo)** para Windows, Wayland y libei
-(Linux).
+RobotGo ofrece backends **100 % Go (sin Cgo)** para Windows, macOS, X11,
+Wayland y libei (Linux).
 Exponen la misma API `robotgo`, por lo que tu código no necesita cambios — solo
 una etiqueta de compilación. Estos backends se compilan de forma cruzada con
-`CGO_ENABLED=0` (sin GCC, MinGW ni encabezados X11).
+`CGO_ENABLED=0` (sin GCC, MinGW, Xcode ni encabezados X11).
 
-| Backend                         | Etiqueta de build | Paquete Go                          |
-| ------------------------------- | ----------------- | ----------------------------------- |
-| Windows (sin Cgo)               | `win`             | `github.com/go-vgo/robotgo/win`     |
-| Wayland (Linux, wlroots)        | `wayland`         | `github.com/go-vgo/robotgo/wayland` |
-| libei (Linux, portal GNOME/KDE) | `libei`           | `github.com/go-vgo/robotgo/libei`   |
+| Backend                          | Etiqueta de build | Paquete Go                          |
+| -------------------------------- | ----------------- | ----------------------------------- |
+| Windows (sin Cgo)                | `win`             | `github.com/go-vgo/robotgo/win`     |
+| macOS (Quartz vía purego)        | `mac`             | `github.com/go-vgo/robotgo/darwin`  |
+| X11 (Linux, protocolo X en Go puro) | `x11`          | `github.com/go-vgo/robotgo/x11`     |
+| Wayland (Linux, wlroots)         | `wayland`         | `github.com/go-vgo/robotgo/wayland` |
+| libei (Linux, portal GNOME/KDE)  | `libei`           | `github.com/go-vgo/robotgo/libei`   |
 
 ```sh
 # Windows, sin Cgo / sin MinGW
 CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags win ./...
+
+# macOS, Quartz/CoreGraphics cargado en tiempo de ejecución vía purego (sin Xcode)
+CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -tags mac ./...
+
+# X11, protocolo X en Go puro (XTEST) — sin encabezados X11
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags x11 ./...
 
 # Wayland, compositor basado en wlroots (Sway, Hyprland, Wayfire, ...)
 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags wayland ./...
@@ -231,10 +239,14 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags libei ./...
 ```
 
 Con la etiqueta `win`, el backend Cgo/Win32 predeterminado se excluye y las
-llamadas se reenvían al paquete Go puro `win`; con la etiqueta `wayland`, el
-backend Cgo/X11 se excluye y las llamadas se reenvían al paquete Go puro
-`wayland`; con la etiqueta `libei`, se excluyen tanto el backend Cgo/X11 como el
-backend Wayland wlroots y las llamadas se reenvían al paquete Go puro `libei`.
+llamadas se reenvían al paquete Go puro `win`; con la etiqueta `mac`, el backend
+Cgo/Quartz predeterminado se excluye y las llamadas se reenvían al paquete Go
+puro `darwin` (la gestión de ventanas devuelve `ErrNotSupported`); con la
+etiqueta `x11`, el backend Cgo/X11 se excluye y las llamadas se reenvían al
+paquete Go puro `x11`; con la etiqueta `wayland`, el backend Cgo/X11 se excluye
+y las llamadas se reenvían al paquete Go puro `wayland`; con la etiqueta
+`libei`, se excluyen tanto el backend Cgo/X11 como el backend Wayland wlroots y
+las llamadas se reenvían al paquete Go puro `libei`.
 
 ## [Examples:](https://github.com/go-vgo/robotgo/blob/master/examples)
 

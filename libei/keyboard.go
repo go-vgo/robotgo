@@ -124,39 +124,50 @@ func KeyTap(key string, args ...interface{}) error {
 	if !ok {
 		return errors.New("robotgo/libei: unknown key: " + key)
 	}
-	modifiers := extractModifiers(args)
 
-	// Press modifiers.
-	for _, mod := range modifiers {
+	// Press modifiers, remembering the ones that actually went down so they
+	// are always released (the upKeyArr behavior of the C backend), even when
+	// a later injection fails.
+	var pressed []int32
+	upMods := func() error {
+		return releaseKeys(pressed, func(mc int32) error {
+			return c.inj.keyboardKeycode(mc, stateReleased)
+		})
+	}
+	for _, mod := range extractModifiers(args) {
 		mc, ok := keyToEvdev(mod)
 		if !ok {
 			continue
 		}
 		if err := c.inj.keyboardKeycode(mc, statePressed); err != nil {
-			return err
+			return errors.Join(err, upMods())
 		}
+		pressed = append(pressed, mc)
 	}
 
 	// Press + release the key.
 	if err := c.inj.keyboardKeycode(code, statePressed); err != nil {
-		return err
+		return errors.Join(err, upMods())
 	}
 	time.Sleep(time.Duration(KeySleep) * time.Millisecond)
-	if err := c.inj.keyboardKeycode(code, stateReleased); err != nil {
-		return err
-	}
+	err = c.inj.keyboardKeycode(code, stateReleased)
 
-	// Release modifiers in reverse order.
-	for i := len(modifiers) - 1; i >= 0; i-- {
-		mc, ok := keyToEvdev(modifiers[i])
-		if !ok {
-			continue
-		}
-		if err := c.inj.keyboardKeycode(mc, stateReleased); err != nil {
-			return err
+	// Release modifiers in reverse order (upKeyArr) even if the key release
+	// failed, so no modifier is left stuck down.
+	return errors.Join(err, upMods())
+}
+
+// releaseKeys keys up the given evdev codes in reverse order via send,
+// mirroring the C backend's upKeyArr(). It keeps going past failures so every
+// key gets a release attempt, and returns the errors it hit (joined).
+func releaseKeys(codes []int32, send func(code int32) error) error {
+	var errs []error
+	for i := len(codes) - 1; i >= 0; i-- {
+		if err := send(codes[i]); err != nil {
+			errs = append(errs, err)
 		}
 	}
-	return nil
+	return errors.Join(errs...)
 }
 
 // KeyToggle toggles a key down or up. Default is "down".
@@ -183,11 +194,17 @@ func KeyToggle(key string, args ...interface{}) error {
 	return c.inj.keyboardKeycode(code, state)
 }
 
-// KeyDown presses a key down.
-func KeyDown(key string, args ...interface{}) error { return KeyToggle(key, "down") }
+// KeyDown presses a key down. Extra args are forwarded to KeyToggle for API
+// parity with the other backends.
+func KeyDown(key string, args ...interface{}) error {
+	return KeyToggle(key, append([]interface{}{"down"}, args...)...)
+}
 
-// KeyUp releases a key.
-func KeyUp(key string, args ...interface{}) error { return KeyToggle(key, "up") }
+// KeyUp releases a key. Extra args are forwarded to KeyToggle for API parity
+// with the other backends.
+func KeyUp(key string, args ...interface{}) error {
+	return KeyToggle(key, append([]interface{}{"up"}, args...)...)
+}
 
 // KeyPress presses and releases a key (alias of KeyTap).
 func KeyPress(key string, args ...interface{}) error { return KeyTap(key, args...) }

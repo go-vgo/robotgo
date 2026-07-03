@@ -207,20 +207,28 @@ Problème de `go mod vendor`, [golang #26366](https://github.com/golang/go/issue
 
 ## Cgo-free Builds:
 
-RobotGo fournit des backends **100 % Go (sans Cgo)** pour Windows, Wayland et
-libei (Linux). Ils exposent la même API `robotgo`, votre code n'a donc pas besoin
+RobotGo fournit des backends **100 % Go (sans Cgo)** pour Windows, macOS, X11,
+Wayland et libei (Linux). Ils exposent la même API `robotgo`, votre code n'a donc pas besoin
 d'être modifié — il suffit d'un tag de build. Ces backends se compilent en
-cross-compilation avec `CGO_ENABLED=0` (sans GCC, MinGW ni en-têtes X11).
+cross-compilation avec `CGO_ENABLED=0` (sans GCC, MinGW, Xcode ni en-têtes X11).
 
 | Backend                          | Tag de build | Paquet Go                           |
 | -------------------------------- | ------------ | ----------------------------------- |
 | Windows (sans Cgo)               | `win`        | `github.com/go-vgo/robotgo/win`     |
+| macOS (Quartz via purego)        | `mac`        | `github.com/go-vgo/robotgo/darwin`  |
+| X11 (Linux, protocole X pur Go)  | `x11`        | `github.com/go-vgo/robotgo/x11`     |
 | Wayland (Linux, wlroots)         | `wayland`    | `github.com/go-vgo/robotgo/wayland` |
 | libei (Linux, portail GNOME/KDE) | `libei`      | `github.com/go-vgo/robotgo/libei`   |
 
 ```sh
 # Windows, sans Cgo / sans MinGW
 CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags win ./...
+
+# macOS, Quartz/CoreGraphics chargé à l'exécution via purego (sans Xcode)
+CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -tags mac ./...
+
+# X11, protocole X pur Go (XTEST) — sans en-têtes X11
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags x11 ./...
 
 # Wayland, compositeur basé sur wlroots (Sway, Hyprland, Wayfire, ...)
 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags wayland ./...
@@ -230,10 +238,14 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags libei ./...
 ```
 
 Avec le tag `win`, le backend Cgo/Win32 par défaut est exclu et les appels sont
-redirigés vers le paquet Go pur `win` ; avec le tag `wayland`, le backend Cgo/X11
-est exclu et les appels sont redirigés vers le paquet Go pur `wayland` ; avec le
-tag `libei`, les backends Cgo/X11 et Wayland wlroots sont tous deux exclus et les
-appels sont redirigés vers le paquet Go pur `libei`.
+redirigés vers le paquet Go pur `win` ; avec le tag `mac`, le backend Cgo/Quartz
+par défaut est exclu et les appels sont redirigés vers le paquet Go pur `darwin`
+(la gestion des fenêtres renvoie `ErrNotSupported`) ; avec le tag `x11`, le
+backend Cgo/X11 est exclu et les appels sont redirigés vers le paquet Go pur
+`x11` ; avec le tag `wayland`, le backend Cgo/X11 est exclu et les appels sont
+redirigés vers le paquet Go pur `wayland` ; avec le tag `libei`, les backends
+Cgo/X11 et Wayland wlroots sont tous deux exclus et les appels sont redirigés
+vers le paquet Go pur `libei`.
 
 ## [Examples:](https://github.com/go-vgo/robotgo/blob/master/examples)
 

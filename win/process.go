@@ -15,6 +15,7 @@
 package win
 
 import (
+	"errors"
 	"os"
 	"os/exec"
 	"strings"
@@ -167,6 +168,10 @@ func GetPid() int {
 
 // Kill kills a process by PID.
 func Kill(pid int) error {
+	if pid <= 0 {
+		// A zero or negative pid would signal the whole process group.
+		return errors.New("robotgo: invalid pid")
+	}
 	p, err := os.FindProcess(pid)
 	if err != nil {
 		return err
