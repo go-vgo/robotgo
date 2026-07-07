@@ -9,8 +9,8 @@
 // This file may not be copied, modified, or distributed
 // except according to those terms.
 
-//go:build !windows && !wayland && !libei && !mac && !x11
-// +build !windows,!wayland,!libei,!mac,!x11
+//go:build !windows && !wayland && !libei && !mac && !x11 && !purego
+// +build !windows,!wayland,!libei,!mac,!x11,!purego
 
 package robotgo
 

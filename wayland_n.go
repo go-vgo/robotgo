@@ -1,5 +1,8 @@
-//go:build linux && wayland && !libei
-// +build linux,wayland,!libei
+//go:build linux && (wayland || purego) && !libei && !x11
+// +build linux
+// +build wayland purego
+// +build !libei
+// +build !x11
 
 // Copyright (c) 2016-2026 AtomAI, All rights reserved.
 //
@@ -12,6 +15,12 @@
 // Build it with:
 //
 //	go build -tags wayland ./...
+//
+// or use the cross-platform pure-Go default backends (mac on macOS,
+// win on Windows, wayland on Linux; override with `purego,x11` or
+// `purego,libei` on Linux):
+//
+//	go build -tags purego ./...
 //
 // Under this tag the Cgo/X11 backend (robotgo.go, key.go, screen.go, ...) is
 // excluded via `!wayland` constraints, and the wrappers below forward to the

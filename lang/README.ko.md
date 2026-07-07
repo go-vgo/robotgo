@@ -206,9 +206,9 @@ go1.10.x의 C 파일 컴파일 캐시 문제에 주의하세요, [golang #24355]
 
 ## Cgo-free Builds:
 
-RobotGo는 Windows, macOS, X11, Wayland, libei(Linux)용 **순수 Go(Cgo 없음)** 백엔드를 제공합니다.
-동일한 `robotgo` API를 노출하므로 코드를 변경할 필요 없이 빌드 태그만 지정하면
-됩니다. 이 백엔드는 `CGO_ENABLED=0`으로 크로스 컴파일됩니다(GCC, MinGW, Xcode, X11 헤더 불필요).
+RobotGo는 Windows, macOS, X11, Wayland, libei(Linux)용 **순수 Go(Cgo 없음)** 백엔드를 제공합니다. 현재는 실험적 기능입니다.
+동일한 `robotgo` API를 노출하므로 코드를 변경할 필요 없이 빌드 태그만 지정하면 됩니다.
+이 백엔드는 `CGO_ENABLED=0`으로 크로스 컴파일됩니다(GCC, MinGW, Xcode, X11 헤더 불필요).
 
 | 백엔드                         | 빌드 태그 | Go 패키지                           |
 | ------------------------------ | --------- | ----------------------------------- |
@@ -217,8 +217,14 @@ RobotGo는 Windows, macOS, X11, Wayland, libei(Linux)용 **순수 Go(Cgo 없음)
 | X11(Linux, 순수 Go X 프로토콜) | `x11`     | `github.com/go-vgo/robotgo/x11`     |
 | Wayland(Linux, wlroots)        | `wayland` | `github.com/go-vgo/robotgo/wayland` |
 | libei(Linux, GNOME/KDE portal) | `libei`   | `github.com/go-vgo/robotgo/libei`   |
+| 순수 Go 기본값(모든 플랫폼)    | `purego`  | 위의 `mac`/`win`/`wayland` 선택     |
 
 ```sh
+# 플랫폼별 순수 Go 기본 백엔드, 모든 대상에 하나의 태그 사용:
+# macOS -> mac, Windows -> win, Linux -> wayland(x11/libei와 조합해 재정의 가능)
+go build -tags purego ./...
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags "purego,x11" ./...
+
 # Windows, Cgo / MinGW 불필요
 CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags win ./...
 
@@ -235,13 +241,9 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags wayland ./...
 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags libei ./...
 ```
 
-`win` 태그에서는 기본 Cgo/Win32 백엔드가 제외되고 호출이 순수 Go `win` 패키지로
-전달됩니다. `mac` 태그에서는 기본 Cgo/Quartz 백엔드가 제외되고 호출이 순수 Go `darwin`
-패키지로 전달됩니다(창 관리는 `ErrNotSupported`를 반환합니다). `x11` 태그에서는
-Cgo/X11 백엔드가 제외되고 호출이 순수 Go `x11` 패키지로 전달됩니다. `wayland`
-태그에서는 Cgo/X11 백엔드가 제외되고 호출이 순수 Go `wayland` 패키지로 전달됩니다.
-`libei` 태그에서는 Cgo/X11과 wlroots Wayland 백엔드가 모두 제외되고 호출이 순수 Go
-`libei` 패키지로 전달됩니다.
+`win` 태그에서는 기본 Cgo/Win32 백엔드가 제외되고 호출이 순수 Go `win` 패키지로 전달됩니다. `mac` 태그에서는 기본 Cgo/Quartz 백엔드가 제외되고 호출이 순수 Go `darwin` 패키지로 전달됩니다(창 관리는 `ErrNotSupported`를 반환합니다). `x11` 태그에서는 Cgo/X11 백엔드가 제외되고 호출이 순수 Go `x11` 패키지로 전달됩니다. `wayland` 태그에서는 Cgo/X11 백엔드가 제외되고 호출이 순수 Go `wayland` 패키지로 전달됩니다. `libei` 태그에서는 Cgo/X11과 wlroots Wayland 백엔드가 모두 제외되고 호출이 순수 Go `libei` 패키지로 전달됩니다.
+
+`purego` 태그는 크로스 플랫폼 단축 태그입니다. 모든 플랫폼에서 Cgo 백엔드를 제외하고 대상 OS의 순수 Go 기본 백엔드(macOS는 `mac`, Windows는 `win`, Linux는 `wayland`)를 선택합니다. Linux에서는 `x11` 또는 `libei`와 조합하여(예: `-tags "purego,libei"`) 다른 순수 Go 백엔드를 선택할 수 있습니다.
 
 ## [Examples:](https://github.com/go-vgo/robotgo/blob/master/examples)
 

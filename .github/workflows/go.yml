@@ -28,3 +28,33 @@ jobs:
       - name: Test
         run: go test -v robot_info_test.go
         # run: go test -v .
+
+      - name: Pure Go Test
+        run: go test -v -tags purego .
+
+  purego-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up Go 1.26.0
+        uses: actions/setup-go@v6
+        with:
+          go-version: 1.26.x
+        id: go
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v6
+
+      - name: Get dependencies
+        run: |
+          go get -v -t -d ./...
+
+      - name: Pure Go X11 Test
+        run: go test -v -tags "purego,x11" . ./x11
+        env:
+          CGO_ENABLED: 0
+
+      - name: Pure Go libei Test
+        run: go test -v -tags "purego,libei" . ./libei
+        env:
+          CGO_ENABLED: 0

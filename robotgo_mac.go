@@ -9,8 +9,8 @@
 // This file may not be copied, modified, or distributed
 // except according to those terms.
 
-//go:build darwin && !mac
-// +build darwin,!mac
+//go:build darwin && !mac && !purego
+// +build darwin,!mac,!purego
 
 package robotgo
 

@@ -1,5 +1,6 @@
-//go:build windows && win
-// +build windows,win
+//go:build windows && (win || purego)
+// +build windows
+// +build win purego
 
 // Copyright (c) 2016-2026 AtomAI, All rights reserved.
 //
@@ -12,6 +13,11 @@
 // Build it with:
 //
 //	go build -tags win ./...
+//
+// or use the cross-platform pure-Go default backends (mac on macOS,
+// win on Windows, wayland on Linux):
+//
+//	go build -tags purego ./...
 //
 // Under this tag the default Cgo backend (robotgo.go, key.go, screen.go, ...)
 // is excluded via `!win` constraints, and the wrappers below forward to the

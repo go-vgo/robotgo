@@ -215,15 +215,21 @@ and libei (Linux), it's experimental. They expose the same `robotgo` API, so you
 only a build tag. These backends cross-compile with `CGO_ENABLED=0` (no GCC,
 MinGW, Xcode, or X11 headers required).
 
-| Backend                         | Build tag | Go package                          |
-| ------------------------------- | --------- | ----------------------------------- |
-| Windows (Cgo-free)              | `win`     | `github.com/go-vgo/robotgo/win`     |
-| macOS (Quartz via purego)       | `mac`     | `github.com/go-vgo/robotgo/darwin`  |
-| X11 (Linux, pure-Go X protocol) | `x11`     | `github.com/go-vgo/robotgo/x11`     |
-| Wayland (Linux, wlroots)        | `wayland` | `github.com/go-vgo/robotgo/wayland` |
-| libei (Linux, GNOME/KDE portal) | `libei`   | `github.com/go-vgo/robotgo/libei`   |
+| Backend                          | Build tag | Go package                          |
+| -------------------------------- | --------- | ----------------------------------- |
+| Windows (Cgo-free)               | `win`     | `github.com/go-vgo/robotgo/win`     |
+| macOS (Quartz via purego)        | `mac`     | `github.com/go-vgo/robotgo/darwin`  |
+| X11 (Linux, pure-Go X protocol)  | `x11`     | `github.com/go-vgo/robotgo/x11`     |
+| Wayland (Linux, wlroots)         | `wayland` | `github.com/go-vgo/robotgo/wayland` |
+| libei (Linux, GNOME/KDE portal)  | `libei`   | `github.com/go-vgo/robotgo/libei`   |
+| Pure-Go default (all platforms)  | `purego`  | selects `mac`/`win`/`wayland` above |
 
 ```sh
+# Pure-Go default backend per platform, one tag for all targets:
+# macOS -> mac, Windows -> win, Linux -> wayland (combine with x11/libei to override)
+go build -tags purego ./...
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags "purego,x11" ./...
+
 # Windows, no Cgo / no MinGW required
 CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags win ./...
 
@@ -249,6 +255,12 @@ package; under the `wayland` tag the Cgo/X11 backend is excluded and calls are
 forwarded to the pure-Go `wayland` package; under the `libei` tag both the
 Cgo/X11 and wlroots Wayland backends are excluded and calls are forwarded to
 the pure-Go `libei` package.
+
+The `purego` tag is a cross-platform shortcut: it excludes the Cgo backend
+everywhere and picks the pure-Go default for the target OS — `mac` on macOS,
+`win` on Windows and `wayland` on Linux. On Linux you can combine it with
+`x11` or `libei` (e.g. `-tags "purego,libei"`) to pick a different pure-Go
+backend.
 
 ## [Examples:](https://github.com/go-vgo/robotgo/blob/master/examples)
 

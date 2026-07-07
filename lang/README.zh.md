@@ -204,7 +204,7 @@ go get -u github.com/go-vgo/robotgo
 
 ## Cgo-free Builds:
 
-RobotGo 为 Windows、macOS、X11、Wayland 和 libei（Linux）提供了 **纯 Go（无 Cgo）** 后端。
+RobotGo 为 Windows、macOS、X11、Wayland 和 libei（Linux）提供了 **纯 Go（无 Cgo）** 后端，当前为实验性功能。
 它们暴露相同的 `robotgo` API，因此你的代码无需改动 —— 只需一个构建标签。
 这些后端可在 `CGO_ENABLED=0` 下交叉编译（无需 GCC、MinGW、Xcode 或 X11 头文件）。
 
@@ -215,8 +215,14 @@ RobotGo 为 Windows、macOS、X11、Wayland 和 libei（Linux）提供了 **纯 
 | X11（Linux，纯 Go X 协议）       | `x11`     | `github.com/go-vgo/robotgo/x11`     |
 | Wayland（Linux，wlroots）        | `wayland` | `github.com/go-vgo/robotgo/wayland` |
 | libei（Linux，GNOME/KDE portal） | `libei`   | `github.com/go-vgo/robotgo/libei`   |
+| 纯 Go 默认（所有平台）           | `purego`  | 选择上面的 `mac`/`win`/`wayland`    |
 
 ```sh
+# 每个平台的纯 Go 默认后端，一个标签适用于所有目标：
+# macOS -> mac，Windows -> win，Linux -> wayland（可与 x11/libei 组合以覆盖）
+go build -tags purego ./...
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags "purego,x11" ./...
+
 # Windows，无需 Cgo / 无需 MinGW
 CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags win ./...
 
@@ -238,6 +244,8 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags libei ./...
 在 `x11` 标签下，Cgo/X11 后端被排除，调用转发到纯 Go 的 `x11` 包；
 在 `wayland` 标签下，Cgo/X11 后端被排除，调用转发到纯 Go 的 `wayland` 包；
 在 `libei` 标签下，Cgo/X11 和 wlroots Wayland 后端均被排除，调用转发到纯 Go 的 `libei` 包。
+
+`purego` 标签是一个跨平台快捷方式：它会在所有平台排除 Cgo 后端，并按目标 OS 选择默认纯 Go 后端 —— macOS 使用 `mac`，Windows 使用 `win`，Linux 使用 `wayland`。在 Linux 上，你可以将它与 `x11` 或 `libei` 组合（例如 `-tags "purego,libei"`）以选择不同的纯 Go 后端。
 
 ## [Examples:](https://github.com/go-vgo/robotgo/blob/master/examples)
 

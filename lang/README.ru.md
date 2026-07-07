@@ -207,20 +207,25 @@ go get -u github.com/go-vgo/robotgo
 
 ## Cgo-free Builds:
 
-RobotGo предоставляет **чистые Go-бэкенды (без Cgo)** для Windows, macOS, X11,
-Wayland и libei (Linux). Они предоставляют тот же API `robotgo`, поэтому ваш код не нуждается в
-изменениях — достаточно тега сборки. Эти бэкенды кросс-компилируются с
-`CGO_ENABLED=0` (без GCC, MinGW, Xcode или заголовков X11).
+RobotGo предоставляет **чистые Go-бэкенды (без Cgo)** для Windows, macOS, X11, Wayland и libei (Linux); это экспериментальная возможность.
+Они предоставляют тот же API `robotgo`, поэтому ваш код не нуждается в изменениях — достаточно тега сборки.
+Эти бэкенды кросс-компилируются с `CGO_ENABLED=0` (без GCC, MinGW, Xcode или заголовков X11).
 
 | Бэкенд                          | Тег сборки | Go-пакет                            |
 | ------------------------------- | ---------- | ----------------------------------- |
 | Windows (без Cgo)               | `win`      | `github.com/go-vgo/robotgo/win`     |
-| macOS (Quartz через purego)    | `mac`      | `github.com/go-vgo/robotgo/darwin`  |
-| X11 (Linux, чистый Go X-протокол) | `x11`  | `github.com/go-vgo/robotgo/x11`     |
+| macOS (Quartz через purego)     | `mac`      | `github.com/go-vgo/robotgo/darwin`  |
+| X11 (Linux, чистый Go X-протокол) | `x11`    | `github.com/go-vgo/robotgo/x11`     |
 | Wayland (Linux, wlroots)        | `wayland`  | `github.com/go-vgo/robotgo/wayland` |
 | libei (Linux, portal GNOME/KDE) | `libei`    | `github.com/go-vgo/robotgo/libei`   |
+| Чистый Go по умолчанию (все платформы) | `purego` | выбирает `mac`/`win`/`wayland` выше |
 
 ```sh
+# Чистый Go-бэкенд по умолчанию для каждой платформы, один тег для всех целей:
+# macOS -> mac, Windows -> win, Linux -> wayland (комбинируйте с x11/libei для переопределения)
+go build -tags purego ./...
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags "purego,x11" ./...
+
 # Windows, без Cgo / без MinGW
 CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags win ./...
 
@@ -237,14 +242,9 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags wayland ./...
 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags libei ./...
 ```
 
-С тегом `win` бэкенд Cgo/Win32 по умолчанию исключается, а вызовы
-перенаправляются в чистый Go-пакет `win`; с тегом `mac` исключается бэкенд
-Cgo/Quartz по умолчанию, а вызовы перенаправляются в чистый Go-пакет `darwin`
-(управление окнами возвращает `ErrNotSupported`); с тегом `x11` исключается
-бэкенд Cgo/X11, а вызовы перенаправляются в чистый Go-пакет `x11`; с тегом
-`wayland` исключается бэкенд Cgo/X11, а вызовы перенаправляются в чистый
-Go-пакет `wayland`; с тегом `libei` исключаются как бэкенд Cgo/X11, так и
-wlroots Wayland бэкенд, а вызовы перенаправляются в чистый Go-пакет `libei`.
+С тегом `win` бэкенд Cgo/Win32 по умолчанию исключается, а вызовы перенаправляются в чистый Go-пакет `win`; с тегом `mac` исключается бэкенд Cgo/Quartz по умолчанию, а вызовы перенаправляются в чистый Go-пакет `darwin` (управление окнами возвращает `ErrNotSupported`); с тегом `x11` исключается бэкенд Cgo/X11, а вызовы перенаправляются в чистый Go-пакет `x11`; с тегом `wayland` исключается бэкенд Cgo/X11, а вызовы перенаправляются в чистый Go-пакет `wayland`; с тегом `libei` исключаются как бэкенд Cgo/X11, так и wlroots Wayland бэкенд, а вызовы перенаправляются в чистый Go-пакет `libei`.
+
+Тег `purego` — это кроссплатформенное сокращение: он везде исключает Cgo-бэкенд и выбирает чистый Go-бэкенд по умолчанию для целевой ОС — `mac` на macOS, `win` на Windows и `wayland` на Linux. В Linux его можно комбинировать с `x11` или `libei` (например, `-tags "purego,libei"`), чтобы выбрать другой чистый Go-бэкенд.
 
 ## [Examples:](https://github.com/go-vgo/robotgo/blob/master/examples)
 

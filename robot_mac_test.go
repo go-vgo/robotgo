@@ -1,5 +1,6 @@
-//go:build darwin && mac
-// +build darwin,mac
+//go:build darwin && (mac || purego)
+// +build darwin
+// +build mac purego
 
 // Copyright (c) 2016-2026 AtomAI, All rights reserved.
 //

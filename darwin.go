@@ -1,5 +1,6 @@
-//go:build darwin && mac
-// +build darwin,mac
+//go:build darwin && (mac || purego)
+// +build darwin
+// +build mac purego
 
 // Copyright (c) 2016-2026 AtomAI, All rights reserved.
 //
@@ -18,6 +19,11 @@
 // Build it with:
 //
 //	go build -tags mac ./...
+//
+// or use the cross-platform pure-Go default backends (mac on macOS,
+// win on Windows, wayland on Linux):
+//
+//	go build -tags purego ./...
 //
 // Under this tag the default Cgo backend (robotgo.go, key.go, robotgo_mac.go,
 // ...) is excluded via `!mac` constraints, and the wrappers below forward to

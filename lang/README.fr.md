@@ -207,10 +207,9 @@ Problème de `go mod vendor`, [golang #26366](https://github.com/golang/go/issue
 
 ## Cgo-free Builds:
 
-RobotGo fournit des backends **100 % Go (sans Cgo)** pour Windows, macOS, X11,
-Wayland et libei (Linux). Ils exposent la même API `robotgo`, votre code n'a donc pas besoin
-d'être modifié — il suffit d'un tag de build. Ces backends se compilent en
-cross-compilation avec `CGO_ENABLED=0` (sans GCC, MinGW, Xcode ni en-têtes X11).
+RobotGo fournit des backends **100 % Go (sans Cgo)** pour Windows, macOS, X11, Wayland et libei (Linux), c'est expérimental.
+Ils exposent la même API `robotgo`, votre code n'a donc pas besoin d'être modifié — il suffit d'un tag de build.
+Ces backends se compilent en cross-compilation avec `CGO_ENABLED=0` (sans GCC, MinGW, Xcode ni en-têtes X11).
 
 | Backend                          | Tag de build | Paquet Go                           |
 | -------------------------------- | ------------ | ----------------------------------- |
@@ -219,8 +218,14 @@ cross-compilation avec `CGO_ENABLED=0` (sans GCC, MinGW, Xcode ni en-têtes X11)
 | X11 (Linux, protocole X pur Go)  | `x11`        | `github.com/go-vgo/robotgo/x11`     |
 | Wayland (Linux, wlroots)         | `wayland`    | `github.com/go-vgo/robotgo/wayland` |
 | libei (Linux, portail GNOME/KDE) | `libei`      | `github.com/go-vgo/robotgo/libei`   |
+| Défaut pur Go (toutes plateformes) | `purego`   | sélectionne `mac`/`win`/`wayland` ci-dessus |
 
 ```sh
+# Backend pur Go par défaut par plateforme, un seul tag pour toutes les cibles :
+# macOS -> mac, Windows -> win, Linux -> wayland (à combiner avec x11/libei pour remplacer)
+go build -tags purego ./...
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags "purego,x11" ./...
+
 # Windows, sans Cgo / sans MinGW
 CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags win ./...
 
@@ -237,15 +242,9 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags wayland ./...
 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags libei ./...
 ```
 
-Avec le tag `win`, le backend Cgo/Win32 par défaut est exclu et les appels sont
-redirigés vers le paquet Go pur `win` ; avec le tag `mac`, le backend Cgo/Quartz
-par défaut est exclu et les appels sont redirigés vers le paquet Go pur `darwin`
-(la gestion des fenêtres renvoie `ErrNotSupported`) ; avec le tag `x11`, le
-backend Cgo/X11 est exclu et les appels sont redirigés vers le paquet Go pur
-`x11` ; avec le tag `wayland`, le backend Cgo/X11 est exclu et les appels sont
-redirigés vers le paquet Go pur `wayland` ; avec le tag `libei`, les backends
-Cgo/X11 et Wayland wlroots sont tous deux exclus et les appels sont redirigés
-vers le paquet Go pur `libei`.
+Avec le tag `win`, le backend Cgo/Win32 par défaut est exclu et les appels sont redirigés vers le paquet Go pur `win` ; avec le tag `mac`, le backend Cgo/Quartz par défaut est exclu et les appels sont redirigés vers le paquet Go pur `darwin` (la gestion des fenêtres renvoie `ErrNotSupported`) ; avec le tag `x11`, le backend Cgo/X11 est exclu et les appels sont redirigés vers le paquet Go pur `x11` ; avec le tag `wayland`, le backend Cgo/X11 est exclu et les appels sont redirigés vers le paquet Go pur `wayland` ; avec le tag `libei`, les backends Cgo/X11 et Wayland wlroots sont tous deux exclus et les appels sont redirigés vers le paquet Go pur `libei`.
+
+Le tag `purego` est un raccourci multiplateforme : il exclut le backend Cgo partout et choisit le backend pur Go par défaut pour l'OS cible — `mac` sur macOS, `win` sur Windows et `wayland` sur Linux. Sous Linux, vous pouvez le combiner avec `x11` ou `libei` (par exemple `-tags "purego,libei"`) pour choisir un autre backend pur Go.
 
 ## [Examples:](https://github.com/go-vgo/robotgo/blob/master/examples)
 
