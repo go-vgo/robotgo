@@ -19,6 +19,8 @@ import (
 	"strings"
 	"time"
 	"unicode/utf16"
+
+	"github.com/vcaesar/keycode"
 )
 
 // KeySleep is the global keyboard delay in milliseconds.
@@ -36,6 +38,14 @@ var letterCodes = map[rune]uint16{
 var digitCodes = map[rune]uint16{
 	'0': 29, '1': 18, '2': 19, '3': 20, '4': 21,
 	'5': 23, '6': 22, '7': 26, '8': 28, '9': 25,
+}
+
+// punctCodes maps the unshifted ANSI punctuation keys to their virtual key
+// codes (kVK_ANSI_Minus, ...). Shifted symbols ("!", "{", ...) resolve via
+// keycode.Special to one of these plus SHIFT.
+var punctCodes = map[rune]uint16{
+	'-': 27, '=': 24, '[': 33, ']': 30, '\\': 42, ';': 41,
+	'\'': 39, ',': 43, '.': 47, '/': 44, '`': 50,
 }
 
 // namedCodes maps robotgo named keys to macOS virtual key codes.
@@ -57,6 +67,11 @@ var namedCodes = map[string]uint16{
 	"f7": 98, "f8": 100, "f9": 101, "f10": 109, "f11": 103, "f12": 111,
 	"f13": 105, "f14": 107, "f15": 113, "f16": 106, "f17": 64, "f18": 79,
 	"f19": 80, "f20": 90,
+
+	"num0": 82, "num1": 83, "num2": 84, "num3": 85, "num4": 86,
+	"num5": 87, "num6": 88, "num7": 89, "num8": 91, "num9": 92,
+	"num.": 65, "num+": 69, "num-": 78, "num*": 67, "num/": 75,
+	"num_enter": 76, "num_equal": 81, "num_clear": 71, "num_lock": 71,
 }
 
 // modifierFlags maps a modifier name to its CGEventFlags mask.
@@ -89,6 +104,15 @@ func keyToCode(key string) (code uint16, flags uint64, ok bool) {
 		}
 		if v, found := digitCodes[c]; found {
 			return v, 0, true
+		}
+		if v, found := punctCodes[c]; found {
+			return v, 0, true
+		}
+		// Shifted symbol ("!" -> "1" + SHIFT).
+		if base, found := keycode.Special[key]; found {
+			if v, _, ok := keyToCode(base); ok {
+				return v, kCGEventFlagMaskShift, true
+			}
 		}
 		// Uppercase letter -> base key + SHIFT.
 		lower := []rune(strings.ToLower(string(c)))
@@ -140,7 +164,9 @@ func sendKeyCode(code uint16, down bool, flags uint64, pid int) {
 	if !loaded {
 		return
 	}
-	ev := cgEventCreateKeyboardEvent(0, code, down)
+	ev := withSource(func(src uintptr) uintptr {
+		return cgEventCreateKeyboardEvent(src, code, down)
+	})
 	if ev == 0 {
 		return
 	}
@@ -157,7 +183,9 @@ func sendUnicode(r rune, down bool, pid int) {
 	if !loaded {
 		return
 	}
-	ev := cgEventCreateKeyboardEvent(0, 0, down)
+	ev := withSource(func(src uintptr) uintptr {
+		return cgEventCreateKeyboardEvent(src, 0, down)
+	})
 	if ev == 0 {
 		return
 	}

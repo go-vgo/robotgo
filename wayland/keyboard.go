@@ -17,6 +17,7 @@ package wayland
 import (
 	"errors"
 	"time"
+	"unicode"
 )
 
 // KeySleep is the global keyboard delay in milliseconds.
@@ -102,6 +103,56 @@ const (
 	keyStatePressed  = 1
 )
 
+// XKB real-modifier masks for the "complete" types the keymap includes.
+const (
+	modShift   = 1 << 0
+	modControl = 1 << 2
+	modAlt     = 1 << 3 // Mod1
+	modSuper   = 1 << 6 // Mod4
+)
+
+// modMask maps a modifier evdev code to its XKB modifier bit.
+var modMask = map[uint32]uint32{
+	42: modShift, 54: modShift, // KEY_LEFTSHIFT / KEY_RIGHTSHIFT
+	29: modControl, 97: modControl, // KEY_LEFTCTRL / KEY_RIGHTCTRL
+	56: modAlt, 100: modAlt, // KEY_LEFTALT / KEY_RIGHTALT
+	125: modSuper, 126: modSuper, // KEY_LEFTMETA / KEY_RIGHTMETA
+}
+
+// sendKey injects one key event and, for modifier keys, follows it with the
+// modifiers request: compositors do not derive the seat's modifier state from
+// virtual key codes, so without it shift/ctrl/alt combos silently misfire.
+func (c *conn) sendKey(ts, code, state uint32) error {
+	return c.do(func() error {
+		if err := c.keyboard.Key(ts, code, state); err != nil {
+			return err
+		}
+		mask, isMod := modMask[code]
+		if !isMod {
+			return nil
+		}
+		if state == keyStatePressed {
+			c.mods |= mask
+		} else {
+			c.mods &^= mask
+		}
+		return c.keyboard.Modifiers(c.mods, 0, 0, 0)
+	})
+}
+
+// resolveKey maps a robotgo key name to its evdev code, treating a single
+// uppercase letter as the lowercase key plus shift (like the Cgo backend).
+func resolveKey(key string) (code uint32, shift bool, ok bool) {
+	if code, ok = keyToEvdev(key); ok {
+		return code, false, true
+	}
+	if r := []rune(key); len(r) == 1 && unicode.IsUpper(r[0]) {
+		code, ok = keyToEvdev(string(unicode.ToLower(r[0])))
+		return code, true, ok
+	}
+	return 0, false, false
+}
+
 // KeyTap taps a key (press + release). Trailing arguments may be modifier
 // names and an int pid. The pid is accepted for API parity with the other
 // backends but is ignored on Wayland: the virtual keyboard injects into the
@@ -122,9 +173,13 @@ func KeyTap(key string, args ...interface{}) error {
 	}
 
 	// Resolve the key first so an unknown key can never leave modifiers held.
-	code, ok := keyToEvdev(key)
+	code, shift, ok := resolveKey(key)
 	if !ok {
 		return errors.New("robotgo: unknown key: " + key)
+	}
+	mods := extractModifiers(args)
+	if shift {
+		mods = append(mods, "shift")
 	}
 
 	// Press modifiers, remembering the ones that actually went down so they
@@ -133,22 +188,22 @@ func KeyTap(key string, args ...interface{}) error {
 	var pressed []uint32
 	upMods := func() error {
 		return releaseKeys(pressed, func(mc uint32) error {
-			return c.keyboard.Key(timestamp(), mc, keyStateReleased)
+			return c.sendKey(timestamp(), mc, keyStateReleased)
 		})
 	}
-	for _, mod := range extractModifiers(args) {
+	for _, mod := range mods {
 		mc, ok := keyToEvdev(mod)
 		if !ok {
 			continue
 		}
-		if err := c.keyboard.Key(timestamp(), mc, keyStatePressed); err != nil {
+		if err := c.sendKey(timestamp(), mc, keyStatePressed); err != nil {
 			return errors.Join(err, upMods())
 		}
 		pressed = append(pressed, mc)
 	}
 
 	ts := timestamp()
-	if err := c.keyboard.Key(ts, code, keyStatePressed); err != nil {
+	if err := c.sendKey(ts, code, keyStatePressed); err != nil {
 		return errors.Join(err, upMods())
 	}
 	// Clamp the delay to a non-negative value: a negative KeySleep would skip
@@ -159,7 +214,7 @@ func KeyTap(key string, args ...interface{}) error {
 		ks = 0
 	}
 	time.Sleep(time.Duration(ks) * time.Millisecond)
-	err = c.keyboard.Key(ts+uint32(ks), code, keyStateReleased)
+	err = c.sendKey(ts+uint32(ks), code, keyStateReleased)
 
 	// Release modifiers in reverse order (upKeyArr) even if the key release
 	// failed, so no modifier is left stuck down.
@@ -201,12 +256,12 @@ func KeyToggle(key string, args ...interface{}) error {
 		}
 	}
 
-	code, ok := keyToEvdev(key)
+	code, _, ok := resolveKey(key)
 	if !ok {
 		return errors.New("robotgo: unknown key: " + key)
 	}
 
-	return c.keyboard.Key(timestamp(), code, state)
+	return c.sendKey(timestamp(), code, state)
 }
 
 // KeyDown presses a key down. Extra args are forwarded to KeyToggle for API

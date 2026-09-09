@@ -144,6 +144,19 @@ var vkMap = map[string]uint16{
 	"f13": win.VK_F13, "f14": win.VK_F14, "f15": win.VK_F15, "f16": win.VK_F16,
 	"f17": win.VK_F17, "f18": win.VK_F18, "f19": win.VK_F19, "f20": win.VK_F20,
 	"f21": win.VK_F21, "f22": win.VK_F22, "f23": win.VK_F23, "f24": win.VK_F24,
+
+	"num0": win.VK_NUMPAD0, "num1": win.VK_NUMPAD1, "num2": win.VK_NUMPAD2,
+	"num3": win.VK_NUMPAD3, "num4": win.VK_NUMPAD4, "num5": win.VK_NUMPAD5,
+	"num6": win.VK_NUMPAD6, "num7": win.VK_NUMPAD7, "num8": win.VK_NUMPAD8,
+	"num9": win.VK_NUMPAD9,
+	"num.": win.VK_DECIMAL, "num+": win.VK_ADD, "num-": win.VK_SUBTRACT,
+	"num*": win.VK_MULTIPLY, "num/": win.VK_DIVIDE, "num_enter": win.VK_RETURN,
+	"num_clear": win.VK_CLEAR,
+
+	"audio_mute": win.VK_VOLUME_MUTE, "audio_vol_down": win.VK_VOLUME_DOWN,
+	"audio_vol_up": win.VK_VOLUME_UP, "audio_play": win.VK_MEDIA_PLAY_PAUSE,
+	"audio_pause": win.VK_MEDIA_PLAY_PAUSE, "audio_stop": win.VK_MEDIA_STOP,
+	"audio_prev": win.VK_MEDIA_PREV_TRACK, "audio_next": win.VK_MEDIA_NEXT_TRACK,
 }
 
 // extendedVKs are the virtual keys that must be sent with the
@@ -156,8 +169,25 @@ var extendedVKs = map[uint16]bool{
 	win.VK_HOME: true, win.VK_END: true,
 	win.VK_PRIOR: true, win.VK_NEXT: true,
 	win.VK_LEFT: true, win.VK_RIGHT: true, win.VK_UP: true, win.VK_DOWN: true,
-	win.VK_NUMLOCK: true, win.VK_SNAPSHOT: true,
+	win.VK_NUMLOCK: true, win.VK_SNAPSHOT: true, win.VK_PAUSE: true,
 	win.VK_LWIN: true, win.VK_RWIN: true, win.VK_APPS: true,
+	win.VK_DIVIDE:      true,
+	win.VK_VOLUME_MUTE: true, win.VK_VOLUME_DOWN: true, win.VK_VOLUME_UP: true,
+	win.VK_MEDIA_PLAY_PAUSE: true, win.VK_MEDIA_STOP: true,
+	win.VK_MEDIA_PREV_TRACK: true, win.VK_MEDIA_NEXT_TRACK: true,
+}
+
+var procMapVirtualKeyW = modUser32.NewProc("MapVirtualKeyW")
+
+// mapvkVkToVsc is the MapVirtualKey translation from VK to scan code.
+const mapvkVkToVsc = 0
+
+// scanCode returns the hardware scan code for a virtual key. Raw-input
+// consumers (games, RDP, low-level hooks) ignore events whose scan code is
+// zero, so it is filled in like the Cgo backend's win32KeyEvent does.
+func scanCode(vk uint16) uint16 {
+	r, _, _ := procMapVirtualKeyW.Call(uintptr(vk), mapvkVkToVsc)
+	return uint16(r)
 }
 
 // keyToVK resolves a robotgo key name to a Win32 virtual-key code plus the
@@ -192,6 +222,7 @@ func sendVK(vk uint16, up bool) {
 		Type: win.INPUT_KEYBOARD,
 		Ki: win.KEYBDINPUT{
 			WVk:     vk,
+			WScan:   scanCode(vk),
 			DwFlags: flags,
 		},
 	}
