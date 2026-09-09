@@ -17,6 +17,7 @@ package libei
 import (
 	"errors"
 	"time"
+	"unicode"
 )
 
 // KeySleep is the global keyboard delay in milliseconds (between press and
@@ -109,6 +110,19 @@ func keyboardReady() (*conn, error) {
 	return c, nil
 }
 
+// resolveKey maps a robotgo key name to its evdev code, treating a single
+// uppercase letter as the lowercase key plus shift (like the Cgo backend).
+func resolveKey(key string) (code int32, shift bool, ok bool) {
+	if code, ok = keyToEvdev(key); ok {
+		return code, false, true
+	}
+	if r := []rune(key); len(r) == 1 && unicode.IsUpper(r[0]) {
+		code, ok = keyToEvdev(string(unicode.ToLower(r[0])))
+		return code, true, ok
+	}
+	return 0, false, false
+}
+
 // KeyTap taps a key (press + release), optionally with modifiers.
 //
 //	KeyTap("a")
@@ -120,9 +134,13 @@ func KeyTap(key string, args ...interface{}) error {
 		return err
 	}
 
-	code, ok := keyToEvdev(key)
+	code, shift, ok := resolveKey(key)
 	if !ok {
 		return errors.New("robotgo/libei: unknown key: " + key)
+	}
+	mods := extractModifiers(args)
+	if shift {
+		mods = append(mods, "shift")
 	}
 
 	// Press modifiers, remembering the ones that actually went down so they
@@ -134,7 +152,7 @@ func KeyTap(key string, args ...interface{}) error {
 			return c.inj.keyboardKeycode(mc, stateReleased)
 		})
 	}
-	for _, mod := range extractModifiers(args) {
+	for _, mod := range mods {
 		mc, ok := keyToEvdev(mod)
 		if !ok {
 			continue
@@ -187,7 +205,7 @@ func KeyToggle(key string, args ...interface{}) error {
 		}
 	}
 
-	code, ok := keyToEvdev(key)
+	code, _, ok := resolveKey(key)
 	if !ok {
 		return errors.New("robotgo/libei: unknown key: " + key)
 	}

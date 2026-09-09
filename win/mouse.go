@@ -178,8 +178,9 @@ func MouseUp(key ...interface{}) error {
 	return Toggle(args...)
 }
 
-// Scroll scrolls the mouse. Positive y scrolls down, negative scrolls up;
-// positive x scrolls right, negative scrolls left. Optional arg: delay ms.
+// Scroll scrolls the mouse by wheel notches. Positive y scrolls up, negative
+// scrolls down; positive x scrolls left, negative scrolls right (matching
+// robotgo's Cgo backend convention). Optional arg: delay ms.
 func Scroll(x, y int, args ...int) {
 	msDelay := 10
 	if len(args) > 0 {
@@ -187,11 +188,13 @@ func Scroll(x, y int, args ...int) {
 	}
 
 	if y != 0 {
-		// Win32 wheel: positive delta scrolls up, so negate for down-positive.
-		sendMouseInput(win.MOUSEEVENTF_WHEEL, uint32(int32(-y*wheelDelta)), 0, 0)
+		// Win32 wheel: positive delta scrolls up, same as robotgo.
+		sendMouseInput(win.MOUSEEVENTF_WHEEL, uint32(int32(y*wheelDelta)), 0, 0)
 	}
 	if x != 0 {
-		sendMouseInput(win.MOUSEEVENTF_HWHEEL, uint32(int32(x*wheelDelta)), 0, 0)
+		// Win32 horizontal wheel: positive delta scrolls right, so negate for
+		// robotgo's left-positive convention.
+		sendMouseInput(win.MOUSEEVENTF_HWHEEL, uint32(int32(-x*wheelDelta)), 0, 0)
 	}
 	if msDelay > 0 {
 		time.Sleep(time.Duration(msDelay) * time.Millisecond)
@@ -207,14 +210,14 @@ func ScrollDir(x int, direction ...interface{}) {
 		}
 	}
 	switch dir {
-	case "up":
-		Scroll(0, -x)
 	case "down":
+		Scroll(0, -x)
+	case "up":
 		Scroll(0, x)
 	case "left":
-		Scroll(-x, 0)
-	case "right":
 		Scroll(x, 0)
+	case "right":
+		Scroll(-x, 0)
 	}
 }
 

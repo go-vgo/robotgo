@@ -24,6 +24,7 @@ import (
 	"time"
 
 	"github.com/vcaesar/go-wayland/client"
+	"golang.org/x/sys/unix"
 
 	"github.com/go-vgo/robotgo/wayland/internal/protocols/wlr_foreign_toplevel"
 	"github.com/go-vgo/robotgo/wayland/internal/protocols/wlr_screencopy"
@@ -33,7 +34,16 @@ import (
 
 // conn holds the singleton Wayland connection and all bound protocol objects.
 type conn struct {
+	// mu guards the Go-side window/output bookkeeping (toplevels, outputs).
 	mu sync.Mutex
+
+	// wl serializes every interaction with the go-wayland Context: the
+	// library keeps an unsynchronized object table, so requests that create
+	// or destroy proxies must never run concurrently with event dispatch.
+	// dispatchLoop holds it while delivering each event, so event handlers
+	// (which already run under it) call proxies directly; every other
+	// goroutine goes through c.do.
+	wl sync.Mutex
 
 	display  *client.Display
 	registry *client.Registry
@@ -52,6 +62,9 @@ type conn struct {
 	toplevels map[uint32]*toplevelInfo
 
 	keymapSet bool
+	// mods is the XKB modifier mask currently held down via the virtual
+	// keyboard; it is reported to the compositor with the modifiers request.
+	mods uint32
 
 	// dispatch loop
 	dispatchDone chan struct{}
@@ -195,16 +208,22 @@ func (c *conn) handleGlobal(e client.RegistryGlobalEvent) {
 		}
 		info := &outputInfo{output: out}
 		out.SetGeometryHandler(func(ge client.OutputGeometryEvent) {
+			c.mu.Lock()
 			info.x = int32(ge.X)
 			info.y = int32(ge.Y)
+			c.mu.Unlock()
 		})
 		out.SetModeHandler(func(me client.OutputModeEvent) {
 			if me.Flags&0x1 != 0 { // WL_OUTPUT_MODE_CURRENT
+				c.mu.Lock()
 				info.width = int32(me.Width)
 				info.height = int32(me.Height)
+				c.mu.Unlock()
 			}
 		})
+		c.mu.Lock()
 		c.outputs = append(c.outputs, info)
+		c.mu.Unlock()
 
 	case wlr_virtual_pointer.ZwlrVirtualPointerManagerV1InterfaceName:
 		c.pointerManager = wlr_virtual_pointer.NewZwlrVirtualPointerManagerV1(c.display.Context())
@@ -262,27 +281,91 @@ func (c *conn) handleNewToplevel(handle *wlr_foreign_toplevel.ZwlrForeignTopleve
 		c.mu.Lock()
 		delete(c.toplevels, handle.ID())
 		c.mu.Unlock()
+		// The handle is inert after closed; release it so the proxy slot and
+		// server resource do not leak for every window that comes and goes.
+		if err := handle.Destroy(); err != nil {
+			log.Printf("robotgo: destroy toplevel handle: %v", err)
+		}
 	})
 }
 
-// roundtrip performs a blocking wl_display.sync roundtrip.
+// roundtrip performs a blocking wl_display.sync roundtrip. It is only used
+// during setup, before the dispatch loop starts.
 func (c *conn) roundtrip() {
-	display := c.display
-	display.Roundtrip()
+	if err := c.display.Roundtrip(); err != nil {
+		log.Printf("robotgo: wayland roundtrip: %v", err)
+	}
 }
 
-// dispatchLoop runs the Wayland event dispatch loop in a background goroutine.
+// do runs fn with exclusive access to the Wayland context. It returns
+// ErrNoConnection once the connection has been closed or its dispatch loop
+// has died, so callers never block on a dead compositor.
+func (c *conn) do(fn func() error) error {
+	if c.closed.Load() {
+		return ErrNoConnection
+	}
+	select {
+	case <-c.dispatchDone:
+		return ErrNoConnection
+	default:
+	}
+	c.wl.Lock()
+	defer c.wl.Unlock()
+	return fn()
+}
+
+// dispatchLoop reads Wayland events in a background goroutine. The socket read
+// happens unlocked; the actual dispatch (which touches the shared object table
+// and runs handlers) is serialized with c.do via c.wl.
 func (c *conn) dispatchLoop() {
 	defer close(c.dispatchDone)
+	ctx := c.display.Context()
 	for {
-		if err := c.display.Context().Dispatch(); err != nil {
-			if c.closed.Load() {
-				return
+		dispatch := ctx.GetDispatch()
+		c.wl.Lock()
+		err := dispatch()
+		c.wl.Unlock()
+		if err != nil {
+			if !c.closed.Load() {
+				log.Printf("robotgo: dispatch error: %v", err)
 			}
-			log.Printf("robotgo: dispatch error: %v", err)
 			return
 		}
 	}
+}
+
+// outputBounds returns the union rectangle of all outputs, which is the
+// coordinate space wlr_virtual_pointer.motion_absolute maps onto when the
+// pointer is not bound to a single output.
+func (c *conn) outputBounds() (x, y, w, h int32) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if len(c.outputs) == 0 {
+		return 0, 0, 0, 0
+	}
+	minX, minY := c.outputs[0].x, c.outputs[0].y
+	maxX, maxY := minX, minY
+	for _, o := range c.outputs {
+		minX = min(minX, o.x)
+		minY = min(minY, o.y)
+		maxX = max(maxX, o.x+o.width)
+		maxY = max(maxY, o.y+o.height)
+	}
+	return minX, minY, maxX - minX, maxY - minY
+}
+
+// output returns a snapshot of output idx (0 when out of range) and whether
+// any output exists.
+func (c *conn) output(idx int) (outputInfo, bool) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if len(c.outputs) == 0 {
+		return outputInfo{}, false
+	}
+	if idx < 0 || idx >= len(c.outputs) {
+		idx = 0
+	}
+	return *c.outputs[idx], true
 }
 
 // timestamp returns a Wayland-compatible millisecond timestamp.
@@ -290,73 +373,43 @@ func timestamp() uint32 {
 	return uint32(time.Now().UnixMilli())
 }
 
-// setupKeymap writes a minimal XKB keymap to a temp file and sends it
-// to the virtual keyboard. This must be done before any key events.
-func (c *conn) setupKeymap() error {
-	// Minimal but complete XKB keymap that maps evdev keycodes directly.
-	// This keymap covers the standard 104-key US layout.
-	keymap := `xkb_keymap {
-	xkb_keycodes "evdev" {
-		minimum = 8;
-		maximum = 255;
-		<ESC> = 9;
-		<AE01> = 10; <AE02> = 11; <AE03> = 12; <AE04> = 13;
-		<AE05> = 14; <AE06> = 15; <AE07> = 16; <AE08> = 17;
-		<AE09> = 18; <AE10> = 19; <AE11> = 20; <AE12> = 21;
-		<BKSP> = 22; <TAB> = 23;
-		<AD01> = 24; <AD02> = 25; <AD03> = 26; <AD04> = 27;
-		<AD05> = 28; <AD06> = 29; <AD07> = 30; <AD08> = 31;
-		<AD09> = 32; <AD10> = 33; <AD11> = 34; <AD12> = 35;
-		<RTRN> = 36; <LCTL> = 37;
-		<AC01> = 38; <AC02> = 39; <AC03> = 40; <AC04> = 41;
-		<AC05> = 42; <AC06> = 43; <AC07> = 44; <AC08> = 45;
-		<AC09> = 46; <AC10> = 47; <AC11> = 48; <TLDE> = 49;
-		<LFSH> = 50; <BKSL> = 51;
-		<AB01> = 52; <AB02> = 53; <AB03> = 54; <AB04> = 55;
-		<AB05> = 56; <AB06> = 57; <AB07> = 58; <AB08> = 59;
-		<AB09> = 60; <AB10> = 61; <RTSH> = 62;
-		<KPMU> = 63; <LALT> = 64; <SPCE> = 65; <CAPS> = 66;
-		<FK01> = 67; <FK02> = 68; <FK03> = 69; <FK04> = 70;
-		<FK05> = 71; <FK06> = 72; <FK07> = 73; <FK08> = 74;
-		<FK09> = 75; <FK10> = 76;
-		<NMLK> = 77; <SCLK> = 78;
-		<KP7> = 79; <KP8> = 80; <KP9> = 81; <KPSU> = 82;
-		<KP4> = 83; <KP5> = 84; <KP6> = 85; <KPAD> = 86;
-		<KP1> = 87; <KP2> = 88; <KP3> = 89; <KP0> = 90;
-		<KPDL> = 91;
-		<FK11> = 95; <FK12> = 96;
-		<KPEN> = 104; <RCTL> = 105; <KPDV> = 106; <PRSC> = 107;
-		<RALT> = 108; <HOME> = 110; <UP> = 111; <PGUP> = 112;
-		<LEFT> = 113; <RGHT> = 114; <END> = 115; <DOWN> = 116;
-		<PGDN> = 117; <INS> = 118; <DELE> = 119;
-		<LWIN> = 133; <RWIN> = 134; <MENU> = 135;
-	};
-	xkb_types "complete" { include "complete" };
-	xkb_compat "complete" { include "complete" };
-	xkb_symbols "us" { include "pc+us+inet(evdev)" };
+// keymap is the XKB keymap installed on the virtual keyboard. It is the same
+// shape `setxkbmap -print` produces: the full evdev keycode set (so every
+// code in evdevKeyMap — F13-F24, media keys, pause, ... — resolves) with the
+// US symbols the key table assumes.
+const keymap = `xkb_keymap {
+	xkb_keycodes { include "evdev+aliases(qwerty)" };
+	xkb_types { include "complete" };
+	xkb_compat { include "complete" };
+	xkb_symbols { include "pc+us+inet(evdev)" };
+	xkb_geometry { include "pc(pc105)" };
 };
 `
-	keymapBytes := []byte(keymap)
-	keymapBytes = append(keymapBytes, 0) // NUL terminate
 
-	dir := os.Getenv("XDG_RUNTIME_DIR")
-	if dir == "" {
-		dir = os.TempDir()
-	}
+// setupKeymap shares the XKB keymap with the compositor through a sealed
+// memfd, as the protocol expects (the compositor mmaps the fd read-only).
+// This must be done before any key events.
+func (c *conn) setupKeymap() error {
+	data := append([]byte(keymap), 0) // NUL terminate
 
-	f, err := os.CreateTemp(dir, "robotgo-keymap-*")
+	fd, err := unix.MemfdCreate("robotgo-keymap", unix.MFD_CLOEXEC|unix.MFD_ALLOW_SEALING)
 	if err != nil {
-		return fmt.Errorf("create keymap temp file: %w", err)
+		return fmt.Errorf("memfd_create keymap: %w", err)
 	}
+	f := os.NewFile(uintptr(fd), "robotgo-keymap")
 	defer f.Close()
-	defer os.Remove(f.Name())
 
-	if _, err := f.Write(keymapBytes); err != nil {
+	if _, err := f.Write(data); err != nil {
 		return fmt.Errorf("write keymap: %w", err)
 	}
+	if _, err := unix.FcntlInt(uintptr(fd), unix.F_ADD_SEALS,
+		unix.F_SEAL_SHRINK|unix.F_SEAL_GROW|unix.F_SEAL_WRITE|unix.F_SEAL_SEAL); err != nil {
+		return fmt.Errorf("seal keymap: %w", err)
+	}
 
-	// The fd must remain valid when sent to the compositor
-	if err := c.keyboard.Keymap(1, int(f.Fd()), uint32(len(keymapBytes))); err != nil {
+	// The fd is duplicated onto the socket by SCM_RIGHTS, so it can be
+	// closed once the request has been written.
+	if err := c.keyboard.Keymap(1, fd, uint32(len(data))); err != nil {
 		return fmt.Errorf("send keymap: %w", err)
 	}
 
@@ -376,6 +429,8 @@ func Close() {
 	globalConn = nil
 	c.closed.Store(true)
 
+	c.wl.Lock()
+	defer c.wl.Unlock()
 	if c.pointer != nil {
 		_ = c.pointer.Destroy()
 	}
@@ -391,5 +446,6 @@ func Close() {
 	if c.toplevelMgr != nil {
 		_ = c.toplevelMgr.Stop()
 	}
+	// Closing the socket unblocks the dispatch goroutine's pending read.
 	_ = c.display.Context().Close()
 }

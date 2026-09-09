@@ -168,6 +168,11 @@ func TestRuneToKeysym(t *testing.T) {
 		{'é', 0xe9},                // Latin-1: keysym == codepoint
 		{'€', 0x20ac | 0x01000000}, // beyond Latin-1: Unicode keysym range
 		{'😀', 0x1f600 | 0x01000000},
+		{'\n', 0xff0d}, // control chars map to function keysyms
+		{'\r', 0xff0d},
+		{'\t', 0xff09},
+		{'\b', 0xff08},
+		{0x1b, 0xff1b},
 	}
 	for _, tt := range tests {
 		if got := runeToKeysym(tt.r); got != tt.want {
@@ -266,7 +271,283 @@ func TestCmdCtrl(t *testing.T) {
 	}
 }
 
+// fakeInjector records injected pointer events; used to test position
+// tracking without a portal.
+type fakeInjector struct {
+	abs  []absCall
+	rel  []relCall
+	axis []axisCall
+	err  error
+}
+
+type absCall struct {
+	stream uint32
+	x, y   float64
+}
+
+type relCall struct{ dx, dy float64 }
+
+type axisCall struct {
+	axis  uint32
+	steps int32
+}
+
+func (f *fakeInjector) keyboardKeycode(int32, uint32) error { return nil }
+func (f *fakeInjector) keyboardKeysym(int32, uint32) error  { return nil }
+func (f *fakeInjector) pointerButton(int32, uint32) error   { return nil }
+func (f *fakeInjector) pointerAxisDiscrete(axis uint32, steps int32) error {
+	f.axis = append(f.axis, axisCall{axis, steps})
+	return f.err
+}
+func (f *fakeInjector) pointerMotion(dx, dy float64) error {
+	f.rel = append(f.rel, relCall{dx, dy})
+	return f.err
+}
+func (f *fakeInjector) pointerMotionAbsolute(s uint32, x, y float64) error {
+	f.abs = append(f.abs, absCall{s, x, y})
+	return f.err
+}
+
+// installFakeConn installs a healthy conn backed by fakeInjector as the global
+// connection so the public API never touches D-Bus during tests.
+func installFakeConn(t *testing.T, streams ...stream) *fakeInjector {
+	t.Helper()
+	inj := &fakeInjector{}
+	connMu.Lock()
+	prev := globalConn
+	globalConn = &conn{devices: deviceKeyboard | devicePointer, streams: streams, inj: inj}
+	connMu.Unlock()
+	t.Cleanup(func() {
+		connMu.Lock()
+		globalConn = prev
+		connMu.Unlock()
+	})
+	return inj
+}
+
+func TestMoveAbsoluteWithStreams(t *testing.T) {
+	inj := installFakeConn(t,
+		stream{nodeID: 1, x: 0, y: 0, width: 1920, height: 1080},
+		stream{nodeID: 2, x: 1920, y: 0, width: 1280, height: 720},
+	)
+
+	if x, y := Location(); x != 0 || y != 0 {
+		t.Fatalf("Location before move: got (%d,%d), want (0,0)", x, y)
+	}
+
+	Move(100, 200)
+	if x, y := Location(); x != 100 || y != 200 {
+		t.Errorf("Location after Move: got (%d,%d), want (100,200)", x, y)
+	}
+
+	// Point on the second monitor must be mapped into that stream's space.
+	Move(2000, 50)
+	if len(inj.abs) != 2 {
+		t.Fatalf("got %d absolute calls, want 2", len(inj.abs))
+	}
+	if got := inj.abs[1]; got.stream != 2 || got.x != 80 || got.y != 50 {
+		t.Errorf("second Move: got %+v, want stream 2 at (80,50)", got)
+	}
+	if x, y := Location(); x != 2000 || y != 50 {
+		t.Errorf("Location: got (%d,%d), want (2000,50)", x, y)
+	}
+
+	// Explicit displayId wins over the containing-stream lookup.
+	Move(10, 10, 1)
+	if got := inj.abs[2]; got.stream != 2 || got.x != -1910 {
+		t.Errorf("Move with displayId=1: got %+v", got)
+	}
+	if len(inj.rel) != 0 {
+		t.Errorf("unexpected relative calls: %+v", inj.rel)
+	}
+}
+
+func TestMoveRelativeTracksPosition(t *testing.T) {
+	inj := installFakeConn(t, stream{nodeID: 1, width: 800, height: 600})
+
+	Move(100, 100)
+	MoveRelative(50, -30)
+	if x, y := Location(); x != 150 || y != 70 {
+		t.Errorf("Location: got (%d,%d), want (150,70)", x, y)
+	}
+	// Clamped to the stream bounds.
+	MoveRelative(10000, 10000)
+	if x, y := Location(); x != 799 || y != 599 {
+		t.Errorf("Location clamped: got (%d,%d), want (799,599)", x, y)
+	}
+	if len(inj.rel) != 2 {
+		t.Errorf("got %d relative calls, want 2", len(inj.rel))
+	}
+}
+
+func TestMoveWithoutStreamsFallsBackToRelative(t *testing.T) {
+	inj := installFakeConn(t)
+
+	// Unknown position: Move first parks the pointer in the corner, then
+	// moves by the delta from (0,0).
+	Move(100, 100)
+	if len(inj.abs) != 0 {
+		t.Fatalf("unexpected absolute calls: %v", inj.abs)
+	}
+	want := []relCall{{-cornerReset, -cornerReset}, {100, 100}}
+	if len(inj.rel) != 2 || inj.rel[0] != want[0] || inj.rel[1] != want[1] {
+		t.Fatalf("Move with unknown position: got %+v, want %+v", inj.rel, want)
+	}
+	if x, y := Location(); x != 100 || y != 100 {
+		t.Errorf("Location: got (%d,%d), want (100,100)", x, y)
+	}
+
+	// Once a position is known, Move works as a plain delta.
+	MoveRelative(10, 20)
+	Move(100, 100)
+	if len(inj.rel) != 4 || inj.rel[3] != (relCall{-10, -20}) {
+		t.Errorf("Move fallback: got %+v, want delta (-10,-20)", inj.rel)
+	}
+	if x, y := Location(); x != 100 || y != 100 {
+		t.Errorf("Location: got (%d,%d), want (100,100)", x, y)
+	}
+
+	// MoveSmooth with an unknown start and no stream jumps via Move.
+	inj2 := installFakeConn(t)
+	if !MoveSmooth(50, 50, 2, 0) {
+		t.Error("MoveSmooth with unknown position must succeed via corner reset")
+	}
+	if x, y := Location(); x != 50 || y != 50 {
+		t.Errorf("Location after MoveSmooth: got (%d,%d), want (50,50)", x, y)
+	}
+	if len(inj2.rel) != 2 {
+		t.Errorf("MoveSmooth jump: got %d relative calls, want 2", len(inj2.rel))
+	}
+}
+
+func TestMoveIntoMonitorGapClamps(t *testing.T) {
+	inj := installFakeConn(t,
+		stream{nodeID: 1, x: 0, y: 0, width: 1000, height: 1000},
+		stream{nodeID: 2, x: 1500, y: 0, width: 1000, height: 1000},
+	)
+	// (1200, 50) lies in the gap: clamp onto stream 0 instead of sending
+	// an out-of-range local coordinate.
+	Move(1200, 50)
+	if len(inj.abs) != 1 || inj.abs[0] != (absCall{1, 999, 50}) {
+		t.Errorf("gap Move: got %+v, want stream 1 at (999,50)", inj.abs)
+	}
+	if x, y := Location(); x != 999 || y != 50 {
+		t.Errorf("Location: got (%d,%d), want (999,50)", x, y)
+	}
+}
+
+func TestScrollSignConvention(t *testing.T) {
+	inj := installFakeConn(t)
+	// robotgo: positive y = up, positive x = left; the portal counts
+	// positive steps as down/right.
+	Scroll(2, 3, 0)
+	ScrollDir(1, "down")
+	ScrollDir(1, "right")
+	want := []axisCall{
+		{axisVertical, -3}, {axisHorizontal, -2},
+		{axisVertical, 1}, {axisHorizontal, 1},
+	}
+	if len(inj.axis) != len(want) {
+		t.Fatalf("got %d axis calls, want %d: %+v", len(inj.axis), len(want), inj.axis)
+	}
+	for i := range want {
+		if inj.axis[i] != want[i] {
+			t.Errorf("axis call %d: got %+v, want %+v", i, inj.axis[i], want[i])
+		}
+	}
+}
+
+func TestResolveKeyUppercase(t *testing.T) {
+	code, shift, ok := resolveKey("A")
+	if !ok || !shift || code != 30 {
+		t.Errorf("resolveKey(A): got (%d,%v,%v), want (30,true,true)", code, shift, ok)
+	}
+	if _, shift, ok := resolveKey("a"); !ok || shift {
+		t.Error("resolveKey(a) must not imply shift")
+	}
+	if _, _, ok := resolveKey("É"); ok {
+		t.Error("resolveKey(É) must be unknown")
+	}
+}
+
+func TestMoveSmoothAbsoluteTarget(t *testing.T) {
+	inj := installFakeConn(t, stream{nodeID: 1, width: 1000, height: 1000})
+
+	Move(0, 0)
+	if !MoveSmooth(100, 50, 4, 0) {
+		t.Fatal("MoveSmooth returned false")
+	}
+	if x, y := Location(); x != 100 || y != 50 {
+		t.Errorf("Location: got (%d,%d), want (100,50)", x, y)
+	}
+	want := []absCall{{1, 0, 0}, {1, 25, 12}, {1, 50, 25}, {1, 75, 37}, {1, 100, 50}}
+	if len(inj.abs) != len(want) {
+		t.Fatalf("got %d absolute calls, want %d: %+v", len(inj.abs), len(want), inj.abs)
+	}
+	for i := range want {
+		if inj.abs[i] != want[i] {
+			t.Errorf("step %d: got %+v, want %+v", i, inj.abs[i], want[i])
+		}
+	}
+
+	// Unknown start + stream: single jump.
+	inj2 := installFakeConn(t, stream{nodeID: 1, width: 1000, height: 1000})
+	if !MoveSmooth(300, 300, 5, 0) {
+		t.Fatal("MoveSmooth jump returned false")
+	}
+	if len(inj2.abs) != 1 {
+		t.Errorf("jump: got %d absolute calls, want 1", len(inj2.abs))
+	}
+}
+
+func TestMoveInjectErrorKeepsPosition(t *testing.T) {
+	inj := installFakeConn(t, stream{nodeID: 1, width: 1000, height: 1000})
+	Move(10, 10)
+	inj.err = ErrNotSupported
+	Move(500, 500)
+	MoveRelative(5, 5)
+	if x, y := Location(); x != 10 || y != 10 {
+		t.Errorf("Location after failed moves: got (%d,%d), want (10,10)", x, y)
+	}
+}
+
+func TestScreenGeometryFromStreams(t *testing.T) {
+	installFakeConn(t,
+		stream{nodeID: 1, x: 0, y: 0, width: 1920, height: 1080},
+		stream{nodeID: 2, x: 1920, y: -200, width: 1280, height: 720},
+	)
+	if w, h := GetScreenSize(); w != 3200 || h != 1280 {
+		t.Errorf("GetScreenSize: got (%d,%d), want (3200,1280)", w, h)
+	}
+	if n := DisplaysNum(); n != 2 {
+		t.Errorf("DisplaysNum: got %d, want 2", n)
+	}
+	r := GetScreenRect(1)
+	if r.X != 1920 || r.Y != -200 || r.W != 1280 || r.H != 720 {
+		t.Errorf("GetScreenRect(1): got %+v", r)
+	}
+	if r := GetScreenRect(7); r != GetScreenRect(0) {
+		t.Errorf("GetScreenRect(out of range): got %+v, want display 0", r)
+	}
+}
+
+func TestCloseMarksUnhealthy(t *testing.T) {
+	installFakeConn(t)
+	c := globalConn
+	if !c.healthy() {
+		t.Fatal("fresh conn must be healthy")
+	}
+	Close()
+	if c.healthy() {
+		t.Error("closed conn must not be healthy")
+	}
+	if globalConn != nil {
+		t.Error("Close must drop the global conn")
+	}
+}
+
 func TestUnsupportedSurface(t *testing.T) {
+	installFakeConn(t)
 	// Screen capture and window management are intentionally unsupported.
 	if _, err := CaptureImg(); err != ErrNotSupported {
 		t.Errorf("CaptureImg: got %v, want ErrNotSupported", err)
@@ -281,7 +562,7 @@ func TestUnsupportedSurface(t *testing.T) {
 		t.Errorf("GetPixelColor: got %q, want 000000", got)
 	}
 	if w, h := GetScreenSize(); w != 0 || h != 0 {
-		t.Errorf("GetScreenSize: got (%d,%d), want (0,0)", w, h)
+		t.Errorf("GetScreenSize without streams: got (%d,%d), want (0,0)", w, h)
 	}
 }
 

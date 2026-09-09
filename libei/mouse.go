@@ -27,27 +27,56 @@ const (
 // MouseSleep is the global mouse delay in milliseconds.
 var MouseSleep = 0
 
+// cornerReset is the relative delta used to park the pointer in the top-left
+// corner when its position is unknown; larger than any screen.
+const cornerReset = 1 << 16
+
 // Move moves the mouse to absolute position (x, y).
 //
-// Absolute positioning through the portal requires a linked ScreenCast stream
-// (NotifyPointerMotionAbsolute). When no stream has been negotiated the portal
-// rejects absolute motion, so this becomes a no-op. Use MoveRelative for
-// reliable cursor movement on this backend.
+// With a linked ScreenCast stream (see LinkScreenCast) the move is sent as
+// NotifyPointerMotionAbsolute on the stream that contains (x, y) — or the one
+// selected by displayId. Without a stream the portal only accepts relative
+// motion, so Move sends a delta from the last tracked position; when no
+// position has been tracked yet the pointer is first parked in the top-left
+// corner with a large relative move so the origin is known.
 func Move(x, y int, displayId ...int) {
 	c, err := pointerReady()
-	if err != nil || len(c.streams) == 0 {
+	if err != nil {
 		return
 	}
 
-	idx := 0
+	if len(c.streams) == 0 {
+		cx, cy, ok := c.position()
+		if !ok {
+			if err := c.inj.pointerMotion(-cornerReset, -cornerReset); err != nil {
+				return
+			}
+			c.setPos(0, 0)
+			cx, cy = 0, 0
+		}
+		if err := c.inj.pointerMotion(float64(x-cx), float64(y-cy)); err == nil {
+			c.setPos(x, y)
+		}
+		mouseDelay()
+		return
+	}
+
+	idx, found := c.streamAt(x, y)
 	if len(displayId) > 0 && displayId[0] >= 0 && displayId[0] < len(c.streams) {
-		idx = displayId[0]
+		idx, found = displayId[0], true
 	}
 	s := c.streams[idx]
-	// Map global coordinates into the stream's local space.
-	lx := float64(x - int(s.x))
-	ly := float64(y - int(s.y))
-	_ = c.inj.pointerMotionAbsolute(s.nodeID, lx, ly)
+	// Map global coordinates into the stream's local space; a point outside
+	// every stream (a gap between monitors) is clamped onto the chosen one
+	// rather than sent as an out-of-range position the portal rejects.
+	lx, ly := x-int(s.x), y-int(s.y)
+	if !found {
+		lx = clamp(lx, 0, int(s.width)-1)
+		ly = clamp(ly, 0, int(s.height)-1)
+	}
+	if err := c.inj.pointerMotionAbsolute(s.nodeID, float64(lx), float64(ly)); err == nil {
+		c.setPos(lx+int(s.x), ly+int(s.y))
+	}
 	mouseDelay()
 }
 
@@ -57,14 +86,18 @@ func MoveRelative(x, y int) {
 	if err != nil {
 		return
 	}
-	_ = c.inj.pointerMotion(float64(x), float64(y))
+	if err := c.inj.pointerMotion(float64(x), float64(y)); err == nil {
+		c.addPos(x, y)
+	}
 	mouseDelay()
 }
 
-// MoveSmooth moves the mouse smoothly using relative steps toward an offset
-// (dx, dy). Because the portal does not expose the absolute cursor position,
-// the arguments are treated as a relative delta and interpolated. Returns true
+// MoveSmooth moves the mouse smoothly to absolute position (x, y). Optional
+// args: steps (default 20), sleep ms between steps (default 5). Returns true
 // on success.
+//
+// When the current position is unknown (no move issued yet) and a stream is
+// linked, it jumps straight to the target; without a stream it returns false.
 func MoveSmooth(x, y int, args ...interface{}) bool {
 	c, err := pointerReady()
 	if err != nil {
@@ -84,24 +117,31 @@ func MoveSmooth(x, y int, args ...interface{}) bool {
 		}
 	}
 
-	var movedX, movedY int
+	sx, sy, known := c.position()
+	if !known {
+		Move(x, y)
+		_, _, known = c.position()
+		return known
+	}
+
 	for i := 1; i <= steps; i++ {
-		tx := x * i / steps
-		ty := y * i / steps
-		dx := tx - movedX
-		dy := ty - movedY
-		movedX, movedY = tx, ty
-		if dx == 0 && dy == 0 {
+		tx := sx + (x-sx)*i/steps
+		ty := sy + (y-sy)*i/steps
+		cx, cy, _ := c.position()
+		if tx == cx && ty == cy {
 			continue
 		}
-		if err := c.inj.pointerMotion(float64(dx), float64(dy)); err != nil {
-			return false
+		if len(c.streams) > 0 {
+			Move(tx, ty)
+		} else {
+			MoveRelative(tx-cx, ty-cy)
 		}
 		if sleepMs > 0 {
 			time.Sleep(time.Duration(sleepMs) * time.Millisecond)
 		}
 	}
-	return true
+	cx, cy, _ := c.position()
+	return cx == x && cy == y
 }
 
 // Click clicks a mouse button. Default is the left button. Pass a bool true to
@@ -182,6 +222,9 @@ func MouseUp(key ...interface{}) error {
 
 // Scroll scrolls the mouse. Positive y scrolls down, negative up; positive x
 // scrolls right, negative left.
+// Scroll scrolls the mouse by wheel notches. Positive y scrolls up, negative
+// scrolls down; positive x scrolls left, negative scrolls right (matching
+// robotgo's Cgo backend convention). Optional arg: delay ms.
 func Scroll(x, y int, args ...int) {
 	c, err := pointerReady()
 	if err != nil {
@@ -192,11 +235,12 @@ func Scroll(x, y int, args ...int) {
 	if len(args) > 0 {
 		msDelay = args[0]
 	}
+	// The portal counts positive steps as down/right.
 	if y != 0 {
-		_ = c.inj.pointerAxisDiscrete(axisVertical, int32(y))
+		_ = c.inj.pointerAxisDiscrete(axisVertical, int32(-y))
 	}
 	if x != 0 {
-		_ = c.inj.pointerAxisDiscrete(axisHorizontal, int32(x))
+		_ = c.inj.pointerAxisDiscrete(axisHorizontal, int32(-x))
 	}
 	if msDelay > 0 {
 		time.Sleep(time.Duration(msDelay) * time.Millisecond)
@@ -212,14 +256,14 @@ func ScrollDir(x int, direction ...interface{}) {
 		}
 	}
 	switch dir {
-	case "up":
-		Scroll(0, -x)
 	case "down":
+		Scroll(0, -x)
+	case "up":
 		Scroll(0, x)
 	case "left":
-		Scroll(-x, 0)
-	case "right":
 		Scroll(x, 0)
+	case "right":
+		Scroll(-x, 0)
 	}
 }
 
@@ -268,9 +312,19 @@ func MoveClick(x, y int, args ...interface{}) {
 }
 
 // Location returns the current mouse position.
-// The RemoteDesktop portal does not expose the global pointer position, so this
-// returns (0, 0).
-func Location() (int, int) { return 0, 0 }
+//
+// The RemoteDesktop portal does not expose the real cursor position, so this
+// returns the last position injected by this backend (Move, MoveRelative,
+// MoveSmooth, ...). It is (0, 0) until the first move and does not follow
+// movement made by the physical mouse.
+func Location() (int, int) {
+	c, err := ensureConn()
+	if err != nil {
+		return 0, 0
+	}
+	x, y, _ := c.position()
+	return x, y
+}
 
 // GetMousePos returns the current mouse position (alias of Location).
 func GetMousePos() (int, int) { return Location() }

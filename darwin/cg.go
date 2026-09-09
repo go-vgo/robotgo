@@ -42,6 +42,11 @@ type CGRect struct {
 // CoreGraphics event tap location.
 const kCGHIDEventTap = 0
 
+// kCGEventSourceStateHIDSystemState is the event source state the Cgo
+// backend creates its events from, so apps that inspect the source treat
+// them like real HID input.
+const kCGEventSourceStateHIDSystemState = 1
+
 // CoreGraphics mouse event types.
 const (
 	kCGEventLeftMouseDown     = 1
@@ -87,6 +92,7 @@ const kCGMouseEventClickState = 1
 // CoreGraphics / Quartz function bindings (loaded via purego).
 var (
 	// Events.
+	cgEventSourceCreate        func(state int32) uintptr
 	cgEventCreate              func(source uintptr) uintptr
 	cgEventCreateMouseEvent    func(source uintptr, mouseType uint32, point CGPoint, button uint32) uintptr
 	cgEventCreateKeyboardEvent func(source uintptr, keycode uint16, keyDown bool) uintptr
@@ -107,6 +113,12 @@ var (
 	cgDisplayPixelsHigh   func(display uint32) uint64
 	cgDisplayBounds       func(display uint32) CGRect
 	cgGetActiveDisplayLst func(maxDisplays uint32, active *uint32, count *uint32) int32
+
+	// Display modes (backing scale).
+	cgDisplayCopyDisplayMode   func(display uint32) uintptr
+	cgDisplayModeGetWidth      func(mode uintptr) uint64
+	cgDisplayModeGetPixelWidth func(mode uintptr) uint64
+	cgDisplayModeRelease       func(mode uintptr)
 
 	// Screen capture.
 	cgDisplayCreateImageForRect func(display uint32, rect CGRect) uintptr
@@ -149,6 +161,7 @@ func init() {
 		}
 	}()
 
+	purego.RegisterLibFunc(&cgEventSourceCreate, cg, "CGEventSourceCreate")
 	purego.RegisterLibFunc(&cgEventCreate, cg, "CGEventCreate")
 	purego.RegisterLibFunc(&cgEventCreateMouseEvent, cg, "CGEventCreateMouseEvent")
 	purego.RegisterLibFunc(&cgEventCreateKeyboardEvent, cg, "CGEventCreateKeyboardEvent")
@@ -166,6 +179,11 @@ func init() {
 	purego.RegisterLibFunc(&cgDisplayBounds, cg, "CGDisplayBounds")
 	purego.RegisterLibFunc(&cgGetActiveDisplayLst, cg, "CGGetActiveDisplayList")
 
+	purego.RegisterLibFunc(&cgDisplayCopyDisplayMode, cg, "CGDisplayCopyDisplayMode")
+	purego.RegisterLibFunc(&cgDisplayModeGetWidth, cg, "CGDisplayModeGetWidth")
+	purego.RegisterLibFunc(&cgDisplayModeGetPixelWidth, cg, "CGDisplayModeGetPixelWidth")
+	purego.RegisterLibFunc(&cgDisplayModeRelease, cg, "CGDisplayModeRelease")
+
 	purego.RegisterLibFunc(&cgDisplayCreateImageForRect, cg, "CGDisplayCreateImageForRect")
 	purego.RegisterLibFunc(&cgImageGetWidth, cg, "CGImageGetWidth")
 	purego.RegisterLibFunc(&cgImageGetHeight, cg, "CGImageGetHeight")
@@ -179,6 +197,18 @@ func init() {
 	purego.RegisterLibFunc(&cfRelease, cf, "CFRelease")
 
 	loaded = true
+}
+
+// withSource runs create with a HID-system-state event source (mirroring the
+// Cgo backend) and releases the source afterwards. A nil source (0) is used
+// if the source cannot be created.
+func withSource(create func(source uintptr) uintptr) uintptr {
+	source := cgEventSourceCreate(kCGEventSourceStateHIDSystemState)
+	ev := create(source)
+	if source != 0 {
+		cfRelease(source)
+	}
+	return ev
 }
 
 // postEvent posts a CoreGraphics event to the global HID event tap and
