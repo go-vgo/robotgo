@@ -16,6 +16,7 @@ package wayland
 
 import (
 	"math"
+	"sync"
 	"time"
 )
 
@@ -36,36 +37,58 @@ const (
 const (
 	axisVerticalScroll   = 0
 	axisHorizontalScroll = 1
+
+	// WL_POINTER_AXIS_SOURCE_WHEEL; one wheel notch is 15 axis units.
+	axisSourceWheel = 0
+	wheelStep       = 15.0
 )
 
 // MouseSleep is the global mouse delay in milliseconds.
 var MouseSleep = 0
 
-// Move moves the mouse to absolute position (x, y).
-// An optional displayId selects which output to position against.
+// Last pointer position injected by this backend; see Location.
+var (
+	posMu      sync.Mutex
+	posX, posY int
+)
+
+func setPos(x, y int) {
+	posMu.Lock()
+	posX, posY = x, y
+	posMu.Unlock()
+}
+
+// warp sends one absolute motion + frame. motion_absolute is normalized
+// against the whole output layout (that is what wlroots maps a virtual
+// pointer onto), so the extent is the union of all outputs and the
+// coordinates are made relative to its origin.
+func (c *conn) warp(x, y int) {
+	ox, oy, ow, oh := c.outputBounds()
+	if ow <= 0 || oh <= 0 {
+		ox, oy, ow, oh = 0, 0, 1920, 1080
+	}
+	cx := clampExtent(x-int(ox), uint32(ow))
+	cy := clampExtent(y-int(oy), uint32(oh))
+	err := c.do(func() error {
+		if err := c.pointer.MotionAbsolute(timestamp(), cx, cy, uint32(ow), uint32(oh)); err != nil {
+			return err
+		}
+		return c.pointer.Frame()
+	})
+	if err == nil {
+		setPos(int(cx)+int(ox), int(cy)+int(oy))
+	}
+}
+
+// Move moves the mouse to absolute position (x, y) in layout coordinates.
+// The optional displayId is accepted for API parity; outputs share one
+// layout on Wayland so it does not change the target.
 func Move(x, y int, displayId ...int) {
 	c, err := ensureConn()
 	if err != nil || c.pointer == nil {
 		return
 	}
-
-	// Select the output to use for the absolute-positioning extent.
-	idx := 0
-	if len(displayId) > 0 && displayId[0] >= 0 && displayId[0] < len(c.outputs) {
-		idx = displayId[0]
-	}
-
-	var xExtent, yExtent uint32 = 1920, 1080
-	if idx < len(c.outputs) {
-		o := c.outputs[idx]
-		if o.width > 0 && o.height > 0 {
-			xExtent = uint32(o.width)
-			yExtent = uint32(o.height)
-		}
-	}
-
-	_ = c.pointer.MotionAbsolute(timestamp(), clampExtent(x, xExtent), clampExtent(y, yExtent), xExtent, yExtent)
-	_ = c.pointer.Frame()
+	c.warp(x, y)
 	mouseDelay()
 }
 
@@ -76,12 +99,23 @@ func MoveRelative(x, y int) {
 		return
 	}
 
-	_ = c.pointer.Motion(timestamp(), float64(x), float64(y))
-	_ = c.pointer.Frame()
+	err = c.do(func() error {
+		if err := c.pointer.Motion(timestamp(), float64(x), float64(y)); err != nil {
+			return err
+		}
+		return c.pointer.Frame()
+	})
+	if err == nil {
+		posMu.Lock()
+		posX += x
+		posY += y
+		posMu.Unlock()
+	}
 	mouseDelay()
 }
 
-// MoveSmooth moves the mouse smoothly to (x, y) with a human-like curve.
+// MoveSmooth moves the mouse smoothly from the last injected position to
+// (x, y) with an ease-in-out curve. Optional args: steps (int), sleepMs (int).
 // Returns true on success.
 func MoveSmooth(x, y int, args ...interface{}) bool {
 	c, err := ensureConn()
@@ -103,16 +137,11 @@ func MoveSmooth(x, y int, args ...interface{}) bool {
 			sleepMs = v
 		}
 	}
-
-	var xExtent, yExtent uint32 = 1920, 1080
-	if len(c.outputs) > 0 {
-		o := c.outputs[0]
-		if o.width > 0 && o.height > 0 {
-			xExtent = uint32(o.width)
-			yExtent = uint32(o.height)
-		}
+	if steps < 1 {
+		steps = 1
 	}
 
+	sx, sy := Location()
 	// Smooth interpolation using ease-in-out
 	for i := 1; i <= steps; i++ {
 		t := float64(i) / float64(steps)
@@ -123,13 +152,23 @@ func MoveSmooth(x, y int, args ...interface{}) bool {
 			t = 1 - math.Pow(-2*t+2, 3)/2
 		}
 
-		cx := clampExtent(int(float64(x)*t), xExtent)
-		cy := clampExtent(int(float64(y)*t), yExtent)
-		_ = c.pointer.MotionAbsolute(timestamp(), cx, cy, xExtent, yExtent)
-		_ = c.pointer.Frame()
+		cx := float64(sx) + float64(x-sx)*t
+		cy := float64(sy) + float64(y-sy)*t
+		c.warp(int(math.Round(cx)), int(math.Round(cy)))
 		time.Sleep(time.Duration(sleepMs) * time.Millisecond)
 	}
+	mouseDelay()
 	return true
+}
+
+// button sends one button event + frame under the connection lock.
+func (c *conn) button(ts uint32, button int, state uint32) error {
+	return c.do(func() error {
+		if err := c.pointer.Button(ts, uint32(button), state); err != nil {
+			return err
+		}
+		return c.pointer.Frame()
+	})
 }
 
 // Click clicks a mouse button. Default is left button.
@@ -162,15 +201,13 @@ func Click(args ...interface{}) error {
 
 	for i := 0; i < count; i++ {
 		ts := timestamp()
-		if err := c.pointer.Button(ts, uint32(button), buttonPressed); err != nil {
+		if err := c.button(ts, button, buttonPressed); err != nil {
 			return err
 		}
-		_ = c.pointer.Frame()
 		time.Sleep(10 * time.Millisecond)
-		if err := c.pointer.Button(ts+10, uint32(button), buttonReleased); err != nil {
+		if err := c.button(ts+10, button, buttonReleased); err != nil {
 			return err
 		}
-		_ = c.pointer.Frame()
 		if i < count-1 {
 			time.Sleep(50 * time.Millisecond)
 		}
@@ -207,10 +244,7 @@ func Toggle(key ...interface{}) error {
 		}
 	}
 
-	if err := c.pointer.Button(timestamp(), uint32(button), state); err != nil {
-		return err
-	}
-	return c.pointer.Frame()
+	return c.button(timestamp(), button, state)
 }
 
 // MouseDown sends a mouse button down event.
@@ -227,7 +261,9 @@ func MouseUp(key ...interface{}) error {
 	return Toggle(args...)
 }
 
-// Scroll scrolls the mouse. Positive y scrolls down, negative scrolls up.
+// Scroll scrolls the mouse by wheel notches. Positive y scrolls up, negative
+// scrolls down; positive x scrolls left, negative scrolls right (matching
+// robotgo's Cgo backend convention). Optional arg: delay ms.
 func Scroll(x, y int, args ...int) {
 	c, err := ensureConn()
 	if err != nil || c.pointer == nil {
@@ -239,14 +275,27 @@ func Scroll(x, y int, args ...int) {
 		msDelay = args[0]
 	}
 
+	// wl_pointer axis values are positive towards down/right, so robotgo's
+	// up/left-positive notches are negated. axis_source must precede the
+	// axis events and axis_discrete carries the notch count that clients
+	// which only handle discrete (wheel) scrolling rely on.
 	ts := timestamp()
-	if y != 0 {
-		_ = c.pointer.Axis(ts, axisVerticalScroll, float64(y)*15.0)
-	}
-	if x != 0 {
-		_ = c.pointer.Axis(ts, axisHorizontalScroll, float64(x)*15.0)
-	}
-	_ = c.pointer.Frame()
+	_ = c.do(func() error {
+		if err := c.pointer.AxisSource(axisSourceWheel); err != nil {
+			return err
+		}
+		if y != 0 {
+			if err := c.pointer.AxisDiscrete(ts, axisVerticalScroll, float64(-y)*wheelStep, int32(-y)); err != nil {
+				return err
+			}
+		}
+		if x != 0 {
+			if err := c.pointer.AxisDiscrete(ts, axisHorizontalScroll, float64(-x)*wheelStep, int32(-x)); err != nil {
+				return err
+			}
+		}
+		return c.pointer.Frame()
+	})
 	if msDelay > 0 {
 		time.Sleep(time.Duration(msDelay) * time.Millisecond)
 	}
@@ -261,14 +310,14 @@ func ScrollDir(x int, direction ...interface{}) {
 		}
 	}
 	switch dir {
-	case "up":
-		Scroll(0, -x)
 	case "down":
+		Scroll(0, -x)
+	case "up":
 		Scroll(0, x)
 	case "left":
-		Scroll(-x, 0)
-	case "right":
 		Scroll(x, 0)
+	case "right":
+		Scroll(-x, 0)
 	}
 }
 
@@ -294,16 +343,17 @@ func MoveClick(x, y int, args ...interface{}) {
 }
 
 // Location returns the current mouse position.
-// NOTE: Wayland does not expose global pointer position.
-// This returns (0, 0) as a stub — position tracking would require
-// a RemoteDesktop portal session.
+// NOTE: Wayland does not expose the global pointer position, so this returns
+// the last position injected by this backend (Move, MoveRelative, MoveSmooth).
+// It is (0, 0) until the first move and does not follow the physical mouse.
 func Location() (int, int) {
-	return 0, 0
+	posMu.Lock()
+	defer posMu.Unlock()
+	return posX, posY
 }
 
 // GetMousePos returns the current mouse position.
 // It is an alias of Location, mirroring the robotgo API.
-// NOTE: Wayland does not expose global pointer position; returns (0, 0).
 func GetMousePos() (int, int) {
 	return Location()
 }

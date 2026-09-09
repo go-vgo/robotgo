@@ -34,9 +34,24 @@ const (
 	portalPath = "/org/freedesktop/portal/desktop"
 
 	ifaceRemoteDesktop = "org.freedesktop.portal.RemoteDesktop"
+	ifaceScreenCast    = "org.freedesktop.portal.ScreenCast"
 	ifaceRequest       = "org.freedesktop.portal.Request"
 	ifaceSession       = "org.freedesktop.portal.Session"
 )
+
+// ScreenCast SelectSources option values.
+const (
+	sourceMonitor    uint32 = 1 // types: MONITOR
+	cursorModeHidden uint32 = 1 // cursor_mode: HIDDEN
+)
+
+// LinkScreenCast controls whether the portal session also negotiates a
+// ScreenCast monitor source (org.freedesktop.portal.ScreenCast.SelectSources).
+// A linked stream is what makes absolute pointer motion (Move, MoveSmooth to a
+// target) and screen geometry (GetScreenSize, GetScreenRect) available; without
+// it only relative motion works. Set to false before the first call to skip the
+// extra "share screen" consent. Default true.
+var LinkScreenCast = true
 
 // RemoteDesktop device-type bitmask (SelectDevices "types").
 const (
@@ -106,6 +121,13 @@ type conn struct {
 	streams []stream
 
 	inj injector
+
+	// Last pointer position injected through this session. The portal never
+	// reports the real cursor position, so this is the best available answer
+	// for Location. posKnown is false until an absolute move has happened.
+	posX, posY int
+	posKnown   bool
+	closed     bool
 }
 
 // stream describes a ScreenCast PipeWire stream linked to the session. It is
@@ -146,11 +168,73 @@ func ensureConn() (*conn, error) {
 	return globalConn, nil
 }
 
-// healthy reports whether the connection still has a live session bus.
+// healthy reports whether the connection has not been closed.
 func (c *conn) healthy() bool {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	return c.bus != nil
+	return !c.closed
+}
+
+// position returns the tracked pointer position and whether it is known.
+func (c *conn) position() (int, int, bool) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	return c.posX, c.posY, c.posKnown
+}
+
+// setPos records an absolute pointer position.
+func (c *conn) setPos(x, y int) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.posX, c.posY, c.posKnown = x, y, true
+}
+
+// addPos applies a relative delta to the tracked position, clamped to the
+// linked stream bounds when they are known.
+func (c *conn) addPos(dx, dy int) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.posX += dx
+	c.posY += dy
+	c.posKnown = true
+	if r, ok := c.bounds(); ok {
+		c.posX = clamp(c.posX, r.X, r.X+r.W-1)
+		c.posY = clamp(c.posY, r.Y, r.Y+r.H-1)
+	}
+}
+
+// bounds returns the union rectangle of all linked streams.
+func (c *conn) bounds() (Rect, bool) {
+	if len(c.streams) == 0 {
+		return Rect{}, false
+	}
+	minX, minY := int(c.streams[0].x), int(c.streams[0].y)
+	maxX, maxY := minX, minY
+	for _, s := range c.streams {
+		minX = min(minX, int(s.x))
+		minY = min(minY, int(s.y))
+		maxX = max(maxX, int(s.x+s.width))
+		maxY = max(maxY, int(s.y+s.height))
+	}
+	return Rect{Point{minX, minY}, Size{maxX - minX, maxY - minY}}, true
+}
+
+// streamAt returns the index of the stream containing (x, y). When no stream
+// contains the point it reports ok=false and the caller clamps into stream 0.
+func (c *conn) streamAt(x, y int) (int, bool) {
+	for i, s := range c.streams {
+		if x >= int(s.x) && x < int(s.x+s.width) && y >= int(s.y) && y < int(s.y+s.height) {
+			return i, true
+		}
+	}
+	return 0, false
+}
+
+func clamp(v, lo, hi int) int {
+	if hi < lo {
+		return lo
+	}
+	return min(max(v, lo), hi)
 }
 
 // newConn connects to the session bus and runs the
@@ -175,13 +259,50 @@ func newConn() (*conn, error) {
 		_ = bus.Close()
 		return nil, err
 	}
+	if LinkScreenCast {
+		// Non-fatal: without a stream the backend still supports relative
+		// motion, buttons, scroll and keyboard.
+		if err := c.selectSources(); err != nil {
+			log.Printf("robotgo/libei: link ScreenCast (absolute Move disabled): %v", err)
+		}
+	}
 	if err := c.start(); err != nil {
 		_ = bus.Close()
 		return nil, err
 	}
 
 	c.inj = &notifyInjector{c: c}
+	c.watchSession()
 	return c, nil
+}
+
+// watchSession marks the connection closed when the portal ends the session
+// (org.freedesktop.portal.Session.Closed, e.g. the user stops sharing), so
+// ensureConn transparently negotiates a fresh one instead of reusing a dead
+// handle. The goroutine exits when the bus is closed (godbus closes the
+// channel) or the signal arrives.
+func (c *conn) watchSession() {
+	if err := c.bus.AddMatchSignal(
+		dbus.WithMatchObjectPath(c.sessionHandle),
+		dbus.WithMatchInterface(ifaceSession),
+		dbus.WithMatchMember("Closed"),
+	); err != nil {
+		log.Printf("robotgo/libei: watch session: %v", err)
+		return
+	}
+	ch := make(chan *dbus.Signal, 4)
+	c.bus.Signal(ch)
+	go func() {
+		defer c.bus.RemoveSignal(ch)
+		for sig := range ch {
+			if sig.Path == c.sessionHandle && sig.Name == ifaceSession+".Closed" {
+				c.mu.Lock()
+				c.closed = true
+				c.mu.Unlock()
+				return
+			}
+		}
+	}()
 }
 
 // nextToken returns a process-unique token usable as a portal handle_token.
@@ -202,6 +323,11 @@ func (c *conn) escapedSender() string {
 // results vardict. It subscribes to the predicted Response signal before making
 // the call to avoid a race where the response fires first.
 func (c *conn) callPortal(method string, args ...interface{}) (map[string]dbus.Variant, error) {
+	return c.callPortalOn(ifaceRemoteDesktop, method, args...)
+}
+
+// callPortalOn is callPortal for an arbitrary portal interface.
+func (c *conn) callPortalOn(iface, method string, args ...interface{}) (map[string]dbus.Variant, error) {
 	token := nextToken("req")
 	reqPath := dbus.ObjectPath(fmt.Sprintf(
 		"/org/freedesktop/portal/desktop/request/%s/%s", c.escapedSender(), token))
@@ -234,7 +360,7 @@ func (c *conn) callPortal(method string, args ...interface{}) (map[string]dbus.V
 	}
 
 	var returnedPath dbus.ObjectPath
-	call := c.obj.Call(ifaceRemoteDesktop+"."+method, 0, args...)
+	call := c.obj.Call(iface+"."+method, 0, args...)
 	if call.Err != nil {
 		return nil, fmt.Errorf("%w: %s: %v", ErrNoConnection, method, call.Err)
 	}
@@ -316,6 +442,20 @@ func (c *conn) selectDevices() error {
 		opts["restore_token"] = dbus.MakeVariant(tok)
 	}
 	_, err := c.callPortal("SelectDevices", c.sessionHandle, opts)
+	return err
+}
+
+// selectSources links a ScreenCast monitor source to the RemoteDesktop
+// session so Start returns a stream usable for NotifyPointerMotionAbsolute.
+// persist_mode/restore_token must NOT be passed here: the portal rejects them
+// for remote desktop sessions (they are handled by SelectDevices).
+func (c *conn) selectSources() error {
+	opts := map[string]dbus.Variant{
+		"types":       dbus.MakeVariant(sourceMonitor),
+		"multiple":    dbus.MakeVariant(true),
+		"cursor_mode": dbus.MakeVariant(cursorModeHidden),
+	}
+	_, err := c.callPortalOn(ifaceScreenCast, "SelectSources", c.sessionHandle, opts)
 	return err
 }
 
@@ -401,6 +541,7 @@ func Close() {
 
 	c.mu.Lock()
 	defer c.mu.Unlock()
+	c.closed = true
 	if c.bus != nil {
 		// Best-effort close of the session object.
 		_ = c.bus.Object(portalDest, c.sessionHandle).

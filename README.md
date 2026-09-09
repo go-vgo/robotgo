@@ -181,7 +181,11 @@ xdg-desktop-portal-gnome / -kde  (your desktop's portal backend)
 ```
 
 Note: the libei backend handles mouse and keyboard input only. Screen capture and
-window management report `ErrNotSupported`.
+window management report `ErrNotSupported`. Absolute `Move` uses a ScreenCast
+monitor stream linked to the session (the first-run consent dialog covers both);
+set `libei.LinkScreenCast = false` to opt out and keep relative motion only.
+The portal never exposes the physical cursor, so `Location()` returns the last
+position injected by robotgo, not movement made with the real mouse.
 
 ## Installation:
 
