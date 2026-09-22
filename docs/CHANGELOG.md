@@ -1,6 +1,18 @@
 # CHANGELOG
 
 <!--### RobotGo-->
+## Unreleased
+
+### Fixed
+
+- [FIX] libei backend: `Move`/`MoveSmooth` were no-ops and `Location` always returned (0, 0) under `-tags libei` (#783). The RemoteDesktop session now links a ScreenCast monitor stream so `NotifyPointerMotionAbsolute` works, `Move` falls back to relative motion when no stream is available, `MoveSmooth` targets an absolute position, `Location` reports the last injected position, and `GetScreenSize`/`GetScreenRect` return the stream geometry. Added `libei.LinkScreenCast` to opt out of the stream.
+- [FIX] wayland backend: `Location` returns the last injected position instead of a (0, 0) stub.
+- [FIX] wayland backend: serialize all go-wayland context access (event dispatch vs. request/proxy creation raced on the unsynchronized object table); `CaptureImg` no longer hangs forever when the connection dies (5s timeout), handles XBGR/ABGR shm formats and the `y_invert` flag; the virtual keyboard now sends the `modifiers` request so shift/ctrl/alt combos work and uses a sealed memfd keymap with the full evdev keycode set (F13-F24, media keys, ...); `Scroll` sends `axis_source` + `axis_discrete`; `Move` maps onto the whole output layout; `MinWindow`/`MaxWindow` act on the active toplevel; closed toplevel handles are destroyed; malformed toplevel events can no longer panic the dispatch goroutine.
+- [FIX] libei backend: `Move` without a ScreenCast stream parks the pointer in the corner first instead of being a no-op; points in monitor gaps are clamped; `Type` maps `\n`/`\t`/`\b`/Esc to function keysyms; `KeyTap("A")` implies shift; sessions closed by the portal are re-established; `GetScaleSize(displayId)` honours the display.
+- [FIX] darwin (purego) backend: events are created from a HID-system-state source like the Cgo backend; punctuation, shifted symbols (`!`, `{`, ...) and numpad keys resolve; `ScaleF`/`GetScaleSize` report the Retina backing scale; `GetScreenRect(displayId)` returns that display's bounds.
+- [FIX] win (pure-Go) backend: key events carry the hardware scan code (raw-input consumers ignored them); numpad and media keys resolve; `ScaleF`/`GetScaleSize` report the DPI scale; `GetScreenRect` follows the Cgo backend's virtual-screen rule.
+- [FIX] All pure-Go backends: `Scroll`/`ScrollDir` use the same sign convention as the Cgo backend (positive y = up, positive x = left); the darwin/win/wayland/libei ports previously inverted it.
+
 ## RobotGo v0.100.0, MT. Baker; Enhancement bitmap and image, add arm support...
 
 ### Add

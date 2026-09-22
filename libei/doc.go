@@ -35,9 +35,13 @@
 //
 // Capability notes:
 //   - Keyboard, relative pointer motion, buttons and scroll are supported.
-//   - Absolute pointer motion (Move) requires a linked ScreenCast session and
-//     is not yet wired up; Move falls back to a best-effort relative move and
-//     screen/window helpers report ErrNotSupported.
+//   - Absolute pointer motion (Move, MoveSmooth) works through a ScreenCast
+//     monitor stream linked to the session (LinkScreenCast, on by default);
+//     GetScreenSize/GetScreenRect report the stream geometry. Without a
+//     stream, Move falls back to a relative delta from the tracked position.
+//   - Location returns the last position injected by this backend: the portal
+//     never reports the physical cursor position.
+//   - Screen capture and window helpers report ErrNotSupported.
 //
 // The transport is intentionally hidden behind the injector interface (see
 // conn.go) so the real libei/EIS wire protocol (via RemoteDesktop.ConnectToEIS)

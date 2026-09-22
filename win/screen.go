@@ -27,15 +27,49 @@ func GetScreenSize() (int, int) {
 	return int(win.GetSystemMetrics(win.SM_CXSCREEN)), int(win.GetSystemMetrics(win.SM_CYSCREEN))
 }
 
-// GetScaleSize returns the scaled screen size. The GDI capture path already
-// works in physical pixels, so this returns the same value as GetScreenSize.
-// Provided for robotgo API parity.
-func GetScaleSize(displayId ...int) (int, int) {
-	return GetScreenSize()
+// ScaleF returns the system DPI scale factor (LOGPIXELSX / 96), mirroring the
+// Cgo backend's sys_scale on Windows.
+func ScaleF(displayId ...int) float64 {
+	hdc := win.GetDC(0)
+	if hdc == 0 {
+		return 1
+	}
+	defer win.ReleaseDC(0, hdc)
+	dpi := win.GetDeviceCaps(hdc, win.LOGPIXELSX)
+	if dpi <= 0 {
+		return 1
+	}
+	return float64(dpi) / 96.0
 }
 
-// GetScreenRect returns the primary display rectangle.
+// GetScaleSize returns the screen size multiplied by the DPI scale factor,
+// matching robotgo.GetScaleSize on the Cgo backend.
+func GetScaleSize(displayId ...int) (int, int) {
+	w, h := GetScreenSize()
+	f := ScaleF(displayId...)
+	return int(float64(w) * f), int(float64(h) * f)
+}
+
+// GetScreenRect returns the primary display rectangle, or the whole virtual
+// desktop when a non-zero displayId is given on a multi-monitor system
+// (the same rule as the Cgo backend's getScreenRect).
 func GetScreenRect(displayId ...int) Rect {
+	id := -1
+	if len(displayId) > 0 {
+		id = displayId[0]
+	}
+	if DisplaysNum() > 1 && id > 0 {
+		return Rect{
+			Point: Point{
+				X: int(win.GetSystemMetrics(win.SM_XVIRTUALSCREEN)),
+				Y: int(win.GetSystemMetrics(win.SM_YVIRTUALSCREEN)),
+			},
+			Size: Size{
+				W: int(win.GetSystemMetrics(win.SM_CXVIRTUALSCREEN)),
+				H: int(win.GetSystemMetrics(win.SM_CYVIRTUALSCREEN)),
+			},
+		}
+	}
 	w, h := GetScreenSize()
 	return Rect{Point: Point{X: 0, Y: 0}, Size: Size{W: w, H: h}}
 }

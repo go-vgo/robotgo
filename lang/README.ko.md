@@ -222,24 +222,26 @@ RobotGo는 Windows, macOS, X11, Wayland, libei(Linux)용 **순수 Go(Cgo 없음)
 ```sh
 # 플랫폼별 순수 Go 기본 백엔드, 모든 대상에 하나의 태그 사용:
 # macOS -> mac, Windows -> win, Linux -> wayland(x11/libei와 조합해 재정의 가능)
-go build -tags purego ./...
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags "purego,x11" ./...
+go build -tags purego .
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags "purego,x11" .
 
 # Windows, Cgo / MinGW 불필요
-CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags win ./...
+CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags win .
 
 # macOS, purego를 통해 런타임에 Quartz/CoreGraphics 로드(Xcode 불필요)
-CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -tags mac ./...
+CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -tags mac .
 
 # X11, 순수 Go X 프로토콜(XTEST) — X11 헤더 불필요
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags x11 ./...
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags x11 .
 
 # Wayland, wlroots 기반 컴포지터(Sway, Hyprland, Wayfire 등)
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags wayland ./...
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags wayland .
 
 # libei, xdg-desktop-portal RemoteDesktop를 통한 GNOME/KDE 지원
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags libei ./...
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags libei .
 ```
+
+참고: `examples/` 및 일부 OS별 하위 패키지는 기본 Cgo 백엔드에서만 사용할 수 있는 API를 사용하므로, 위 예제는 `./...` 대신 모듈 루트(`.`)를 빌드합니다.
 
 `win` 태그에서는 기본 Cgo/Win32 백엔드가 제외되고 호출이 순수 Go `win` 패키지로 전달됩니다. `mac` 태그에서는 기본 Cgo/Quartz 백엔드가 제외되고 호출이 순수 Go `darwin` 패키지로 전달됩니다(창 관리는 `ErrNotSupported`를 반환합니다). `x11` 태그에서는 Cgo/X11 백엔드가 제외되고 호출이 순수 Go `x11` 패키지로 전달됩니다. `wayland` 태그에서는 Cgo/X11 백엔드가 제외되고 호출이 순수 Go `wayland` 패키지로 전달됩니다. `libei` 태그에서는 Cgo/X11과 wlroots Wayland 백엔드가 모두 제외되고 호출이 순수 Go `libei` 패키지로 전달됩니다.
 

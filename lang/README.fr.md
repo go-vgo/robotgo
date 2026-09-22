@@ -223,24 +223,26 @@ Ces backends se compilent en cross-compilation avec `CGO_ENABLED=0` (sans GCC, M
 ```sh
 # Backend pur Go par défaut par plateforme, un seul tag pour toutes les cibles :
 # macOS -> mac, Windows -> win, Linux -> wayland (à combiner avec x11/libei pour remplacer)
-go build -tags purego ./...
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags "purego,x11" ./...
+go build -tags purego .
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags "purego,x11" .
 
 # Windows, sans Cgo / sans MinGW
-CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags win ./...
+CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags win .
 
 # macOS, Quartz/CoreGraphics chargé à l'exécution via purego (sans Xcode)
-CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -tags mac ./...
+CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -tags mac .
 
 # X11, protocole X pur Go (XTEST) — sans en-têtes X11
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags x11 ./...
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags x11 .
 
 # Wayland, compositeur basé sur wlroots (Sway, Hyprland, Wayfire, ...)
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags wayland ./...
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags wayland .
 
 # libei, GNOME/KDE via l'interface RemoteDesktop de xdg-desktop-portal
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags libei ./...
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags libei .
 ```
+
+Remarque : les exemples compilent la racine du module (`.`) plutôt que `./...`, car `examples/` et certains sous-paquets spécifiques à l'OS utilisent des API disponibles uniquement avec le backend Cgo par défaut.
 
 Avec le tag `win`, le backend Cgo/Win32 par défaut est exclu et les appels sont redirigés vers le paquet Go pur `win` ; avec le tag `mac`, le backend Cgo/Quartz par défaut est exclu et les appels sont redirigés vers le paquet Go pur `darwin` (la gestion des fenêtres renvoie `ErrNotSupported`) ; avec le tag `x11`, le backend Cgo/X11 est exclu et les appels sont redirigés vers le paquet Go pur `x11` ; avec le tag `wayland`, le backend Cgo/X11 est exclu et les appels sont redirigés vers le paquet Go pur `wayland` ; avec le tag `libei`, les backends Cgo/X11 et Wayland wlroots sont tous deux exclus et les appels sont redirigés vers le paquet Go pur `libei`.
 

@@ -145,10 +145,7 @@ func ToRGBAGo(bmp1 Bitmap) *image.RGBA {
 }
 
 func val(p *uint8, n int) uint8 {
-	addr := uintptr(unsafe.Pointer(p))
-	addr += uintptr(n)
-	p1 := (*uint8)(unsafe.Pointer(addr))
-	return *p1
+	return *(*uint8)(unsafe.Add(unsafe.Pointer(p), n))
 }
 
 func copyToVUint8A(dst []uint8, src *uint8) {

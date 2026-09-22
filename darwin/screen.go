@@ -31,7 +31,9 @@ func displayForIndex(displayId ...int) uint32 {
 		var count uint32
 		if cgGetActiveDisplayLst(uint32(len(ids)), &ids[0], &count) == 0 {
 			idx := displayId[0]
-			if idx < int(count) {
+			// count reports every active display, not only the ones that
+			// fit in ids, so bound by both.
+			if idx < int(count) && idx < len(ids) {
 				return ids[idx]
 			}
 		}
@@ -57,17 +59,44 @@ func GetScreenSize() (int, int) {
 	return int(cgDisplayPixelsWide(id)), int(cgDisplayPixelsHigh(id))
 }
 
-// GetScaleSize returns the scaled (pixel) screen size. The CoreGraphics
-// capture path already works in physical pixels, so this matches
-// GetScreenSize. Provided for robotgo API parity.
-func GetScaleSize(displayId ...int) (int, int) {
-	return GetScreenSize()
+// ScaleF returns the backing scale factor (pixel width / point width) of the
+// selected display, mirroring the Cgo backend's sys_scale. Returns 1 when the
+// frameworks are unavailable or the mode cannot be read.
+func ScaleF(displayId ...int) float64 {
+	if !loaded {
+		return 1
+	}
+	mode := cgDisplayCopyDisplayMode(displayForIndex(displayId...))
+	if mode == 0 {
+		return 1
+	}
+	defer cgDisplayModeRelease(mode)
+	w := cgDisplayModeGetWidth(mode)
+	if w == 0 {
+		return 1
+	}
+	return float64(cgDisplayModeGetPixelWidth(mode)) / float64(w)
 }
 
-// GetScreenRect returns the main display rectangle (origin 0,0, pixel size).
-func GetScreenRect(displayId ...int) Rect {
+// GetScaleSize returns the screen size in physical pixels (point size times
+// the backing scale), matching robotgo.GetScaleSize on the Cgo backend.
+func GetScaleSize(displayId ...int) (int, int) {
 	w, h := GetScreenSize()
-	return Rect{Point: Point{X: 0, Y: 0}, Size: Size{W: w, H: h}}
+	f := ScaleF(displayId...)
+	return int(float64(w) * f), int(float64(h) * f)
+}
+
+// GetScreenRect returns the selected display's bounds (origin in global
+// display space, size in points), defaulting to the main display.
+func GetScreenRect(displayId ...int) Rect {
+	if !loaded {
+		return Rect{}
+	}
+	b := cgDisplayBounds(displayForIndex(displayId...))
+	return Rect{
+		Point: Point{X: int(b.Origin.X), Y: int(b.Origin.Y)},
+		Size:  Size{W: int(b.Size.Width), H: int(b.Size.Height)},
+	}
 }
 
 // DisplaysNum returns the number of active displays.

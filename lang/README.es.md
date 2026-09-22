@@ -223,24 +223,26 @@ Estos backends se compilan de forma cruzada con `CGO_ENABLED=0` (sin GCC, MinGW,
 ```sh
 # Backend Go puro predeterminado por plataforma, una etiqueta para todos los destinos:
 # macOS -> mac, Windows -> win, Linux -> wayland (combínala con x11/libei para sobrescribir)
-go build -tags purego ./...
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags "purego,x11" ./...
+go build -tags purego .
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags "purego,x11" .
 
 # Windows, sin Cgo / sin MinGW
-CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags win ./...
+CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags win .
 
 # macOS, Quartz/CoreGraphics cargado en tiempo de ejecución vía purego (sin Xcode)
-CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -tags mac ./...
+CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -tags mac .
 
 # X11, protocolo X en Go puro (XTEST) — sin encabezados X11
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags x11 ./...
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags x11 .
 
 # Wayland, compositor basado en wlroots (Sway, Hyprland, Wayfire, ...)
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags wayland ./...
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags wayland .
 
 # libei, GNOME/KDE a través de la interfaz RemoteDesktop de xdg-desktop-portal
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags libei ./...
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags libei .
 ```
+
+Nota: los ejemplos compilan la raíz del módulo (`.`) en lugar de `./...`, porque `examples/` y algunos subpaquetes específicos del sistema operativo usan APIs que solo están disponibles con el backend Cgo predeterminado.
 
 Con la etiqueta `win`, el backend Cgo/Win32 predeterminado se excluye y las llamadas se reenvían al paquete Go puro `win`; con la etiqueta `mac`, el backend Cgo/Quartz predeterminado se excluye y las llamadas se reenvían al paquete Go puro `darwin` (la gestión de ventanas devuelve `ErrNotSupported`); con la etiqueta `x11`, el backend Cgo/X11 se excluye y las llamadas se reenvían al paquete Go puro `x11`; con la etiqueta `wayland`, el backend Cgo/X11 se excluye y las llamadas se reenvían al paquete Go puro `wayland`; con la etiqueta `libei`, se excluyen tanto el backend Cgo/X11 como el backend Wayland wlroots y las llamadas se reenvían al paquete Go puro `libei`.
 

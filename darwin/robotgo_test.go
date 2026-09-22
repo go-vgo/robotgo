@@ -242,3 +242,48 @@ func TestKillInvalidPid(t *testing.T) {
 		t.Error("Kill(-1): expected error")
 	}
 }
+
+func TestKeyToCodePunctuationAndSpecial(t *testing.T) {
+	tests := []struct {
+		key   string
+		code  uint16
+		flags uint64
+	}{
+		{"-", 27, 0},
+		{"=", 24, 0},
+		{"/", 44, 0},
+		{"`", 50, 0},
+		{"!", 18, kCGEventFlagMaskShift}, // shift+1
+		{"{", 33, kCGEventFlagMaskShift}, // shift+[
+		{"~", 50, kCGEventFlagMaskShift}, // shift+`
+		{"num0", 82, 0},
+		{"num_enter", 76, 0},
+	}
+	for _, tt := range tests {
+		code, flags, ok := keyToCode(tt.key)
+		if !ok || code != tt.code || flags != tt.flags {
+			t.Errorf("keyToCode(%q): got (%d,%#x,%v), want (%d,%#x,true)", tt.key, code, flags, ok, tt.code, tt.flags)
+		}
+	}
+}
+
+func TestScaleAndRect(t *testing.T) {
+	if !loaded {
+		t.Skip("CoreGraphics not loaded")
+	}
+	if f := ScaleF(); f < 1 || f > 4 {
+		t.Errorf("ScaleF: got %v", f)
+	}
+	w, h := GetScreenSize()
+	sw, sh := GetScaleSize()
+	if sw < w || sh < h {
+		t.Errorf("GetScaleSize (%d,%d) must be >= GetScreenSize (%d,%d)", sw, sh, w, h)
+	}
+	if r := GetScreenRect(); r.W != w || r.H != h {
+		t.Errorf("GetScreenRect: got %+v, want %dx%d", r, w, h)
+	}
+	// Out-of-range index falls back to the main display, no panic.
+	if r := GetScreenRect(99); r.W != w {
+		t.Errorf("GetScreenRect(99): got %+v", r)
+	}
+}

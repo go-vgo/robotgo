@@ -91,11 +91,22 @@ var evdevKeyMap = map[string]int32{
 }
 
 // runeToKeysym converts a Unicode rune to an X11 keysym for use with
-// NotifyKeyboardKeysym. For Latin-1 (0x00-0xff) the keysym equals the
+// NotifyKeyboardKeysym. Control characters map to their function keysyms
+// (Return, Tab, ...); for Latin-1 (0x20-0xff) the keysym equals the
 // codepoint; higher codepoints use the Unicode keysym range (0x01000000 | cp).
 // This is layout independent — the compositor maps the symbol to a keycode —
 // so Type/TypeStr work regardless of the user's keyboard layout.
 func runeToKeysym(r rune) int32 {
+	switch r {
+	case '\n', '\r':
+		return 0xff0d // XK_Return
+	case '\t':
+		return 0xff09 // XK_Tab
+	case '\b':
+		return 0xff08 // XK_BackSpace
+	case 0x1b:
+		return 0xff1b // XK_Escape
+	}
 	if r <= 0xff {
 		return int32(r)
 	}

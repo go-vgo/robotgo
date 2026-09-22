@@ -322,3 +322,111 @@ func TestGetPid(t *testing.T) {
 		t.Errorf("GetPid() returned %d", pid)
 	}
 }
+
+func TestResolveKeyUppercase(t *testing.T) {
+	code, shift, ok := resolveKey("A")
+	if !ok || !shift || code != 30 {
+		t.Errorf("resolveKey(A): got (%d,%v,%v), want (30,true,true)", code, shift, ok)
+	}
+	if _, shift, ok := resolveKey("a"); !ok || shift {
+		t.Error("resolveKey(a) must not imply shift")
+	}
+	if _, _, ok := resolveKey("É"); ok {
+		t.Error("resolveKey(É) must be unknown")
+	}
+}
+
+func TestModMask(t *testing.T) {
+	tests := map[string]uint32{
+		"shift": modShift, "shiftr": modShift,
+		"ctrl": modControl, "ctrlr": modControl,
+		"alt": modAlt, "altr": modAlt,
+		"cmd": modSuper, "cmdr": modSuper,
+	}
+	for name, want := range tests {
+		code, _ := keyToEvdev(name)
+		if got := modMask[code]; got != want {
+			t.Errorf("modMask[%s]: got %d, want %d", name, got, want)
+		}
+	}
+	if _, isMod := modMask[30]; isMod {
+		t.Error("KEY_A must not be a modifier")
+	}
+}
+
+func TestDecodeShm(t *testing.T) {
+	// 2x2, stride 12 (one padding pixel per row), rows: top then bottom.
+	px := func(a, b, c, d byte) []byte { return []byte{a, b, c, d} }
+	row := func(p1, p2 []byte) []byte { return append(append(append([]byte{}, p1...), p2...), 0, 0, 0, 0) }
+	top := row(px(1, 2, 3, 0x80), px(4, 5, 6, 0x80))
+	bottom := row(px(7, 8, 9, 0x80), px(10, 11, 12, 0x80))
+	data := append(append([]byte{}, top...), bottom...)
+
+	// XRGB: bytes are B,G,R,X -> opaque, swapped.
+	img := decodeShm(data, shmXRGB8888, 2, 2, 12, false)
+	if c := img.RGBAAt(0, 0); c.R != 3 || c.G != 2 || c.B != 1 || c.A != 0xff {
+		t.Errorf("XRGB (0,0): got %+v", c)
+	}
+	// ARGB keeps alpha.
+	if c := decodeShm(data, shmARGB8888, 2, 2, 12, false).RGBAAt(1, 0); c.R != 6 || c.A != 0x80 {
+		t.Errorf("ARGB (1,0): got %+v", c)
+	}
+	// XBGR: bytes are R,G,B,X -> no swap.
+	if c := decodeShm(data, shmXBGR8888, 2, 2, 12, false).RGBAAt(0, 1); c.R != 7 || c.B != 9 || c.A != 0xff {
+		t.Errorf("XBGR (0,1): got %+v", c)
+	}
+	// y_invert flips rows.
+	if c := decodeShm(data, shmABGR8888, 2, 2, 12, true).RGBAAt(0, 0); c.R != 7 || c.A != 0x80 {
+		t.Errorf("y_invert (0,0): got %+v", c)
+	}
+}
+
+func TestOutputBounds(t *testing.T) {
+	c := &conn{outputs: []*outputInfo{
+		{x: 0, y: 0, width: 1920, height: 1080},
+		{x: 1920, y: -200, width: 1280, height: 720},
+	}}
+	x, y, w, h := c.outputBounds()
+	if x != 0 || y != -200 || w != 3200 || h != 1280 {
+		t.Errorf("outputBounds: got (%d,%d,%d,%d)", x, y, w, h)
+	}
+	if o, ok := c.output(5); !ok || o.width != 1920 {
+		t.Errorf("output(5) must fall back to output 0, got %+v %v", o, ok)
+	}
+	if _, ok := (&conn{}).output(0); ok {
+		t.Error("output on empty conn must report !ok")
+	}
+}
+
+func TestActiveToplevel(t *testing.T) {
+	c := &conn{toplevels: map[uint32]*toplevelInfo{}}
+	if c.activeToplevel() != nil {
+		t.Error("empty toplevels must yield nil")
+	}
+	inactive := &toplevelInfo{title: "bg"}
+	active := &toplevelInfo{title: "fg", states: []byte{2, 0, 0, 0}}
+	c.toplevels[1] = inactive
+	c.toplevels[2] = active
+	for i := 0; i < 20; i++ { // map order is random; must be stable
+		if got := c.activeToplevel(); got != active {
+			t.Fatalf("activeToplevel: got %q, want fg", got.title)
+		}
+	}
+}
+
+func TestDoRejectsClosedConn(t *testing.T) {
+	c := &conn{dispatchDone: make(chan struct{})}
+	c.closed.Store(true)
+	if err := c.do(func() error { return nil }); err != ErrNoConnection {
+		t.Errorf("closed conn: got %v, want ErrNoConnection", err)
+	}
+	c2 := &conn{dispatchDone: make(chan struct{})}
+	close(c2.dispatchDone)
+	if err := c2.do(func() error { return nil }); err != ErrNoConnection {
+		t.Errorf("dead dispatch loop: got %v, want ErrNoConnection", err)
+	}
+	c3 := &conn{dispatchDone: make(chan struct{})}
+	if err := c3.do(func() error { return nil }); err != nil {
+		t.Errorf("live conn: got %v", err)
+	}
+}

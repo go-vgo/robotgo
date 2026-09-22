@@ -220,24 +220,26 @@ RobotGo 為 Windows、macOS、X11、Wayland 和 libei（Linux）提供了 **純 
 ```sh
 # 每個平台的純 Go 預設後端，一個標籤適用於所有目標：
 # macOS -> mac，Windows -> win，Linux -> wayland（可與 x11/libei 組合以覆蓋）
-go build -tags purego ./...
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags "purego,x11" ./...
+go build -tags purego .
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags "purego,x11" .
 
 # Windows，無需 Cgo / 無需 MinGW
-CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags win ./...
+CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags win .
 
 # macOS，透過 purego 在執行時載入 Quartz/CoreGraphics（無需 Xcode）
-CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -tags mac ./...
+CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -tags mac .
 
 # X11，純 Go 實作的 X 協定（XTEST）—— 無需 X11 頭檔案
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags x11 ./...
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags x11 .
 
 # Wayland，基於 wlroots 的合成器（Sway、Hyprland、Wayfire 等）
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags wayland ./...
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags wayland .
 
 # libei，透過 xdg-desktop-portal RemoteDesktop 支援 GNOME/KDE
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags libei ./...
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags libei .
 ```
+
+注意：上面的範例建置模組根目錄（`.`）而不是 `./...`，因為 `examples/` 和一些特定平台的子套件使用了僅在預設 Cgo 後端下可用的 API。
 
 在 `win` 標籤下，預設的 Cgo/Win32 後端被排除，呼叫轉發到純 Go 的 `win` 套件；
 在 `mac` 標籤下，預設的 Cgo/Quartz 後端被排除，呼叫轉發到純 Go 的 `darwin` 套件（視窗管理回報 `ErrNotSupported`）；

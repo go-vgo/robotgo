@@ -48,7 +48,9 @@ func postMouseState(eventType uint32, p CGPoint, button uint32, clickState int64
 	if !loaded {
 		return
 	}
-	ev := cgEventCreateMouseEvent(0, eventType, p, button)
+	ev := withSource(func(src uintptr) uintptr {
+		return cgEventCreateMouseEvent(src, eventType, p, button)
+	})
 	if ev == 0 {
 		return
 	}
@@ -186,8 +188,9 @@ func MouseUp(key ...interface{}) error {
 	return Toggle(append(append([]interface{}{}, key...), "up")...)
 }
 
-// Scroll scrolls the mouse. Positive y scrolls down, negative scrolls up;
-// positive x scrolls right, negative scrolls left. Optional arg: delay ms.
+// Scroll scrolls the mouse by wheel notches. Positive y scrolls up, negative
+// scrolls down; positive x scrolls left, negative scrolls right (matching
+// robotgo's Cgo backend convention). Optional arg: delay ms.
 func Scroll(x, y int, args ...int) {
 	msDelay := 10
 	if len(args) > 0 {
@@ -197,9 +200,11 @@ func Scroll(x, y int, args ...int) {
 		// Create a line-unit scroll event via the fixed-arity
 		// CGEventCreateScrollWheelEvent2 (the plain variant is variadic and
 		// unsafe to call through purego). Axis 1 is vertical, axis 2
-		// horizontal; macOS positive vertical delta scrolls up, so negate y
-		// for robotgo's down-positive convention.
-		ev := cgEventCreateScrollWheelEvent2(0, kCGScrollEventUnitLine, 2, int32(-y), int32(x), 0)
+		// horizontal; CoreGraphics counts positive deltas as up/left, the
+		// same convention robotgo uses, so the values pass straight through.
+		ev := withSource(func(src uintptr) uintptr {
+			return cgEventCreateScrollWheelEvent2(src, kCGScrollEventUnitLine, 2, int32(y), int32(x), 0)
+		})
 		if ev != 0 {
 			postEvent(ev)
 		}
@@ -218,14 +223,14 @@ func ScrollDir(x int, direction ...interface{}) {
 		}
 	}
 	switch dir {
-	case "up":
-		Scroll(0, -x)
 	case "down":
+		Scroll(0, -x)
+	case "up":
 		Scroll(0, x)
 	case "left":
-		Scroll(-x, 0)
-	case "right":
 		Scroll(x, 0)
+	case "right":
+		Scroll(-x, 0)
 	}
 }
 

@@ -17,10 +17,29 @@ package wayland
 import (
 	"encoding/binary"
 	"strings"
+
+	"github.com/go-vgo/robotgo/wayland/internal/protocols/wlr_foreign_toplevel"
 )
 
 // Window management via zwlr_foreign_toplevel_management_v1.
 // Only available on wlroots-based compositors.
+
+// activeToplevel returns the activated toplevel, falling back to any toplevel
+// when none is activated. The lookup runs under c.mu; the returned handle is
+// used only after the lock is released (requests need c.wl, which the
+// dispatch goroutine holds while it updates c.toplevels under c.mu).
+func (c *conn) activeToplevel() *toplevelInfo {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	var any *toplevelInfo
+	for _, info := range c.toplevels {
+		if isActivated(info.states) {
+			return info
+		}
+		any = info
+	}
+	return any
+}
 
 // GetTitle returns the title of the active (or specified) window.
 func GetTitle(args ...int) string {
@@ -28,22 +47,13 @@ func GetTitle(args ...int) string {
 	if err != nil || c.toplevelMgr == nil {
 		return ""
 	}
-
+	info := c.activeToplevel()
+	if info == nil {
+		return ""
+	}
 	c.mu.Lock()
 	defer c.mu.Unlock()
-
-	// Find the activated toplevel
-	for _, info := range c.toplevels {
-		if isActivated(info.states) {
-			return info.title
-		}
-	}
-
-	// Fallback: return first toplevel's title
-	for _, info := range c.toplevels {
-		return info.title
-	}
-	return ""
+	return info.title
 }
 
 // ActiveName activates a window by matching process/app name.
@@ -56,92 +66,75 @@ func ActiveName(name string) error {
 		return ErrNotSupported
 	}
 
-	c.mu.Lock()
-	defer c.mu.Unlock()
-
 	nameLower := strings.ToLower(name)
+	var handle *wlr_foreign_toplevel.ZwlrForeignToplevelHandleV1
+	c.mu.Lock()
 	for _, info := range c.toplevels {
 		if strings.Contains(strings.ToLower(info.title), nameLower) ||
 			strings.Contains(strings.ToLower(info.appId), nameLower) {
-			return info.handle.Activate(c.seat)
+			handle = info.handle
+			break
 		}
 	}
-	return ErrNotSupported
+	c.mu.Unlock()
+	if handle == nil {
+		return ErrNotSupported
+	}
+	return c.do(func() error { return handle.Activate(c.seat) })
 }
 
-// MinWindow minimizes a window. If state is true, minimize; if false, unminimize.
-func MinWindow(pid int, args ...interface{}) {
+// withActive runs fn on the active toplevel's handle, if any.
+func withActive(fn func(h *wlr_foreign_toplevel.ZwlrForeignToplevelHandleV1) error) {
 	c, err := ensureConn()
 	if err != nil || c.toplevelMgr == nil {
 		return
 	}
+	info := c.activeToplevel()
+	if info == nil {
+		return
+	}
+	_ = c.do(func() error { return fn(info.handle) })
+}
 
+// MinWindow minimizes the active window. If the first arg is false, unminimize.
+// The pid is accepted for API parity; the protocol exposes no pid mapping.
+func MinWindow(pid int, args ...interface{}) {
 	minimize := true
 	if len(args) > 0 {
 		if b, ok := args[0].(bool); ok {
 			minimize = b
 		}
 	}
-
-	c.mu.Lock()
-	defer c.mu.Unlock()
-
-	// Find toplevel by matching (we don't have PID info from the protocol,
-	// so we operate on all toplevels or the active one)
-	for _, info := range c.toplevels {
+	withActive(func(h *wlr_foreign_toplevel.ZwlrForeignToplevelHandleV1) error {
 		if minimize {
-			_ = info.handle.SetMinimized()
-		} else {
-			_ = info.handle.UnsetMinimized()
+			return h.SetMinimized()
 		}
-		return // operate on first match
-	}
+		return h.UnsetMinimized()
+	})
 }
 
-// MaxWindow maximizes a window.
+// MaxWindow maximizes the active window. If the first arg is false, unmaximize.
+// The pid is accepted for API parity; the protocol exposes no pid mapping.
 func MaxWindow(pid int, args ...interface{}) {
-	c, err := ensureConn()
-	if err != nil || c.toplevelMgr == nil {
-		return
-	}
-
 	maximize := true
 	if len(args) > 0 {
 		if b, ok := args[0].(bool); ok {
 			maximize = b
 		}
 	}
-
-	c.mu.Lock()
-	defer c.mu.Unlock()
-
-	for _, info := range c.toplevels {
+	withActive(func(h *wlr_foreign_toplevel.ZwlrForeignToplevelHandleV1) error {
 		if maximize {
-			_ = info.handle.SetMaximized()
-		} else {
-			_ = info.handle.UnsetMaximized()
+			return h.SetMaximized()
 		}
-		return
-	}
+		return h.UnsetMaximized()
+	})
 }
 
-// CloseWindow closes a window.
+// CloseWindow closes the active window.
 func CloseWindow(args ...int) {
-	c, err := ensureConn()
-	if err != nil || c.toplevelMgr == nil {
-		return
-	}
-
-	c.mu.Lock()
-	defer c.mu.Unlock()
-
-	// Close the active toplevel
-	for _, info := range c.toplevels {
-		if isActivated(info.states) {
-			_ = info.handle.Close()
-			return
-		}
-	}
+	withActive(func(h *wlr_foreign_toplevel.ZwlrForeignToplevelHandleV1) error {
+		return h.Close()
+	})
 }
 
 // isActivated checks if the toplevel state array contains the "activated" state.

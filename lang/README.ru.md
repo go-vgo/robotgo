@@ -223,24 +223,26 @@ RobotGo предоставляет **чистые Go-бэкенды (без Cgo)
 ```sh
 # Чистый Go-бэкенд по умолчанию для каждой платформы, один тег для всех целей:
 # macOS -> mac, Windows -> win, Linux -> wayland (комбинируйте с x11/libei для переопределения)
-go build -tags purego ./...
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags "purego,x11" ./...
+go build -tags purego .
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags "purego,x11" .
 
 # Windows, без Cgo / без MinGW
-CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags win ./...
+CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags win .
 
 # macOS, Quartz/CoreGraphics загружается во время выполнения через purego (без Xcode)
-CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -tags mac ./...
+CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -tags mac .
 
 # X11, чистый Go X-протокол (XTEST) — без заголовков X11
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags x11 ./...
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags x11 .
 
 # Wayland, композитор на основе wlroots (Sway, Hyprland, Wayfire и др.)
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags wayland ./...
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags wayland .
 
 # libei, GNOME/KDE через xdg-desktop-portal RemoteDesktop
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags libei ./...
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags libei .
 ```
+
+Примечание: примеры собирают корень модуля (`.`) вместо `./...`, поскольку `examples/` и некоторые ОС-специфичные подпакеты используют API, доступные только с бэкендом Cgo по умолчанию.
 
 С тегом `win` бэкенд Cgo/Win32 по умолчанию исключается, а вызовы перенаправляются в чистый Go-пакет `win`; с тегом `mac` исключается бэкенд Cgo/Quartz по умолчанию, а вызовы перенаправляются в чистый Go-пакет `darwin` (управление окнами возвращает `ErrNotSupported`); с тегом `x11` исключается бэкенд Cgo/X11, а вызовы перенаправляются в чистый Go-пакет `x11`; с тегом `wayland` исключается бэкенд Cgo/X11, а вызовы перенаправляются в чистый Go-пакет `wayland`; с тегом `libei` исключаются как бэкенд Cgo/X11, так и wlroots Wayland бэкенд, а вызовы перенаправляются в чистый Go-пакет `libei`.
 

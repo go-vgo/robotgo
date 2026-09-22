@@ -41,6 +41,42 @@ func TestKeyToVK(t *testing.T) {
 	}
 }
 
+func TestKeyToVKRejectsNonBMP(t *testing.T) {
+	// These code points truncate to ASCII keys if cast directly to uint16.
+	for _, key := range []string{"\U00010061", "\U00010041", "\U00010030", "\U00100061", "😀"} {
+		if vk, mods, ok := keyToVK(key); ok || vk != 0 || mods != 0 {
+			t.Errorf("keyToVK(%q) = (%#x, %d, %v), want (0, 0, false)", key, vk, mods, ok)
+		}
+	}
+}
+
+func TestAppendUniqueMod(t *testing.T) {
+	for _, mod := range []string{"shift", "ctrl", "alt"} {
+		variants := []string{mod, mod + "l", mod + "r"}
+		if mod == "ctrl" {
+			variants = append(variants, "control")
+		}
+		for _, variant := range variants {
+			t.Run(variant, func(t *testing.T) {
+				got := appendUniqueMod([]string{"cmd", variant}, mod)
+				if len(got) != 2 || got[0] != "cmd" || got[1] != variant {
+					t.Errorf("appendUniqueMod([cmd %s], %q) = %v, want unchanged modifiers", variant, mod, got)
+				}
+			})
+		}
+		t.Run(mod+"/missing", func(t *testing.T) {
+			got := appendUniqueMod([]string{"cmd"}, mod)
+			if len(got) != 2 || got[0] != "cmd" || got[1] != mod {
+				t.Errorf("appendUniqueMod([cmd], %q) = %v, want [cmd %s]", mod, got, mod)
+			}
+			got = appendUniqueMod(nil, mod)
+			if len(got) != 1 || got[0] != mod {
+				t.Errorf("appendUniqueMod(nil, %q) = %v, want [%s]", mod, got, mod)
+			}
+		})
+	}
+}
+
 func TestExtractModifiers(t *testing.T) {
 	tests := []struct {
 		name string

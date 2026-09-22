@@ -181,7 +181,11 @@ xdg-desktop-portal-gnome / -kde  (your desktop's portal backend)
 ```
 
 Note: the libei backend handles mouse and keyboard input only. Screen capture and
-window management report `ErrNotSupported`.
+window management report `ErrNotSupported`. Absolute `Move` uses a ScreenCast
+monitor stream linked to the session (the first-run consent dialog covers both);
+set `libei.LinkScreenCast = false` to opt out and keep relative motion only.
+The portal never exposes the physical cursor, so `Location()` returns the last
+position injected by robotgo, not movement made with the real mouse.
 
 ## Installation:
 
@@ -227,24 +231,28 @@ MinGW, Xcode, or X11 headers required).
 ```sh
 # Pure-Go default backend per platform, one tag for all targets:
 # macOS -> mac, Windows -> win, Linux -> wayland (combine with x11/libei to override)
-go build -tags purego ./...
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags "purego,x11" ./...
+go build -tags purego .
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags "purego,x11" .
 
 # Windows, no Cgo / no MinGW required
-CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags win ./...
+CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags win .
 
 # macOS, Quartz/CoreGraphics loaded at runtime via purego (no Xcode required)
-CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -tags mac ./...
+CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -tags mac .
 
 # X11, pure-Go X protocol (XTEST) — no X11 headers required
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags x11 ./...
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags x11 .
 
 # Wayland, wlroots-based compositor (Sway, Hyprland, Wayfire, ...)
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags wayland ./...
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags wayland .
 
 # libei, GNOME/KDE via xdg-desktop-portal RemoteDesktop
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags libei ./...
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags libei .
 ```
+
+Note: the examples build the module root (`.`) rather than `./...`, because
+`examples/` and some OS-specific subpackages use APIs that are only available
+with the default Cgo backend.
 
 Under the `win` tag the default Cgo/Win32 backend is excluded and calls are
 forwarded to the pure-Go `win` package; under the `mac` tag the default

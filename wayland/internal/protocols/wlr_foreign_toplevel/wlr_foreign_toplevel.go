@@ -174,51 +174,53 @@ func (i *ZwlrForeignToplevelHandleV1) SetParentHandler(f ZwlrForeignToplevelHand
 	i.parentHandler = f
 }
 
+// wireString decodes a Wayland wire string (u32 length incl. NUL, then
+// bytes) at data[l:], tolerating a truncated or malformed payload instead of
+// panicking the dispatch goroutine.
+func wireString(data []byte, l int) string {
+	if l+4 > len(data) {
+		return ""
+	}
+	n := int(client.Uint32(data[l : l+4]))
+	l += 4
+	if n <= 0 || l+n > len(data) {
+		return ""
+	}
+	return string(data[l : l+n-1]) // strip trailing NUL
+}
+
 // Dispatch dispatches events for ZwlrForeignToplevelHandleV1.
 func (i *ZwlrForeignToplevelHandleV1) Dispatch(opcode uint32, fd int, data []byte) {
 	switch opcode {
 	case 0: // title
 		if i.titleHandler != nil {
-			var e ZwlrForeignToplevelHandleV1TitleEvent
-			l := 0
-			titleLen := int(client.Uint32(data[l : l+4]))
-			l += 4
-			if titleLen > 0 {
-				e.Title = string(data[l : l+titleLen-1]) // strip trailing NUL
-			}
-			i.titleHandler(e)
+			i.titleHandler(ZwlrForeignToplevelHandleV1TitleEvent{Title: wireString(data, 0)})
 		}
 	case 1: // app_id
 		if i.appIdHandler != nil {
-			var e ZwlrForeignToplevelHandleV1AppIdEvent
-			l := 0
-			appIdLen := int(client.Uint32(data[l : l+4]))
-			l += 4
-			if appIdLen > 0 {
-				e.AppId = string(data[l : l+appIdLen-1])
-			}
-			i.appIdHandler(e)
+			i.appIdHandler(ZwlrForeignToplevelHandleV1AppIdEvent{AppId: wireString(data, 0)})
 		}
 	case 2: // output_enter
-		if i.outputEnterHandler != nil {
+		if i.outputEnterHandler != nil && len(data) >= 4 {
 			var e ZwlrForeignToplevelHandleV1OutputEnterEvent
 			e.OutputID = client.Uint32(data[0:4])
 			i.outputEnterHandler(e)
 		}
 	case 3: // output_leave
-		if i.outputLeaveHandler != nil {
+		if i.outputLeaveHandler != nil && len(data) >= 4 {
 			var e ZwlrForeignToplevelHandleV1OutputLeaveEvent
 			e.OutputID = client.Uint32(data[0:4])
 			i.outputLeaveHandler(e)
 		}
 	case 4: // state
-		if i.stateHandler != nil {
+		if i.stateHandler != nil && len(data) >= 4 {
 			var e ZwlrForeignToplevelHandleV1StateEvent
-			l := 0
-			stateLen := int(client.Uint32(data[l : l+4]))
-			l += 4
+			stateLen := int(client.Uint32(data[0:4]))
+			if stateLen < 0 || 4+stateLen > len(data) {
+				stateLen = len(data) - 4
+			}
 			e.State = make([]byte, stateLen)
-			copy(e.State, data[l:l+stateLen])
+			copy(e.State, data[4:4+stateLen])
 			i.stateHandler(e)
 		}
 	case 5: // done
@@ -230,7 +232,7 @@ func (i *ZwlrForeignToplevelHandleV1) Dispatch(opcode uint32, fd int, data []byt
 			i.closedHandler(ZwlrForeignToplevelHandleV1ClosedEvent{})
 		}
 	case 7: // parent
-		if i.parentHandler != nil {
+		if i.parentHandler != nil && len(data) >= 4 {
 			var e ZwlrForeignToplevelHandleV1ParentEvent
 			e.ParentID = client.Uint32(data[0:4])
 			i.parentHandler(e)
