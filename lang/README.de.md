@@ -1,5 +1,9 @@
 # Robotgo
 
+<p align="center">
+  <img src="../docs/robotgo-logo.svg" width="560" alt="RobotGo-Logo — ein Roboter mit Mauszeiger" />
+</p>
+
 [![Build Status](https://github.com/go-vgo/robotgo/workflows/Go/badge.svg)](https://github.com/go-vgo/robotgo/commits/master)
 [![CircleCI Status](https://circleci.com/gh/go-vgo/robotgo.svg?style=shield)](https://circleci.com/gh/go-vgo/robotgo)
 [![Go Report Card](https://goreportcard.com/badge/github.com/go-vgo/robotgo)](https://goreportcard.com/report/github.com/go-vgo/robotgo)
