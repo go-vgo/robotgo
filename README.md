@@ -1,5 +1,9 @@
 # Robotgo
 
+<p align="center">
+  <img src="docs/robotgo-logo.svg" width="560" alt="RobotGo logo — a robot with a mouse pointer" />
+</p>
+
 <!-- <img align="right" src="https://raw.githubusercontent.com/go-vgo/robotgo/master/logo.jpg"> -->
 <!-- [![codecov](https://codecov.io/gh/go-vgo/robotgo/branch/master/graph/badge.svg)](https://codecov.io/gh/go-vgo/robotgo) -->
 

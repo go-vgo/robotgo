@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="224" viewBox="0 0 760 224" fill="none" role="img" aria-labelledby="logo-title logo-desc">
+  <title id="logo-title">RobotGo</title>
+  <desc id="logo-desc">A cyan robot with a desktop-screen face and a mouse pointer, beside the RobotGo wordmark.</desc>
+  <defs>
+    <linearGradient id="shell" x1="64" y1="48" x2="208" y2="184" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#5DE4DD"/>
+      <stop offset="0.5" stop-color="#16C6DC"/>
+      <stop offset="1" stop-color="#0099C6"/>
+    </linearGradient>
+    <linearGradient id="go" x1="370" y1="0" x2="532" y2="90" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#009EAE"/>
+      <stop offset="1" stop-color="#007DAA"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="1" y="1" width="758" height="222" rx="32" fill="#F4FAFC" stroke="#DCECF1" stroke-width="2"/>
+
+  <g id="robot">
+    <path d="M132 63V43" stroke="#14384C" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="132" cy="39" r="9" fill="#16C6DC"/>
+    <circle cx="129" cy="36" r="3" fill="#CAFFEF"/>
+    <rect x="48" y="101" width="16" height="34" rx="8" fill="#009EBB"/>
+    <rect x="200" y="101" width="16" height="34" rx="8" fill="#009EBB"/>
+    <rect x="60" y="60" width="144" height="116" rx="34" fill="url(#shell)"/>
+    <path d="M87 70H169" stroke="#C5FFF1" stroke-width="3" stroke-linecap="round" stroke-opacity="0.6"/>
+    <rect x="74" y="79" width="116" height="78" rx="24" fill="#14384C"/>
+    <rect x="96" y="98" width="14" height="23" rx="7" fill="#B8FFF1"/>
+    <rect x="154" y="98" width="14" height="23" rx="7" fill="#B8FFF1"/>
+    <path d="M119 133Q132 143 145 133" stroke="#5DE4DD" stroke-width="5" stroke-linecap="round"/>
+    <path d="M172 139L180 190L194 176L206 196L219 188L207 169L226 165Z" fill="#F4FAFC" stroke="#F4FAFC" stroke-width="12" stroke-linejoin="round"/>
+    <path d="M172 139L180 190L194 176L206 196L219 188L207 169L226 165Z" fill="#14384C" stroke="#14384C" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M182 154L187 177L194 168L207 165Z" fill="#5DE4DD"/>
+  </g>
+
+  <g id="wordmark" transform="translate(258 76) scale(0.8)" fill="#14384C" fill-rule="evenodd">
+    <path d="M0 88V0H35C57 0 70 12 70 31C70 46 62 56 49 60L73 88H50L28 62H18V88ZM18 16V46H34C46 46 52 40 52 31C52 21 46 16 34 16Z"/>
+    <path d="M112 22C133 22 146 36 146 56S133 90 112 90S78 76 78 56S91 22 112 22ZM112 38C101 38 95 45 95 56S101 74 112 74S129 67 129 56S123 38 112 38Z"/>
+    <path d="M157 0H174V30C179 25 186 22 194 22C212 22 224 36 224 56C224 76 212 90 194 90C185 90 177 87 173 81V88H157ZM190 38C180 38 173 45 173 56C173 67 180 74 190 74C200 74 207 67 207 56C207 45 200 38 190 38Z"/>
+    <path d="M268 22C289 22 302 36 302 56S289 90 268 90S234 76 234 56S247 22 268 22ZM268 38C257 38 251 45 251 56S257 74 268 74S285 67 285 56S279 38 268 38Z"/>
+    <path d="M318 8H335V24H352V39H335V66C335 73 338 75 345 75H352V90H342C326 90 318 82 318 67V39H307V24H318Z"/>
+    <g fill="url(#go)">
+      <path d="M415 0C390 0 372 18 372 45S390 90 415 90C430 90 443 85 452 77V39H414V55H435V68C430 72 423 74 416 74C400 74 390 62 390 45S400 16 416 16C426 16 433 20 439 27L452 15C443 5 431 0 415 0Z"/>
+      <path d="M498 22C519 22 532 36 532 56S519 90 498 90S464 76 464 56S477 22 498 22ZM498 38C487 38 481 45 481 56S487 74 498 74S515 67 515 56S509 38 498 38Z"/>
+    </g>
+  </g>
+</svg>
