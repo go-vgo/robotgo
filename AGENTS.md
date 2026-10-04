@@ -2,46 +2,50 @@
 
 Go native cross-platform desktop automation: mouse, keyboard, screen, bitmap, process, window handle, clipboard, and global event listener. Supports macOS, Windows, Linux; amd64 and arm64.
 
-Module: `github.com/go-vgo/robotgo` — `go.mod` declares `go 1.25.0` (CI sets up Go 1.26.x).
+Module: `github.com/go-vgo/robotgo` — `go.mod` declares `go 1.26.0` (GitHub Actions sets up Go 1.26.x).
 
 ## Build/Test/Lint Commands
 
-Prerequisites: `GCC` must be installed. `CGO_ENABLED=1` (default). On macOS, Xcode Command Line Tools + Accessibility/Screen Recording permissions. On Linux, X11 + XTest (`libx11-dev xorg-dev libxtst-dev`).
+Default Cgo backend prerequisites: `GCC` must be installed. `CGO_ENABLED=1` (default). On macOS, Xcode Command Line Tools + Accessibility/Screen Recording permissions. On Linux, X11 + XTest (`libx11-dev xorg-dev libxtst-dev`). The pure-Go backends support `CGO_ENABLED=0`; see the backend tags below.
 
 - **Build**: `go build -v .`
 - **Build all subpackages**: `go build -v ./...`
 - **Fetch deps**: `go get -v -t -d ./...`
-- **Test (CI minimal — no display required)**: `go test -v robot_info_test.go`
+- **Test (Cgo CI smoke tests — queries screen/window state)**: `go test -v robot_info_test.go`
+- **Test (pure-Go default backend)**: `go test -v -tags purego .`
+- **Test (Linux pure-Go X11)**: `go test -v -tags "purego,x11" . ./x11`
+- **Test (Linux pure-Go libei)**: `go test -v -tags "purego,libei" . ./libei`
 - **Test (full)**: `go test -v ./...` (Linux CI wraps with `xvfb-run` — see `.circleci/config.yml`)
 - **Single test**: `go test -v -run TestGetScreenSize .`
 - **Format**: `gofmt -w .` (code uses tab indentation, standard `gofmt` style)
 - **Vet**: `go vet ./...`
 - **Run an example**: `cd examples/mouse && go run main.go`
 
-There is no Makefile / Taskfile / linter config. CI is `.github/workflows/go.yml` (macOS + Windows, Go 1.26.x: `go build -v .` then `go test -v robot_info_test.go` only) and `.circleci/config.yml` (Linux full tests under xvfb). The old `appveyor.yml` has been removed.
+There is no Makefile / Taskfile / linter config. `.github/workflows/go.yml` runs Go 1.26.x on macOS + Windows (Cgo build/smoke tests and pure-Go root tests) and Ubuntu (pure-Go X11/libei root + backend tests with `CGO_ENABLED=0`). `.circleci/config.yml` runs Linux package tests under xvfb; its container image is still `golang:1.25.0`, below the module's declared Go version. The old `appveyor.yml` has been removed.
 
 ## Architecture
 
-Single Go package `robotgo` at repo root (flat layout) with platform-specific files and C-binding subpackages. The default backend is Cgo wrappers over C headers vendored in subdirectories; build tags split platform implementations. In addition, three **pure-Go (no-Cgo) backends** now live in their own packages and are selected via build tags on the root package: `win/` (`-tags win`, Win32 via tailscale/win), `wayland/` (`-tags wayland`, wlroots virtual-input protocols), and `libei/` (`-tags libei`, xdg-desktop-portal RemoteDesktop for GNOME/KDE). `robotgo.go` carries `//go:build !wayland && !win && !libei` so exactly one backend compiles.
+Single Go package `robotgo` at repo root (flat layout) with platform-specific files and C-binding subpackages. The default backend is Cgo wrappers over C headers vendored in subdirectories; build tags split platform implementations. Five **pure-Go (no-Cgo) backends** live in their own packages: `win/` (`-tags win`, Win32 via tailscale/win), `darwin/` (`-tags mac`, Quartz via purego), `x11/` (`-tags x11`, X11 protocol), `wayland/` (`-tags wayland`, wlroots virtual-input protocols), and `libei/` (`-tags libei`, xdg-desktop-portal RemoteDesktop for GNOME/KDE). `-tags purego` selects macOS/Windows/Linux defaults (`mac`/`win`/`wayland`); Linux can override with `purego,x11` or `purego,libei`. `robotgo.go` excludes all these tags. Build the module root (`.`) for these backends; some examples/subpackages still require Cgo APIs.
 
 ```
 robotgo/
-├── robotgo.go              # default Cgo API + preamble; //go:build !wayland && !win && !libei
+├── robotgo.go              # default Cgo API; excludes wayland, win, libei, mac, x11, purego
 ├── robotgo_pub.go          # portable pkg vars: Version, MouseSleep, KeySleep, DisplayID, Scale...
 ├── doc.go                  # package doc
-├── robotgo_mac.go          # //go:build darwin
-├── robotgo_mac_unix.go     # //go:build darwin || linux
-├── robotgo_mac_win.go      # //go:build darwin || windows
+├── robotgo_mac.go          # macOS Cgo implementation; excludes mac/purego
+├── robotgo_mac_unix.go     # non-Windows Cgo implementation; excludes pure-Go backend tags
+├── robotgo_mac_win.go      # macOS/Windows Cgo implementation; excludes win/mac/purego
 ├── robotgo_win.go          # //go:build windows
-├── robotgo_x11.go          # //go:build linux
+├── robotgo_x11.go          # default non-macOS/non-Windows Cgo implementation
 ├── robotgo_android.go, robotgo_adb.go
 ├── robotgo_ocr.go          # //go:build ocr (gosseract OCR)
 ├── libei.go                # //go:build linux && libei — wires libei/ backend into robotgo pkg
-├── wayland_n.go, windows_n.go
+├── wayland_n.go, windows_n.go, darwin.go, x11_n.go # root pure-Go backend adapters
 ├── key.go, keycode.go, screen.go, img.go, ps.go
 ├── robotgo_fn_v1.go        # deprecated v1 aliases (kept for compat)
-├── robot_info_test.go      # only portable test (used by GitHub Actions)
-├── robotgo_test.go         # full interactive tests
+├── robot_info_test.go      # default Cgo smoke tests (used by GitHub Actions)
+├── robotgo_test.go         # interactive Cgo tests, macOS/Windows only
+├── img_test.go, key_test.go, robot_mac_test.go # image, Cgo key and macOS pure-Go tests
 ├── base/       # C helpers (MMBitmap, rgb, microsleep, types, os, pubs, xdisplay)
 ├── mouse/      # Go pkg + C (mouse.h, mouse_c.h) with *_darwin.go/_windows.go/_x11.go
 ├── key/        # Go pkg + C (keycode.h, keycode_c.h, keypress.h, keypress_c.h, key_windows.go)
@@ -57,12 +61,12 @@ robotgo/
 ├── examples/   # main.go + mouse, key, screen, window, scale — runnable main.go
 ├── lang/       # translated READMEs (de, es, fr, ja, ko, pt, ru, zh, zht)
 ├── skills/     # SKILL.md (agent skill descriptor)
-├── x11/, darwin/   # currently empty placeholder dirs
+├── x11/, darwin/   # implemented pure-Go X11/macOS backends, with tests
 ├── docs/       # install.md, keys.md, CHANGELOG.md, README.md, archive/
 └── .github/workflows/go.yml, .circleci/config.yml
 ```
 
-Key subpackage relationships: the root `robotgo` package pulls C code from `screen/goScreen.h`, `mouse/mouse_c.h`, `window/goWindow.h`. The `key/` and `clipboard/` directories are importable Go packages; `base/` is header-only C support. The pure-Go `win/`, `wayland/` and `libei/` packages each mirror the robotgo API surface (mouse/keyboard/screen/window/process) so a backend can be swapped per platform with a build tag.
+Key subpackage relationships: the root `robotgo` package pulls C code from `screen/goScreen.h`, `mouse/mouse_c.h`, `window/goWindow.h`. The `key/` and `clipboard/` directories are importable Go packages; `base/` is header-only C support. The pure-Go packages expose platform-specific subsets of the robotgo API through root adapters; unsupported operations may return `ErrNotSupported` (for example, macOS pure-Go window management).
 
 ## Code Style
 
@@ -80,18 +84,18 @@ Key subpackage relationships: the root `robotgo` package pulls C code from `scre
 
 - Framework: stdlib `testing` + `github.com/vcaesar/tt` (`tt.Expect(t, want, got)`).
 - Test files: `*_test.go` beside sources. Package declared as `robotgo_test` (external) for API-surface tests, or `robotgo` for internal.
-- **Portable tests** live in `robot_info_test.go` — the only file exercised by GitHub Actions. Keep new tests here if they must run headless on macOS/Windows CI.
-- **Interactive / display-required tests** go in `robotgo_test.go` and run only under CircleCI's `xvfb-run go test -v ./...`.
+- **Default Cgo smoke tests** live in `robot_info_test.go`, explicitly selected by GitHub Actions on macOS/Windows. They query screen/window state and are excluded from pure-Go package test runs. Backend-independent tests such as `img_test.go` run under the pure-Go root test jobs; match build tags to the APIs being tested.
+- **Interactive / display-required tests** live in `robotgo_test.go`; its build tags restrict it to macOS/Windows Cgo, so CircleCI's Linux `xvfb-run go test -v ./...` does not include that file. Pure-Go backend tests live beside their implementations; macOS root adapter tests are in `robot_mac_test.go`.
 - Run one test: `go test -v -run TestGetScreenSize .`
 - No fixtures, snapshots, or golden files in use. Screenshots produced by examples are `.gitignore`d.
 
 ## Key Patterns
 
-- **Cgo + platform split is mandatory**. Any new OS-specific function must be gated by `//go:build` tags and have implementations (even stub) for darwin, linux, windows — examine `mouse/mouse_darwin.go`, `mouse_windows.go`, `mouse_x11.go` as the template.
+- **Platform and backend build tags are mandatory**. Keep Cgo implementations separate from pure-Go adapters. Any new cross-platform API needs appropriate implementations (or explicit unsupported stubs) for darwin, linux, windows — examine `mouse/mouse_darwin.go`, `mouse_windows.go`, `mouse_x11.go` for Cgo and the root backend adapters for pure-Go conventions.
 - **Free C-allocated bitmaps**: every `CaptureScreen`, `ToCBitmap`, etc. must be paired with `defer robotgo.FreeBitmap(bit)` or `robotgo.FreeBitmapArr(...)`. Leaking is a memory bug on all platforms.
 - **Global tunables** are package-level vars, not config structs: `MouseSleep`, `KeySleep`, `DisplayID`, `NotPid`, `Scale`. Callers mutate them directly (see README examples). Do not hide them behind getters.
 - **`robotgo_fn_v1.go`** contains deprecated v1 aliases — do not add new APIs there, but do not delete existing ones (backwards compatibility).
-- **Version string** lives in `robotgo_pub.go` as `const Version = "v2.00.0.1658, MT. Baker!"` (moved out of `robotgo.go`). Bump it when releasing; `TestGetVer` asserts it matches `GetVersion()`. The pure-Go backends carry their own versions (`win/robotgo.go` `v0.1.0-windows`, `wayland/robotgo.go` `v0.1.0-wayland`, `libei/robotgo.go` `v0.1.0-libei`).
+- **Version string** lives in `robotgo_pub.go` as `const Version = "v2.00.0.1658, MT. Baker!"` (moved out of `robotgo.go`). Bump it when releasing; `TestGetVer` asserts it matches `GetVersion()`. The pure-Go backends carry their own versions in each package's `robotgo.go`: `v0.1.0-windows`, `v0.1.0-darwin`, `v0.1.0-x11`, `v0.1.0-wayland`, `v0.1.0-libei`.
 - **Windows pid vs hwnd**: set `robotgo.NotPid = true` to pass window handles instead of pids into the window/key APIs on Windows.
 - **macOS permissions**: most screen/input APIs silently fail without Accessibility + Screen Recording grants. When reproducing bugs on darwin, verify System Settings → Privacy & Security first.
 - **Do not vendor**: `vendor/` is in `.gitignore`; also avoid `go mod vendor` (upstream note in README references golang/go#26366).
@@ -104,7 +108,7 @@ Key subpackage relationships: the root `robotgo` package pulls C code from `scre
 - `github.com/vcaesar/go-wayland` — Wayland protocol client (used by the `wayland/` pure-Go backend).
 - `github.com/godbus/dbus/v5` — D-Bus, used on Linux for Wayland/desktop ops and the `libei/` xdg-portal backend.
 - `github.com/tailscale/win`, `github.com/dblohm7/wingoes`, `github.com/yusufpapurcu/wmi`, `github.com/go-ole/go-ole`, `golang.org/x/sys` — Windows system APIs (also used by the `win/` pure-Go backend).
-- `github.com/ebitengine/purego`, `github.com/gen2brain/shm` — indirect, dlopen/shared-memory helpers pulled in by the screenshot/wayland paths.
+- `github.com/ebitengine/purego` — direct dependency for runtime native-library loading (including the macOS backend); `github.com/gen2brain/shm` — indirect shared-memory helper.
 - `github.com/vcaesar/keycode` — cross-platform keycode mapping (used by `key/`).
 - `github.com/vcaesar/imgo`, `golang.org/x/image` — image encode/decode (PNG/JPEG save).
 - `github.com/vcaesar/screenshot` — screenshot backend.
