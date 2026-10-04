@@ -15,6 +15,11 @@
 package x11
 
 import (
+	"os"
+	"path/filepath"
+	"strconv"
+	"strings"
+
 	"github.com/jezek/xgb/xproto"
 	"github.com/jezek/xgbutil/ewmh"
 	"github.com/jezek/xgbutil/icccm"
@@ -163,4 +168,43 @@ func CloseWindow(args ...int) {
 		return
 	}
 	_ = ewmh.CloseWindow(c.xu, w)
+}
+
+// CheckAccess reports whether input injection is permitted. X11 has no
+// accessibility gate, so it always returns true; prompt is ignored.
+func CheckAccess(prompt bool) bool { return true }
+
+// GetActiveApp returns the active window's process name, executable path and
+// pid (from _NET_WM_PID and /proc). Unresolved fields are left empty.
+func GetActiveApp() (string, string, int) {
+	c, err := ensureConn()
+	if err != nil {
+		return "", "", 0
+	}
+	w, err := ewmh.ActiveWindowGet(c.xu)
+	if err != nil {
+		return "", "", 0
+	}
+	wmPid, err := ewmh.WmPidGet(c.xu, w)
+	if err != nil || wmPid == 0 {
+		return "", "", 0
+	}
+	return procInfo(int(wmPid))
+}
+
+// procInfo returns the name and executable path of pid read from /proc.
+// The name prefers the exe basename, since comm is truncated to 15 bytes.
+func procInfo(pid int) (string, string, int) {
+	dir := "/proc/" + strconv.Itoa(pid)
+	path, err := os.Readlink(dir + "/exe")
+	if err != nil {
+		path = ""
+	} else if name := filepath.Base(path); name != "." && name != "/" {
+		return name, path, pid
+	}
+	comm, err := os.ReadFile(dir + "/comm")
+	if err != nil {
+		return "", path, pid
+	}
+	return strings.TrimSpace(string(comm)), path, pid
 }

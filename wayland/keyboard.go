@@ -92,6 +92,7 @@ const (
 	AltR     = "altr"
 	Space    = "space"
 	Capslock = "capslock"
+	Caps     = "caps"
 	Print    = "print"
 	Insert   = "insert"
 	Menu     = "menu"
@@ -291,8 +292,10 @@ func KeyPress(key string, args ...interface{}) error {
 // Type types a string character by character using evdev key codes for ASCII
 // characters. An optional first int argument (pid) is accepted for API parity
 // but ignored on Wayland: input is injected into the focused surface (see
-// KeyTap), mirroring the X11 path in key/keypress_c.h.
-func Type(str string, args ...int) {
+// KeyTap), mirroring the X11 path in key/keypress_c.h. It returns the number
+// of characters (runes) typed and stops at the first failed key event.
+func Type(str string, args ...int) int {
+	n := 0
 	for _, ch := range str {
 		key := string(ch)
 		needShift := false
@@ -306,12 +309,18 @@ func Type(str string, args ...int) {
 			needShift = true
 		}
 
+		var err error
 		if needShift {
-			_ = KeyTap(key, "shift")
+			err = KeyTap(key, "shift")
 		} else {
-			_ = KeyTap(key)
+			err = KeyTap(key)
 		}
+		if err != nil {
+			return n
+		}
+		n++
 	}
+	return n
 }
 
 // TypeStr types a string character by character.

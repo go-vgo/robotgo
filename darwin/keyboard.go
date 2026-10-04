@@ -55,7 +55,7 @@ var namedCodes = map[string]uint16{
 	"esc": 53, "escape": 53,
 	"up": 126, "down": 125, "left": 123, "right": 124,
 	"home": 115, "end": 119, "pageup": 116, "pagedown": 121,
-	"capslock": 57, "help": 114, "insert": 114,
+	"capslock": 57, "caps": 57, "fn": 63, "help": 114, "insert": 114,
 
 	"cmd": 55, "command": 55, "lcmd": 55, "cmdl": 55,
 	"rcmd": 54, "cmdr": 54,
@@ -178,22 +178,24 @@ func sendKeyCode(code uint16, down bool, flags uint64, pid int) {
 
 // sendUnicode posts a key event carrying a single rune as a Unicode string to
 // the target pid (0 posts to the global HID event tap), supporting any
-// character regardless of the active keyboard layout.
-func sendUnicode(r rune, down bool, pid int) {
+// character regardless of the active keyboard layout. It reports whether the
+// event was posted.
+func sendUnicode(r rune, down bool, pid int) bool {
 	if !loaded {
-		return
+		return false
 	}
 	ev := withSource(func(src uintptr) uintptr {
 		return cgEventCreateKeyboardEvent(src, 0, down)
 	})
 	if ev == 0 {
-		return
+		return false
 	}
 	units := utf16.Encode([]rune{r})
 	if len(units) > 0 {
 		cgEventKeyboardSetUnicode(ev, uint64(len(units)), &units[0])
 	}
 	postEventTo(ev, pid)
+	return true
 }
 
 // KeyTap taps a key (press + release). Trailing arguments may be modifier
@@ -305,18 +307,25 @@ func KeyPress(key string, args ...interface{}) error {
 //
 //	Type("hello")
 //	Type("hello", pid)
-func Type(str string, args ...int) {
+//
+// It returns the number of characters (runes) typed and stops at the first
+// event that can not be posted.
+func Type(str string, args ...int) int {
 	pid := 0
 	if len(args) > 0 {
 		pid = args[0]
 	}
+	n := 0
 	for _, r := range str {
-		sendUnicode(r, true, pid)
-		sendUnicode(r, false, pid)
+		if !sendUnicode(r, true, pid) || !sendUnicode(r, false, pid) {
+			return n
+		}
+		n++
 		if KeySleep > 0 {
 			time.Sleep(time.Duration(KeySleep) * time.Millisecond)
 		}
 	}
+	return n
 }
 
 // TypeStr types a string. Alias of Type, mirroring the robotgo API.

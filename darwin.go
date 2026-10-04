@@ -77,7 +77,7 @@ func KeyUp(key string, args ...any) error { return dm.KeyUp(key, args...) }
 func KeyPress(key string, args ...any) error { return dm.KeyPress(key, args...) }
 
 // Type type a string (alias of TypeStr).
-func Type(str string, args ...int) { dm.Type(str, args...) }
+func Type(str string, args ...int) int { return dm.Type(str, args...) }
 
 // TypeStr type a string.
 func TypeStr(str string, args ...int) { dm.TypeStr(str, args...) }
@@ -172,6 +172,12 @@ func PadHex(hex uint32) string { return dm.PadHex(hex) }
 
 // GetTitle get the window title, return string.
 func GetTitle(args ...int) string { return dm.GetTitle(args...) }
+
+// CheckAccess check the os accessibility, p shows the system prompt.
+func CheckAccess(p bool) bool { return dm.CheckAccess(p) }
+
+// GetActiveApp get the active app name, bundle id or path, and pid.
+func GetActiveApp() (string, string, int) { return dm.GetActiveApp() }
 
 // ActiveName active the window by name.
 func ActiveName(name string) error { return dm.ActiveName(name) }

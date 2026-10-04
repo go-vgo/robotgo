@@ -33,3 +33,12 @@ func MaxWindow(pid int, args ...interface{}) {}
 
 // CloseWindow is a no-op on this backend.
 func CloseWindow(args ...int) {}
+
+// CheckAccess reports whether input injection is permitted. Access is
+// granted per session by the portal dialog, so it always returns true here;
+// prompt is ignored.
+func CheckAccess(prompt bool) bool { return true }
+
+// GetActiveApp returns empty values; the portal does not expose the
+// focused application.
+func GetActiveApp() (string, string, int) { return "", "", 0 }

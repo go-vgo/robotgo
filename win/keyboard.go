@@ -109,6 +109,7 @@ const (
 	AltR     = "altr"
 	Space    = "space"
 	Capslock = "capslock"
+	Caps     = "caps"
 	Print    = "print"
 	Insert   = "insert"
 	Menu     = "menu"
@@ -133,6 +134,7 @@ var vkMap = map[string]uint16{
 	"cmd": win.VK_LWIN, "cmdl": win.VK_LWIN, "win": win.VK_LWIN,
 	"cmdr": win.VK_RWIN, "rwin": win.VK_RWIN,
 	"capslock": win.VK_CAPITAL,
+	"caps":     win.VK_CAPITAL,
 	"print":    win.VK_SNAPSHOT, "printscreen": win.VK_SNAPSHOT,
 	"menu":     win.VK_APPS,
 	"num_lock": win.VK_NUMLOCK, "scroll_lock": win.VK_SCROLL,
@@ -230,7 +232,8 @@ func sendVK(vk uint16, up bool) {
 }
 
 // sendUnicode dispatches a single UTF-16 code unit as a Unicode key event.
-func sendUnicode(u uint16, up bool) {
+// It reports whether SendInput inserted the event.
+func sendUnicode(u uint16, up bool) bool {
 	flags := uint32(win.KEYEVENTF_UNICODE)
 	if up {
 		flags |= win.KEYEVENTF_KEYUP
@@ -242,7 +245,7 @@ func sendUnicode(u uint16, up bool) {
 			DwFlags: flags,
 		},
 	}
-	win.SendInput(1, unsafe.Pointer(&in), int32(unsafe.Sizeof(in)))
+	return win.SendInput(1, unsafe.Pointer(&in), int32(unsafe.Sizeof(in))) == 1
 }
 
 // hwndByPid returns the first top-level window owned by pid. It mirrors the C
@@ -282,8 +285,10 @@ func postKey(hwnd win.HWND, vk uint16, up bool) {
 
 // postChar posts a WM_CHAR message carrying a single UTF-16 code unit to a
 // window, mirroring unicodeType()'s PostMessageW path in key/keypress_c.h.
-func postChar(hwnd win.HWND, u uint16) {
-	procPostMessageW.Call(uintptr(hwnd), uintptr(wmChar), uintptr(u), 0)
+// It reports whether PostMessageW succeeded.
+func postChar(hwnd win.HWND, u uint16) bool {
+	r, _, _ := procPostMessageW.Call(uintptr(hwnd), uintptr(wmChar), uintptr(u), 0)
+	return r != 0
 }
 
 // KeyTap taps a key (press + release). Optional trailing modifiers and an int
@@ -429,31 +434,41 @@ func KeyPress(key string, args ...interface{}) error {
 //
 //	Type("hello")
 //	Type("hello", pid)
-func Type(str string, args ...int) {
+//
+// It returns the number of characters (runes) typed, stopping at the first
+// failed input event; 0 if the target window is not found.
+func Type(str string, args ...int) int {
 	pid := 0
 	if len(args) > 0 {
 		pid = args[0]
 	}
+	send := func(u uint16) bool { return sendUnicode(u, false) && sendUnicode(u, true) }
 	if pid != 0 {
 		hwnd := keyHwnd(pid)
 		if hwnd == 0 {
-			return
+			return 0
 		}
-		for _, u := range utf16.Encode([]rune(str)) {
-			postChar(hwnd, u)
-			if KeySleep > 0 {
-				time.Sleep(time.Duration(KeySleep) * time.Millisecond)
+		send = func(u uint16) bool { return postChar(hwnd, u) }
+	}
+	return typeRunes(str, send)
+}
+
+// typeRunes sends each rune of str as UTF-16 code units via send and returns
+// the number of runes fully sent, stopping at the first failure.
+func typeRunes(str string, send func(u uint16) bool) int {
+	n := 0
+	for _, r := range str {
+		for _, u := range utf16.Encode([]rune{r}) {
+			if !send(u) {
+				return n
 			}
 		}
-		return
-	}
-	for _, u := range utf16.Encode([]rune(str)) {
-		sendUnicode(u, false)
-		sendUnicode(u, true)
+		n++
 		if KeySleep > 0 {
 			time.Sleep(time.Duration(KeySleep) * time.Millisecond)
 		}
 	}
+	return n
 }
 
 // TypeStr types a string. Alias of Type, mirroring the robotgo API.

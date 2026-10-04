@@ -58,6 +58,7 @@ var evdevKeyMap = map[string]uint32{
 	"cmd": 125, "cmdl": 125, "cmdr": 126, // KEY_LEFTMETA / KEY_RIGHTMETA
 	"space":    57,
 	"capslock": 58,
+	"caps":     58,
 
 	// Function keys
 	"f1": 59, "f2": 60, "f3": 61, "f4": 62, "f5": 63, "f6": 64,

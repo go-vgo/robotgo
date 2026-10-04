@@ -235,26 +235,32 @@ func KeyUp(key string, args ...interface{}) error {
 	return KeyToggle(key, args...)
 }
 
-// Type types a string (alias of TypeStr).
-func Type(str string, args ...int) {
-	TypeStr(str, args...)
-}
-
-// TypeStr types a string of (possibly Unicode) characters.
-func TypeStr(str string, args ...int) {
+// Type types a string of (possibly Unicode) characters and returns the
+// number of characters (runes) typed; it stops at the first failed key event.
+func Type(str string, args ...int) int {
 	c, err := ensureConn()
 	if err != nil {
-		return
+		return 0
 	}
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
+	n := 0
 	for _, r := range str {
-		_ = c.pressKeysym(runeKeysym(r))
+		if err := c.pressKeysym(runeKeysym(r)); err != nil {
+			return n
+		}
+		n++
 		if KeySleep > 0 {
 			time.Sleep(time.Duration(KeySleep) * time.Millisecond)
 		}
 	}
+	return n
+}
+
+// TypeStr types a string (alias of Type).
+func TypeStr(str string, args ...int) {
+	Type(str, args...)
 }
 
 // TypeDelay types a string then sleeps for delay milliseconds.

@@ -76,6 +76,8 @@ typedef struct {
 	uintptr pid;           // Process ID
 } ActiveApp;
 
+// getActiveApp returns the frontmost app on macOS; other platforms
+// resolve it in Go from the active window pid (see GetActiveApp).
 ActiveApp getActiveApp(void) {
 	ActiveApp app = {0};
 	#if defined(IS_MACOSX)
@@ -93,32 +95,6 @@ ActiveApp getActiveApp(void) {
 				app.pid = [frontApp processIdentifier];
 			}
 		}
-		return app;
-	#elif defined(USE_X11)
-		return app;
-	#elif defined(IS_WINDOWS)
-		HWND hwnd = GetForegroundWindow();
-		if (!hwnd) {
-			return app;
-		}
-		
-		// Get window title
-		GetWindowTextA(hwnd, app.name, sizeof(app.name) - 1);
-		// Get process ID
-		DWORD pid = 0;
-		GetWindowThreadProcessId(hwnd, &pid);
-		app.pid = pid;
-		if (pid == 0) {
-			return app;
-		}
-		
-		// Get executable path
-		HANDLE hProcess = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid);
-		if (hProcess) {
-			DWORD size = sizeof(app.bundle_id);
-			QueryFullProcessImageNameA(hProcess, 0, app.bundle_id, &size);
-			CloseHandle(hProcess);
-		}
-		return app;
 	#endif
+	return app;
 }

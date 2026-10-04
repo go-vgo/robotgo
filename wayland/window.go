@@ -137,6 +137,30 @@ func CloseWindow(args ...int) {
 	})
 }
 
+// CheckAccess reports whether input injection is permitted. Wayland
+// (wlroots virtual input) has no accessibility gate; prompt is ignored.
+func CheckAccess(prompt bool) bool { return true }
+
+// GetActiveApp returns the active toplevel's app_id as both name and id.
+// wlr-foreign-toplevel does not expose a pid, so the pid is always 0.
+func GetActiveApp() (string, string, int) {
+	c, err := ensureConn()
+	if err != nil || c.toplevelMgr == nil {
+		return "", "", 0
+	}
+	info := c.activeToplevel()
+	if info == nil {
+		return "", "", 0
+	}
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	// activeToplevel falls back to any toplevel; only report a truly active one.
+	if !isActivated(info.states) {
+		return "", "", 0
+	}
+	return info.appId, info.appId, 0
+}
+
 // isActivated checks if the toplevel state array contains the "activated" state.
 // The state is an array of uint32 values, where 2 = activated.
 func isActivated(states []byte) bool {

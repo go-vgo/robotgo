@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/go-vgo/robotgo/clipboard"
 )
@@ -217,24 +218,31 @@ func WriteAll(text string) error {
 // PasteStr paste a string
 //
 // Deprecated: use the Paste()
-func PasteStr(str string) (int, error) {
-	return Paste(str)
+func PasteStr(str string) error {
+	_, err := Paste(str)
+	return err
 }
 
+// Pastes paste a string and return the pasted character count, 0 on failure
 func Pastes(str string, pid ...int) int {
-	l, _ := Paste(str, pid...)
-	return l
+	n, err := Paste(str, pid...)
+	if err != nil {
+		return 0
+	}
+	return n
 }
 
 // Paste paste a string (supported UTF-8),
-// write the string to clipboard and tap `cmd + v`
+// write the string to clipboard and tap `cmd + v`,
+// return the pasted character (rune) count
 func Paste(str string, pid ...int) (int, error) {
-	err := clipboard.WriteAll(str)
-	if err != nil {
+	if err := clipboard.WriteAll(str); err != nil {
 		return 0, err
 	}
-	err = CmdV(pid...)
-	return len(str), err
+	if err := CmdV(pid...); err != nil {
+		return 0, err
+	}
+	return utf8.RuneCountInString(str), nil
 }
 
 // TypeStrDelay type string width delay

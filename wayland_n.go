@@ -72,7 +72,7 @@ func KeyUp(key string, args ...any) error { return wl.KeyUp(key, args...) }
 func KeyPress(key string, args ...any) error { return wl.KeyPress(key, args...) }
 
 // Type type a string (alias of TypeStr).
-func Type(str string, args ...int) { wl.Type(str, args...) }
+func Type(str string, args ...int) int { return wl.Type(str, args...) }
 
 // TypeStr type a string.
 func TypeStr(str string, args ...int) { wl.TypeStr(str, args...) }
@@ -160,6 +160,12 @@ func PadHex(hex uint32) string { return wl.PadHex(hex) }
 
 // GetTitle get the window title, return string.
 func GetTitle(args ...int) string { return wl.GetTitle(args...) }
+
+// CheckAccess check the os accessibility, p shows the system prompt.
+func CheckAccess(p bool) bool { return wl.CheckAccess(p) }
+
+// GetActiveApp get the active app name, bundle id or path, and pid.
+func GetActiveApp() (string, string, int) { return wl.GetActiveApp() }
 
 // ActiveName active the window by name.
 func ActiveName(name string) error { return wl.ActiveName(name) }
