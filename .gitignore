@@ -20,6 +20,10 @@ test/test.png
 *.dSYM/
 *.su
 debug
+v0
+.v0
+test/tmp
+test/logs
 
 # Architecture specific extensions/prefixes
 *.[568vq]
