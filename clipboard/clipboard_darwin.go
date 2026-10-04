@@ -19,9 +19,10 @@ var (
 )
 
 // utf8Env forces pbcopy/pbpaste to use UTF-8, they fall back to a legacy
-// encoding when the process has no UTF-8 locale (e.g. launched from a GUI)
+// encoding when the process has no UTF-8 locale (e.g. launched from a GUI).
+// LC_ALL takes precedence over LC_CTYPE and LANG; exec keeps the last duplicate.
 func utf8Env() []string {
-	return append(os.Environ(), "LANG=en_US.UTF-8")
+	return append(os.Environ(), "LANG=en_US.UTF-8", "LC_ALL=en_US.UTF-8")
 }
 
 func getPasteCommand() *exec.Cmd {

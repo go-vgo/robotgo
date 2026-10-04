@@ -99,7 +99,12 @@ func readAll() (string, error) {
 		return "", winErr(err)
 	}
 
-	size, _, _ := globalSize.Call(h)
+	// valid CF_UNICODETEXT data holds at least the UTF-16 terminator
+	size, _, err := globalSize.Call(h)
+	if size == 0 {
+		return "", winErr(err)
+	}
+
 	l, _, err := globalLock.Call(h)
 	if l == 0 {
 		return "", winErr(err)
