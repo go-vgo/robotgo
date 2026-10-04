@@ -2,22 +2,25 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-//go:build darwin || windows
-// +build darwin windows
-
 package clipboard_test
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/go-vgo/robotgo/clipboard"
 )
 
-func TestCopyAndPaste(t *testing.T) {
-	expected := "日本語"
+func skipUnsupported(tb testing.TB) {
+	tb.Helper()
+	if clipboard.Unsupported {
+		tb.Skip("clipboard utilities are not available")
+	}
+}
 
-	err := clipboard.WriteAll(expected)
-	if err != nil {
+func roundTrip(t *testing.T, expected string) {
+	t.Helper()
+	if err := clipboard.WriteAll(expected); err != nil {
 		t.Fatal(err)
 	}
 
@@ -25,52 +28,56 @@ func TestCopyAndPaste(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
 	if actual != expected {
-		t.Errorf("want %s, got %s", expected, actual)
+		t.Errorf("want %q (len %d), got %q (len %d)",
+			short(expected), len(expected), short(actual), len(actual))
 	}
+}
+
+func short(s string) string {
+	if len(s) > 64 {
+		return s[:64] + "..."
+	}
+	return s
+}
+
+func TestCopyAndPaste(t *testing.T) {
+	skipUnsupported(t)
+	roundTrip(t, "日本語")
 }
 
 func TestMultiCopyAndPaste(t *testing.T) {
-	expected1 := "French: éèêëàùœç"
-	expected2 := "Weird UTF-8: 💩☃"
+	skipUnsupported(t)
+	roundTrip(t, "French: éèêëàùœç")
+	roundTrip(t, "Weird UTF-8: 💩☃")
+}
 
-	err := clipboard.WriteAll(expected1)
-	if err != nil {
-		t.Fatal(err)
-	}
+func TestCopyAndPasteEmpty(t *testing.T) {
+	skipUnsupported(t)
+	roundTrip(t, "")
+}
 
-	actual1, err := clipboard.ReadAll()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if actual1 != expected1 {
-		t.Errorf("want %s, got %s", expected1, actual1)
-	}
-
-	err = clipboard.WriteAll(expected2)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	actual2, err := clipboard.ReadAll()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if actual2 != expected2 {
-		t.Errorf("want %s, got %s", expected2, actual2)
-	}
+func TestCopyAndPasteLarge(t *testing.T) {
+	skipUnsupported(t)
+	// larger than the old 1<<20 UTF-16 read limit on windows
+	roundTrip(t, strings.Repeat("ab日", 1<<19))
 }
 
 func BenchmarkReadAll(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		clipboard.ReadAll()
+	skipUnsupported(b)
+	for b.Loop() {
+		if _, err := clipboard.ReadAll(); err != nil {
+			b.Fatal(err)
+		}
 	}
 }
 
 func BenchmarkWriteAll(b *testing.B) {
+	skipUnsupported(b)
 	text := "いろはにほへと"
-	for i := 0; i < b.N; i++ {
-		clipboard.WriteAll(text)
+	for b.Loop() {
+		if err := clipboard.WriteAll(text); err != nil {
+			b.Fatal(err)
+		}
 	}
 }

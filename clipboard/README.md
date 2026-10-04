@@ -18,7 +18,16 @@ Platforms:
 
 * OSX
 * Windows 7 (probably work on other Windows)
-* Linux, Unix (requires 'xclip' or 'xsel' command to be installed)
+* Linux, Unix, the first available tool is used:
+  * Wayland: `wl-clipboard` (`wl-copy` / `wl-paste`), when `WAYLAND_DISPLAY` is set
+  * X11: `xclip` or `xsel`
+  * Android Termux: `termux-clipboard-get` / `termux-clipboard-set` (Termux:API add-on)
+  * WSL: the Windows clipboard via `clip.exe` / `powershell.exe`
+  * tmux: the tmux paste buffer, when running inside tmux (`TMUX` is set)
+* Plan 9 (`/dev/snarf`)
+
+`clipboard.Primary = true` selects the primary selection on Wayland and X11,
+other tools fall back to the clipboard.
 
 
 Document: 
