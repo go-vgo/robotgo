@@ -13,7 +13,7 @@ require (
 	github.com/vcaesar/gops v0.43.0
 	github.com/vcaesar/imgo v0.43.0
 	github.com/vcaesar/keycode v0.20.0
-	github.com/vcaesar/screenshot v0.30.0
+	github.com/vcaesar/screenshot v0.40.0
 	github.com/vcaesar/tt v0.40.0
 	golang.org/x/sys v0.48.0
 )
