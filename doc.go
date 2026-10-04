@@ -30,6 +30,7 @@ Keys are supported:
 	"pageup"
 	"pagedown"
 
+	"fn"
 	"f1"
 	"f2"
 	"f3"
