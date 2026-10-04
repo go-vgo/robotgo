@@ -131,7 +131,7 @@ var vkMap = map[string]uint16{
 	"ctrl": win.VK_CONTROL, "control": win.VK_CONTROL,
 	"ctrll": win.VK_LCONTROL, "ctrlr": win.VK_RCONTROL,
 	"alt": win.VK_MENU, "altl": win.VK_LMENU, "altr": win.VK_RMENU,
-	"cmd": win.VK_LWIN, "cmdl": win.VK_LWIN, "win": win.VK_LWIN,
+	"cmd": win.VK_LWIN, "command": win.VK_LWIN, "cmdl": win.VK_LWIN, "win": win.VK_LWIN,
 	"cmdr": win.VK_RWIN, "rwin": win.VK_RWIN,
 	"capslock": win.VK_CAPITAL,
 	"caps":     win.VK_CAPITAL,
@@ -300,6 +300,7 @@ func postChar(hwnd win.HWND, u uint16) bool {
 //	KeyTap("a")
 //	KeyTap("a", "ctrl")
 //	KeyTap("a", "ctrl", "shift")
+//	KeyTap("a", []string{"ctrl", "shift"})
 //	KeyTap("a", pid)
 //	KeyTap("a", pid, "ctrl")
 func KeyTap(key string, args ...interface{}) error {
@@ -377,34 +378,88 @@ func appendUniqueMod(mods []string, mod string) []string {
 	return append(mods, mod)
 }
 
-// KeyToggle toggles a key. Default is "down"; pass "up" to release. An optional
+type keyEvent struct {
+	vk uint16
+	up bool
+}
+
+// toggleKeyEvents plans modifier and key transitions without injecting input.
+func toggleKeyEvents(key string, args []interface{}) ([]keyEvent, error) {
+	up := false
+	for _, arg := range args {
+		switch value := arg.(type) {
+		case string:
+			up = up || value == "up"
+		case []string:
+			for _, s := range value {
+				up = up || s == "up"
+			}
+		}
+	}
+	vk, autoMods, ok := keyToVK(key)
+	if !ok {
+		return nil, errors.New("robotgo: unknown key: " + key)
+	}
+	mods := extractModifiers(args)
+	for i, mod := range []string{"shift", "ctrl", "alt"} {
+		if autoMods&(1<<i) != 0 {
+			mods = appendUniqueMod(mods, mod)
+		}
+	}
+	var modifierKeys []uint16
+	seen := map[uint16]bool{vk: true}
+	for _, mod := range mods {
+		mvk, _, ok := keyToVK(mod)
+		if ok && !seen[mvk] {
+			modifierKeys = append(modifierKeys, mvk)
+			seen[mvk] = true
+		}
+	}
+	events := make([]keyEvent, 0, len(modifierKeys)+1)
+	if up {
+		events = append(events, keyEvent{vk: vk, up: true})
+		for i := len(modifierKeys) - 1; i >= 0; i-- {
+			events = append(events, keyEvent{vk: modifierKeys[i], up: true})
+		}
+	} else {
+		for _, mod := range modifierKeys {
+			events = append(events, keyEvent{vk: mod})
+		}
+		events = append(events, keyEvent{vk: vk})
+	}
+	return events, nil
+}
+
+// KeyToggle toggles a key. Default is "down"; pass "up" to release. Modifiers
+// may be strings or []string. They are pressed before the key and released
+// in reverse order after the key. An optional
 // int pid posts the event to that process's window via PostMessageW, mirroring
 // key/keypress_c.h; otherwise SendInput is used. Set NotPid to pass an HWND.
 //
 //	KeyToggle("a")
 //	KeyToggle("a", "up")
+//	KeyToggle("a", "down", []string{"ctrl", "shift"})
+//	KeyToggle("a", "up", []string{"ctrl", "shift"})
 //	KeyToggle("a", pid)
 func KeyToggle(key string, args ...interface{}) error {
-	up := false
-	for _, arg := range args {
-		if s, ok := arg.(string); ok && s == "up" {
-			up = true
-		}
+	events, err := toggleKeyEvents(key, args)
+	if err != nil {
+		return err
 	}
 	pid := extractPid(args)
-	vk, _, ok := keyToVK(key)
-	if !ok {
-		return errors.New("robotgo: unknown key: " + key)
-	}
 	if pid != 0 {
 		hwnd := keyHwnd(pid)
 		if hwnd == 0 {
 			return ErrNotFound
 		}
-		postKey(hwnd, vk, up)
+		for _, event := range events {
+			postKey(hwnd, event.vk, event.up)
+		}
 		return nil
 	}
-	sendVK(vk, up)
+	for _, event := range events {
+		sendVK(event.vk, event.up)
+	}
 	return nil
 }
 
@@ -499,16 +554,26 @@ func CmdCtrl() string {
 	return "ctrl"
 }
 
+// extractModifiers accepts individual modifier names and modifier slices.
 func extractModifiers(args []interface{}) []string {
 	var mods []string
+	add := func(s string) {
+		s = strings.ToLower(s)
+		switch s {
+		case "ctrl", "control", "ctrll", "ctrlr",
+			"shift", "shiftl", "shiftr",
+			"alt", "altl", "altr",
+			"cmd", "command", "cmdl", "cmdr", "win", "rwin":
+			mods = append(mods, s)
+		}
+	}
 	for _, arg := range args {
-		if s, ok := arg.(string); ok {
-			switch s {
-			case "ctrl", "control", "ctrll", "ctrlr",
-				"shift", "shiftl", "shiftr",
-				"alt", "altl", "altr",
-				"cmd", "cmdl", "cmdr", "win", "rwin":
-				mods = append(mods, s)
+		switch value := arg.(type) {
+		case string:
+			add(value)
+		case []string:
+			for _, s := range value {
+				add(s)
 			}
 		}
 	}

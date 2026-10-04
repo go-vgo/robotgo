@@ -20,6 +20,24 @@
 | \*  | string -> image.Image             | robotgo.StrToImg()      |
 |     | string -> byte                    | []byte()                |
 
+## Windows pure-Go keyboard shortcuts
+
+With the `win` or `purego` build tag on Windows, keyboard modifiers can be
+individual strings or a `[]string`. Modifier names are case-insensitive;
+`command` is an alias for the left Windows key, like `cmd`.
+
+| Call | Behavior |
+| --- | --- |
+| `robotgo.KeyTap("a", []string{"ctrl", "shift"})` | Press and release Ctrl+Shift+A. |
+| `robotgo.KeyDown("a", "ctrl", "shift")` | Press the modifiers, then hold A. |
+| `robotgo.KeyUp("a", "ctrl", "shift")` | Release A, then release the modifiers in reverse order. |
+| `robotgo.KeyToggle("a", "up", []string{"ctrl", "shift"})` | Release the same held shortcut using a modifier slice. |
+
+Pair `KeyDown` with `KeyUp` using the same key and modifiers so modifiers are
+released. These arguments also work with an explicit target process ID in the
+Windows pure-Go backend. The shortcut functions above return an error for an unknown
+key or a target process with no window.
+
 # Keys
 
 ```Go
