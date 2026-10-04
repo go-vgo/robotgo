@@ -14,7 +14,11 @@
 
 package x11
 
-import "testing"
+import (
+	"os"
+	"path/filepath"
+	"testing"
+)
 
 // --- Pure Go tests (run anywhere, no X server needed) ---
 
@@ -238,5 +242,20 @@ func TestKillInvalidPid(t *testing.T) {
 	}
 	if err := Kill(-1); err == nil {
 		t.Error("Kill(-1): expected error")
+	}
+}
+
+func TestProcInfo(t *testing.T) {
+	pid := os.Getpid()
+	name, path, got := procInfo(pid)
+	if got != pid || path == "" {
+		t.Fatalf("procInfo(self) = %q, %q, %d", name, path, got)
+	}
+	// The name comes from the exe basename, not the 15-byte comm.
+	if want := filepath.Base(path); name != want {
+		t.Errorf("procInfo name = %q, want %q", name, want)
+	}
+	if name, path, got := procInfo(-1); name != "" || path != "" || got != -1 {
+		t.Errorf("procInfo(-1) = %q, %q, %d", name, path, got)
 	}
 }

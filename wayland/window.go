@@ -154,6 +154,10 @@ func GetActiveApp() (string, string, int) {
 	}
 	c.mu.Lock()
 	defer c.mu.Unlock()
+	// activeToplevel falls back to any toplevel; only report a truly active one.
+	if !isActivated(info.states) {
+		return "", "", 0
+	}
 	return info.appId, info.appId, 0
 }
 

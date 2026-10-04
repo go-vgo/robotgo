@@ -199,3 +199,21 @@ func TestTypes(t *testing.T) {
 		t.Errorf("Nps: got %+v", n)
 	}
 }
+
+func TestTypeRunesStopsOnFailure(t *testing.T) {
+	ok := func(uint16) bool { return true }
+	if n := typeRunes("héllo😀", ok); n != 6 {
+		t.Errorf("typeRunes all ok: got %d, want 6", n)
+	}
+	calls := 0
+	failThird := func(uint16) bool { calls++; return calls < 3 }
+	if n := typeRunes("abcd", failThird); n != 2 {
+		t.Errorf("typeRunes fail on 3rd: got %d, want 2", n)
+	}
+	// A surrogate pair counts only when both halves are sent.
+	calls = 0
+	failSecond := func(uint16) bool { calls++; return calls < 2 }
+	if n := typeRunes("😀", failSecond); n != 0 {
+		t.Errorf("typeRunes partial surrogate: got %d, want 0", n)
+	}
+}

@@ -16,6 +16,7 @@ package x11
 
 import (
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -192,16 +193,18 @@ func GetActiveApp() (string, string, int) {
 }
 
 // procInfo returns the name and executable path of pid read from /proc.
+// The name prefers the exe basename, since comm is truncated to 15 bytes.
 func procInfo(pid int) (string, string, int) {
 	dir := "/proc/" + strconv.Itoa(pid)
-	comm, err := os.ReadFile(dir + "/comm")
-	if err != nil {
-		return "", "", pid
-	}
-	name := strings.TrimSpace(string(comm))
 	path, err := os.Readlink(dir + "/exe")
 	if err != nil {
-		return name, "", pid
+		path = ""
+	} else if name := filepath.Base(path); name != "." && name != "/" {
+		return name, path, pid
 	}
-	return name, path, pid
+	comm, err := os.ReadFile(dir + "/comm")
+	if err != nil {
+		return "", path, pid
+	}
+	return strings.TrimSpace(string(comm)), path, pid
 }

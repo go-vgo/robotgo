@@ -185,7 +185,11 @@
 		keyInput.ki.time = 0;
 		keyInput.ki.dwExtraInfo = 0;
 		UINT sent = SendInput(1, &keyInput, sizeof(keyInput));
-		return sent == 1 ? 0 : (int)GetLastError();
+		if (sent == 1) {
+			return 0;
+		}
+		DWORD err = GetLastError();
+		return err != 0 ? (int)err : -1;
 	}
 #endif
 
@@ -363,7 +367,11 @@ int unicodeType(const unsigned value, uintptr pid, int8_t isPid) {
   		input[1].ki.dwFlags = KEYEVENTF_KEYUP | 0x4; // KEYEVENTF_UNICODE;
 
   		UINT sent = SendInput(2, input, sizeof(INPUT));
-		return sent == 2 ? 0 : (int)GetLastError();
+		if (sent == 2) {
+			return 0;
+		}
+		DWORD err = GetLastError();
+		return err != 0 ? (int)err : -1;
 	#elif defined(USE_X11)
 		toggleUniKey(value, true);
 		microsleep(5.0);

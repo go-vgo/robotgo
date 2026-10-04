@@ -15,6 +15,7 @@
 package darwin
 
 import (
+	"runtime"
 	"sync"
 	"unsafe"
 
@@ -59,7 +60,10 @@ func loadApp() bool {
 }
 
 // withPool runs fn inside an NSAutoreleasePool so autoreleased objects are freed.
+// The pool is thread-local, so the goroutine is pinned to its OS thread.
 func withPool(fn func()) {
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
 	pool := objc.ID(objc.GetClass("NSAutoreleasePool")).Send(objc.RegisterName("new"))
 	defer pool.Send(objc.RegisterName("drain"))
 	fn()
