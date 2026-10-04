@@ -8,7 +8,9 @@
 package clipboard
 
 import (
+	"os"
 	"os/exec"
+	"strings"
 )
 
 var (
@@ -16,12 +18,22 @@ var (
 	copyCmdArgs  = "pbcopy"
 )
 
+// utf8Env forces pbcopy/pbpaste to use UTF-8, they fall back to a legacy
+// encoding when the process has no UTF-8 locale (e.g. launched from a GUI)
+func utf8Env() []string {
+	return append(os.Environ(), "LANG=en_US.UTF-8")
+}
+
 func getPasteCommand() *exec.Cmd {
-	return exec.Command(pasteCmdArgs)
+	cmd := exec.Command(pasteCmdArgs)
+	cmd.Env = utf8Env()
+	return cmd
 }
 
 func getCopyCommand() *exec.Cmd {
-	return exec.Command(copyCmdArgs)
+	cmd := exec.Command(copyCmdArgs)
+	cmd.Env = utf8Env()
+	return cmd
 }
 
 func readAll() (string, error) {
@@ -35,20 +47,6 @@ func readAll() (string, error) {
 
 func writeAll(text string) error {
 	copyCmd := getCopyCommand()
-	in, err := copyCmd.StdinPipe()
-	if err != nil {
-		return err
-	}
-
-	if err := copyCmd.Start(); err != nil {
-		return err
-	}
-	if _, err := in.Write([]byte(text)); err != nil {
-		return err
-	}
-	if err := in.Close(); err != nil {
-		return err
-	}
-
-	return copyCmd.Wait()
+	copyCmd.Stdin = strings.NewReader(text)
+	return copyCmd.Run()
 }
