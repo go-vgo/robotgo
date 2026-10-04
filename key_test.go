@@ -15,10 +15,39 @@
 package robotgo
 
 import (
+	"runtime"
 	"testing"
 
 	"github.com/vcaesar/tt"
 )
+
+func TestLinuxNumpadKeyCodes(t *testing.T) {
+	if runtime.GOOS != "linux" {
+		t.Skip("X11 keysyms are specific to the Linux backend")
+	}
+
+	tests := []struct {
+		key  string
+		want int
+	}{
+		{key: "num+", want: 0xffab},      // XK_KP_Add
+		{key: "num-", want: 0xffad},      // XK_KP_Subtract
+		{key: "num*", want: 0xffaa},      // XK_KP_Multiply
+		{key: "num/", want: 0xffaf},      // XK_KP_Divide
+		{key: "num_enter", want: 0xff8d}, // XK_KP_Enter
+	}
+	for _, test := range tests {
+		t.Run(test.key, func(t *testing.T) {
+			got, err := checkKeyCodes(test.key)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if int(got) != test.want {
+				t.Errorf("checkKeyCodes(%q) = %#x, want %#x", test.key, int(got), test.want)
+			}
+		})
+	}
+}
 
 func TestKeyAliases(t *testing.T) {
 	aliases := map[string]string{
