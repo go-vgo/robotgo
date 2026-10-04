@@ -93,6 +93,7 @@ const (
 	AltR     = "altr"
 	Space    = "space"
 	Capslock = "capslock"
+	Caps     = "caps"
 	Print    = "print"
 	Insert   = "insert"
 	Menu     = "menu"
@@ -229,22 +230,26 @@ func KeyPress(key string, args ...interface{}) error { return KeyTap(key, args..
 
 // Type types a string. Each rune is sent as an X11 keysym via
 // NotifyKeyboardKeysym, so it is layout independent and needs no shift
-// bookkeeping.
-func Type(str string, args ...int) {
+// bookkeeping. It returns the number of characters (runes) typed and stops
+// at the first failed key event.
+func Type(str string, args ...int) int {
 	c, err := keyboardReady()
 	if err != nil {
-		return
+		return 0
 	}
+	n := 0
 	for _, r := range str {
 		sym := runeToKeysym(r)
 		if err := c.inj.keyboardKeysym(sym, statePressed); err != nil {
-			return
+			return n
 		}
 		time.Sleep(time.Duration(KeySleep) * time.Millisecond)
 		if err := c.inj.keyboardKeysym(sym, stateReleased); err != nil {
-			return
+			return n
 		}
+		n++
 	}
+	return n
 }
 
 // TypeStr types a string (alias of Type).

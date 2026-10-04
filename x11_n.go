@@ -72,7 +72,7 @@ func KeyUp(key string, args ...any) error { return x11.KeyUp(key, args...) }
 func KeyPress(key string, args ...any) error { return x11.KeyPress(key, args...) }
 
 // Type type a string (alias of TypeStr).
-func Type(str string, args ...int) { x11.Type(str, args...) }
+func Type(str string, args ...int) int { return x11.Type(str, args...) }
 
 // TypeStr type a string.
 func TypeStr(str string, args ...int) { x11.TypeStr(str, args...) }
@@ -171,6 +171,12 @@ func PadHex(hex uint32) string { return x11.PadHex(hex) }
 
 // GetTitle get the window title, return string.
 func GetTitle(args ...int) string { return x11.GetTitle(args...) }
+
+// CheckAccess check the os accessibility, p shows the system prompt.
+func CheckAccess(p bool) bool { return x11.CheckAccess(p) }
+
+// GetActiveApp get the active app name, bundle id or path, and pid.
+func GetActiveApp() (string, string, int) { return x11.GetActiveApp() }
 
 // ActiveName active the window by name.
 func ActiveName(name string) error { return x11.ActiveName(name) }

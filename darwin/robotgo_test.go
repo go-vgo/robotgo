@@ -19,6 +19,7 @@ import "testing"
 func TestKeyToCode(t *testing.T) {
 	named := []string{
 		"enter", "tab", "space", "backspace", "delete", "esc", "escape",
+		"caps", "capslock", "fn",
 		"up", "down", "left", "right", "home", "end",
 		"shift", "ctrl", "alt", "cmd", "f1", "f12",
 	}
@@ -285,5 +286,13 @@ func TestScaleAndRect(t *testing.T) {
 	// Out-of-range index falls back to the main display, no panic.
 	if r := GetScreenRect(99); r.W != w {
 		t.Errorf("GetScreenRect(99): got %+v", r)
+	}
+}
+
+func TestActiveAppAndAccess(t *testing.T) {
+	CheckAccess(false)
+	name, id, pid := GetActiveApp()
+	if pid <= 0 || name == "" || id == "" {
+		t.Errorf("GetActiveApp() = %q, %q, %d; want frontmost app", name, id, pid)
 	}
 }

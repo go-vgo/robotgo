@@ -15,6 +15,7 @@
 package win
 
 import (
+	"path/filepath"
 	"strings"
 	"sync"
 	"syscall"
@@ -181,4 +182,42 @@ func CloseWindow(args ...int) {
 		return
 	}
 	procPostMessageW.Call(uintptr(hwnd), uintptr(wmClose), 0, 0)
+}
+
+// CheckAccess reports whether input injection is permitted. Windows has no
+// accessibility gate, so it always returns true; prompt is ignored.
+func CheckAccess(prompt bool) bool { return true }
+
+// GetActiveApp returns the foreground app's executable name, full
+// executable path and pid. Fields that can not be resolved are left empty.
+func GetActiveApp() (string, string, int) {
+	hwnd := win.GetForegroundWindow()
+	if hwnd == 0 {
+		return "", "", 0
+	}
+	pid := windowPid(hwnd)
+	if pid == 0 {
+		return "", "", 0
+	}
+	path, err := processPath(pid)
+	if err != nil {
+		return "", "", pid
+	}
+	return filepath.Base(path), path, pid
+}
+
+// processPath returns the full executable path of pid.
+func processPath(pid int) (string, error) {
+	h, err := windows.OpenProcess(windows.PROCESS_QUERY_LIMITED_INFORMATION, false, uint32(pid))
+	if err != nil {
+		return "", err
+	}
+	defer windows.CloseHandle(h)
+
+	buf := make([]uint16, windows.MAX_LONG_PATH)
+	size := uint32(len(buf))
+	if err := windows.QueryFullProcessImageName(h, 0, &buf[0], &size); err != nil {
+		return "", err
+	}
+	return windows.UTF16ToString(buf[:size]), nil
 }

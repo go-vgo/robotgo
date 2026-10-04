@@ -20,6 +20,7 @@ func TestKeyToVK(t *testing.T) {
 	// Named keys must resolve.
 	named := []string{
 		"enter", "tab", "space", "backspace", "delete", "esc", "escape",
+		"caps", "capslock",
 		"up", "down", "left", "right", "home", "end",
 		"shift", "ctrl", "alt", "f1", "f12",
 	}

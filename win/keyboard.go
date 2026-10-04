@@ -19,6 +19,7 @@ import (
 	"strings"
 	"time"
 	"unicode/utf16"
+	"unicode/utf8"
 	"unsafe"
 
 	"github.com/tailscale/win"
@@ -109,6 +110,7 @@ const (
 	AltR     = "altr"
 	Space    = "space"
 	Capslock = "capslock"
+	Caps     = "caps"
 	Print    = "print"
 	Insert   = "insert"
 	Menu     = "menu"
@@ -133,6 +135,7 @@ var vkMap = map[string]uint16{
 	"cmd": win.VK_LWIN, "cmdl": win.VK_LWIN, "win": win.VK_LWIN,
 	"cmdr": win.VK_RWIN, "rwin": win.VK_RWIN,
 	"capslock": win.VK_CAPITAL,
+	"caps":     win.VK_CAPITAL,
 	"print":    win.VK_SNAPSHOT, "printscreen": win.VK_SNAPSHOT,
 	"menu":     win.VK_APPS,
 	"num_lock": win.VK_NUMLOCK, "scroll_lock": win.VK_SCROLL,
@@ -429,7 +432,10 @@ func KeyPress(key string, args ...interface{}) error {
 //
 //	Type("hello")
 //	Type("hello", pid)
-func Type(str string, args ...int) {
+//
+// It returns the number of characters (runes) typed, 0 if the target window
+// is not found.
+func Type(str string, args ...int) int {
 	pid := 0
 	if len(args) > 0 {
 		pid = args[0]
@@ -437,7 +443,7 @@ func Type(str string, args ...int) {
 	if pid != 0 {
 		hwnd := keyHwnd(pid)
 		if hwnd == 0 {
-			return
+			return 0
 		}
 		for _, u := range utf16.Encode([]rune(str)) {
 			postChar(hwnd, u)
@@ -445,7 +451,7 @@ func Type(str string, args ...int) {
 				time.Sleep(time.Duration(KeySleep) * time.Millisecond)
 			}
 		}
-		return
+		return utf8.RuneCountInString(str)
 	}
 	for _, u := range utf16.Encode([]rune(str)) {
 		sendUnicode(u, false)
@@ -454,6 +460,7 @@ func Type(str string, args ...int) {
 			time.Sleep(time.Duration(KeySleep) * time.Millisecond)
 		}
 	}
+	return utf8.RuneCountInString(str)
 }
 
 // TypeStr types a string. Alias of Type, mirroring the robotgo API.

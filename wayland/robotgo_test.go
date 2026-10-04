@@ -31,6 +31,8 @@ func TestKeyToEvdev(t *testing.T) {
 		{"enter", 28, true},
 		{"escape", 1, true},
 		{"esc", 1, true},
+		{"caps", 58, true},
+		{"capslock", 58, true},
 		{"f1", 59, true},
 		{"f12", 88, true},
 		{"shift", 42, true},

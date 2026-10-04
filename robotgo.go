@@ -913,8 +913,10 @@ func IsValid() bool {
 }
 
 // CheckAccess check the os accessibility
+// (macOS Accessibility; always true on other platforms),
+// p shows the system prompt when access is not granted
 func CheckAccess(p bool) bool {
-	return bool(C.checkAccessibility(C.bool(p)))
+	return bool(C.IsAxEnabled(C.bool(p)))
 }
 
 // SetActive set the window active
@@ -1089,7 +1091,12 @@ func GetTitle(args ...int) string {
 }
 
 // GetActiveApp get the active app info
+// return name, bundle id (macOS) or executable path, and pid
 func GetActiveApp() (string, string, int) {
+	if runtime.GOOS != "darwin" {
+		return appInfo(GetPid())
+	}
+
 	app := C.getActiveApp()
 	return C.GoString(&app.name[0]), C.GoString(&app.bundle_id[0]), int(app.pid)
 }

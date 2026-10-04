@@ -30,6 +30,8 @@ func TestKeyKeysym(t *testing.T) {
 		{"enter", xkReturn, true},
 		{"esc", xkEscape, true},
 		{"escape", xkEscape, true},
+		{"caps", xkCapsLock, true},
+		{"capslock", xkCapsLock, true},
 		{"f1", xkF1, true},
 		{"f12", xkF1 + 11, true},
 		{"f24", xkF1 + 23, true},

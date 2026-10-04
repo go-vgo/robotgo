@@ -37,15 +37,15 @@ var keyNames = map[string]C.MMKeyCode{
 	"enter":     C.K_RETURN,
 	"tab":       C.K_TAB,
 	"esc":       C.K_ESCAPE,
-	// "escape":    C.K_ESCAPE,
-	"up":       C.K_UP,
-	"down":     C.K_DOWN,
-	"right":    C.K_RIGHT,
-	"left":     C.K_LEFT,
-	"home":     C.K_HOME,
-	"end":      C.K_END,
-	"pageup":   C.K_PAGEUP,
-	"pagedown": C.K_PAGEDOWN,
+	"escape":    C.K_ESCAPE,
+	"up":        C.K_UP,
+	"down":      C.K_DOWN,
+	"right":     C.K_RIGHT,
+	"left":      C.K_LEFT,
+	"home":      C.K_HOME,
+	"end":       C.K_END,
+	"pageup":    C.K_PAGEUP,
+	"pagedown":  C.K_PAGEDOWN,
 	//
 	"fn":  C.K_Fn,
 	"f1":  C.K_F1,
@@ -89,6 +89,7 @@ var keyNames = map[string]C.MMKeyCode{
 	"shiftr":      C.K_RSHIFT,
 	"right_shift": C.K_RSHIFT,
 	"caps":        C.K_CAPSLOCK,
+	"capslock":    C.K_CAPSLOCK,
 	"space":       C.K_SPACE,
 	"print":       C.K_PRINTSCREEN,
 	"printscreen": C.K_PRINTSCREEN,
@@ -207,13 +208,15 @@ var macCharToKeyCode = map[byte]C.MMKeyCode{
 }
 
 // It sends a key press and release to the active application
+// The key up is always sent so modifiers pressed by a failed key down are released.
 func tapKeyCode(code C.MMKeyCode, flags C.MMKeyFlags, pid C.uintptr) (int, string) {
 	c1 := C.toggleKeyCode(code, true, flags, pid)
+	MilliSleep(3)
+	c2 := C.toggleKeyCode(code, false, flags, pid)
 	if c1 != 0 {
 		return int(c1), "down"
 	}
-	MilliSleep(3)
-	return int(C.toggleKeyCode(code, false, flags, pid)), "up"
+	return int(c2), "up"
 }
 
 var keyErr = errors.New("Invalid key flag specified.")
@@ -309,13 +312,10 @@ func keyTaps(k string, keyArr []string, pid int) error {
 		return err
 	}
 
-	c1, down := tapKeyCode(key, flags, C.uintptr(pid))
-	if c1 != 0 {
-		return formatClickError(c1, k, down, 1)
-	}
+	c1, stage := tapKeyCode(key, flags, C.uintptr(pid))
 	MilliSleep(KeySleep)
 	upKeyArr(keyArr, pid)
-	return nil
+	return formatClickError(c1, k, stage, 1)
 }
 
 func getKeyDown(keyArr []string) (bool, []string) {
@@ -349,14 +349,11 @@ func keyTogglesB(k string, down bool, keyArr []string, pid int) error {
 	}
 
 	c1 := C.toggleKeyCode(key, C.bool(down), flags, C.uintptr(pid))
-	if c1 != 0 {
-		return formatClickError(int(c1), k, getDown(down), 1)
-	}
 	MilliSleep(KeySleep)
 	if !down {
 		upKeyArr(keyArr, pid)
 	}
-	return nil
+	return formatClickError(int(c1), k, getDown(down), 1)
 }
 
 func keyToggles(k string, keyArr []string, pid int) error {

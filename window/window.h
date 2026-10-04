@@ -125,19 +125,6 @@ bool is_valid() {
 #endif
 }
 
-bool checkAccessibility(bool prompt) {
-#if defined(IS_MACOSX)
-    NSDictionary *opts = @{
-        (__bridge NSString *)kAXTrustedCheckOptionPrompt: @(prompt)
-    };
-    return AXIsProcessTrustedWithOptions((__bridge CFDictionaryRef)opts);
-#elif defined(USE_X11)
-	return true;
-#elif defined(IS_WINDOWS)
-	return true;
-#endif
-}
-
 bool IsAxEnabled(bool options){
 #if defined(IS_MACOSX)
 	// Statically load all required functions one time

@@ -76,3 +76,20 @@ func Run(path string) ([]byte, error) {
 func Kill(pid int) error {
 	return ps.Kill(pid)
 }
+
+// appInfo return the process name, executable path and pid,
+// fields that can not be resolved are left empty
+func appInfo(pid int) (string, string, int) {
+	if pid <= 0 {
+		return "", "", 0
+	}
+	name, err := FindName(pid)
+	if err != nil {
+		return "", "", pid
+	}
+	path, err := FindPath(pid)
+	if err != nil {
+		return name, "", pid
+	}
+	return name, path, pid
+}

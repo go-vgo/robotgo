@@ -57,9 +57,11 @@
 #elif defined(USE_X11)
 	Display *XGetMainDisplay(void);
 
-	void X_KEY_EVENT(Display *display, MMKeyCode key, bool is_press) {
-		XTestFakeKeyEvent(display, XKeysymToKeycode(display, key), is_press, CurrentTime); 
+	// X_KEY_EVENT returns 0 on success, 1 if XTest rejected the event.
+	int X_KEY_EVENT(Display *display, MMKeyCode key, bool is_press) {
+		Bool ok = XTestFakeKeyEvent(display, XKeysymToKeycode(display, key), is_press, CurrentTime); 
 		XSync(display, false);
+		return ok ? 0 : 1;
 	}
 
 	void X_KEY_EVENT_WAIT(Display *display, MMKeyCode key, bool is_press) {
@@ -86,7 +88,7 @@
 		kern_return_t kr;
 
 		if (!sEventDrvrRef) {
-			#if __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ <= 12000
+			#if __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ < 120000
 				kr = IOMasterPort(bootstrap_port, &masterPort); // waring deprecated
 			#else
 				kr = IOMainPort(bootstrap_port, &masterPort);
@@ -361,7 +363,7 @@ int unicodeType(const unsigned value, uintptr pid, int8_t isPid) {
   		input[1].ki.dwFlags = KEYEVENTF_KEYUP | 0x4; // KEYEVENTF_UNICODE;
 
   		UINT sent = SendInput(2, input, sizeof(INPUT));
-		return sent == 1 ? 0 : (int)GetLastError();
+		return sent == 2 ? 0 : (int)GetLastError();
 	#elif defined(USE_X11)
 		toggleUniKey(value, true);
 		microsleep(5.0);

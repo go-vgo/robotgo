@@ -103,6 +103,7 @@ var specialKeysyms = map[string]uint32{
 	"pagedown":    xkPageDown,
 	"space":       xkSpace,
 	"capslock":    xkCapsLock,
+	"caps":        xkCapsLock,
 	"print":       xkPrint,
 	"printscreen": xkPrint,
 	"insert":      xkInsert,
