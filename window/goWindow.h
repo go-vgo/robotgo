@@ -68,3 +68,57 @@ void active_PID(uintptr pid, int8_t isPid){
 	MData win = set_handle_pid(pid, isPid);
 	set_active(win);
 }
+
+typedef struct {
+	// char* name;
+	char name[256];       // Application name
+	char bundle_id[256];  // macOS: bundle ID, Windows/Linux: executable path
+	uintptr pid;           // Process ID
+} ActiveApp;
+
+ActiveApp getActiveApp(void) {
+	ActiveApp app = {0};
+	#if defined(IS_MACOSX)
+		@autoreleasepool {
+			NSRunningApplication *frontApp = [[NSWorkspace sharedWorkspace] frontmostApplication];
+			if (frontApp) {
+				NSString *appName = [frontApp localizedName];
+				if (appName) {
+					strncpy(app.name, [appName UTF8String], sizeof(app.name) - 1);
+				}
+				NSString *bundleID = [frontApp bundleIdentifier];
+				if (bundleID) {
+					strncpy(app.bundle_id, [bundleID UTF8String], sizeof(app.bundle_id) - 1);
+				}
+				app.pid = [frontApp processIdentifier];
+			}
+		}
+		return app;
+	#elif defined(USE_X11)
+		return app;
+	#elif defined(IS_WINDOWS)
+		HWND hwnd = GetForegroundWindow();
+		if (!hwnd) {
+			return app;
+		}
+		
+		// Get window title
+		GetWindowTextA(hwnd, app.name, sizeof(app.name) - 1);
+		// Get process ID
+		DWORD pid = 0;
+		GetWindowThreadProcessId(hwnd, &pid);
+		app.pid = pid;
+		if (pid == 0) {
+			return app;
+		}
+		
+		// Get executable path
+		HANDLE hProcess = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid);
+		if (hProcess) {
+			DWORD size = sizeof(app.bundle_id);
+			QueryFullProcessImageNameA(hProcess, 0, app.bundle_id, &size);
+			CloseHandle(hProcess);
+		}
+		return app;
+	#endif
+}

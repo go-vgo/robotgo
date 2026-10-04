@@ -37,16 +37,17 @@ var keyNames = map[string]C.MMKeyCode{
 	"enter":     C.K_RETURN,
 	"tab":       C.K_TAB,
 	"esc":       C.K_ESCAPE,
-	"escape":    C.K_ESCAPE,
-	"up":        C.K_UP,
-	"down":      C.K_DOWN,
-	"right":     C.K_RIGHT,
-	"left":      C.K_LEFT,
-	"home":      C.K_HOME,
-	"end":       C.K_END,
-	"pageup":    C.K_PAGEUP,
-	"pagedown":  C.K_PAGEDOWN,
+	// "escape":    C.K_ESCAPE,
+	"up":       C.K_UP,
+	"down":     C.K_DOWN,
+	"right":    C.K_RIGHT,
+	"left":     C.K_LEFT,
+	"home":     C.K_HOME,
+	"end":      C.K_END,
+	"pageup":   C.K_PAGEUP,
+	"pagedown": C.K_PAGEDOWN,
 	//
+	"fn":  C.K_Fn,
 	"f1":  C.K_F1,
 	"f2":  C.K_F2,
 	"f3":  C.K_F3,
@@ -87,7 +88,7 @@ var keyNames = map[string]C.MMKeyCode{
 	"shiftl":      C.K_LSHIFT,
 	"shiftr":      C.K_RSHIFT,
 	"right_shift": C.K_RSHIFT,
-	"capslock":    C.K_CAPSLOCK,
+	"caps":        C.K_CAPSLOCK,
 	"space":       C.K_SPACE,
 	"print":       C.K_PRINTSCREEN,
 	"printscreen": C.K_PRINTSCREEN,
@@ -152,11 +153,67 @@ var keyNames = map[string]C.MMKeyCode{
 	// { NULL:              C.K_NOT_A_KEY }
 }
 
+// macCharToKeyCode maps ASCII characters to macOS virtual key codes (kVK_ANSI_*)
+// This avoids calling C.keyCodeForChar which can cause SIGTRAP on macOS
+var macCharToKeyCode = map[byte]C.MMKeyCode{
+	'a': 0x00, 'A': 0x00,
+	's': 0x01, 'S': 0x01,
+	'd': 0x02, 'D': 0x02,
+	'f': 0x03, 'F': 0x03,
+	'h': 0x04, 'H': 0x04,
+	'g': 0x05, 'G': 0x05,
+	'z': 0x06, 'Z': 0x06,
+	'x': 0x07, 'X': 0x07,
+	'c': 0x08, 'C': 0x08,
+	'v': 0x09, 'V': 0x09,
+	'b': 0x0B, 'B': 0x0B,
+	'q': 0x0C, 'Q': 0x0C,
+	'w': 0x0D, 'W': 0x0D,
+	'e': 0x0E, 'E': 0x0E,
+	'r': 0x0F, 'R': 0x0F,
+	'y': 0x10, 'Y': 0x10,
+	't': 0x11, 'T': 0x11,
+	'1': 0x12, '!': 0x12,
+	'2': 0x13, '@': 0x13,
+	'3': 0x14, '#': 0x14,
+	'4': 0x15, '$': 0x15,
+	'6': 0x16, '^': 0x16,
+	'5': 0x17, '%': 0x17,
+	'=': 0x18, '+': 0x18,
+	'9': 0x19, '(': 0x19,
+	'7': 0x1A, '&': 0x1A,
+	'-': 0x1B, '_': 0x1B,
+	'8': 0x1C, '*': 0x1C,
+	'0': 0x1D, ')': 0x1D,
+	']': 0x1E, '}': 0x1E,
+	'o': 0x1F, 'O': 0x1F,
+	'u': 0x20, 'U': 0x20,
+	'[': 0x21, '{': 0x21,
+	'i': 0x22, 'I': 0x22,
+	'p': 0x23, 'P': 0x23,
+	'l': 0x25, 'L': 0x25,
+	'j': 0x26, 'J': 0x26,
+	'\'': 0x27, '"': 0x27,
+	'k': 0x28, 'K': 0x28,
+	';': 0x29, ':': 0x29,
+	'\\': 0x2A, '|': 0x2A,
+	',': 0x2B, '<': 0x2B,
+	'/': 0x2C, '?': 0x2C,
+	'n': 0x2D, 'N': 0x2D,
+	'm': 0x2E, 'M': 0x2E,
+	'.': 0x2F, '>': 0x2F,
+	'`': 0x32, '~': 0x32,
+	' ': 0x31, // kVK_Space
+}
+
 // It sends a key press and release to the active application
-func tapKeyCode(code C.MMKeyCode, flags C.MMKeyFlags, pid C.uintptr) {
-	C.toggleKeyCode(code, true, flags, pid)
+func tapKeyCode(code C.MMKeyCode, flags C.MMKeyFlags, pid C.uintptr) (int, string) {
+	c1 := C.toggleKeyCode(code, true, flags, pid)
+	if c1 != 0 {
+		return int(c1), "down"
+	}
 	MilliSleep(3)
-	C.toggleKeyCode(code, false, flags, pid)
+	return int(C.toggleKeyCode(code, false, flags, pid)), "up"
 }
 
 var keyErr = errors.New("Invalid key flag specified.")
@@ -167,6 +224,17 @@ func checkKeyCodes(k string) (key C.MMKeyCode, err error) {
 	}
 
 	if len(k) == 1 {
+		// On macOS, use Go lookup table to avoid SIGTRAP in CGO
+		if runtime.GOOS == "darwin" {
+			c := k[0]
+			if code, ok := macCharToKeyCode[c]; ok {
+				key = code
+				return
+			}
+			err = keyErr
+			return
+		}
+
 		val1 := C.CString(k)
 		defer C.free(unsafe.Pointer(val1))
 
@@ -224,7 +292,6 @@ func getFlagsFromValue(value []string) (flags C.MMKeyFlags) {
 		f = checkKeyFlags(value[i])
 		flags = (C.MMKeyFlags)(flags | f)
 	}
-
 	return
 }
 
@@ -242,7 +309,10 @@ func keyTaps(k string, keyArr []string, pid int) error {
 		return err
 	}
 
-	tapKeyCode(key, flags, C.uintptr(pid))
+	c1, down := tapKeyCode(key, flags, C.uintptr(pid))
+	if c1 != 0 {
+		return formatClickError(c1, k, down, 1)
+	}
 	MilliSleep(KeySleep)
 	upKeyArr(keyArr, pid)
 	return nil
@@ -264,6 +334,13 @@ func getKeyDown(keyArr []string) (bool, []string) {
 	return down, keyArr
 }
 
+func getDown(down bool) string {
+	if down {
+		return "down"
+	}
+	return "up"
+}
+
 func keyTogglesB(k string, down bool, keyArr []string, pid int) error {
 	flags := getFlagsFromValue(keyArr)
 	key, err := checkKeyCodes(k)
@@ -271,7 +348,10 @@ func keyTogglesB(k string, down bool, keyArr []string, pid int) error {
 		return err
 	}
 
-	C.toggleKeyCode(key, C.bool(down), flags, C.uintptr(pid))
+	c1 := C.toggleKeyCode(key, C.bool(down), flags, C.uintptr(pid))
+	if c1 != 0 {
+		return formatClickError(int(c1), k, getDown(down), 1)
+	}
 	MilliSleep(KeySleep)
 	if !down {
 		upKeyArr(keyArr, pid)
@@ -446,7 +526,7 @@ func TypeStr(str string, args ...int) {
 //
 //	robotgo.Type("abc@123, Hi galaxy, こんにちは")
 //	robotgo.Type("To be or not to be, this is questions.", pid int)
-func Type(str string, args ...int) {
+func Type(str string, args ...int) int {
 	var tm, tm1 = 0, 7
 
 	if len(args) > 1 {
@@ -474,10 +554,11 @@ func Type(str string, args ...int) {
 
 			MilliSleep(tm)
 		}
-		return
+		return len(strUc)
 	}
 
-	for i := 0; i < len([]rune(str)); i++ {
+	l1 := len([]rune(str))
+	for i := 0; i < l1; i++ {
 		ustr := uint32(CharCodeAt(str, i))
 		UnicodeType(ustr, pid)
 		// if len(args) > 0 {
@@ -485,4 +566,5 @@ func Type(str string, args ...int) {
 		// }
 	}
 	MilliSleep(KeySleep)
+	return l1
 }

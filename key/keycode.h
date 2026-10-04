@@ -27,6 +27,7 @@ enum _MMKeyCode {
 	K_PAGEUP = kVK_PageUp,
 	K_PAGEDOWN = kVK_PageDown,
 
+	K_Fn = kVK_Function,
 	K_F1 = kVK_F1,
 	K_F2 = kVK_F2,
 	K_F3 = kVK_F3,
@@ -145,6 +146,7 @@ enum _MMKeyCode {
 	K_PAGEUP = XK_Page_Up,
 	K_PAGEDOWN = XK_Page_Down,
 
+	K_Fn = K_NOT_A_KEY, // Fn key is handled by hardware on Linux
 	K_F1 = XK_F1,
 	K_F2 = XK_F2,
 	K_F3 = XK_F3,
@@ -306,6 +308,7 @@ enum _MMKeyCode {
 	K_PAGEUP = VK_PRIOR,
 	K_PAGEDOWN = VK_NEXT,
 
+	K_Fn = K_NOT_A_KEY, // Fn key is handled by hardware on windows
 	K_F1 = VK_F1,
 	K_F2 = VK_F2,
 	K_F3 = VK_F3,

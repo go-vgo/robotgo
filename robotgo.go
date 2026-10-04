@@ -57,6 +57,7 @@ import (
 	"errors"
 	"fmt"
 	"image"
+	"reflect"
 	"runtime"
 	"syscall"
 	"unsafe"
@@ -674,11 +675,16 @@ func MultiClick(button string, count int, click ...bool) error {
 	return nil
 }
 
-func formatClickError(code int, button C.MMMouseButton, stage string, count int) error {
+func formatClickError(code int, key interface{}, stage string, count int) error {
 	if code == 0 {
 		return nil
 	}
-	btnName := MouseButtonString(button)
+	btnName := ""
+	if reflect.TypeOf(key) == reflect.TypeOf(btnName) {
+		btnName = key.(string)
+	} else {
+		btnName = MouseButtonString(key.(C.MMMouseButton))
+	}
 	detail := ""
 
 	switch runtime.GOOS {
@@ -753,7 +759,7 @@ func Toggle(key ...interface{}) error {
 	if len(key) > 2 {
 		MilliSleep(MouseSleep)
 	}
-	return formatClickError(int(code), button, "down", 1)
+	return formatClickError(int(code), button, getDown(down), 1)
 }
 
 // MouseDown send mouse down event
@@ -904,6 +910,11 @@ func IsValid() bool {
 	abool := C.is_valid()
 	gbool := bool(abool)
 	return gbool
+}
+
+// CheckAccess check the os accessibility
+func CheckAccess(p bool) bool {
+	return bool(C.checkAccessibility(C.bool(p)))
 }
 
 // SetActive set the window active
@@ -1075,6 +1086,12 @@ func GetTitle(args ...int) string {
 	}
 
 	return internalGetTitle(args[0])
+}
+
+// GetActiveApp get the active app info
+func GetActiveApp() (string, string, int) {
+	app := C.getActiveApp()
+	return C.GoString(&app.name[0]), C.GoString(&app.bundle_id[0]), int(app.pid)
 }
 
 // GetPid get the process id return int32
