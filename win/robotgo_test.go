@@ -294,3 +294,26 @@ func TestPressKeysPartial(t *testing.T) {
 		t.Errorf("pressKeys ok: got %x, %v", pressed, err)
 	}
 }
+
+// In handle mode (Cgo NotPid / extra arg) pid is an HWND and must exist.
+func TestWindowForHandle(t *testing.T) {
+	const bogus = 0x7ffffff0
+	if h := windowFor(0, true); h != 0 {
+		t.Errorf("windowFor(0, handle): got %v, want 0", h)
+	}
+	if h := windowFor(bogus, true); h != 0 {
+		t.Errorf("windowFor(bogus, handle): got %v, want 0", h)
+	}
+	if err := ActivePid(bogus, true); err != ErrNotFound {
+		t.Errorf("ActivePid(bogus, handle): got %v, want ErrNotFound", err)
+	}
+	if err := ActivePid(0, false); err != ErrNotFound {
+		t.Errorf("ActivePid(0): got %v, want ErrNotFound", err)
+	}
+	if x, y, w, h := GetBounds(bogus, true); x|y|w|h != 0 {
+		t.Errorf("GetBounds(bogus, handle): got %d,%d,%d,%d", x, y, w, h)
+	}
+	if x, y, w, h := GetClient(bogus, true); x|y|w|h != 0 {
+		t.Errorf("GetClient(bogus, handle): got %d,%d,%d,%d", x, y, w, h)
+	}
+}

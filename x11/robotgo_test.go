@@ -480,3 +480,17 @@ func TestParseXftDPI(t *testing.T) {
 		}
 	}
 }
+
+// In XID mode (Cgo NotPid / extra arg) pid is used as the window id as-is.
+func TestWindowForXid(t *testing.T) {
+	c := &conn{}
+	if w, err := c.windowFor(0x1234, true); err != nil || w != 0x1234 {
+		t.Errorf("windowFor(xid): got %v, %v", w, err)
+	}
+	if _, err := c.windowFor(0, true); err != ErrNotFound {
+		t.Errorf("windowFor(0, xid): got %v, want ErrNotFound", err)
+	}
+	if err := ActivePid(0, true); err != ErrNotFound {
+		t.Errorf("ActivePid(0): got %v, want ErrNotFound", err)
+	}
+}

@@ -253,12 +253,136 @@ func TestTypes(t *testing.T) {
 	}
 }
 
-func TestWindowUnsupported(t *testing.T) {
-	if err := ActiveName("nope"); err != ErrNotSupported {
-		t.Errorf("ActiveName: got %v, want ErrNotSupported", err)
+// noPid is a pid no running process can have (above kern.maxproc).
+const noPid = 0x7ffffff0
+
+func TestWindowNotFound(t *testing.T) {
+	if err := ActiveName("robotgo-no-such-app-0x7ff"); err != ErrNotFound {
+		t.Errorf("ActiveName: got %v, want ErrNotFound", err)
 	}
-	if GetTitle() != "" {
-		t.Error("GetTitle: expected empty string")
+	if err := ActivePid(noPid); err != ErrNotFound {
+		t.Errorf("ActivePid: got %v, want ErrNotFound", err)
+	}
+	if err := ActivePid(0); err != ErrNotFound {
+		t.Errorf("ActivePid(0): got %v, want ErrNotFound", err)
+	}
+	if got := GetTitle(noPid); got != "" {
+		t.Errorf("GetTitle: got %q, want empty", got)
+	}
+	if x, y, w, h := GetBounds(noPid); x != 0 || y != 0 || w != 0 || h != 0 {
+		t.Errorf("GetBounds: got %d,%d,%d,%d, want zeros", x, y, w, h)
+	}
+	if err := withWindow(noPid, false, func(uintptr) error { return nil }); err != ErrNotFound {
+		t.Errorf("withWindow: got %v, want ErrNotFound", err)
+	}
+	// pid_t overflow must not wrap to a real pid (1<<32+1 -> 1).
+	if err := ActivePid(1<<32 + 1); err != ErrNotFound {
+		t.Errorf("ActivePid(overflow): got %v, want ErrNotFound", err)
+	}
+	// Writes never fall back to the frontmost window for a missing pid.
+	if err := minWindow(0, true); err != ErrNotFound {
+		t.Errorf("minWindow(0): got %v, want ErrNotFound", err)
+	}
+	if err := closeWindowPid(0); err != ErrNotFound {
+		t.Errorf("closeWindowPid(0): got %v, want ErrNotFound", err)
+	}
+	if got := GetTitle(0); got != "" {
+		t.Errorf("GetTitle(0): got %q, want empty", got)
+	}
+	// Must not panic or touch any real window.
+	MinWindow(noPid)
+	MaxWindow(noPid, false)
+	CloseWindow(noPid)
+}
+
+func TestLoadAX(t *testing.T) {
+	if !loadAX() {
+		t.Fatal("AX API failed to load")
+	}
+	if cfBool(true) == 0 || cfBool(false) == 0 || cfBool(true) == cfBool(false) {
+		t.Error("cfBool: kCFBooleanTrue/False not resolved")
+	}
+	if axSystem == 0 || axValueTypeID == 0 {
+		t.Error("system-wide element / AXValue type id not resolved")
+	}
+	for i, s := range []uintptr{axFocusedApplication, axFrontmost, axFocusedWindow, axMainWindow,
+		axWindows, axTitle, axPosition, axSize, axMinimized, axFullScreen, axCloseButton, axPress, axRaise} {
+		if s == 0 {
+			t.Errorf("AX attribute %d not created", i)
+		}
+	}
+}
+
+func TestBoolArgAndAXError(t *testing.T) {
+	if !boolArg(nil, true) || boolArg([]interface{}{false}, true) || !boolArg([]interface{}{"x"}, true) {
+		t.Error("boolArg: unexpected result")
+	}
+	if axError(kAXErrorSuccess, "op") != nil {
+		t.Error("axError(success): want nil")
+	}
+	if err := axError(-25204, "close"); err == nil || err.Error() != "robotgo: close failed, AXError -25204" {
+		t.Errorf("axError: got %v", err)
+	}
+}
+
+func TestCFHelpers(t *testing.T) {
+	for _, s := range []string{"", "AXTitle", "héllo 世界"} {
+		ref := cfStringCreateWithCString(0, s, cfStringEncodingUTF8)
+		if got := cfGoString(ref); got != s {
+			t.Errorf("cfGoString(%q) = %q", s, got)
+		}
+		// A string is not a number.
+		if _, ok := cfInt(ref); ok {
+			t.Errorf("cfInt(string %q): want !ok", s)
+		}
+		cfRelease(ref)
+	}
+	if cfGoString(0) != "" || cfGoString(cfBooleanTrue) != "" {
+		t.Error("cfGoString(non-string): want empty")
+	}
+	for _, p := range []struct {
+		pid  int
+		want bool
+	}{{0, false}, {-1, false}, {1, true}, {1<<31 - 1, true}, {1 << 31, false}} {
+		if validPid(p.pid) != p.want {
+			t.Errorf("validPid(%d) != %v", p.pid, p.want)
+		}
+	}
+}
+
+func TestMatchOwner(t *testing.T) {
+	owners := []owner{{1, "Xcode"}, {2, "Code"}, {3, "Visual Studio Code Helper"}, {4, "Safari"}}
+	for _, c := range []struct {
+		name string
+		want int
+	}{{"code", 2}, {"CODE", 2}, {"xc", 1}, {"saf", 4}, {"helper", 3}, {"", 0}, {"nope", 0}} {
+		if got := matchOwner(owners, c.name); got != c.want {
+			t.Errorf("matchOwner(%q) = %d, want %d", c.name, got, c.want)
+		}
+	}
+}
+
+// The window list is live and needs no permission.
+func TestWindowOwnersLive(t *testing.T) {
+	owners := windowOwners(kCGWindowListOptionAll)
+	seen := map[int]bool{}
+	for _, o := range owners {
+		if o.pid <= 0 || seen[o.pid] {
+			t.Errorf("windowOwners: bad or duplicate pid %d", o.pid)
+		}
+		seen[o.pid] = true
+	}
+	if len(owners) == 0 {
+		t.Skip("no windows in this session")
+	}
+	if pid := frontmostPid(); pid < 0 {
+		t.Errorf("frontmostPid: got %d", pid)
+	}
+}
+
+func TestMultiClickZero(t *testing.T) {
+	if err := MultiClick("left", 0); err != nil {
+		t.Errorf("MultiClick(0): got %v, want nil", err)
 	}
 }
 

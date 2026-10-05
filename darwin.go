@@ -32,8 +32,8 @@
 //
 // The darwin backend drives input and screen capture through the
 // Quartz/CoreGraphics frameworks loaded at runtime via purego (no Cgo). Window
-// management is not implemented (it needs the Objective-C Accessibility/AppKit
-// APIs) and reports ErrNotSupported.
+// management uses the Accessibility (AXUIElement) and AppKit APIs, so it needs
+// the Accessibility permission (see CheckAccess).
 //
 // Portable, backend-agnostic code (img.go, ps.go, keycode.go, screen.go and
 // the shared helpers in robotgo_pub.go) is compiled as usual and provides the
@@ -119,6 +119,12 @@ func ScrollSmooth(to int, args ...int) error { return dm.ScrollSmooth(to, args..
 // DragSmooth drag the mouse smoothly to (x, y).
 func DragSmooth(x, y int, args ...any) error { return dm.DragSmooth(x, y, args...) }
 
+// MultiClick click the mouse button count times (double, triple... click);
+// click is accepted for API parity.
+func MultiClick(button string, count int, click ...bool) error {
+	return dm.MultiClick(button, count)
+}
+
 // MoveClick move and click the mouse.
 func MoveClick(x, y int, args ...any) error { return dm.MoveClick(x, y, args...) }
 
@@ -177,7 +183,7 @@ func SaveCapture(path string, args ...int) error { return dm.SaveCapture(path, a
 // PadHex pad a hex color value to 6 characters.
 func PadHex(hex uint32) string { return dm.PadHex(hex) }
 
-// --- Window (not supported by the darwin backend; report ErrNotSupported) ---
+// --- Window (via Accessibility; needs the Accessibility permission) ---
 
 // GetTitle get the window title, return string.
 func GetTitle(args ...int) string { return dm.GetTitle(args...) }
@@ -199,6 +205,16 @@ func MaxWindow(pid int, args ...any) { dm.MaxWindow(pid, args...) }
 
 // CloseWindow close the window.
 func CloseWindow(args ...int) { dm.CloseWindow(args...) }
+
+// ActivePid active the app by pid and raise its window;
+// args are accepted for API parity.
+func ActivePid(pid int, args ...int) error { return dm.ActivePid(pid, args...) }
+
+// GetBounds get the window bounds (x, y, w, h); args are accepted for API parity.
+func GetBounds(pid int, args ...int) (int, int, int, int) { return dm.GetBounds(pid, args...) }
+
+// GetClient get the window client bounds, the same as GetBounds on macOS.
+func GetClient(pid int, args ...int) (int, int, int, int) { return dm.GetBounds(pid, args...) }
 
 // --- Process (Pids/Process/Kill/... come from the portable ps.go) ---
 

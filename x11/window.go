@@ -98,6 +98,96 @@ func ActiveName(name string) error {
 	return ewmh.ActiveWindowReq(c.xu, w)
 }
 
+// windowFor resolves pid to a window: with isXid (the Cgo NotPid / extra arg
+// mode) pid is already an X window id, otherwise it is resolved like
+// targetWindow.
+func (c *conn) windowFor(pid int, isXid bool) (xproto.Window, error) {
+	if !isXid {
+		return c.targetWindow(pid)
+	}
+	if pid <= 0 {
+		return 0, ErrNotFound
+	}
+	return xproto.Window(pid), nil
+}
+
+// ActivePid activates the first window owned by pid, or the window pid
+// itself when isXid.
+func ActivePid(pid int, isXid bool) error {
+	if pid <= 0 {
+		return ErrNotFound
+	}
+	c, err := ensureConn()
+	if err != nil {
+		return err
+	}
+	w, err := c.windowFor(pid, isXid)
+	if err != nil {
+		return err
+	}
+	return ewmh.ActiveWindowReq(c.xu, w)
+}
+
+// clientRect returns the client area of w in root coordinates.
+func (c *conn) clientRect(w xproto.Window) (x, y, width, height int, err error) {
+	geom, err := xproto.GetGeometry(c.c, xproto.Drawable(w)).Reply()
+	if err != nil {
+		return 0, 0, 0, 0, err
+	}
+	tr, err := xproto.TranslateCoordinates(c.c, w, c.root, 0, 0).Reply()
+	if err != nil {
+		return 0, 0, 0, 0, err
+	}
+	if !tr.SameScreen {
+		return 0, 0, 0, 0, ErrNotFound
+	}
+	return int(tr.DstX), int(tr.DstY), int(geom.Width), int(geom.Height), nil
+}
+
+// GetClient returns the client area (x, y, w, h) of pid's window (an X
+// window id when isXid); pid <= 0 selects the active window. It returns
+// zeros when no window is found.
+func GetClient(pid int, isXid bool) (int, int, int, int) {
+	c, err := ensureConn()
+	if err != nil {
+		return 0, 0, 0, 0
+	}
+	w, err := c.windowFor(pid, isXid)
+	if err != nil {
+		return 0, 0, 0, 0
+	}
+	x, y, width, height, err := c.clientRect(w)
+	if err != nil {
+		return 0, 0, 0, 0
+	}
+	return x, y, width, height
+}
+
+// GetBounds returns the window bounds (x, y, w, h) of pid's window including
+// the window manager frame (_NET_FRAME_EXTENTS); pid is an X window id when
+// isXid, pid <= 0 selects the active window. It returns zeros when no window
+// is found.
+func GetBounds(pid int, isXid bool) (int, int, int, int) {
+	c, err := ensureConn()
+	if err != nil {
+		return 0, 0, 0, 0
+	}
+	w, err := c.windowFor(pid, isXid)
+	if err != nil {
+		return 0, 0, 0, 0
+	}
+	x, y, width, height, err := c.clientRect(w)
+	if err != nil {
+		return 0, 0, 0, 0
+	}
+	// Undecorated windows or WMs without the property have no frame.
+	if ext, err := ewmh.FrameExtentsGet(c.xu, w); err == nil {
+		x, y = x-ext.Left, y-ext.Top
+		width, height = width+ext.Left+ext.Right, height+ext.Top+ext.Bottom
+	}
+	return x, y, width, height
+}
+
 // MinWindow minimizes (or restores) the window owned by pid.
 //
 //	MinWindow(pid)        // minimize

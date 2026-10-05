@@ -31,6 +31,7 @@ var (
 	modUser32        = windows.NewLazySystemDLL("user32.dll")
 	procEnumWindows  = modUser32.NewProc("EnumWindows")
 	procPostMessageW = modUser32.NewProc("PostMessageW")
+	procIsWindow     = modUser32.NewProc("IsWindow")
 )
 
 // enumState guards the visitor used by the single, permanently-registered
@@ -130,6 +131,69 @@ func ActiveName(name string) error {
 	}
 	win.SetForegroundWindow(target)
 	return nil
+}
+
+// windowFor resolves pid to a window: with isHandle (the Cgo NotPid / extra
+// arg mode) pid is an HWND and must name an existing window, otherwise it is
+// resolved like targetWindow.
+func windowFor(pid int, isHandle bool) win.HWND {
+	if !isHandle {
+		return targetWindow(pid)
+	}
+	if pid == 0 {
+		return 0
+	}
+	if r, _, _ := procIsWindow.Call(uintptr(pid)); r == 0 {
+		return 0
+	}
+	return win.HWND(pid)
+}
+
+// ActivePid restores (if minimized) and brings to the foreground the first
+// visible window owned by pid, or the window pid itself when isHandle.
+func ActivePid(pid int, isHandle bool) error {
+	if pid <= 0 {
+		return ErrNotFound
+	}
+	hwnd := windowFor(pid, isHandle)
+	if hwnd == 0 {
+		return ErrNotFound
+	}
+	if win.IsIconic(hwnd) {
+		win.ShowWindow(hwnd, win.SW_RESTORE)
+	}
+	if !win.SetForegroundWindow(hwnd) {
+		return errActivate
+	}
+	return nil
+}
+
+// GetBounds returns the window rect (x, y, w, h) of pid's window (an HWND
+// when isHandle); pid <= 0 selects the foreground window. It returns zeros
+// when no window is found.
+func GetBounds(pid int, isHandle bool) (int, int, int, int) {
+	hwnd := windowFor(pid, isHandle)
+	var r win.RECT
+	if hwnd == 0 || !win.GetWindowRect(hwnd, &r) {
+		return 0, 0, 0, 0
+	}
+	return int(r.Left), int(r.Top), int(r.Right - r.Left), int(r.Bottom - r.Top)
+}
+
+// GetClient returns the client area (x, y, w, h) of pid's window in screen
+// coordinates (pid is an HWND when isHandle); pid <= 0 selects the
+// foreground window.
+func GetClient(pid int, isHandle bool) (int, int, int, int) {
+	hwnd := windowFor(pid, isHandle)
+	var r win.RECT
+	if hwnd == 0 || !win.GetClientRect(hwnd, &r) {
+		return 0, 0, 0, 0
+	}
+	p := win.POINT{}
+	if !win.ClientToScreen(hwnd, &p) {
+		return 0, 0, 0, 0
+	}
+	return int(p.X), int(p.Y), int(r.Right - r.Left), int(r.Bottom - r.Top)
 }
 
 // MinWindow minimizes (or restores, if the bool arg is false) a window.

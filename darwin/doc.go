@@ -27,7 +27,9 @@
 // Most input and screen-capture APIs silently fail (or return empty results)
 // unless the host process has been granted Accessibility and Screen Recording
 // permissions in System Settings → Privacy & Security. Window management
-// (GetTitle/ActiveName/MinWindow/MaxWindow/CloseWindow) requires the
-// Accessibility/AppKit APIs that are not reachable without Objective-C, so
-// those calls report ErrNotSupported.
+// (GetTitle/GetBounds/ActivePid/ActiveName/MinWindow/MaxWindow/CloseWindow)
+// uses the Accessibility (AXUIElement) API and needs the Accessibility
+// permission; MaxWindow toggles native full screen. Write operations never
+// fall back to the frontmost window for a pid <= 0, except CloseWindow()
+// called with no argument.
 package darwin
