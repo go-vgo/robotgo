@@ -352,7 +352,9 @@ func TestFormatClickErrorButton(t *testing.T) {
 		tt.True(t, strings.HasSuffix(err.Error(), "code=42"), err.Error())
 	case "linux":
 		err = formatClickError(1, "a", "up", 1)
-		tt.True(t, strings.Contains(err.Error(), "XTestFakeButtonEvent"), err.Error())
+		tt.True(t, strings.Contains(err.Error(), "XTest request failed"), err.Error())
+		err = formatClickError(2, "a", "up", 1)
+		tt.True(t, strings.Contains(err.Error(), "no X display"), err.Error())
 	case "windows":
 		err = formatClickError(5, "a", "up", 1)
 		tt.True(t, strings.Contains(err.Error(), syscall.Errno(5).Error()), err.Error())
@@ -501,6 +503,9 @@ func TestCodeDetail(t *testing.T) {
 		tt.Equal(t, syscall.Errno(5).Error(), codeDetail(5))
 		// MM_ERR_INPUT_BLOCKED: SendInput failed without a last error.
 		tt.Equal(t, "input blocked (UIPI or secure desktop)", codeDetail(-1))
+		// win32KeyEvent: no window for the pid.
+		tt.Equal(t, "window not found", codeDetail(-5))
+		tt.Equal(t, "", codeDetail(-42))
 	case "darwin":
 		tt.Equal(t, "kCGErrorCannotComplete", codeDetail(1004))
 		tt.Equal(t, "", codeDetail(42))

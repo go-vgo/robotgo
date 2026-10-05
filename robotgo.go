@@ -756,13 +756,20 @@ var x11Errors = map[int]string{
 	-9: "AltGr level, but layout has no level-3 key",
 }
 
+// winErrors names the negative codes the C Windows functions return; positive
+// codes are GetLastError values.
+var winErrors = map[int]string{
+	-1: "input blocked (UIPI or secure desktop)", // MM_ERR_INPUT_BLOCKED
+	-5: "window not found",
+}
+
 // codeDetail describes a non-zero C error code: Windows GetLastError (or
-// MM_ERR_INPUT_BLOCKED), macOS CGError, X11 status.
+// a winErrors code), macOS CGError, X11 status.
 func codeDetail(code int) string {
 	switch runtime.GOOS {
 	case "windows":
 		if code < 0 {
-			return "input blocked (UIPI or secure desktop)"
+			return winErrors[code]
 		}
 		return syscall.Errno(code).Error()
 	case "darwin":

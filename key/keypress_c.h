@@ -470,6 +470,24 @@ int unicodeType(const unsigned value, uintptr pid, int8_t isPid) {
 			return 0;
 		}
 		DWORD err = GetLastError();
+
+		/* The first `sent` inputs were inserted: downs for units[0..downs),
+		   ups for units[0..ups). Release any down that got no up so the
+		   target does not keep the VK_PACKET key marked down. */
+		int downs = sent < (UINT)len ? (int)sent : len;
+		int ups = sent > (UINT)len ? (int)(sent - (UINT)len) : 0;
+		if (downs > ups) {
+			INPUT keyup[2];
+			memset(keyup, 0, sizeof(keyup));
+			UINT k = 0;
+			for (i = ups; i < downs; i++) {
+				keyup[k].type = INPUT_KEYBOARD;
+				keyup[k].ki.wScan = units[i];
+				keyup[k].ki.dwFlags = KEYEVENTF_KEYUP | KEYEVENTF_UNICODE;
+				k++;
+			}
+			SendInput(k, keyup, sizeof(INPUT)); /* best effort */
+		}
 		return err != 0 ? (int)err : MM_ERR_INPUT_BLOCKED;
 	#elif defined(USE_X11)
 		int err = toggleUniKey(value, true);
