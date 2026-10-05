@@ -51,6 +51,10 @@ func TestKeyKeysym(t *testing.T) {
 		{"up", xkUp, true},
 		{"num5", xkKP0 + 5, true},
 		{"audio_mute", xkAudioMute, true},
+		{"audio_random", 0x1008ff99, true},
+		{"right_shift", xkShiftR, true},
+		{"numpad_7", xkKP0 + 7, true},
+		{"numpad_lock", xkNumLock, true},
 		{"", 0, false},
 		{"no_such_key", 0, false},
 	}
@@ -119,6 +123,10 @@ func TestExtractMods(t *testing.T) {
 		{"ctrl+shift", []interface{}{"ctrl", "shift"}, []string{"ctrl", "shift"}, true, false},
 		{"slice", []interface{}{[]string{"ctrl", "alt"}}, []string{"ctrl", "alt"}, true, false},
 		{"up dir", []interface{}{"up"}, nil, false, true},
+		{"up dir in slice", []interface{}{[]string{"up", "ctrl"}}, []string{"ctrl"}, false, true},
+		{"last dir wins", []interface{}{"ctrl", "up", []string{"down"}}, []string{"ctrl"}, true, true},
+		{"up dir in nested iface", []interface{}{[]interface{}{"up", "ctrl"}}, []string{"ctrl"}, false, true},
+		{"nested without dir keeps outer", []interface{}{"up", []interface{}{"ctrl"}}, []string{"ctrl"}, false, true},
 		{"down dir + mod", []interface{}{"down", "ctrl"}, []string{"ctrl"}, true, true},
 		{"ignore ints", []interface{}{"ctrl", 42, "shift"}, []string{"ctrl", "shift"}, true, false},
 	}
@@ -257,5 +265,25 @@ func TestProcInfo(t *testing.T) {
 	}
 	if name, path, got := procInfo(-1); name != "" || path != "" || got != -1 {
 		t.Errorf("procInfo(-1) = %q, %q, %d", name, path, got)
+	}
+}
+
+func TestParseXftDPI(t *testing.T) {
+	tests := []struct {
+		db   string
+		want float64
+		ok   bool
+	}{
+		{"Xft.dpi:\t144\nXft.antialias:\t1\n", 144, true},
+		{"Xcursor.size: 24\nXft.dpi: 192.5", 192.5, true},
+		{"Xft.antialias: 1\n", 0, false},
+		{"Xft.dpi: nope\n", 0, false},
+		{"", 0, false},
+	}
+	for _, tt := range tests {
+		got, ok := parseXftDPI(tt.db)
+		if got != tt.want || ok != tt.ok {
+			t.Errorf("parseXftDPI(%q) = (%v, %v), want (%v, %v)", tt.db, got, ok, tt.want, tt.ok)
+		}
 	}
 }

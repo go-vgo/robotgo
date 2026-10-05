@@ -23,7 +23,6 @@ import "C"
 import (
 	"errors"
 	"math/rand"
-	"reflect"
 	"runtime"
 	"strings"
 	"unicode"
@@ -253,54 +252,53 @@ func checkKeyCodes(k string) (key C.MMKeyCode, err error) {
 		key = v
 		if key == C.K_NOT_A_KEY {
 			err = keyErr
-			return
 		}
+		return
 	}
+	// Unknown names used to fall through as keycode 0 ("a" on macOS); report
+	// them like the pure-Go backends do.
+	err = keyErr
 	return
 }
 
-func checkKeyFlags(f string) (flags C.MMKeyFlags) {
-	m := map[string]C.MMKeyFlags{
-		"alt":     C.MOD_ALT,
-		"altr":    C.MOD_ALT,
-		"altl":    C.MOD_ALT,
-		"cmd":     C.MOD_META,
-		"command": C.MOD_META,
-		"cmdr":    C.MOD_META,
-		"cmdl":    C.MOD_META,
-		"ctrl":    C.MOD_CONTROL,
-		"control": C.MOD_CONTROL,
-		"ctrlr":   C.MOD_CONTROL,
-		"ctrll":   C.MOD_CONTROL,
-		"shift":   C.MOD_SHIFT,
-		"shiftr":  C.MOD_SHIFT,
-		"shiftl":  C.MOD_SHIFT,
-		"none":    C.MOD_NONE,
-	}
+// keyFlags maps modifier names to MMKeyFlags.
+var keyFlags = map[string]C.MMKeyFlags{
+	"alt":     C.MOD_ALT,
+	"altr":    C.MOD_ALT,
+	"altl":    C.MOD_ALT,
+	"cmd":     C.MOD_META,
+	"command": C.MOD_META,
+	"cmdr":    C.MOD_META,
+	"cmdl":    C.MOD_META,
+	"ctrl":    C.MOD_CONTROL,
+	"control": C.MOD_CONTROL,
+	"ctrlr":   C.MOD_CONTROL,
+	"ctrll":   C.MOD_CONTROL,
+	"shift":   C.MOD_SHIFT,
+	"shiftr":  C.MOD_SHIFT,
+	"shiftl":  C.MOD_SHIFT,
+	// legacy key name (keyNames) accepted as a modifier too
+	"right_shift": C.MOD_SHIFT,
+	"none":        C.MOD_NONE,
+}
 
-	if v, ok := m[f]; ok {
-		return v
-	}
-	return
+func checkKeyFlags(f string) C.MMKeyFlags {
+	return keyFlags[f]
 }
 
 func getFlagsFromValue(value []string) (flags C.MMKeyFlags) {
-	if len(value) <= 0 {
-		return
-	}
-
-	for i := 0; i < len(value); i++ {
-		var f C.MMKeyFlags = C.MOD_NONE
-
-		f = checkKeyFlags(value[i])
-		flags = (C.MMKeyFlags)(flags | f)
+	for _, v := range value {
+		flags |= checkKeyFlags(v)
 	}
 	return
 }
 
 func upKeyArr(keyArr []string, pid int) {
-	for i := 0; i < len(keyArr); i++ {
-		key1, _ := checkKeyCodes(keyArr[i])
+	for _, k := range keyArr {
+		key1, err := checkKeyCodes(k)
+		if err != nil {
+			continue
+		}
 		C.toggleKeyCode(key1, false, C.MOD_NONE, C.uintptr(pid))
 	}
 }
@@ -413,32 +411,27 @@ func appendShift(key string, len1 int, args ...interface{}) (string, []interface
 //
 //	robotgo.KeyTap("k", pid int)
 func KeyTap(key string, args ...interface{}) error {
-	var keyArr []string
 	key, args = appendShift(key, 0, args...)
-
-	pid := 0
-	if len(args) > 0 {
-		if reflect.TypeOf(args[0]) == reflect.TypeOf(keyArr) {
-			keyArr = args[0].([]string)
-		} else {
-			if reflect.TypeOf(args[0]) == reflect.TypeOf(pid) {
-				pid = args[0].(int)
-				keyArr = ToStrings(args[1:])
-			} else {
-				keyArr = ToStrings(args)
-			}
-		}
-	}
-
+	pid, keyArr := getToggleArgs(args...)
 	return keyTaps(key, keyArr, pid)
 }
 
+// getToggleArgs splits args into the pid (the first int, at any position, so
+// KeyUp("a", pid) keeps it after the prepended "up") and the key array;
+// string and []string args are flattened in order, other types are skipped.
 func getToggleArgs(args ...interface{}) (pid int, keyArr []string) {
-	if len(args) > 0 && reflect.TypeOf(args[0]) == reflect.TypeOf(pid) {
-		pid = args[0].(int)
-		keyArr = ToStrings(args[1:])
-	} else {
-		keyArr = ToStrings(args)
+	hasPid := false
+	for _, arg := range args {
+		switch v := arg.(type) {
+		case int:
+			if !hasPid {
+				pid, hasPid = v, true
+			}
+		case string:
+			keyArr = append(keyArr, v)
+		case []string:
+			keyArr = append(keyArr, v...)
+		}
 	}
 	return
 }
@@ -455,6 +448,7 @@ func getToggleArgs(args ...interface{}) (pid int, keyArr []string) {
 //	robotgo.KeyToggle("a", "up")
 //
 //	robotgo.KeyToggle("a", "up", "alt", "cmd")
+//	robotgo.KeyToggle("a", "up", []string{"alt", "cmd"})
 //	robotgo.KeyToggle("k", pid int)
 func KeyToggle(key string, args ...interface{}) error {
 	key, args = appendShift(key, 1, args...)

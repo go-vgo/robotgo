@@ -54,11 +54,31 @@ func GetScreenSize() (int, int) {
 	return int(o.width), int(o.height)
 }
 
-// GetScaleSize returns the scaled screen size. On Wayland the screencopy
-// buffer is already in physical pixels, so the scale factor is 1.0 and this
-// returns the same value as GetScreenSize. Provided for robotgo API parity.
+// ScaleF returns the wl_output.scale factor of the selected output (the
+// compositor's HiDPI integer scale, 1 when not advertised), mirroring the Cgo
+// backend's sys_scale.
+func ScaleF(displayId ...int) float64 {
+	c, err := ensureConn()
+	if err != nil {
+		return 1
+	}
+	idx := 0
+	if len(displayId) > 0 {
+		idx = displayId[0]
+	}
+	o, ok := c.output(idx)
+	if !ok || o.scale <= 0 {
+		return 1
+	}
+	return float64(o.scale)
+}
+
+// GetScaleSize returns the screen size multiplied by ScaleF, like the Cgo
+// backend's GetScaleSize.
 func GetScaleSize(displayId ...int) (int, int) {
-	return GetScreenSize()
+	x, y := GetScreenSize()
+	f := ScaleF(displayId...)
+	return int(float64(x) * f), int(float64(y) * f)
 }
 
 // GetScreenRect returns the screen rectangle.

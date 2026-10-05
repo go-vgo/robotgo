@@ -130,6 +130,15 @@ func GetScreenSize() (int, int) { return x11.GetScreenSize() }
 // GetScaleSize get the screen scale size.
 func GetScaleSize(displayId ...int) (int, int) { return x11.GetScaleSize(displayId...) }
 
+// SysScale get the sys scale (physical DPI or Xft.dpi, / 96).
+func SysScale(displayId ...int) float64 { return x11.ScaleF(displayId...) }
+
+// ScaleF get the system scale val.
+func ScaleF(displayId ...int) float64 { return SysScale(displayId...) }
+
+// Scaled get the screen scaled return scale size.
+func Scaled(x int, displayId ...int) int { return Scaled0(x, ScaleF(displayId...)) }
+
 // GetScreenRect get the screen rect (x, y, w, h).
 func GetScreenRect(displayId ...int) Rect {
 	r := x11.GetScreenRect(displayId...)

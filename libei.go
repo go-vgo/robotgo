@@ -129,6 +129,15 @@ func GetScreenSize() (int, int) { return lb.GetScreenSize() }
 // GetScaleSize get the screen scale size.
 func GetScaleSize(displayId ...int) (int, int) { return lb.GetScaleSize(displayId...) }
 
+// SysScale get the sys scale (see libei.ScaleF for why the portal gives 1).
+func SysScale(displayId ...int) float64 { return lb.ScaleF(displayId...) }
+
+// ScaleF get the system scale val.
+func ScaleF(displayId ...int) float64 { return SysScale(displayId...) }
+
+// Scaled get the screen scaled return scale size.
+func Scaled(x int, displayId ...int) int { return Scaled0(x, ScaleF(displayId...)) }
+
 // GetScreenRect get the screen rect (x, y, w, h).
 func GetScreenRect(displayId ...int) Rect {
 	r := lb.GetScreenRect(displayId...)

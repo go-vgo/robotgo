@@ -16,6 +16,7 @@ package wayland
 
 import (
 	"errors"
+	"strings"
 	"time"
 	"unicode"
 )
@@ -162,7 +163,7 @@ func resolveKey(key string) (code uint32, shift bool, ok bool) {
 }
 
 // KeyTap taps a key (press + release). Trailing arguments may be modifier
-// names and an int pid. The pid is accepted for API parity with the other
+// names (or a []string of them) and an int pid. The pid is accepted for API parity with the other
 // backends but is ignored on Wayland: the virtual keyboard injects into the
 // compositor's focused surface and the protocol exposes no pid mapping,
 // mirroring the X11 path in key/keypress_c.h which also ignores pid.
@@ -170,6 +171,7 @@ func resolveKey(key string) (code uint32, shift bool, ok bool) {
 //	robotgo.KeyTap("a")
 //	robotgo.KeyTap("a", "ctrl")
 //	robotgo.KeyTap("a", "ctrl", "shift")
+//	robotgo.KeyTap("a", []string{"ctrl", "shift"})
 //	robotgo.KeyTap("a", pid) // pid accepted but ignored
 func KeyTap(key string, args ...interface{}) error {
 	c, err := ensureConn()
@@ -181,14 +183,11 @@ func KeyTap(key string, args ...interface{}) error {
 	}
 
 	// Resolve the key first so an unknown key can never leave modifiers held.
-	code, shift, ok := resolveKey(key)
-	if !ok {
-		return errors.New("robotgo: unknown key: " + key)
+	codes, _, err := toggleKeys(key, args)
+	if err != nil {
+		return err
 	}
-	mods := extractModifiers(args)
-	if shift {
-		mods = append(mods, "shift")
-	}
+	code := codes[len(codes)-1]
 
 	// Press modifiers, remembering the ones that actually went down so they
 	// are always released (the upKeyArr behavior of the C backend), even when
@@ -199,11 +198,7 @@ func KeyTap(key string, args ...interface{}) error {
 			return c.sendKey(timestamp(), mc, keyStateReleased)
 		})
 	}
-	for _, mod := range mods {
-		mc, ok := keyToEvdev(mod)
-		if !ok {
-			continue
-		}
+	for _, mc := range codes[:len(codes)-1] {
 		if err := c.sendKey(timestamp(), mc, keyStatePressed); err != nil {
 			return errors.Join(err, upMods())
 		}
@@ -242,11 +237,47 @@ func releaseKeys(codes []uint32, send func(code uint32) error) error {
 	return errors.Join(errs...)
 }
 
-// KeyToggle toggles a key. Default is "down". An int pid may be supplied for
-// API parity but is ignored on Wayland (see KeyTap).
+// toggleKeys resolves a KeyTap/KeyToggle call into evdev codes in press order
+// (modifiers, implied shift, then the key) and its direction; the last "up"
+// or "down" argument wins. Codes are deduplicated so aliases press once, and
+// the implied shift is skipped when any shift variant is already given.
+func toggleKeys(key string, args []interface{}) (codes []uint32, up bool, err error) {
+	code, shift, ok := resolveKey(key)
+	if !ok {
+		return nil, false, errors.New("robotgo: unknown key: " + key)
+	}
+	for _, s := range keyArgs(args) {
+		switch s {
+		case "up":
+			up = true
+		case "down":
+			up = false
+		}
+	}
+
+	mods := extractModifiers(args)
+	if shift && !hasShift(mods) {
+		mods = append(mods, "shift")
+	}
+	seen := map[uint32]bool{code: true}
+	for _, mod := range mods {
+		if mc, ok := keyToEvdev(mod); ok && !seen[mc] {
+			seen[mc] = true
+			codes = append(codes, mc)
+		}
+	}
+	return append(codes, code), up, nil
+}
+
+// KeyToggle toggles a key. Default is "down". Modifiers (strings or a
+// []string) are pressed before the key and released in reverse order after
+// it. An int pid may be supplied for API parity but is ignored on Wayland
+// (see KeyTap).
 //
 //	robotgo.KeyToggle("a")        // press
 //	robotgo.KeyToggle("a", "up")  // release
+//	robotgo.KeyToggle("a", "down", []string{"ctrl", "shift"})
+//	robotgo.KeyToggle("a", "up", []string{"ctrl", "shift"})
 //	robotgo.KeyToggle("a", pid)   // pid accepted but ignored
 func KeyToggle(key string, args ...interface{}) error {
 	c, err := ensureConn()
@@ -257,19 +288,22 @@ func KeyToggle(key string, args ...interface{}) error {
 		return ErrNotSupported
 	}
 
-	state := uint32(keyStatePressed)
-	for _, arg := range args {
-		if s, ok := arg.(string); ok && s == "up" {
-			state = keyStateReleased
+	codes, up, err := toggleKeys(key, args)
+	if err != nil {
+		return err
+	}
+	release := func(code uint32) error {
+		return c.sendKey(timestamp(), code, keyStateReleased)
+	}
+	if up {
+		return releaseKeys(codes, release)
+	}
+	for i, code := range codes {
+		if err := c.sendKey(timestamp(), code, keyStatePressed); err != nil {
+			return errors.Join(err, releaseKeys(codes[:i], release))
 		}
 	}
-
-	code, _, ok := resolveKey(key)
-	if !ok {
-		return errors.New("robotgo: unknown key: " + key)
-	}
-
-	return c.sendKey(timestamp(), code, state)
+	return nil
 }
 
 // KeyDown presses a key down. Extra args are forwarded to KeyToggle for API
@@ -357,20 +391,44 @@ func CmdCtrl() string {
 	return "ctrl"
 }
 
+// keyArgs flattens the string and []string arguments of KeyTap/KeyToggle,
+// skipping other types (such as an int pid).
+func keyArgs(args []interface{}) []string {
+	var out []string
+	for _, arg := range args {
+		switch v := arg.(type) {
+		case string:
+			out = append(out, v)
+		case []string:
+			out = append(out, v...)
+		}
+	}
+	return out
+}
+
+// hasShift reports whether mods (lowercased) contains any shift variant
+// (shift, shiftl, shiftr, right_shift).
+func hasShift(mods []string) bool {
+	for _, m := range mods {
+		if strings.Contains(m, "shift") {
+			return true
+		}
+	}
+	return false
+}
+
+// extractModifiers picks the (case-insensitive) modifier names out of the
+// variadic args, expanding []string entries; results are lowercased.
 func extractModifiers(args []interface{}) []string {
 	var mods []string
-	for _, arg := range args {
-		if s, ok := arg.(string); ok {
-			switch s {
-			case "ctrl", "control", "ctrll", "ctrlr":
-				mods = append(mods, s)
-			case "shift", "shiftl", "shiftr":
-				mods = append(mods, s)
-			case "alt", "altl", "altr":
-				mods = append(mods, s)
-			case "cmd", "cmdl", "cmdr":
-				mods = append(mods, s)
-			}
+	for _, s := range keyArgs(args) {
+		s = strings.ToLower(s)
+		switch s {
+		case "ctrl", "control", "ctrll", "ctrlr",
+			"shift", "shiftl", "shiftr", "right_shift",
+			"alt", "altl", "altr",
+			"cmd", "command", "cmdl", "cmdr":
+			mods = append(mods, s)
 		}
 	}
 	return mods

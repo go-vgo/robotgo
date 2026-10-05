@@ -45,13 +45,18 @@ uint32_t color_rgb_to_hex(uint8_t r, uint8_t g, uint8_t b) {
 
 MMRGBHex get_px_color(int32_t x, int32_t y, int32_t display_id) {
 	MMBitmapRef bitmap;
-	MMRGBHex color;
+	MMRGBHex color = 0;
 
 	if (!pointVisibleOnMainDisplay(MMPointInt32Make(x, y))) {
 		return color;
 	}
 
 	bitmap = copyMMBitmapFromDisplayInRect(MMRectInt32Make(x, y, 1, 1), display_id, 0);
+	/* NULL when the screen cannot be grabbed (e.g. macOS without the Screen
+	   Recording permission); report black instead of dereferencing it. */
+	if (bitmap == NULL) {
+		return color;
+	}
 	color = MMRGBHexAtPoint(bitmap, 0, 0);
 	destroyMMBitmap(bitmap);
 

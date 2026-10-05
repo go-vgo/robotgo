@@ -52,6 +52,27 @@ func TestKeyToEvdev(t *testing.T) {
 		{"right", 106, true},
 		{"home", 102, true},
 		{"end", 107, true},
+		{"num+", 78, true},
+		{"num-", 74, true},
+		{"num*", 55, true},
+		{"num/", 98, true},
+		{"num_enter", 96, true},
+		{"num.", 83, true},
+		{"num0", 82, true},
+		{"num_equal", 117, true},
+		{"numpad_5", 76, true},
+		{"numpad_lock", 69, true},
+		{"pause_break", 119, true},
+		{"right_shift", 54, true},
+		{"audio_rewind", 168, true},
+		{"audio_forward", 208, true},
+		{"audio_repeat", 439, true},
+		{"audio_random", 410, true},
+		{"lights_mon_up", 225, true},
+		{"lights_mon_down", 224, true},
+		{"lights_kbd_toggle", 228, true},
+		{"lights_kbd_up", 230, true},
+		{"lights_kbd_down", 229, true},
 		{"nonexistent_key", 0, false},
 		{"", 0, false},
 	}
@@ -325,6 +346,36 @@ func installFakeConn(t *testing.T, streams ...stream) *fakeInjector {
 		connMu.Unlock()
 	})
 	return inj
+}
+
+// Location is a pure query (#783): it must not negotiate a portal session
+// when there is none, and must keep reporting the last injected position
+// after the portal closed the session.
+func TestLocationIsReadOnly(t *testing.T) {
+	connMu.Lock()
+	prev := globalConn
+	globalConn = nil
+	connMu.Unlock()
+	t.Cleanup(func() {
+		connMu.Lock()
+		globalConn = prev
+		connMu.Unlock()
+	})
+
+	if x, y := Location(); x != 0 || y != 0 {
+		t.Fatalf("Location without session: got (%d,%d), want (0,0)", x, y)
+	}
+	connMu.Lock()
+	if globalConn != nil {
+		connMu.Unlock()
+		t.Fatal("Location opened a portal session")
+	}
+	globalConn = &conn{posX: 40, posY: 50, posKnown: true, closed: true}
+	connMu.Unlock()
+
+	if x, y := Location(); x != 40 || y != 50 {
+		t.Fatalf("Location after session closed: got (%d,%d), want (40,50)", x, y)
+	}
 }
 
 func TestMoveAbsoluteWithStreams(t *testing.T) {

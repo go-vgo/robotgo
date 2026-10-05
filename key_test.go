@@ -15,6 +15,7 @@
 package robotgo
 
 import (
+	"runtime"
 	"testing"
 
 	"github.com/vcaesar/tt"
@@ -33,6 +34,86 @@ func TestKeyAliases(t *testing.T) {
 		tt.Nil(t, err)
 		tt.Equal(t, want, got)
 	}
+
+	// Unknown names must error instead of resolving to keycode 0.
+	_, err := checkKeyCodes("nonexistent_key")
+	tt.Equal(t, keyErr, err)
+	_, err = checkKeyCodes("")
+	tt.Nil(t, err)
+}
+
+func TestLinuxNumpadKeyCodes(t *testing.T) {
+	if runtime.GOOS != "linux" {
+		t.Skip("X11 keysyms are specific to the Linux backend")
+	}
+
+	keys := map[string]int{
+		"num+":      0xffab, // XK_KP_Add
+		"num-":      0xffad, // XK_KP_Subtract
+		"num*":      0xffaa, // XK_KP_Multiply
+		"num/":      0xffaf, // XK_KP_Divide
+		"num_enter": 0xff8d, // XK_KP_Enter
+		"num_equal": 0xffbd, // XK_KP_Equal
+	}
+	for key, want := range keys {
+		got, err := checkKeyCodes(key)
+		tt.Nil(t, err)
+		tt.Equal(t, want, int(got))
+	}
+}
+
+func TestGetToggleArgs(t *testing.T) {
+	pid, arr := getToggleArgs([]string{"alt", "cmd"})
+	tt.Equal(t, 0, pid)
+	tt.Equal(t, []string{"alt", "cmd"}, arr)
+
+	pid, arr = getToggleArgs("up", []string{"alt", "cmd"})
+	tt.Equal(t, 0, pid)
+	tt.Equal(t, []string{"up", "alt", "cmd"}, arr)
+
+	pid, arr = getToggleArgs(123, []string{"ctrl"}, "shift")
+	tt.Equal(t, 123, pid)
+	tt.Equal(t, []string{"ctrl", "shift"}, arr)
+
+	// KeyUp("a", pid, "ctrl") prepends "up"; the pid must still be found.
+	pid, arr = getToggleArgs("up", 123, "ctrl")
+	tt.Equal(t, 123, pid)
+	tt.Equal(t, []string{"up", "ctrl"}, arr)
+
+	// Only the first int is the pid.
+	pid, arr = getToggleArgs([]string{"ctrl"}, 123, 456)
+	tt.Equal(t, 123, pid)
+	tt.Equal(t, []string{"ctrl"}, arr)
+
+	// appendShift appends "shift" after a []string; it must be kept.
+	key, args := appendShift("A", 0, []string{"ctrl"})
+	_, arr = getToggleArgs(args...)
+	tt.Equal(t, "a", key)
+	tt.Equal(t, []string{"ctrl", "shift"}, arr)
+
+	want := checkKeyFlags("ctrl") | checkKeyFlags("shift")
+	tt.Equal(t, want, getFlagsFromValue([]string{"ctrl", "shiftr", "x"}))
+	tt.Equal(t, checkKeyFlags("none"), checkKeyFlags("x"))
+	tt.Equal(t, checkKeyFlags("shift"), checkKeyFlags("right_shift"))
+}
+
+// KeyToggle("a", "up", []string{"alt", "cmd"}): the direction is stripped and
+// the array becomes the modifier flags (this panicked before the flattening).
+func TestKeyToggleArrayArgs(t *testing.T) {
+	key, args := appendShift("a", 1, "up", []string{"alt", "cmd"})
+	tt.Equal(t, "a", key)
+	pid, arr := getToggleArgs(args...)
+	tt.Equal(t, 0, pid)
+
+	down, mods := getKeyDown(arr)
+	tt.False(t, down)
+	tt.Equal(t, []string{"alt", "cmd"}, mods)
+	tt.Equal(t, checkKeyFlags("alt")|checkKeyFlags("cmd"), getFlagsFromValue(mods))
+
+	// no direction defaults to down and keeps the array intact
+	down, mods = getKeyDown([]string{"alt", "cmd"})
+	tt.True(t, down)
+	tt.Equal(t, []string{"alt", "cmd"}, mods)
 }
 
 func TestFormatClickErrorKey(t *testing.T) {

@@ -55,7 +55,7 @@ var evdevKeyMap = map[string]uint32{
 	"shiftl": 42, "shiftr": 54, "shift": 42,
 	"ctrll": 29, "ctrlr": 97, "ctrl": 29, "control": 29,
 	"altl": 56, "altr": 100, "alt": 56,
-	"cmd": 125, "cmdl": 125, "cmdr": 126, // KEY_LEFTMETA / KEY_RIGHTMETA
+	"cmd": 125, "command": 125, "cmdl": 125, "cmdr": 126, // KEY_LEFTMETA / KEY_RIGHTMETA
 	"space":    57,
 	"capslock": 58,
 	"caps":     58,
@@ -79,15 +79,29 @@ var evdevKeyMap = map[string]uint32{
 	"num0": 82, "num1": 79, "num2": 80, "num3": 81,
 	"num4": 75, "num5": 76, "num6": 77,
 	"num7": 71, "num8": 72, "num9": 73,
+	"num_equal": 117, // KEY_KPEQUAL
+	// deprecated numpad_* aliases (see keyNames in the root key.go)
+	"numpad_0": 82, "numpad_1": 79, "numpad_2": 80, "numpad_3": 81,
+	"numpad_4": 75, "numpad_5": 76, "numpad_6": 77,
+	"numpad_7": 71, "numpad_8": 72, "numpad_9": 73, "numpad_lock": 69,
 
 	// Special
 	"print": 99, "printscreen": 99,
 	"scroll_lock": 70,
 	"pause":       119,
+	"pause_break": 119,
+	"right_shift": 54,
 	"menu":        127,
 
 	// Media keys
 	"audio_mute": 113, "audio_vol_down": 114, "audio_vol_up": 115,
 	"audio_play": 164, "audio_stop": 166, "audio_pause": 164,
 	"audio_prev": 165, "audio_next": 163,
+	"audio_rewind": 168, "audio_forward": 208, // KEY_REWIND / KEY_FASTFORWARD
+	"audio_repeat": 439, "audio_random": 410, // KEY_MEDIA_REPEAT / KEY_SHUFFLE
+
+	// Brightness / backlight
+	"lights_mon_up": 225, "lights_mon_down": 224, // KEY_BRIGHTNESSUP / DOWN
+	"lights_kbd_toggle": 228,                         // KEY_KBDILLUMTOGGLE
+	"lights_kbd_up":     230, "lights_kbd_down": 229, // KEY_KBDILLUMUP / DOWN
 }

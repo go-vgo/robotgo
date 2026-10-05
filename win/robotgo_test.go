@@ -40,6 +40,21 @@ func TestKeyToVK(t *testing.T) {
 	if _, _, ok := keyToVK("nonexistent_key"); ok {
 		t.Error("keyToVK(nonexistent_key): expected not resolvable")
 	}
+
+	// Names from the Cgo keyNames table must map to the same virtual keys.
+	parity := map[string]uint16{
+		"pause_break": 0x13, // VK_PAUSE
+		"right_shift": 0xA1, // VK_RSHIFT
+		"num_equal":   0xBB, // VK_OEM_PLUS
+		"numpad_0":    0x60, // VK_NUMPAD0
+		"numpad_9":    0x69, // VK_NUMPAD9
+		"numpad_lock": 0x90, // VK_NUMLOCK
+	}
+	for k, want := range parity {
+		if vk, _, ok := keyToVK(k); !ok || vk != want {
+			t.Errorf("keyToVK(%q) = (%#x, %v), want %#x", k, vk, ok, want)
+		}
+	}
 }
 
 func TestKeyToVKRejectsNonBMP(t *testing.T) {

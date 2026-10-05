@@ -124,6 +124,12 @@ func GetScreenSize() (int, int) { return win.GetScreenSize() }
 // GetScaleSize get the screen scale size.
 func GetScaleSize(displayId ...int) (int, int) { return win.GetScaleSize(displayId...) }
 
+// SysScale get the sys scale (ScaleF itself comes from robotgo_win.go).
+func SysScale(displayId ...int) float64 { return win.ScaleF(displayId...) }
+
+// Scaled get the screen scaled return scale size.
+func Scaled(x int, displayId ...int) int { return Scaled0(x, ScaleF(displayId...)) }
+
 // GetScreenRect get the screen rect (x, y, w, h).
 func GetScreenRect(displayId ...int) Rect {
 	r := win.GetScreenRect(displayId...)

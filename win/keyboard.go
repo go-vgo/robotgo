@@ -128,17 +128,18 @@ var vkMap = map[string]uint16{
 	"insert": win.VK_INSERT,
 
 	"shift": win.VK_SHIFT, "shiftl": win.VK_LSHIFT, "shiftr": win.VK_RSHIFT,
-	"ctrl": win.VK_CONTROL, "control": win.VK_CONTROL,
+	"right_shift": win.VK_RSHIFT,
+	"ctrl":        win.VK_CONTROL, "control": win.VK_CONTROL,
 	"ctrll": win.VK_LCONTROL, "ctrlr": win.VK_RCONTROL,
 	"alt": win.VK_MENU, "altl": win.VK_LMENU, "altr": win.VK_RMENU,
-	"cmd": win.VK_LWIN, "cmdl": win.VK_LWIN, "win": win.VK_LWIN,
+	"cmd": win.VK_LWIN, "command": win.VK_LWIN, "cmdl": win.VK_LWIN, "win": win.VK_LWIN,
 	"cmdr": win.VK_RWIN, "rwin": win.VK_RWIN,
 	"capslock": win.VK_CAPITAL,
 	"caps":     win.VK_CAPITAL,
 	"print":    win.VK_SNAPSHOT, "printscreen": win.VK_SNAPSHOT,
 	"menu":     win.VK_APPS,
 	"num_lock": win.VK_NUMLOCK, "scroll_lock": win.VK_SCROLL,
-	"pause": win.VK_PAUSE,
+	"pause": win.VK_PAUSE, "pause_break": win.VK_PAUSE,
 
 	"f1": win.VK_F1, "f2": win.VK_F2, "f3": win.VK_F3, "f4": win.VK_F4,
 	"f5": win.VK_F5, "f6": win.VK_F6, "f7": win.VK_F7, "f8": win.VK_F8,
@@ -154,6 +155,12 @@ var vkMap = map[string]uint16{
 	"num.": win.VK_DECIMAL, "num+": win.VK_ADD, "num-": win.VK_SUBTRACT,
 	"num*": win.VK_MULTIPLY, "num/": win.VK_DIVIDE, "num_enter": win.VK_RETURN,
 	"num_clear": win.VK_CLEAR,
+	"num_equal": win.VK_OEM_PLUS, // same as the Cgo K_NUMPAD_EQUAL
+	// deprecated numpad_* aliases (see keyNames in the root key.go)
+	"numpad_0": win.VK_NUMPAD0, "numpad_1": win.VK_NUMPAD1, "numpad_2": win.VK_NUMPAD2,
+	"numpad_3": win.VK_NUMPAD3, "numpad_4": win.VK_NUMPAD4, "numpad_5": win.VK_NUMPAD5,
+	"numpad_6": win.VK_NUMPAD6, "numpad_7": win.VK_NUMPAD7, "numpad_8": win.VK_NUMPAD8,
+	"numpad_9": win.VK_NUMPAD9, "numpad_lock": win.VK_NUMLOCK,
 
 	"audio_mute": win.VK_VOLUME_MUTE, "audio_vol_down": win.VK_VOLUME_DOWN,
 	"audio_vol_up": win.VK_VOLUME_UP, "audio_play": win.VK_MEDIA_PLAY_PAUSE,
@@ -291,8 +298,9 @@ func postChar(hwnd win.HWND, u uint16) bool {
 	return r != 0
 }
 
-// KeyTap taps a key (press + release). Optional trailing modifiers and an int
-// pid: when a pid is supplied the key (and its modifiers) is posted to that
+// KeyTap taps a key (press + release). Optional trailing modifiers (strings
+// or a []string) and an int pid: when a pid is supplied the key (and its
+// modifiers) is posted to that
 // process's window via PostMessageW, mirroring the Windows path in
 // key/keypress_c.h; otherwise it is injected into the focused window via
 // SendInput. Set NotPid to pass an HWND instead of a pid.
@@ -300,111 +308,121 @@ func postChar(hwnd win.HWND, u uint16) bool {
 //	KeyTap("a")
 //	KeyTap("a", "ctrl")
 //	KeyTap("a", "ctrl", "shift")
+//	KeyTap("a", []string{"ctrl", "shift"})
 //	KeyTap("a", pid)
 //	KeyTap("a", pid, "ctrl")
 func KeyTap(key string, args ...interface{}) error {
-	pid := extractPid(args)
-	modifiers := extractModifiers(args)
-
-	vk, autoMods, ok := keyToVK(key)
-	if !ok {
-		return errors.New("robotgo: unknown key: " + key)
+	vks, _, err := toggleKeys(key, args)
+	if err != nil {
+		return err
+	}
+	send, err := keySender(extractPid(args))
+	if err != nil {
+		return err
 	}
 
-	// Add the modifiers implied by the key itself (an uppercase letter or
-	// shifted symbol needs SHIFT held), deduplicating against explicit ones.
-	if autoMods&1 != 0 {
-		modifiers = appendUniqueMod(modifiers, "shift")
+	// Press modifiers then the key, and release in reverse order.
+	for _, vk := range vks {
+		send(vk, false)
 	}
-	if autoMods&2 != 0 {
-		modifiers = appendUniqueMod(modifiers, "ctrl")
-	}
-	if autoMods&4 != 0 {
-		modifiers = appendUniqueMod(modifiers, "alt")
-	}
-
-	// pid-directed input: post the key (and its modifiers) to the target
-	// window via PostMessageW, mirroring key/keypress_c.h.
-	if pid != 0 {
-		hwnd := keyHwnd(pid)
-		if hwnd == 0 {
-			return ErrNotFound
-		}
-		for _, mod := range modifiers {
-			if mvk, _, ok := keyToVK(mod); ok {
-				postKey(hwnd, mvk, false)
-			}
-		}
-		postKey(hwnd, vk, false)
-		time.Sleep(time.Duration(KeySleep) * time.Millisecond)
-		postKey(hwnd, vk, true)
-		for i := len(modifiers) - 1; i >= 0; i-- {
-			if mvk, _, ok := keyToVK(modifiers[i]); ok {
-				postKey(hwnd, mvk, true)
-			}
-		}
-		return nil
-	}
-
-	// Press modifiers.
-	for _, mod := range modifiers {
-		if mvk, _, ok := keyToVK(mod); ok {
-			sendVK(mvk, false)
-		}
-	}
-
-	sendVK(vk, false)
 	time.Sleep(time.Duration(KeySleep) * time.Millisecond)
-	sendVK(vk, true)
-
-	// Release modifiers in reverse order.
-	for i := len(modifiers) - 1; i >= 0; i-- {
-		if mvk, _, ok := keyToVK(modifiers[i]); ok {
-			sendVK(mvk, true)
-		}
+	for i := len(vks) - 1; i >= 0; i-- {
+		send(vks[i], true)
 	}
 	return nil
+}
+
+// keySender returns the function delivering virtual-key events: PostMessageW
+// to the pid's window (mirroring key/keypress_c.h) when pid != 0, otherwise
+// SendInput to the focused window.
+func keySender(pid int) (func(vk uint16, up bool), error) {
+	if pid == 0 {
+		return sendVK, nil
+	}
+	hwnd := keyHwnd(pid)
+	if hwnd == 0 {
+		return nil, ErrNotFound
+	}
+	return func(vk uint16, up bool) { postKey(hwnd, vk, up) }, nil
+}
+
+// toggleKeys resolves a key and its modifiers into virtual keys in press
+// order (explicit modifiers, modifiers implied by the key such as shift for
+// uppercase letters, then the key) and the direction; the last "up" or
+// "down" argument wins. Virtual keys are deduplicated so aliases press once.
+func toggleKeys(key string, args []interface{}) (vks []uint16, up bool, err error) {
+	vk, autoMods, ok := keyToVK(key)
+	if !ok {
+		return nil, false, errors.New("robotgo: unknown key: " + key)
+	}
+	for _, s := range keyArgs(args) {
+		switch s {
+		case "up":
+			up = true
+		case "down":
+			up = false
+		}
+	}
+
+	// Add the modifiers implied by the key itself, deduplicating against
+	// explicit ones (including left/right variants).
+	mods := extractModifiers(args)
+	for i, mod := range []string{"shift", "ctrl", "alt"} {
+		if autoMods&(1<<i) != 0 {
+			mods = appendUniqueMod(mods, mod)
+		}
+	}
+	seen := map[uint16]bool{vk: true}
+	for _, mod := range mods {
+		if mvk, _, ok := keyToVK(mod); ok && !seen[mvk] {
+			seen[mvk] = true
+			vks = append(vks, mvk)
+		}
+	}
+	return append(vks, vk), up, nil
 }
 
 // appendUniqueMod appends mod unless an equivalent modifier (including
 // left/right variants and aliases) is already present.
 func appendUniqueMod(mods []string, mod string) []string {
 	for _, m := range mods {
-		if m == mod || m == mod+"l" || m == mod+"r" || (mod == "ctrl" && m == "control") {
+		if m == mod || m == mod+"l" || m == mod+"r" ||
+			(mod == "ctrl" && m == "control") || (mod == "shift" && m == "right_shift") {
 			return mods
 		}
 	}
 	return append(mods, mod)
 }
 
-// KeyToggle toggles a key. Default is "down"; pass "up" to release. An optional
-// int pid posts the event to that process's window via PostMessageW, mirroring
-// key/keypress_c.h; otherwise SendInput is used. Set NotPid to pass an HWND.
+// KeyToggle toggles a key. Default is "down"; pass "up" to release. Modifiers
+// (strings or a []string) are pressed before the key and released in reverse
+// order after it. An optional int pid posts the events to that process's
+// window via PostMessageW, mirroring key/keypress_c.h; otherwise SendInput is
+// used. Set NotPid to pass an HWND.
 //
 //	KeyToggle("a")
 //	KeyToggle("a", "up")
+//	KeyToggle("a", "down", []string{"ctrl", "shift"})
+//	KeyToggle("a", "up", []string{"ctrl", "shift"})
 //	KeyToggle("a", pid)
 func KeyToggle(key string, args ...interface{}) error {
-	up := false
-	for _, arg := range args {
-		if s, ok := arg.(string); ok && s == "up" {
-			up = true
-		}
+	vks, up, err := toggleKeys(key, args)
+	if err != nil {
+		return err
 	}
-	pid := extractPid(args)
-	vk, _, ok := keyToVK(key)
-	if !ok {
-		return errors.New("robotgo: unknown key: " + key)
+	send, err := keySender(extractPid(args))
+	if err != nil {
+		return err
 	}
-	if pid != 0 {
-		hwnd := keyHwnd(pid)
-		if hwnd == 0 {
-			return ErrNotFound
+	if up {
+		for i := len(vks) - 1; i >= 0; i-- {
+			send(vks[i], true)
 		}
-		postKey(hwnd, vk, up)
 		return nil
 	}
-	sendVK(vk, up)
+	for _, vk := range vks {
+		send(vk, false)
+	}
 	return nil
 }
 
@@ -499,17 +517,33 @@ func CmdCtrl() string {
 	return "ctrl"
 }
 
+// keyArgs flattens the string and []string arguments of KeyTap/KeyToggle,
+// skipping other types (such as an int pid).
+func keyArgs(args []interface{}) []string {
+	var out []string
+	for _, arg := range args {
+		switch v := arg.(type) {
+		case string:
+			out = append(out, v)
+		case []string:
+			out = append(out, v...)
+		}
+	}
+	return out
+}
+
+// extractModifiers picks the (case-insensitive) modifier names out of the
+// variadic args, expanding []string entries; results are lowercased.
 func extractModifiers(args []interface{}) []string {
 	var mods []string
-	for _, arg := range args {
-		if s, ok := arg.(string); ok {
-			switch s {
-			case "ctrl", "control", "ctrll", "ctrlr",
-				"shift", "shiftl", "shiftr",
-				"alt", "altl", "altr",
-				"cmd", "cmdl", "cmdr", "win", "rwin":
-				mods = append(mods, s)
-			}
+	for _, s := range keyArgs(args) {
+		s = strings.ToLower(s)
+		switch s {
+		case "ctrl", "control", "ctrll", "ctrlr",
+			"shift", "shiftl", "shiftr", "right_shift",
+			"alt", "altl", "altr",
+			"cmd", "command", "cmdl", "cmdr", "win", "rwin":
+			mods = append(mods, s)
 		}
 	}
 	return mods

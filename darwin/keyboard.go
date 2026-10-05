@@ -59,7 +59,7 @@ var namedCodes = map[string]uint16{
 
 	"cmd": 55, "command": 55, "lcmd": 55, "cmdl": 55,
 	"rcmd": 54, "cmdr": 54,
-	"shift": 56, "shiftl": 56, "lshift": 56, "shiftr": 60, "rshift": 60,
+	"shift": 56, "shiftl": 56, "lshift": 56, "shiftr": 60, "rshift": 60, "right_shift": 60,
 	"ctrl": 59, "control": 59, "ctrll": 59, "ctrlr": 62,
 	"alt": 58, "option": 58, "altl": 58, "altr": 61,
 
@@ -67,19 +67,24 @@ var namedCodes = map[string]uint16{
 	"f7": 98, "f8": 100, "f9": 101, "f10": 109, "f11": 103, "f12": 111,
 	"f13": 105, "f14": 107, "f15": 113, "f16": 106, "f17": 64, "f18": 79,
 	"f19": 80, "f20": 90,
+	"print": 105, "printscreen": 105, // kVK_F13, as in keycode.h
 
 	"num0": 82, "num1": 83, "num2": 84, "num3": 85, "num4": 86,
 	"num5": 87, "num6": 88, "num7": 89, "num8": 91, "num9": 92,
 	"num.": 65, "num+": 69, "num-": 78, "num*": 67, "num/": 75,
 	"num_enter": 76, "num_equal": 81, "num_clear": 71, "num_lock": 71,
+	// deprecated numpad_* aliases (see keyNames in the root key.go)
+	"numpad_0": 82, "numpad_1": 83, "numpad_2": 84, "numpad_3": 85, "numpad_4": 86,
+	"numpad_5": 87, "numpad_6": 88, "numpad_7": 89, "numpad_8": 91, "numpad_9": 92,
+	"numpad_lock": 71,
 }
 
 // modifierFlags maps a modifier name to its CGEventFlags mask.
 var modifierFlags = map[string]uint64{
 	"shift": kCGEventFlagMaskShift, "shiftl": kCGEventFlagMaskShift,
 	"lshift": kCGEventFlagMaskShift, "shiftr": kCGEventFlagMaskShift,
-	"rshift": kCGEventFlagMaskShift,
-	"ctrl":   kCGEventFlagMaskControl, "control": kCGEventFlagMaskControl,
+	"rshift": kCGEventFlagMaskShift, "right_shift": kCGEventFlagMaskShift,
+	"ctrl": kCGEventFlagMaskControl, "control": kCGEventFlagMaskControl,
 	"ctrll": kCGEventFlagMaskControl, "ctrlr": kCGEventFlagMaskControl,
 	"alt": kCGEventFlagMaskAlternate, "option": kCGEventFlagMaskAlternate,
 	"altl": kCGEventFlagMaskAlternate, "altr": kCGEventFlagMaskAlternate,
@@ -214,6 +219,15 @@ func KeyTap(key string, args ...interface{}) error {
 	mods := extractModifiers(args)
 	flags := flagsFromMods(mods)
 
+	// Media keys ignore pid and modifiers, like the Cgo NX_SYSDEFINED path.
+	if mc, ok := mediaCodes[strings.ToLower(key)]; ok {
+		if err := sendMediaKey(mc, true); err != nil {
+			return err
+		}
+		time.Sleep(time.Duration(KeySleep) * time.Millisecond)
+		return sendMediaKey(mc, false)
+	}
+
 	code, autoFlags, ok := keyToCode(key)
 	if !ok {
 		return errors.New("robotgo: unknown key: " + key)
@@ -270,6 +284,10 @@ func KeyToggle(key string, args ...interface{}) error {
 				}
 			}
 		}
+	}
+
+	if mc, ok := mediaCodes[strings.ToLower(key)]; ok {
+		return sendMediaKey(mc, !up)
 	}
 
 	code, autoFlags, ok := keyToCode(key)

@@ -323,9 +323,15 @@ func MoveClick(x, y int, args ...interface{}) {
 // MoveSmooth, ...). It is (0, 0) until the first move and does not follow
 // movement made by the physical mouse. Relative motion alone cannot establish
 // an absolute position; Location stays (0, 0) until Move establishes one.
+//
+// It is a pure query: it never opens a portal session (and so never shows the
+// consent dialog), and it keeps answering from the last session after the
+// portal closed it (#783).
 func Location() (int, int) {
-	c, err := ensureConn()
-	if err != nil {
+	connMu.Lock()
+	c := globalConn
+	connMu.Unlock()
+	if c == nil {
 		return 0, 0
 	}
 	x, y, _ := c.position()

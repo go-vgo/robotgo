@@ -44,6 +44,57 @@ func TestKeyToCode(t *testing.T) {
 	if _, _, ok := keyToCode("nonexistent_key"); ok {
 		t.Error("keyToCode(nonexistent_key): expected not resolvable")
 	}
+
+	// Names from the Cgo keyNames table must map to the same kVK codes.
+	parity := map[string]uint16{
+		"print": 105, "printscreen": 105, "right_shift": 60,
+		"numpad_0": 82, "numpad_9": 92, "numpad_lock": 71,
+	}
+	for k, want := range parity {
+		if code, _, ok := keyToCode(k); !ok || code != want {
+			t.Errorf("keyToCode(%q) = (%d, %v), want %d", k, code, ok, want)
+		}
+	}
+}
+
+func TestMediaKeyData(t *testing.T) {
+	// Same NX_KEYTYPE_* codes the Cgo backend encodes as 1000+code.
+	want := map[string]int{
+		"audio_vol_up": 0, "audio_vol_down": 1, "audio_mute": 7,
+		"audio_play": 16, "audio_pause": 16, "audio_next": 17, "audio_prev": 18,
+		"lights_mon_up": 2, "lights_mon_down": 3,
+		"lights_kbd_up": 21, "lights_kbd_down": 22, "lights_kbd_toggle": 23,
+	}
+	for k, code := range want {
+		if got, ok := mediaCodes[k]; !ok || got != code {
+			t.Errorf("mediaCodes[%q] = (%d, %v), want %d", k, got, ok, code)
+		}
+	}
+
+	flags, data1 := mediaKeyData(7, true)
+	if flags != 0xa00 || data1 != 0x70a00 {
+		t.Errorf("mediaKeyData(7, down) = (%#x, %#x), want (0xa00, 0x70a00)", flags, data1)
+	}
+	flags, data1 = mediaKeyData(16, false)
+	if flags != 0xb00 || data1 != 0x100b00 {
+		t.Errorf("mediaKeyData(16, up) = (%#x, %#x), want (0xb00, 0x100b00)", flags, data1)
+	}
+}
+
+func TestWithMediaEvent(t *testing.T) {
+	if !loaded {
+		t.Skip("CoreGraphics not loaded")
+	}
+	// Build the NSEvent without posting it (posting would change the volume).
+	for _, down := range []bool{true, false} {
+		var cg uintptr
+		if err := withMediaEvent(mediaCodes["audio_mute"], down, func(ev uintptr) { cg = ev }); err != nil {
+			t.Fatalf("withMediaEvent(down=%v): %v", down, err)
+		}
+		if cg == 0 {
+			t.Fatalf("withMediaEvent(down=%v): got nil CGEvent", down)
+		}
+	}
 }
 
 func TestModKeyCodes(t *testing.T) {
@@ -88,6 +139,7 @@ func TestExtractModifiers(t *testing.T) {
 		{"mixed types", []interface{}{"ctrl", 42, true, "alt"}, []string{"ctrl", "alt"}},
 		{"non-modifier string", []interface{}{"hello"}, nil},
 		{"[]string slice", []interface{}{[]string{"cmd", "shift"}}, []string{"cmd", "shift"}},
+		{"right_shift alias", []interface{}{"right_shift"}, []string{"right_shift"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -111,6 +163,9 @@ func TestFlagsFromMods(t *testing.T) {
 	}
 	if got := flagsFromMods(nil); got != 0 {
 		t.Errorf("flagsFromMods(nil): got 0x%x, want 0", got)
+	}
+	if got := flagsFromMods([]string{"right_shift"}); got != kCGEventFlagMaskShift {
+		t.Errorf("flagsFromMods(right_shift): got 0x%x", got)
 	}
 }
 

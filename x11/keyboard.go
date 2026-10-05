@@ -111,21 +111,30 @@ func (c *conn) modKeycodes(mods []string) []xproto.Keycode {
 // leading "up"/"down" direction which is returned separately.
 func extractMods(args []interface{}) (mods []string, down bool, hasDir bool) {
 	down = true
+	add := func(s string) {
+		switch s {
+		case "up":
+			down, hasDir = false, true
+		case "down":
+			down, hasDir = true, true
+		default:
+			mods = append(mods, s)
+		}
+	}
 	for _, a := range args {
 		switch v := a.(type) {
 		case string:
-			if v == "up" {
-				down, hasDir = false, true
-			} else if v == "down" {
-				down, hasDir = true, true
-			} else {
-				mods = append(mods, v)
-			}
+			add(v)
 		case []string:
-			mods = append(mods, v...)
+			for _, s := range v {
+				add(s)
+			}
 		case []interface{}:
-			m, _, _ := extractMods(v)
+			m, d, ok := extractMods(v)
 			mods = append(mods, m...)
+			if ok {
+				down, hasDir = d, true
+			}
 		}
 	}
 	return mods, down, hasDir
