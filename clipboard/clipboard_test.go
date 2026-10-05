@@ -7,6 +7,7 @@ package clipboard_test
 import (
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/go-vgo/robotgo/clipboard"
 )
@@ -18,20 +19,30 @@ func skipUnsupported(tb testing.TB) {
 	}
 }
 
+// roundTrip retries on mismatch: the system clipboard is shared with other
+// test processes (go test ./... runs packages in parallel, and robotgo's
+// TestClip/TestTypeStr write it too), so a write can be overwritten
+// before it is read back.
 func roundTrip(t *testing.T, expected string) {
 	t.Helper()
-	if err := clipboard.WriteAll(expected); err != nil {
-		t.Fatal(err)
-	}
+	var actual string
+	for range 5 {
+		if err := clipboard.WriteAll(expected); err != nil {
+			t.Fatal(err)
+		}
 
-	actual, err := clipboard.ReadAll()
-	if err != nil {
-		t.Fatal(err)
+		var err error
+		actual, err = clipboard.ReadAll()
+		if err != nil {
+			t.Fatal(err)
+		}
+		if actual == expected {
+			return
+		}
+		time.Sleep(100 * time.Millisecond)
 	}
-	if actual != expected {
-		t.Errorf("want %q (len %d), got %q (len %d)",
-			short(expected), len(expected), short(actual), len(actual))
-	}
+	t.Errorf("want %q (len %d), got %q (len %d)",
+		short(expected), len(expected), short(actual), len(actual))
 }
 
 func short(s string) string {
