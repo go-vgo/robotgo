@@ -16,9 +16,11 @@ package darwin
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 	"time"
 	"unicode/utf16"
+	"unicode/utf8"
 
 	"github.com/vcaesar/keycode"
 )
@@ -145,11 +147,16 @@ func modKeyCodes(mods []string) []uint16 {
 // upModKeys posts a key-up for every modifier keycode in reverse order,
 // mirroring the C backend's upKeyArr(): after a tap (or an "up" toggle) the
 // modifier keys are explicitly keyed up so none can be left stuck down.
-func upModKeys(mods []string, pid int) {
+// It releases every modifier and returns the first error.
+func upModKeys(mods []string, pid int) error {
+	var err error
 	codes := modKeyCodes(mods)
 	for i := len(codes) - 1; i >= 0; i-- {
-		sendKeyCode(codes[i], false, 0, pid)
+		if e := sendKeyCode(codes[i], false, 0, pid); err == nil {
+			err = e
+		}
 	}
+	return err
 }
 
 // flagsFromMods folds a slice of modifier names into a combined flag mask.
@@ -165,20 +172,21 @@ func flagsFromMods(mods []string) uint64 {
 
 // sendKeyCode posts a single keyboard event (down or up) with the given flags
 // to the target pid (0 posts to the global HID event tap).
-func sendKeyCode(code uint16, down bool, flags uint64, pid int) {
+func sendKeyCode(code uint16, down bool, flags uint64, pid int) error {
 	if !loaded {
-		return
+		return errNotLoaded
 	}
 	ev := withSource(func(src uintptr) uintptr {
 		return cgEventCreateKeyboardEvent(src, code, down)
 	})
 	if ev == 0 {
-		return
+		return errEventCreate
 	}
 	if flags != 0 {
 		cgEventSetFlags(ev, flags)
 	}
 	postEventTo(ev, pid)
+	return nil
 }
 
 // sendUnicode posts a key event carrying a single rune as a Unicode string to
@@ -234,13 +242,18 @@ func KeyTap(key string, args ...interface{}) error {
 	}
 	flags |= autoFlags
 
-	sendKeyCode(code, true, flags, pid)
+	err := sendKeyCode(code, true, flags, pid)
 	time.Sleep(time.Duration(KeySleep) * time.Millisecond)
-	sendKeyCode(code, false, flags, pid)
+	// The key up is always sent so nothing is left stuck down.
+	if upErr := sendKeyCode(code, false, flags, pid); err == nil {
+		err = upErr
+	}
 	// upKeyArr equivalent: explicitly key-up each modifier keycode so none
 	// is left stuck down (flags alone never generate modifier key events).
-	upModKeys(mods, pid)
-	return nil
+	if upErr := upModKeys(mods, pid); err == nil {
+		err = upErr
+	}
+	return err
 }
 
 // KeyToggle toggles a key. Default is "down"; pass "up" to release. Trailing
@@ -294,13 +307,15 @@ func KeyToggle(key string, args ...interface{}) error {
 	if !ok {
 		return errors.New("robotgo: unknown key: " + key)
 	}
-	sendKeyCode(code, !up, flagsFromMods(mods)|autoFlags, pid)
+	err := sendKeyCode(code, !up, flagsFromMods(mods)|autoFlags, pid)
 	if up {
 		// Mirror the C backend's keyTogglesB: releasing a key also keys up
 		// its modifiers (upKeyArr) so none is left stuck down.
-		upModKeys(mods, pid)
+		if upErr := upModKeys(mods, pid); err == nil {
+			err = upErr
+		}
 	}
-	return nil
+	return err
 }
 
 // KeyDown presses a key down.
@@ -346,17 +361,27 @@ func Type(str string, args ...int) int {
 	return n
 }
 
-// TypeStr types a string. Alias of Type, mirroring the robotgo API.
-func TypeStr(str string, args ...int) {
-	Type(str, args...)
+// TypeStr types a string, mirroring the robotgo API. It returns an error if
+// not every character was typed.
+func TypeStr(str string, args ...int) error {
+	return typeErr(Type(str, args...), str)
 }
 
 // TypeDelay types a string with a per-character delay in milliseconds.
-func TypeDelay(str string, delay int) {
+func TypeDelay(str string, delay int) error {
 	old := KeySleep
 	KeySleep = delay
-	Type(str)
+	n := Type(str)
 	KeySleep = old
+	return typeErr(n, str)
+}
+
+// typeErr reports an error when fewer than all runes of str were typed.
+func typeErr(n int, str string) error {
+	if total := utf8.RuneCountInString(str); n < total {
+		return fmt.Errorf("robotgo: typed %d of %d characters", n, total)
+	}
+	return nil
 }
 
 // SetDelay sets both KeySleep and MouseSleep.

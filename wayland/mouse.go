@@ -15,6 +15,7 @@
 package wayland
 
 import (
+	"fmt"
 	"math"
 	"sync"
 	"time"
@@ -62,7 +63,7 @@ func setPos(x, y int) {
 // against the whole output layout (that is what wlroots maps a virtual
 // pointer onto), so the extent is the union of all outputs and the
 // coordinates are made relative to its origin.
-func (c *conn) warp(x, y int) {
+func (c *conn) warp(x, y int) error {
 	ox, oy, ow, oh := c.outputBounds()
 	if ow <= 0 || oh <= 0 {
 		ox, oy, ow, oh = 0, 0, 1920, 1080
@@ -78,25 +79,33 @@ func (c *conn) warp(x, y int) {
 	if err == nil {
 		setPos(int(cx)+int(ox), int(cy)+int(oy))
 	}
+	return err
 }
 
 // Move moves the mouse to absolute position (x, y) in layout coordinates.
 // The optional displayId is accepted for API parity; outputs share one
 // layout on Wayland so it does not change the target.
-func Move(x, y int, displayId ...int) {
+func Move(x, y int, displayId ...int) error {
 	c, err := ensureConn()
-	if err != nil || c.pointer == nil {
-		return
+	if err != nil {
+		return err
 	}
-	c.warp(x, y)
+	if c.pointer == nil {
+		return ErrNotSupported
+	}
+	err = c.warp(x, y)
 	mouseDelay()
+	return err
 }
 
 // MoveRelative moves the mouse relative to its current position.
-func MoveRelative(x, y int) {
+func MoveRelative(x, y int) error {
 	c, err := ensureConn()
-	if err != nil || c.pointer == nil {
-		return
+	if err != nil {
+		return err
+	}
+	if c.pointer == nil {
+		return ErrNotSupported
 	}
 
 	err = c.do(func() error {
@@ -112,15 +121,24 @@ func MoveRelative(x, y int) {
 		posMu.Unlock()
 	}
 	mouseDelay()
+	return err
 }
 
 // MoveSmooth moves the mouse smoothly from the last injected position to
 // (x, y) with an ease-in-out curve. Optional args: steps (int), sleepMs (int).
-// Returns true on success.
+// Returns true on success, false if a step fails.
 func MoveSmooth(x, y int, args ...interface{}) bool {
+	return moveSmooth(x, y, args...) == nil
+}
+
+// moveSmooth implements MoveSmooth, stopping at the first failed step.
+func moveSmooth(x, y int, args ...interface{}) error {
 	c, err := ensureConn()
-	if err != nil || c.pointer == nil {
-		return false
+	if err != nil {
+		return err
+	}
+	if c.pointer == nil {
+		return ErrNotSupported
 	}
 
 	// Default parameters
@@ -154,11 +172,13 @@ func MoveSmooth(x, y int, args ...interface{}) bool {
 
 		cx := float64(sx) + float64(x-sx)*t
 		cy := float64(sy) + float64(y-sy)*t
-		c.warp(int(math.Round(cx)), int(math.Round(cy)))
+		if err := c.warp(int(math.Round(cx)), int(math.Round(cy))); err != nil {
+			return err
+		}
 		time.Sleep(time.Duration(sleepMs) * time.Millisecond)
 	}
 	mouseDelay()
-	return true
+	return nil
 }
 
 // button sends one button event + frame under the connection lock.
@@ -264,10 +284,13 @@ func MouseUp(key ...interface{}) error {
 // Scroll scrolls the mouse by wheel notches. Positive y scrolls up, negative
 // scrolls down; positive x scrolls left, negative scrolls right (matching
 // robotgo's Cgo backend convention). Optional arg: delay ms.
-func Scroll(x, y int, args ...int) {
+func Scroll(x, y int, args ...int) error {
 	c, err := ensureConn()
-	if err != nil || c.pointer == nil {
-		return
+	if err != nil {
+		return err
+	}
+	if c.pointer == nil {
+		return ErrNotSupported
 	}
 
 	msDelay := 10
@@ -280,7 +303,7 @@ func Scroll(x, y int, args ...int) {
 	// axis events and axis_discrete carries the notch count that clients
 	// which only handle discrete (wheel) scrolling rely on.
 	ts := timestamp()
-	_ = c.do(func() error {
+	err = c.do(func() error {
 		if err := c.pointer.AxisSource(axisSourceWheel); err != nil {
 			return err
 		}
@@ -296,50 +319,67 @@ func Scroll(x, y int, args ...int) {
 		}
 		return c.pointer.Frame()
 	})
+	if err != nil {
+		return err
+	}
 	if msDelay > 0 {
 		time.Sleep(time.Duration(msDelay) * time.Millisecond)
 	}
+	return nil
 }
 
-// ScrollDir scrolls in a named direction: "up", "down", "left", "right".
-func ScrollDir(x int, direction ...interface{}) {
+// ScrollDir scrolls in a named direction: "up", "down" (default), "left",
+// "right". Any other direction is an error.
+func ScrollDir(x int, direction ...interface{}) error {
 	dir := "down"
 	if len(direction) > 0 {
-		if s, ok := direction[0].(string); ok {
-			dir = s
+		s, ok := direction[0].(string)
+		if !ok {
+			return fmt.Errorf("robotgo: unknown scroll direction: %v", direction[0])
 		}
+		dir = s
 	}
 	switch dir {
 	case "down":
-		Scroll(0, -x)
+		return Scroll(0, -x)
 	case "up":
-		Scroll(0, x)
+		return Scroll(0, x)
 	case "left":
-		Scroll(x, 0)
+		return Scroll(x, 0)
 	case "right":
-		Scroll(-x, 0)
+		return Scroll(-x, 0)
 	}
+	return fmt.Errorf("robotgo: unknown scroll direction: %v", dir)
 }
 
-// DragSmooth moves the mouse smoothly while holding a button down.
-func DragSmooth(x, y int, args ...interface{}) {
+// DragSmooth moves the mouse smoothly while holding a button down. The button
+// is released even if the move fails; the first error of the press, move and
+// release is returned.
+func DragSmooth(x, y int, args ...interface{}) error {
 	btn := "left"
 	if len(args) > 0 {
 		if s, ok := args[0].(string); ok {
 			btn = s
 		}
 	}
-	_ = Toggle(btn, "down")
+	if err := Toggle(btn, "down"); err != nil {
+		return err
+	}
 	time.Sleep(50 * time.Millisecond)
-	MoveSmooth(x, y)
+	err := moveSmooth(x, y)
 	time.Sleep(50 * time.Millisecond)
-	_ = Toggle(btn, "up")
+	if upErr := Toggle(btn, "up"); err == nil {
+		err = upErr
+	}
+	return err
 }
 
-// MoveClick moves to (x, y) then clicks.
-func MoveClick(x, y int, args ...interface{}) {
-	Move(x, y)
-	_ = Click(args...)
+// MoveClick moves to (x, y) then clicks. It does not click if the move fails.
+func MoveClick(x, y int, args ...interface{}) error {
+	if err := Move(x, y); err != nil {
+		return err
+	}
+	return Click(args...)
 }
 
 // Location returns the current mouse position.
@@ -360,11 +400,12 @@ func GetMousePos() (int, int) {
 
 // ScrollSmooth scrolls the mouse smoothly by `to` steps, repeating `num`
 // times (default 5) with `tm` ms between steps (default 100). An optional
-// third arg sets the horizontal offset per step.
+// third arg sets the horizontal offset per step. It stops at the first failed
+// scroll.
 //
 //	robotgo.ScrollSmooth(10)
 //	robotgo.ScrollSmooth(10, 6, 50, 1)
-func ScrollSmooth(to int, args ...int) {
+func ScrollSmooth(to int, args ...int) error {
 	num := 5
 	if len(args) > 0 {
 		num = args[0]
@@ -379,10 +420,13 @@ func ScrollSmooth(to int, args ...int) {
 	}
 
 	for i := 0; i < num; i++ {
-		Scroll(tox, to)
+		if err := Scroll(tox, to); err != nil {
+			return err
+		}
 		MilliSleep(tm)
 	}
 	MilliSleep(MouseSleep)
+	return nil
 }
 
 // clampExtent clamps a coordinate to the valid [0, extent] range and returns it

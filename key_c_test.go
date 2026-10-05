@@ -284,10 +284,10 @@ func TestKeyInjectCgo(t *testing.T) {
 func TestUnicodeTypeCgo(t *testing.T) {
 	requireDisplay(t)
 
-	UnicodeType(uint32(' '))
-	UnicodeType(uint32(' '), 0)
-	UnicodeType(uint32(' '), 0, 0)
-	inputUTF("space")
+	tt.Nil(t, UnicodeType(uint32(' ')))
+	tt.Nil(t, UnicodeType(uint32(' '), 0))
+	tt.Nil(t, UnicodeType(uint32(' '), 0, 0))
+	tt.Nil(t, inputUTF("space"))
 }
 
 func TestCheckMouse(t *testing.T) {
@@ -423,4 +423,38 @@ func TestKeyToggleArrayArgs(t *testing.T) {
 func TestFormatClickErrorKey(t *testing.T) {
 	tt.Nil(t, formatClickError(0, "a", "down", 1))
 	tt.NotNil(t, formatClickError(5, "a", "up", 1))
+}
+
+func TestFormatMouseError(t *testing.T) {
+	tt.Nil(t, formatMouseError(0, "move"))
+
+	err := formatMouseError(42, "scroll")
+	tt.NotNil(t, err)
+	tt.True(t, strings.HasPrefix(err.Error(), "mouse scroll failed"), err.Error())
+	tt.True(t, strings.HasSuffix(err.Error(), "code=42"), err.Error())
+
+	if runtime.GOOS == "darwin" {
+		err = formatMouseError(1004, "move")
+		tt.True(t, strings.Contains(err.Error(), "kCGErrorCannotComplete"), err.Error())
+	}
+}
+
+func TestFormatKeyError(t *testing.T) {
+	tt.Nil(t, formatKeyError(0, 'a'))
+
+	err := formatKeyError(42, 'é')
+	tt.NotNil(t, err)
+	tt.True(t, strings.HasPrefix(err.Error(), `type 'é' failed`), err.Error())
+	tt.True(t, strings.HasSuffix(err.Error(), "code=42"), err.Error())
+}
+
+// An invalid direction must error out before any scroll event is posted.
+func TestScrollDirInvalid(t *testing.T) {
+	err := ScrollDir(1, "sideways")
+	tt.NotNil(t, err)
+	tt.Equal(t, "unknown scroll direction: sideways", err.Error())
+
+	err = ScrollDir(1, 3)
+	tt.NotNil(t, err)
+	tt.Equal(t, "unknown scroll direction: 3", err.Error())
 }

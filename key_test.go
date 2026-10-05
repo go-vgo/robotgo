@@ -127,9 +127,9 @@ func TestSetDelay(t *testing.T) {
 func TestTypeEmpty(t *testing.T) {
 	tt.Equal(t, 0, Type(""))
 	tt.Equal(t, 0, Type("", 0))
-	TypeStr("")
-	TypeDelay("", 0)
-	TypeStrDelay("", 0)
+	tt.Nil(t, TypeStr(""))
+	tt.Nil(t, TypeDelay("", 0))
+	tt.Nil(t, TypeStrDelay("", 0))
 }
 
 // Unknown key names must fail on every backend, with or without a session.
@@ -215,8 +215,8 @@ func TestType(t *testing.T) {
 
 	tt.Equal(t, 2, Type("ab"))
 	tt.Equal(t, 1, Type("c", 0))
-	TypeStr("d")
-	TypeDelay("e", 1)
+	tt.Nil(t, TypeStr("d"))
+	tt.Nil(t, TypeDelay("e", 1))
 }
 
 func TestTypeStr(t *testing.T) {

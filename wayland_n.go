@@ -75,7 +75,7 @@ func KeyPress(key string, args ...any) error { return wl.KeyPress(key, args...) 
 func Type(str string, args ...int) int { return wl.Type(str, args...) }
 
 // TypeStr type a string.
-func TypeStr(str string, args ...int) { wl.TypeStr(str, args...) }
+func TypeStr(str string, args ...int) error { return wl.TypeStr(str, args...) }
 
 // TypeDelay, SetDelay and CmdCtrl live in robotgo_pub.go (build-tag-free), so
 // they are NOT re-declared here.
@@ -83,7 +83,7 @@ func TypeStr(str string, args ...int) { wl.TypeStr(str, args...) }
 // --- Mouse ---
 
 // Move move the mouse to (x, y).
-func Move(x, y int, displayId ...int) { wl.Move(x, y, displayId...) }
+func Move(x, y int, displayId ...int) error { return wl.Move(x, y, displayId...) }
 
 // // MoveRelative move the mouse relative to the current position.
 // func MoveRelative(x, y int) { wl.MoveRelative(x, y) }
@@ -104,19 +104,19 @@ func MouseDown(key ...any) error { return wl.MouseDown(key...) }
 func MouseUp(key ...any) error { return wl.MouseUp(key...) }
 
 // Scroll scroll the mouse to (x, y).
-func Scroll(x, y int, args ...int) { wl.Scroll(x, y, args...) }
+func Scroll(x, y int, args ...int) error { return wl.Scroll(x, y, args...) }
 
 // ScrollDir scroll the mouse to a direction.
-func ScrollDir(x int, direction ...any) { wl.ScrollDir(x, direction...) }
+func ScrollDir(x int, direction ...any) error { return wl.ScrollDir(x, direction...) }
 
 // ScrollSmooth scroll the mouse smoothly.
-func ScrollSmooth(to int, args ...int) { wl.ScrollSmooth(to, args...) }
+func ScrollSmooth(to int, args ...int) error { return wl.ScrollSmooth(to, args...) }
 
 // DragSmooth drag the mouse smoothly to (x, y).
-func DragSmooth(x, y int, args ...any) { wl.DragSmooth(x, y, args...) }
+func DragSmooth(x, y int, args ...any) error { return wl.DragSmooth(x, y, args...) }
 
 // MoveClick move and click the mouse.
-func MoveClick(x, y int, args ...any) { wl.MoveClick(x, y, args...) }
+func MoveClick(x, y int, args ...any) error { return wl.MoveClick(x, y, args...) }
 
 // Location get the mouse location position, return x, y.
 func Location() (int, int) { return wl.Location() }

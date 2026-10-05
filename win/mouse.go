@@ -15,6 +15,7 @@
 package win
 
 import (
+	"fmt"
 	"math"
 	"time"
 	"unsafe"
@@ -29,7 +30,7 @@ const wheelDelta = 120
 var MouseSleep = 0
 
 // sendMouseInput dispatches a single synthesized mouse event.
-func sendMouseInput(flags, mouseData uint32, dx, dy int32) {
+func sendMouseInput(flags, mouseData uint32, dx, dy int32) error {
 	in := win.MOUSE_INPUT{
 		Type: win.INPUT_MOUSE,
 		Mi: win.MOUSEINPUT{
@@ -39,7 +40,18 @@ func sendMouseInput(flags, mouseData uint32, dx, dy int32) {
 			DwFlags:   flags,
 		},
 	}
-	win.SendInput(1, unsafe.Pointer(&in), int32(unsafe.Sizeof(in)))
+	if win.SendInput(1, unsafe.Pointer(&in), int32(unsafe.Sizeof(in))) != 1 {
+		return errSendInput
+	}
+	return nil
+}
+
+// setCursorPos moves the cursor to (x, y).
+func setCursorPos(x, y int) error {
+	if !win.SetCursorPos(int32(x), int32(y)) {
+		return errSetCursorPos
+	}
+	return nil
 }
 
 // mouseButtonFlags returns the (down, up) MOUSEEVENTF flags for a button name.
@@ -57,16 +69,16 @@ func mouseButtonFlags(btn string) (down, up uint32) {
 // Move moves the mouse to absolute position (x, y).
 // The optional displayId is accepted for API parity but ignored on Windows,
 // where coordinates are in the unified virtual-desktop space.
-func Move(x, y int, displayId ...int) {
-	win.SetCursorPos(int32(x), int32(y))
+func Move(x, y int, displayId ...int) error {
+	err := setCursorPos(x, y)
 	mouseDelay()
+	return err
 }
 
 // MoveRelative moves the mouse relative to its current position.
-func MoveRelative(x, y int) {
+func MoveRelative(x, y int) error {
 	cx, cy := Location()
-	win.SetCursorPos(int32(cx+x), int32(cy+y))
-	mouseDelay()
+	return Move(cx+x, cy+y)
 }
 
 // MoveSmooth moves the mouse smoothly to (x, y) with an ease-in-out curve.
@@ -99,7 +111,9 @@ func MoveSmooth(x, y int, args ...interface{}) bool {
 		}
 		cx := float64(sx) + float64(x-sx)*t
 		cy := float64(sy) + float64(y-sy)*t
-		win.SetCursorPos(int32(math.Round(cx)), int32(math.Round(cy)))
+		if setCursorPos(int(math.Round(cx)), int(math.Round(cy))) != nil {
+			return false
+		}
 		time.Sleep(time.Duration(sleepMs) * time.Millisecond)
 	}
 	return true
@@ -125,8 +139,12 @@ func Click(args ...interface{}) error {
 		count = 2
 	}
 	for i := 0; i < count; i++ {
-		sendMouseInput(down, 0, 0, 0)
-		sendMouseInput(up, 0, 0, 0)
+		if err := sendMouseInput(down, 0, 0, 0); err != nil {
+			return err
+		}
+		if err := sendMouseInput(up, 0, 0, 0); err != nil {
+			return err
+		}
 		if i < count-1 {
 			time.Sleep(50 * time.Millisecond)
 		}
@@ -157,11 +175,9 @@ func Toggle(key ...interface{}) error {
 
 	downFlag, upFlag := mouseButtonFlags(button)
 	if up {
-		sendMouseInput(upFlag, 0, 0, 0)
-	} else {
-		sendMouseInput(downFlag, 0, 0, 0)
+		return sendMouseInput(upFlag, 0, 0, 0)
 	}
-	return nil
+	return sendMouseInput(downFlag, 0, 0, 0)
 }
 
 // MouseDown sends a mouse button down event.
@@ -181,7 +197,7 @@ func MouseUp(key ...interface{}) error {
 // Scroll scrolls the mouse by wheel notches. Positive y scrolls up, negative
 // scrolls down; positive x scrolls left, negative scrolls right (matching
 // robotgo's Cgo backend convention). Optional arg: delay ms.
-func Scroll(x, y int, args ...int) {
+func Scroll(x, y int, args ...int) error {
 	msDelay := 10
 	if len(args) > 0 {
 		msDelay = args[0]
@@ -189,42 +205,50 @@ func Scroll(x, y int, args ...int) {
 
 	if y != 0 {
 		// Win32 wheel: positive delta scrolls up, same as robotgo.
-		sendMouseInput(win.MOUSEEVENTF_WHEEL, uint32(int32(y*wheelDelta)), 0, 0)
+		if err := sendMouseInput(win.MOUSEEVENTF_WHEEL, uint32(int32(y*wheelDelta)), 0, 0); err != nil {
+			return err
+		}
 	}
 	if x != 0 {
 		// Win32 horizontal wheel: positive delta scrolls right, so negate for
 		// robotgo's left-positive convention.
-		sendMouseInput(win.MOUSEEVENTF_HWHEEL, uint32(int32(-x*wheelDelta)), 0, 0)
+		if err := sendMouseInput(win.MOUSEEVENTF_HWHEEL, uint32(int32(-x*wheelDelta)), 0, 0); err != nil {
+			return err
+		}
 	}
 	if msDelay > 0 {
 		time.Sleep(time.Duration(msDelay) * time.Millisecond)
 	}
+	return nil
 }
 
 // ScrollDir scrolls in a named direction: "up", "down", "left", "right".
-func ScrollDir(x int, direction ...interface{}) {
+func ScrollDir(x int, direction ...interface{}) error {
 	dir := "down"
 	if len(direction) > 0 {
-		if s, ok := direction[0].(string); ok {
-			dir = s
+		s, ok := direction[0].(string)
+		if !ok {
+			return fmt.Errorf("robotgo: unknown scroll direction: %v", direction[0])
 		}
+		dir = s
 	}
 	switch dir {
 	case "down":
-		Scroll(0, -x)
+		return Scroll(0, -x)
 	case "up":
-		Scroll(0, x)
+		return Scroll(0, x)
 	case "left":
-		Scroll(x, 0)
+		return Scroll(x, 0)
 	case "right":
-		Scroll(-x, 0)
+		return Scroll(-x, 0)
 	}
+	return fmt.Errorf("robotgo: unknown scroll direction: %v", dir)
 }
 
 // ScrollSmooth scrolls the mouse smoothly by `to` steps, repeating `num`
 // times (default 5) with `tm` ms between steps (default 100). An optional
 // third arg sets the horizontal offset per step.
-func ScrollSmooth(to int, args ...int) {
+func ScrollSmooth(to int, args ...int) error {
 	num := 5
 	if len(args) > 0 {
 		num = args[0]
@@ -239,31 +263,45 @@ func ScrollSmooth(to int, args ...int) {
 	}
 
 	for i := 0; i < num; i++ {
-		Scroll(tox, to)
+		if err := Scroll(tox, to); err != nil {
+			return err
+		}
 		MilliSleep(tm)
 	}
 	MilliSleep(MouseSleep)
+	return nil
 }
 
 // DragSmooth moves the mouse smoothly while holding a button down.
-func DragSmooth(x, y int, args ...interface{}) {
+func DragSmooth(x, y int, args ...interface{}) error {
 	btn := "left"
 	if len(args) > 0 {
 		if s, ok := args[0].(string); ok {
 			btn = s
 		}
 	}
-	_ = Toggle(btn, "down")
+	if err := Toggle(btn, "down"); err != nil {
+		return err
+	}
 	time.Sleep(50 * time.Millisecond)
-	MoveSmooth(x, y)
+	moved := MoveSmooth(x, y)
 	time.Sleep(50 * time.Millisecond)
-	_ = Toggle(btn, "up")
+	// Always release the button, even if the move failed.
+	if err := Toggle(btn, "up"); err != nil {
+		return err
+	}
+	if !moved {
+		return errSetCursorPos
+	}
+	return nil
 }
 
 // MoveClick moves to (x, y) then clicks.
-func MoveClick(x, y int, args ...interface{}) {
-	Move(x, y)
-	_ = Click(args...)
+func MoveClick(x, y int, args ...interface{}) error {
+	if err := Move(x, y); err != nil {
+		return err
+	}
+	return Click(args...)
 }
 
 // Location returns the current mouse position.

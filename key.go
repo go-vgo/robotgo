@@ -22,6 +22,7 @@ import "C"
 
 import (
 	"errors"
+	"fmt"
 	"math/rand"
 	"runtime"
 	"strings"
@@ -489,7 +490,7 @@ func KeyUp(key string, args ...interface{}) error {
 }
 
 // UnicodeType tap the uint32 unicode
-func UnicodeType(str uint32, args ...int) {
+func UnicodeType(str uint32, args ...int) error {
 	cstr := C.uint(str)
 	pid := 0
 	if len(args) > 0 {
@@ -501,21 +502,38 @@ func UnicodeType(str uint32, args ...int) {
 		isPid = args[1]
 	}
 
-	C.unicodeType(cstr, C.uintptr(pid), C.int8_t(isPid))
+	code := C.unicodeType(cstr, C.uintptr(pid), C.int8_t(isPid))
+	return formatKeyError(int(code), str)
 }
 
-func inputUTF(str string) {
+func inputUTF(str string) error {
 	cstr := C.CString(str)
-	C.input_utf(cstr)
+	code := C.input_utf(cstr)
 
 	C.free(unsafe.Pointer(cstr))
+	if code != 0 {
+		return fmt.Errorf("input %q failed, code=%d", str, int(code))
+	}
+	return nil
 }
 
-// TypeStr tap a string
+// formatKeyError converts a non-zero C unicode type code to an error
+func formatKeyError(code int, r uint32) error {
+	if code == 0 {
+		return nil
+	}
+	if detail := codeDetail(code); detail != "" {
+		return fmt.Errorf("type %q failed: %s (code=%d)", rune(r), detail, code)
+	}
+	return fmt.Errorf("type %q failed, code=%d", rune(r), code)
+}
+
+// TypeStr tap a string and return error
 //
 // Deprecated: use the Type()
-func TypeStr(str string, args ...int) {
-	Type(str, args...)
+func TypeStr(str string, args ...int) error {
+	_, err := typeStr(str, args...)
+	return err
 }
 
 // Type type a string (supported UTF-8)
@@ -526,7 +544,16 @@ func TypeStr(str string, args ...int) {
 //
 //	robotgo.Type("abc@123, Hi galaxy, こんにちは")
 //	robotgo.Type("To be or not to be, this is questions.", pid int)
+//
+// It returns the count of characters typed, stops at the first failure.
 func Type(str string, args ...int) int {
+	n, _ := typeStr(str, args...)
+	return n
+}
+
+// typeStr types str and returns the count of characters typed
+// and the first error.
+func typeStr(str string, args ...int) (int, error) {
 	var tm, tm1 = 0, 7
 
 	if len(args) > 1 {
@@ -544,27 +571,33 @@ func Type(str string, args ...int) int {
 		strUc := ToUC(str)
 		for i := 0; i < len(strUc); i++ {
 			ru := []rune(strUc[i])
+			var err error
 			if len(ru) <= 1 {
 				ustr := uint32(CharCodeAt(strUc[i], 0))
-				UnicodeType(ustr, pid)
+				err = UnicodeType(ustr, pid)
 			} else {
-				inputUTF(strUc[i])
+				err = inputUTF(strUc[i])
 				MilliSleep(tm1)
+			}
+			if err != nil {
+				return i, err
 			}
 
 			MilliSleep(tm)
 		}
-		return len(strUc)
+		return len(strUc), nil
 	}
 
 	l1 := len([]rune(str))
 	for i := 0; i < l1; i++ {
 		ustr := uint32(CharCodeAt(str, i))
-		UnicodeType(ustr, pid)
+		if err := UnicodeType(ustr, pid); err != nil {
+			return i, err
+		}
 		// if len(args) > 0 {
 		MilliSleep(tm)
 		// }
 	}
 	MilliSleep(KeySleep)
-	return l1
+	return l1, nil
 }

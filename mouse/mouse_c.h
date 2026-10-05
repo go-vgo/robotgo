@@ -90,12 +90,16 @@
 	}
 #endif
 
-/* Move the mouse to a specific point. */
-void moveMouse(MMPointInt32 point){
+/* Move the mouse to a specific point, return 0 on success. */
+int moveMouse(MMPointInt32 point){
 	#if defined(IS_MACOSX)
 		CGEventSourceRef source = MMEventSourceCreate();
 		CGEventRef move = CGEventCreateMouseEvent(source, kCGEventMouseMoved, 
 								CGPointFromMMPointInt32(point), kCGMouseButtonLeft);
+		if (move == NULL) {
+			if (source != NULL) { CFRelease(source); }
+			return (int)kCGErrorCannotComplete;
+		}
 
 		/* No calculateDeltas(): on current macOS the HID tap applies the delta
 		fields as accelerated relative motion on top of the absolute point,
@@ -103,31 +107,43 @@ void moveMouse(MMPointInt32 point){
 		// calculateDeltas(&drag, point);
 		CGEventPost(kCGHIDEventTap, move);
 		CFRelease(move);
-		CFRelease(source);
+		if (source != NULL) { CFRelease(source); }
+		return 0;
 	#elif defined(USE_X11)
 		Display *display = XGetMainDisplay();
+		if (display == NULL) { return 1; }
 		XWarpPointer(display, None, DefaultRootWindow(display), 0, 0, 0, 0, point.x, point.y);
 
 		XSync(display, false);
+		return 0;
 	#elif defined(IS_WINDOWS)
-		SetCursorPos(point.x, point.y);
+		if (!SetCursorPos(point.x, point.y)) {
+			DWORD err = GetLastError();
+			return err != 0 ? (int)err : -1;
+		}
+		return 0;
 	#endif
 }
 
-void dragMouse(MMPointInt32 point, const MMMouseButton button){
+int dragMouse(MMPointInt32 point, const MMMouseButton button){
 	#if defined(IS_MACOSX)
 		const CGEventType dragType = MMMouseDragToCGEventType(button);
 		CGEventSourceRef source = MMEventSourceCreate();
 		CGEventRef drag = CGEventCreateMouseEvent(source, dragType, 
 								CGPointFromMMPointInt32(point), (CGMouseButton)button);
+		if (drag == NULL) {
+			if (source != NULL) { CFRelease(source); }
+			return (int)kCGErrorCannotComplete;
+		}
 
 		/* No calculateDeltas(), see moveMouse(). */
 		// calculateDeltas(&drag, point);
 		CGEventPost(kCGHIDEventTap, drag);
 		CFRelease(drag);
-		CFRelease(source);
+		if (source != NULL) { CFRelease(source); }
+		return 0;
 	#else
-		moveMouse(point);
+		return moveMouse(point);
 	#endif
 }
 
@@ -239,8 +255,8 @@ int doubleClick(MMMouseButton button, int count){
 	#endif
 }
 
-/* Function used to scroll the screen in the required direction. */
-void scrollMouseXY(int x, int y) {
+/* Function used to scroll the screen in the required direction, return 0 on success. */
+int scrollMouseXY(int x, int y) {
 	#if defined(IS_WINDOWS)
 		// Fix for #97, C89 needs variables declared on top of functions (mouseScrollInput)
 		INPUT mouseScrollInputH;
@@ -249,30 +265,41 @@ void scrollMouseXY(int x, int y) {
 
 	#if defined(IS_MACOSX)
 		CGEventSourceRef source = MMEventSourceCreate();
-		CGEventRef event = CGEventCreateScrollWheelEvent(source, kCGScrollEventUnitPixel, 2, y, x);	
+		CGEventRef event = CGEventCreateScrollWheelEvent(source, kCGScrollEventUnitPixel, 2, y, x);
+		if (event == NULL) {
+			if (source != NULL) { CFRelease(source); }
+			return (int)kCGErrorCannotComplete;
+		}
 		CGEventPost(kCGHIDEventTap, event);
 
 		CFRelease(event);
-		CFRelease(source);
+		if (source != NULL) { CFRelease(source); }
+		return 0;
 	#elif defined(USE_X11)
 		int ydir = 4; /* Button 4 is up, 5 is down. */
 		int xdir = 6;
 		Display *display = XGetMainDisplay();
+		if (display == NULL) { return 1; }
 
 		if (y < 0) { ydir = 5; }
 		if (x < 0) { xdir = 7; }
 
 		int xi; int yi;
 		for (xi = 0; xi < abs(x); xi++) {
-			XTestFakeButtonEvent(display, xdir, 1, CurrentTime);
-			XTestFakeButtonEvent(display, xdir, 0, CurrentTime);
+			if (!XTestFakeButtonEvent(display, xdir, 1, CurrentTime) ||
+				!XTestFakeButtonEvent(display, xdir, 0, CurrentTime)) {
+				return 1;
+			}
 		}
 		for (yi = 0; yi < abs(y); yi++) {
-			XTestFakeButtonEvent(display, ydir, 1, CurrentTime);
-			XTestFakeButtonEvent(display, ydir, 0, CurrentTime);
+			if (!XTestFakeButtonEvent(display, ydir, 1, CurrentTime) ||
+				!XTestFakeButtonEvent(display, ydir, 0, CurrentTime)) {
+				return 1;
+			}
 		}
 
 		XSync(display, false);
+		return 0;
 	#elif defined(IS_WINDOWS)
 		mouseScrollInputH.type = INPUT_MOUSE;
 		mouseScrollInputH.mi.dx = 0;
@@ -290,8 +317,12 @@ void scrollMouseXY(int x, int y) {
 		mouseScrollInputV.mi.dwExtraInfo = 0;
 		mouseScrollInputV.mi.mouseData = WHEEL_DELTA * y;
 
-		SendInput(1, &mouseScrollInputH, sizeof(mouseScrollInputH));
-		SendInput(1, &mouseScrollInputV, sizeof(mouseScrollInputV));
+		if (SendInput(1, &mouseScrollInputH, sizeof(mouseScrollInputH)) != 1 ||
+			SendInput(1, &mouseScrollInputV, sizeof(mouseScrollInputV)) != 1) {
+			DWORD err = GetLastError();
+			return err != 0 ? (int)err : -1;
+		}
+		return 0;
 	#endif
 }
 
@@ -344,10 +375,8 @@ static bool smoothlyMoveMouseImpl(MMPointInt32 endPoint, double lowSpeed, double
 		// if (pos.x >= screenSize.w || pos.y >= screenSize.h) { 
 		// 	return false;
 		// }
-		if (drag) {
-			dragMouse(pos, button);
-		} else {
-			moveMouse(pos);
+		if ((drag ? dragMouse(pos, button) : moveMouse(pos)) != 0) {
+			return false;
 		}
 
 		/* Wait 1 - 3 milliseconds. */

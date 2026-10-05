@@ -20,7 +20,7 @@ import "github.com/vcaesar/tt"
 //
 // MoveMouse move the mouse
 func MoveMouse(x, y int) {
-	Move(x, y)
+	Move(x, y) //nolint:errcheck // v1 signature has no error result
 }
 
 // Deprecated: use the DragSmooth(),
@@ -28,7 +28,7 @@ func MoveMouse(x, y int) {
 // DragMouse drag the mouse to (x, y),
 // It's same with the DragSmooth() now
 func DragMouse(x, y int, args ...interface{}) {
-	DragSmooth(x, y, args...)
+	DragSmooth(x, y, args...) //nolint:errcheck // v1 signature has no error result
 }
 
 // Deprecated: use the MoveSmooth(),
@@ -62,7 +62,7 @@ func MouseClick(args ...interface{}) {
 // This function will be removed in version v1.0.0
 func TypeStringDelayed(str string, delay int) {
 	tt.Drop("TypeStringDelayed", "TypeStrDelay")
-	TypeStrDelay(str, delay)
+	TypeStrDelay(str, delay) //nolint:errcheck // v1 signature has no error result
 }
 
 // Deprecated: use the ScaledF(),

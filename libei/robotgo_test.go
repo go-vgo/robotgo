@@ -15,6 +15,8 @@
 package libei
 
 import (
+	"errors"
+	"slices"
 	"testing"
 
 	"github.com/godbus/dbus/v5"
@@ -297,12 +299,13 @@ func TestCmdCtrl(t *testing.T) {
 // fakeInjector records injected pointer events; used to test position
 // tracking without a portal.
 type fakeInjector struct {
-	abs   []absCall
-	rel   []relCall
-	axis  []axisCall
-	syms  []int32 // keyboardKeysym calls (press and release)
-	codes []int32 // keyboardKeycode calls
-	err   error
+	abs     []absCall
+	rel     []relCall
+	axis    []axisCall
+	buttons []buttonCall
+	syms    []int32 // keyboardKeysym calls (press and release)
+	codes   []int32 // keyboardKeycode calls
+	err     error
 }
 
 type absCall struct {
@@ -317,6 +320,11 @@ type axisCall struct {
 	steps int32
 }
 
+type buttonCall struct {
+	button int32
+	state  uint32
+}
+
 func (f *fakeInjector) keyboardKeycode(c int32, _ uint32) error {
 	f.codes = append(f.codes, c)
 	return f.err
@@ -325,7 +333,10 @@ func (f *fakeInjector) keyboardKeysym(s int32, _ uint32) error {
 	f.syms = append(f.syms, s)
 	return f.err
 }
-func (f *fakeInjector) pointerButton(int32, uint32) error { return nil }
+func (f *fakeInjector) pointerButton(b int32, s uint32) error {
+	f.buttons = append(f.buttons, buttonCall{b, s})
+	return f.err
+}
 func (f *fakeInjector) pointerAxisDiscrete(axis uint32, steps int32) error {
 	f.axis = append(f.axis, axisCall{axis, steps})
 	return f.err
@@ -396,13 +407,17 @@ func TestMoveAbsoluteWithStreams(t *testing.T) {
 		t.Fatalf("Location before move: got (%d,%d), want (0,0)", x, y)
 	}
 
-	Move(100, 200)
+	if err := Move(100, 200); err != nil {
+		t.Fatal(err)
+	}
 	if x, y := Location(); x != 100 || y != 200 {
 		t.Errorf("Location after Move: got (%d,%d), want (100,200)", x, y)
 	}
 
 	// Point on the second monitor must be mapped into that stream's space.
-	Move(2000, 50)
+	if err := Move(2000, 50); err != nil {
+		t.Fatal(err)
+	}
 	if len(inj.abs) != 2 {
 		t.Fatalf("got %d absolute calls, want 2", len(inj.abs))
 	}
@@ -414,7 +429,9 @@ func TestMoveAbsoluteWithStreams(t *testing.T) {
 	}
 
 	// Explicit displayId wins over the containing-stream lookup.
-	Move(10, 10, 1)
+	if err := Move(10, 10, 1); err != nil {
+		t.Fatal(err)
+	}
 	if got := inj.abs[2]; got.stream != 2 || got.x != -1910 {
 		t.Errorf("Move with displayId=1: got %+v", got)
 	}
@@ -426,13 +443,19 @@ func TestMoveAbsoluteWithStreams(t *testing.T) {
 func TestMoveRelativeTracksPosition(t *testing.T) {
 	inj := installFakeConn(t, stream{nodeID: 1, width: 800, height: 600})
 
-	Move(100, 100)
-	MoveRelative(50, -30)
+	if err := Move(100, 100); err != nil {
+		t.Fatal(err)
+	}
+	if err := MoveRelative(50, -30); err != nil {
+		t.Fatal(err)
+	}
 	if x, y := Location(); x != 150 || y != 70 {
 		t.Errorf("Location: got (%d,%d), want (150,70)", x, y)
 	}
 	// Clamped to the stream bounds.
-	MoveRelative(10000, 10000)
+	if err := MoveRelative(10000, 10000); err != nil {
+		t.Fatal(err)
+	}
 	if x, y := Location(); x != 799 || y != 599 {
 		t.Errorf("Location clamped: got (%d,%d), want (799,599)", x, y)
 	}
@@ -446,7 +469,9 @@ func TestMoveWithoutStreamsFallsBackToRelative(t *testing.T) {
 
 	// Unknown position: Move first parks the pointer in the corner, then
 	// moves by the delta from (0,0).
-	Move(100, 100)
+	if err := Move(100, 100); err != nil {
+		t.Fatal(err)
+	}
 	if len(inj.abs) != 0 {
 		t.Fatalf("unexpected absolute calls: %v", inj.abs)
 	}
@@ -459,8 +484,12 @@ func TestMoveWithoutStreamsFallsBackToRelative(t *testing.T) {
 	}
 
 	// Once a position is known, Move works as a plain delta.
-	MoveRelative(10, 20)
-	Move(100, 100)
+	if err := MoveRelative(10, 20); err != nil {
+		t.Fatal(err)
+	}
+	if err := Move(100, 100); err != nil {
+		t.Fatal(err)
+	}
 	if len(inj.rel) != 4 || inj.rel[3] != (relCall{-10, -20}) {
 		t.Errorf("Move fallback: got %+v, want delta (-10,-20)", inj.rel)
 	}
@@ -488,7 +517,9 @@ func TestMoveIntoMonitorGapClamps(t *testing.T) {
 	)
 	// (1200, 50) lies in the gap: clamp onto stream 0 instead of sending
 	// an out-of-range local coordinate.
-	Move(1200, 50)
+	if err := Move(1200, 50); err != nil {
+		t.Fatal(err)
+	}
 	if len(inj.abs) != 1 || inj.abs[0] != (absCall{1, 999, 50}) {
 		t.Errorf("gap Move: got %+v, want stream 1 at (999,50)", inj.abs)
 	}
@@ -501,9 +532,15 @@ func TestScrollSignConvention(t *testing.T) {
 	inj := installFakeConn(t)
 	// robotgo: positive y = up, positive x = left; the portal counts
 	// positive steps as down/right.
-	Scroll(2, 3, 0)
-	ScrollDir(1, "down")
-	ScrollDir(1, "right")
+	if err := Scroll(2, 3, 0); err != nil {
+		t.Fatal(err)
+	}
+	if err := ScrollDir(1, "down"); err != nil {
+		t.Fatal(err)
+	}
+	if err := ScrollDir(1, "right"); err != nil {
+		t.Fatal(err)
+	}
 	want := []axisCall{
 		{axisVertical, -3}, {axisHorizontal, -2},
 		{axisVertical, 1}, {axisHorizontal, 1},
@@ -534,7 +571,9 @@ func TestResolveKeyUppercase(t *testing.T) {
 func TestMoveSmoothAbsoluteTarget(t *testing.T) {
 	inj := installFakeConn(t, stream{nodeID: 1, width: 1000, height: 1000})
 
-	Move(0, 0)
+	if err := Move(0, 0); err != nil {
+		t.Fatal(err)
+	}
 	if !MoveSmooth(100, 50, 4, 0) {
 		t.Fatal("MoveSmooth returned false")
 	}
@@ -569,14 +608,18 @@ func TestMoveRelativeUnknownPosition(t *testing.T) {
 				streams = []stream{{nodeID: 1, width: 800, height: 600}}
 			}
 			inj := installFakeConn(t, streams...)
-			MoveRelative(10, 20)
+			if err := MoveRelative(10, 20); err != nil {
+				t.Fatal(err)
+			}
 			if len(inj.rel) != 1 || inj.rel[0] != (relCall{10, 20}) {
 				t.Fatalf("relative injection: got %+v", inj.rel)
 			}
 			if x, y, known := globalConn.position(); known || x != 0 || y != 0 {
 				t.Errorf("relative motion cannot establish an absolute position: (%d,%d), known=%v", x, y, known)
 			}
-			Move(100, 100)
+			if err := Move(100, 100); err != nil {
+				t.Fatal(err)
+			}
 			if !linked && (len(inj.rel) != 3 || inj.rel[1] != (relCall{-cornerReset, -cornerReset}) || inj.rel[2] != (relCall{100, 100})) {
 				t.Errorf("Move must still reset the unknown origin: %+v", inj.rel)
 			}
@@ -637,12 +680,185 @@ func TestMoveSmoothUnknownStartClampedTarget(t *testing.T) {
 
 func TestMoveInjectErrorKeepsPosition(t *testing.T) {
 	inj := installFakeConn(t, stream{nodeID: 1, width: 1000, height: 1000})
-	Move(10, 10)
+	if err := Move(10, 10); err != nil {
+		t.Fatal(err)
+	}
 	inj.err = ErrNotSupported
-	Move(500, 500)
-	MoveRelative(5, 5)
+	if err := Move(500, 500); !errors.Is(err, ErrNotSupported) {
+		t.Errorf("failed Move: got %v, want ErrNotSupported", err)
+	}
+	if err := MoveRelative(5, 5); !errors.Is(err, ErrNotSupported) {
+		t.Errorf("failed MoveRelative: got %v, want ErrNotSupported", err)
+	}
 	if x, y := Location(); x != 10 || y != 10 {
 		t.Errorf("Location after failed moves: got (%d,%d), want (10,10)", x, y)
+	}
+}
+
+// Pointer injection failures must be returned instead of dropped, and
+// ScrollSmooth/MoveClick must stop at the first one.
+func TestPointerErrorsPropagate(t *testing.T) {
+	inj := installFakeConn(t, stream{nodeID: 1, width: 1000, height: 1000})
+	inj.err = ErrNotSupported
+
+	if err := Scroll(0, 1); !errors.Is(err, ErrNotSupported) {
+		t.Errorf("Scroll: got %v, want ErrNotSupported", err)
+	}
+	if err := ScrollDir(1, "left"); !errors.Is(err, ErrNotSupported) {
+		t.Errorf("ScrollDir: got %v, want ErrNotSupported", err)
+	}
+	inj.axis = nil
+	if err := ScrollSmooth(1, 3, 0); !errors.Is(err, ErrNotSupported) {
+		t.Errorf("ScrollSmooth: got %v, want ErrNotSupported", err)
+	}
+	if len(inj.axis) != 1 {
+		t.Errorf("ScrollSmooth scrolled %d times, want 1 (stop at the first error)", len(inj.axis))
+	}
+	if err := MoveClick(10, 10); !errors.Is(err, ErrNotSupported) {
+		t.Errorf("MoveClick: got %v, want ErrNotSupported", err)
+	}
+	if len(inj.buttons) != 0 {
+		t.Errorf("MoveClick clicked after a failed move: %+v", inj.buttons)
+	}
+
+	// A failed press makes DragSmooth return before moving or releasing.
+	inj.abs = nil
+	if err := DragSmooth(20, 20); !errors.Is(err, ErrNotSupported) {
+		t.Errorf("DragSmooth: got %v, want ErrNotSupported", err)
+	}
+	if len(inj.buttons) != 1 || len(inj.abs) != 0 {
+		t.Errorf("DragSmooth after failed press: buttons %+v, moves %+v", inj.buttons, inj.abs)
+	}
+
+	// Without a granted pointer device nothing is injected.
+	inj.err = nil
+	globalConn.devices = deviceKeyboard
+	if err := Move(1, 1); !errors.Is(err, ErrNotSupported) {
+		t.Errorf("Move without pointer device: got %v, want ErrNotSupported", err)
+	}
+}
+
+// stepFailInjector fails only the second absolute motion.
+type stepFailInjector struct{ fakeInjector }
+
+func (f *stepFailInjector) pointerMotionAbsolute(s uint32, x, y float64) error {
+	f.abs = append(f.abs, absCall{s, x, y})
+	if len(f.abs) == 2 {
+		return ErrNotSupported
+	}
+	return nil
+}
+
+// A failed intermediate step must fail MoveSmooth even though later steps
+// would still reach the target.
+func TestMoveSmoothStopsOnStepError(t *testing.T) {
+	installFakeConn(t, stream{nodeID: 1, width: 1000, height: 1000})
+	inj := &stepFailInjector{}
+	globalConn.inj = inj
+	if err := Move(0, 0); err != nil {
+		t.Fatal(err)
+	}
+	if MoveSmooth(100, 50, 4, 0) {
+		t.Error("MoveSmooth reported success after a failed step")
+	}
+	if len(inj.abs) != 2 {
+		t.Errorf("MoveSmooth kept moving after a failed step: %d calls, want 2", len(inj.abs))
+	}
+}
+
+var errMoveFailed = errors.New("move failed")
+
+// moveFailInjector fails every pointer motion while buttons still work.
+type moveFailInjector struct{ fakeInjector }
+
+func (f *moveFailInjector) pointerMotion(float64, float64) error { return errMoveFailed }
+func (f *moveFailInjector) pointerMotionAbsolute(uint32, float64, float64) error {
+	return errMoveFailed
+}
+
+// DragSmooth must release the button even when the move fails, and return
+// the move error.
+func TestDragSmoothReleasesOnMoveError(t *testing.T) {
+	installFakeConn(t)
+	inj := &moveFailInjector{}
+	globalConn.inj = inj
+	if err := DragSmooth(100, 100, "right"); !errors.Is(err, errMoveFailed) {
+		t.Errorf("DragSmooth: got %v, want the move error", err)
+	}
+	want := []buttonCall{{btnRight, statePressed}, {btnRight, stateReleased}}
+	if !slices.Equal(inj.buttons, want) {
+		t.Errorf("buttons: got %+v, want press then release %+v", inj.buttons, want)
+	}
+}
+
+// ScrollDir must reject directions other than up/down/left/right instead of
+// silently doing nothing; no direction means down.
+func TestScrollDirUnknown(t *testing.T) {
+	inj := installFakeConn(t)
+	tests := []struct {
+		dir  interface{}
+		want string
+	}{
+		{"diagonal", "robotgo: unknown scroll direction: diagonal"},
+		{"Up", "robotgo: unknown scroll direction: Up"},
+		{42, "robotgo: unknown scroll direction: 42"},
+		{nil, "robotgo: unknown scroll direction: <nil>"},
+	}
+	for _, tt := range tests {
+		if err := ScrollDir(1, tt.dir); err == nil || err.Error() != tt.want {
+			t.Errorf("ScrollDir(1, %#v) = %v, want %q", tt.dir, err, tt.want)
+		}
+	}
+	if len(inj.axis) != 0 {
+		t.Errorf("unknown directions scrolled: %+v", inj.axis)
+	}
+	if err := ScrollDir(2); err != nil {
+		t.Fatal(err)
+	}
+	if len(inj.axis) != 1 || inj.axis[0] != (axisCall{axisVertical, 2}) {
+		t.Errorf("ScrollDir(2) default: got %+v, want one down step of 2", inj.axis)
+	}
+}
+
+// keysymFailInjector accepts n keysym events, then fails.
+type keysymFailInjector struct {
+	fakeInjector
+	n int
+}
+
+func (f *keysymFailInjector) keyboardKeysym(s int32, state uint32) error {
+	if len(f.syms) == f.n {
+		return ErrNotSupported
+	}
+	return f.fakeInjector.keyboardKeysym(s, state)
+}
+
+// TypeStr/TypeDelay must report how many characters (runes) were typed when
+// typing stops early, and TypeDelay must restore KeySleep.
+func TestTypeStrPartial(t *testing.T) {
+	installFakeConn(t)
+	old := KeySleep
+	t.Cleanup(func() { KeySleep = old })
+	KeySleep = 0
+
+	// 4 keysym events = press+release of the first 2 runes.
+	globalConn.inj = &keysymFailInjector{n: 4}
+	if err := TypeStr("hé€lo"); err == nil || err.Error() != "robotgo: typed 2 of 5 characters" {
+		t.Errorf("TypeStr: got %v, want typed 2 of 5", err)
+	}
+
+	KeySleep = 7
+	globalConn.inj = &keysymFailInjector{n: 2}
+	if err := TypeDelay("abc", 0); err == nil || err.Error() != "robotgo: typed 1 of 3 characters" {
+		t.Errorf("TypeDelay: got %v, want typed 1 of 3", err)
+	}
+	if KeySleep != 7 {
+		t.Errorf("TypeDelay left KeySleep = %d, want 7", KeySleep)
+	}
+
+	globalConn.inj = &fakeInjector{}
+	if err := TypeStr("hé€lo"); err != nil {
+		t.Errorf("TypeStr: got %v, want nil", err)
 	}
 }
 

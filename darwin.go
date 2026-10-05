@@ -80,7 +80,7 @@ func KeyPress(key string, args ...any) error { return dm.KeyPress(key, args...) 
 func Type(str string, args ...int) int { return dm.Type(str, args...) }
 
 // TypeStr type a string.
-func TypeStr(str string, args ...int) { dm.TypeStr(str, args...) }
+func TypeStr(str string, args ...int) error { return dm.TypeStr(str, args...) }
 
 // TypeDelay, SetDelay and CmdCtrl live in robotgo_pub.go (build-tag-free), so
 // they are NOT re-declared here.
@@ -88,7 +88,7 @@ func TypeStr(str string, args ...int) { dm.TypeStr(str, args...) }
 // --- Mouse ---
 
 // Move move the mouse to (x, y).
-func Move(x, y int, displayId ...int) { dm.Move(x, y, displayId...) }
+func Move(x, y int, displayId ...int) error { return dm.Move(x, y, displayId...) }
 
 // // MoveRelative lives in robotgo_pub.go, so it is NOT re-declared here.
 
@@ -108,19 +108,19 @@ func MouseDown(key ...any) error { return dm.MouseDown(key...) }
 func MouseUp(key ...any) error { return dm.MouseUp(key...) }
 
 // Scroll scroll the mouse to (x, y).
-func Scroll(x, y int, args ...int) { dm.Scroll(x, y, args...) }
+func Scroll(x, y int, args ...int) error { return dm.Scroll(x, y, args...) }
 
 // ScrollDir scroll the mouse to a direction.
-func ScrollDir(x int, direction ...any) { dm.ScrollDir(x, direction...) }
+func ScrollDir(x int, direction ...any) error { return dm.ScrollDir(x, direction...) }
 
 // ScrollSmooth scroll the mouse smoothly.
-func ScrollSmooth(to int, args ...int) { dm.ScrollSmooth(to, args...) }
+func ScrollSmooth(to int, args ...int) error { return dm.ScrollSmooth(to, args...) }
 
 // DragSmooth drag the mouse smoothly to (x, y).
-func DragSmooth(x, y int, args ...any) { dm.DragSmooth(x, y, args...) }
+func DragSmooth(x, y int, args ...any) error { return dm.DragSmooth(x, y, args...) }
 
 // MoveClick move and click the mouse.
-func MoveClick(x, y int, args ...any) { dm.MoveClick(x, y, args...) }
+func MoveClick(x, y int, args ...any) error { return dm.MoveClick(x, y, args...) }
 
 // Location get the mouse location position, return x, y.
 func Location() (int, int) { return dm.Location() }

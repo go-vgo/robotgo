@@ -22,3 +22,9 @@ var ErrNotFound = errors.New("robotgo: not found")
 // ErrNotSupported is returned when an operation is not supported by this
 // pure-Go backend.
 var ErrNotSupported = errors.New("robotgo: operation not supported")
+
+// errNotLoaded is returned by input events when CoreGraphics is not loaded.
+var errNotLoaded = errors.New("robotgo: CoreGraphics not loaded")
+
+// errEventCreate is returned when a CoreGraphics event can not be created.
+var errEventCreate = errors.New("robotgo: failed to create CoreGraphics event")

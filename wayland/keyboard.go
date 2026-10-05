@@ -16,9 +16,11 @@ package wayland
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 	"time"
 	"unicode"
+	"unicode/utf8"
 )
 
 // KeySleep is the global keyboard delay in milliseconds.
@@ -358,21 +360,32 @@ func Type(str string, args ...int) int {
 }
 
 // TypeStr types a string character by character.
-// It is an alias of Type, mirroring the robotgo API.
-func TypeStr(str string, args ...int) {
-	Type(str, args...)
+// It is an alias of Type, mirroring the robotgo API, and returns an error if
+// not every character was typed.
+func TypeStr(str string, args ...int) error {
+	return typeErr(Type(str, args...), str)
 }
 
 // TypeDelay types a string with a per-character delay in milliseconds.
-// A negative delay is treated as zero.
-func TypeDelay(str string, delay int) {
+// A negative delay is treated as zero. It returns an error if not every
+// character was typed.
+func TypeDelay(str string, delay int) error {
 	if delay < 0 {
 		delay = 0
 	}
 	old := KeySleep
 	KeySleep = delay
-	Type(str)
+	n := Type(str)
 	KeySleep = old
+	return typeErr(n, str)
+}
+
+// typeErr reports an error when fewer than all runes of str were typed.
+func typeErr(n int, str string) error {
+	if total := utf8.RuneCountInString(str); n < total {
+		return fmt.Errorf("robotgo: typed %d of %d characters", n, total)
+	}
+	return nil
 }
 
 // SetDelay sets both KeySleep and MouseSleep.

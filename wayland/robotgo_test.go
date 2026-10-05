@@ -15,6 +15,8 @@
 package wayland
 
 import (
+	"errors"
+	"slices"
 	"strings"
 	"testing"
 )
@@ -495,11 +497,13 @@ func TestDoRejectsClosedConn(t *testing.T) {
 }
 
 // fakePointer records zwlr_virtual_pointer_v1 requests instead of sending
-// them to a compositor; fail makes every motion request error.
+// them to a compositor; fail makes every motion and scroll request error.
 type fakePointer struct {
-	abs  [][2]uint32
-	rel  [][2]float64
-	fail bool
+	abs     [][2]uint32
+	rel     [][2]float64
+	buttons [][2]uint32 // button, state
+	scrolls int         // axis_source requests, one per Scroll
+	fail    bool
 }
 
 func (f *fakePointer) Motion(_ uint32, dx, dy float64) error {
@@ -518,8 +522,19 @@ func (f *fakePointer) MotionAbsolute(_, x, y, _, _ uint32) error {
 	return nil
 }
 
-func (f *fakePointer) Button(_, _, _ uint32) error                        { return nil }
-func (f *fakePointer) AxisSource(uint32) error                            { return nil }
+func (f *fakePointer) Button(_, button, state uint32) error {
+	f.buttons = append(f.buttons, [2]uint32{button, state})
+	return nil
+}
+
+func (f *fakePointer) AxisSource(uint32) error {
+	f.scrolls++
+	if f.fail {
+		return ErrNoConnection
+	}
+	return nil
+}
+
 func (f *fakePointer) AxisDiscrete(_, _ uint32, _ float64, _ int32) error { return nil }
 func (f *fakePointer) Frame() error                                       { return nil }
 func (f *fakePointer) Destroy() error                                     { return nil }
@@ -551,7 +566,9 @@ func TestMoveThenLocation(t *testing.T) {
 		&outputInfo{x: 1920, y: 0, width: 1280, height: 720},
 	)
 
-	Move(20, 20)
+	if err := Move(20, 20); err != nil {
+		t.Fatal(err)
+	}
 	if x, y := Location(); x != 20 || y != 20 {
 		t.Fatalf("Location after Move: got (%d,%d), want (20,20)", x, y)
 	}
@@ -560,20 +577,28 @@ func TestMoveThenLocation(t *testing.T) {
 	}
 
 	// Second output: layout coordinates are passed through unchanged.
-	Move(2000, 50)
+	if err := Move(2000, 50); err != nil {
+		t.Fatal(err)
+	}
 	if x, y := Location(); x != 2000 || y != 50 {
 		t.Fatalf("Location on 2nd output: got (%d,%d), want (2000,50)", x, y)
 	}
 
 	// Outside the layout is clamped to the union extent, and Location
 	// reports the clamped point actually injected.
-	Move(5000, -10)
+	if err := Move(5000, -10); err != nil {
+		t.Fatal(err)
+	}
 	if x, y := Location(); x != 3200 || y != 0 {
 		t.Fatalf("Location after clamped Move: got (%d,%d), want (3200,0)", x, y)
 	}
 
-	Move(200, 200)
-	MoveRelative(10, -10)
+	if err := Move(200, 200); err != nil {
+		t.Fatal(err)
+	}
+	if err := MoveRelative(10, -10); err != nil {
+		t.Fatal(err)
+	}
 	if x, y := Location(); x != 210 || y != 190 {
 		t.Fatalf("Location after MoveRelative: got (%d,%d), want (210,190)", x, y)
 	}
@@ -593,10 +618,16 @@ func TestMoveThenLocation(t *testing.T) {
 // must stay a pure query when there is no connection at all.
 func TestLocationTracksOnlySuccessfulMoves(t *testing.T) {
 	fp := installFakeConn(t, &outputInfo{width: 1920, height: 1080})
-	Move(30, 40)
+	if err := Move(30, 40); err != nil {
+		t.Fatal(err)
+	}
 	fp.fail = true
-	Move(500, 500)
-	MoveRelative(5, 5)
+	if err := Move(500, 500); !errors.Is(err, ErrNoConnection) {
+		t.Errorf("failed Move: got %v, want ErrNoConnection", err)
+	}
+	if err := MoveRelative(5, 5); !errors.Is(err, ErrNoConnection) {
+		t.Errorf("failed MoveRelative: got %v, want ErrNoConnection", err)
+	}
 	if x, y := Location(); x != 30 || y != 40 {
 		t.Fatalf("Location after failed moves: got (%d,%d), want (30,40)", x, y)
 	}
@@ -606,6 +637,149 @@ func TestLocationTracksOnlySuccessfulMoves(t *testing.T) {
 	connMu.Unlock()
 	if x, y := Location(); x != 30 || y != 40 {
 		t.Fatalf("Location without conn: got (%d,%d), want last (30,40)", x, y)
+	}
+}
+
+// Pointer failures must be returned instead of dropped; MoveSmooth reports
+// them as false and ScrollSmooth stops at the first one.
+func TestPointerErrors(t *testing.T) {
+	fp := installFakeConn(t, &outputInfo{width: 1920, height: 1080})
+	fp.fail = true
+
+	if MoveSmooth(100, 100, 3, 0) {
+		t.Error("MoveSmooth reported success after a failed step")
+	}
+	if err := Scroll(0, 1); !errors.Is(err, ErrNoConnection) {
+		t.Errorf("Scroll: got %v, want ErrNoConnection", err)
+	}
+	if err := ScrollDir(1, "up"); !errors.Is(err, ErrNoConnection) {
+		t.Errorf("ScrollDir: got %v, want ErrNoConnection", err)
+	}
+	fp.scrolls = 0
+	if err := ScrollSmooth(1, 3, 0); !errors.Is(err, ErrNoConnection) {
+		t.Errorf("ScrollSmooth: got %v, want ErrNoConnection", err)
+	}
+	if fp.scrolls != 1 {
+		t.Errorf("ScrollSmooth scrolled %d times, want 1 (stop at the first error)", fp.scrolls)
+	}
+	if err := MoveClick(10, 10); !errors.Is(err, ErrNoConnection) {
+		t.Errorf("MoveClick: got %v, want ErrNoConnection", err)
+	}
+	if len(fp.buttons) != 0 {
+		t.Errorf("MoveClick clicked after a failed move: %v", fp.buttons)
+	}
+}
+
+// DragSmooth must release the button even when the move fails, and return
+// the move error.
+func TestDragSmoothReleasesOnMoveError(t *testing.T) {
+	fp := installFakeConn(t, &outputInfo{width: 1920, height: 1080})
+	fp.fail = true
+	if err := DragSmooth(100, 100, "right"); !errors.Is(err, ErrNoConnection) {
+		t.Errorf("DragSmooth: got %v, want the move error", err)
+	}
+	want := [][2]uint32{{btnRight, buttonPressed}, {btnRight, buttonReleased}}
+	if !slices.Equal(fp.buttons, want) {
+		t.Errorf("buttons: got %v, want press then release %v", fp.buttons, want)
+	}
+}
+
+// Without a virtual pointer every mouse call fails with ErrNotSupported (a
+// failed press makes DragSmooth return before moving).
+func TestNoVirtualPointer(t *testing.T) {
+	installFakeConn(t)
+	globalConn.pointer = nil
+
+	tests := []struct {
+		name string
+		fn   func() error
+	}{
+		{"Move", func() error { return Move(1, 1) }},
+		{"MoveRelative", func() error { return MoveRelative(1, 1) }},
+		{"Scroll", func() error { return Scroll(0, 1) }},
+		{"ScrollDir", func() error { return ScrollDir(1) }},
+		{"ScrollSmooth", func() error { return ScrollSmooth(1, 2, 0) }},
+		{"DragSmooth", func() error { return DragSmooth(1, 1) }},
+		{"MoveClick", func() error { return MoveClick(1, 1) }},
+	}
+	for _, tt := range tests {
+		if err := tt.fn(); !errors.Is(err, ErrNotSupported) {
+			t.Errorf("%s: got %v, want ErrNotSupported", tt.name, err)
+		}
+	}
+	if MoveSmooth(1, 1) {
+		t.Error("MoveSmooth: got true without a virtual pointer")
+	}
+}
+
+// ScrollDir must reject directions other than up/down/left/right instead of
+// silently doing nothing; no direction means down.
+func TestScrollDirUnknown(t *testing.T) {
+	fp := installFakeConn(t)
+	tests := []struct {
+		dir  interface{}
+		want string
+	}{
+		{"diagonal", "robotgo: unknown scroll direction: diagonal"},
+		{"Up", "robotgo: unknown scroll direction: Up"},
+		{42, "robotgo: unknown scroll direction: 42"},
+		{nil, "robotgo: unknown scroll direction: <nil>"},
+	}
+	for _, tt := range tests {
+		if err := ScrollDir(1, tt.dir); err == nil || err.Error() != tt.want {
+			t.Errorf("ScrollDir(1, %#v) = %v, want %q", tt.dir, err, tt.want)
+		}
+	}
+	if fp.scrolls != 0 {
+		t.Errorf("unknown directions scrolled %d times", fp.scrolls)
+	}
+	if err := ScrollDir(1); err != nil || fp.scrolls != 1 {
+		t.Errorf("ScrollDir(1): err %v, scrolls %d; want nil, 1", err, fp.scrolls)
+	}
+}
+
+// TypeStr/TypeDelay must report untyped characters: without a virtual
+// keyboard nothing is typed, and TypeDelay still restores KeySleep.
+func TestTypeStrReportsUntyped(t *testing.T) {
+	installFakeConn(t) // no virtual keyboard
+	old := KeySleep
+	t.Cleanup(func() { KeySleep = old })
+	KeySleep = 7
+
+	if err := TypeStr("hé"); err == nil || err.Error() != "robotgo: typed 0 of 2 characters" {
+		t.Errorf("TypeStr: got %v", err)
+	}
+	if err := TypeDelay("abc", 3); err == nil || err.Error() != "robotgo: typed 0 of 3 characters" {
+		t.Errorf("TypeDelay: got %v", err)
+	}
+	if KeySleep != 7 {
+		t.Errorf("TypeDelay left KeySleep = %d, want 7", KeySleep)
+	}
+	if err := TypeStr(""); err != nil {
+		t.Errorf("TypeStr(\"\"): got %v, want nil", err)
+	}
+}
+
+// typeErr counts runes, not bytes, and only fails on a short count.
+func TestTypeErr(t *testing.T) {
+	tests := []struct {
+		n    int
+		str  string
+		want string
+	}{
+		{0, "", ""},
+		{5, "héllo", ""},
+		{2, "héllo", "robotgo: typed 2 of 5 characters"},
+		{1, "中文", "robotgo: typed 1 of 2 characters"},
+	}
+	for _, tt := range tests {
+		got := ""
+		if err := typeErr(tt.n, tt.str); err != nil {
+			got = err.Error()
+		}
+		if got != tt.want {
+			t.Errorf("typeErr(%d, %q) = %q, want %q", tt.n, tt.str, got, tt.want)
+		}
 	}
 }
 

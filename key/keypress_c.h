@@ -403,9 +403,10 @@ int unicodeType(const unsigned value, uintptr pid, int8_t isPid) {
 	#if defined(IS_MACOSX)
 		UniChar ch = (UniChar)value; // Convert to unsigned char
 
-		toggleUnicode(ch, true, pid);
+		int err = toggleUnicode(ch, true, pid);
 		microsleep(5.0);
-		return toggleUnicode(ch, false, pid);
+		int err1 = toggleUnicode(ch, false, pid);
+		return err != 0 ? err : err1;
 	#elif defined(IS_WINDOWS)
 		if (pid != 0) {
 			HWND hwnd = getHwnd(pid, isPid);
@@ -435,15 +436,17 @@ int unicodeType(const unsigned value, uintptr pid, int8_t isPid) {
 		DWORD err = GetLastError();
 		return err != 0 ? (int)err : -1;
 	#elif defined(USE_X11)
-		toggleUniKey(value, true);
+		int err = toggleUniKey(value, true);
 		microsleep(5.0);
-		return toggleUniKey(value, false);	
+		int err1 = toggleUniKey(value, false);
+		return err != 0 ? err : err1;
 	#endif
 }
 
 #if defined(USE_X11)
 	int input_utf(const char *utf) {
 		Display *dpy = XOpenDisplay(NULL);
+		if (dpy == NULL) { return 1; }
 		KeySym sym = XStringToKeysym(utf);
 		// KeySym sym = XKeycodeToKeysym(dpy, utf);
 

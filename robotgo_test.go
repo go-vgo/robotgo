@@ -44,7 +44,9 @@ func requireDisplay(t *testing.T) {
 			return
 		}
 		for i := 0; i < 2 && !displayOK; i++ {
-			Move(10, 10)
+			if Move(10, 10) != nil {
+				return
+			}
 			MilliSleep(50)
 			x, y := Location()
 			displayOK = x == 10 && y == 10
@@ -100,7 +102,7 @@ func TestSize(t *testing.T) {
 func TestMoveMouse(t *testing.T) {
 	requireDisplay(t)
 
-	Move(20, 20)
+	tt.Nil(t, Move(20, 20))
 	MilliSleep(50)
 	for i := 0; i < 3; i++ {
 		x, y := Location()
@@ -125,7 +127,7 @@ func TestMoveMouseSmooth(t *testing.T) {
 func TestDragMouse(t *testing.T) {
 	requireDisplay(t)
 
-	DragSmooth(500, 500)
+	tt.Nil(t, DragSmooth(500, 500))
 	MilliSleep(50)
 	x, y := Location()
 
@@ -136,23 +138,24 @@ func TestDragMouse(t *testing.T) {
 func TestScrollMouse(t *testing.T) {
 	requireDisplay(t)
 
-	ScrollDir(120, "up")
-	ScrollDir(100, "right")
+	tt.Nil(t, ScrollDir(120, "up"))
+	tt.Nil(t, ScrollDir(100, "right"))
+	tt.NotNil(t, ScrollDir(100, "sideways"))
 
-	Scroll(0, 120)
+	tt.Nil(t, Scroll(0, 120))
 	MilliSleep(100)
 
-	Scroll(210, 210)
+	tt.Nil(t, Scroll(210, 210))
 	MilliSleep(10)
 }
 
 func TestMoveRelative(t *testing.T) {
 	requireDisplay(t)
 
-	Move(200, 200)
+	tt.Nil(t, Move(200, 200))
 	MilliSleep(50)
 
-	MoveRelative(10, -10)
+	tt.Nil(t, MoveRelative(10, -10))
 	MilliSleep(50)
 
 	x, y := Location()
@@ -163,10 +166,10 @@ func TestMoveRelative(t *testing.T) {
 func TestMoveSmoothRelative(t *testing.T) {
 	requireDisplay(t)
 
-	Move(200, 200)
+	tt.Nil(t, Move(200, 200))
 	MilliSleep(50)
 
-	MoveSmoothRelative(10, -10)
+	tt.Nil(t, MoveSmoothRelative(10, -10))
 	MilliSleep(50)
 
 	x, y := Location()

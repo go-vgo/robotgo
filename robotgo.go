@@ -472,21 +472,22 @@ func MoveScale(x, y int, displayId ...int) (int, int) {
 //
 //	robotgo.MouseSleep = 100  // 100 millisecond
 //	robotgo.Move(10, 10)
-func Move(x, y int, displayId ...int) {
+func Move(x, y int, displayId ...int) error {
 	x, y = MoveScale(x, y, displayId...)
 
 	cx := C.int32_t(x)
 	cy := C.int32_t(y)
-	C.moveMouse(C.MMPointInt32Make(cx, cy))
+	code := C.moveMouse(C.MMPointInt32Make(cx, cy))
 
 	MilliSleep(MouseSleep)
+	return formatMouseError(int(code), "move")
 }
 
 // Deprecated: use the DragSmooth(),
 //
 // Drag drag the mouse to (x, y),
 // It's not valid now, use the DragSmooth()
-func Drag(x, y int, args ...string) {
+func Drag(x, y int, args ...string) error {
 	x, y = MoveScale(x, y)
 
 	var button C.MMMouseButton = C.LEFT_BUTTON
@@ -497,8 +498,9 @@ func Drag(x, y int, args ...string) {
 		button = CheckMouse(args[0])
 	}
 
-	C.dragMouse(C.MMPointInt32Make(cx, cy), button)
+	code := C.dragMouse(C.MMPointInt32Make(cx, cy), button)
 	MilliSleep(MouseSleep)
+	return formatMouseError(int(code), "drag")
 }
 
 // DragSmooth drag the mouse like smooth to (x, y)
@@ -506,11 +508,20 @@ func Drag(x, y int, args ...string) {
 // Examples:
 //
 //	robotgo.DragSmooth(10, 10)
-func DragSmooth(x, y int, args ...interface{}) {
-	Toggle("left") //nolint:errcheck // "left" is always valid
+func DragSmooth(x, y int, args ...interface{}) error {
+	if err := Toggle("left"); err != nil {
+		return err
+	}
 	MilliSleep(50)
-	smoothMove(x, y, true, args...)
-	Toggle("left", "up") //nolint:errcheck // "left" is always valid
+	ok := smoothMove(x, y, true, args...)
+	// always release the button, even if the drag failed
+	if err := Toggle("left", "up"); err != nil {
+		return err
+	}
+	if !ok {
+		return errors.New("mouse drag failed")
+	}
+	return nil
 }
 
 func smoothMove(x, y int, drag bool, args ...interface{}) bool {
@@ -689,13 +700,34 @@ func formatClickError(code int, key interface{}, stage string, count int) error 
 	} else {
 		btnName = MouseButtonString(key.(C.MMMouseButton))
 	}
-	detail := ""
+	detail := codeDetail(code)
+	if detail == "" && runtime.GOOS != "windows" && runtime.GOOS != "darwin" && code == 1 {
+		detail = "XTestFakeButtonEvent returned false"
+	}
 
+	if detail != "" {
+		return fmt.Errorf("click %s failed (%s, count=%d): %s (code=%d)", stage, btnName, count, detail, code)
+	}
+	return fmt.Errorf("click %s failed (%s, count=%d), code=%d", stage, btnName, count, code)
+}
+
+// formatMouseError converts a non-zero C mouse move/drag/scroll code to an error
+func formatMouseError(code int, op string) error {
+	if code == 0 {
+		return nil
+	}
+	if detail := codeDetail(code); detail != "" {
+		return fmt.Errorf("mouse %s failed: %s (code=%d)", op, detail, code)
+	}
+	return fmt.Errorf("mouse %s failed, code=%d", op, code)
+}
+
+// codeDetail describes a non-zero C error code
+// (Windows GetLastError or macOS CGError)
+func codeDetail(code int) string {
 	switch runtime.GOOS {
 	case "windows":
-		if code != 0 {
-			detail = syscall.Errno(code).Error()
-		}
+		return syscall.Errno(code).Error()
 	case "darwin":
 		cgErrors := map[int]string{
 			0:    "kCGErrorSuccess",
@@ -710,19 +742,9 @@ func formatClickError(code int, key interface{}, stage string, count int) error 
 			1008: "kCGErrorNoCurrentPoint",
 			1010: "kCGErrorInvalidOperation",
 		}
-		if v, ok := cgErrors[code]; ok {
-			detail = v
-		}
-	default:
-		if code == 1 {
-			detail = "XTestFakeButtonEvent returned false"
-		}
+		return cgErrors[code]
 	}
-
-	if detail != "" {
-		return fmt.Errorf("click %s failed (%s, count=%d): %s (code=%d)", stage, btnName, count, detail, code)
-	}
-	return fmt.Errorf("click %s failed (%s, count=%d), code=%d", stage, btnName, count, code)
+	return ""
 }
 
 // MoveClick move and click the mouse
@@ -733,10 +755,12 @@ func formatClickError(code int, key interface{}, stage string, count int) error 
 //
 //	robotgo.MouseSleep = 100
 //	robotgo.MoveClick(10, 10)
-func MoveClick(x, y int, args ...interface{}) {
-	Move(x, y)
+func MoveClick(x, y int, args ...interface{}) error {
+	if err := Move(x, y); err != nil {
+		return err
+	}
 	MilliSleep(50)
-	Click(args...) //nolint:errcheck // v1 signature has no error result
+	return Click(args...)
 }
 
 // Toggle toggle the mouse, support button:
@@ -786,7 +810,7 @@ func MouseUp(key ...interface{}) error {
 // Examples:
 //
 //	robotgo.Scroll(10, 10)
-func Scroll(x, y int, args ...int) {
+func Scroll(x, y int, args ...int) error {
 	var msDelay = 10
 	if len(args) > 0 {
 		msDelay = args[0]
@@ -795,8 +819,9 @@ func Scroll(x, y int, args ...int) {
 	cx := C.int(x)
 	cy := C.int(y)
 
-	C.scrollMouseXY(cx, cy)
+	code := C.scrollMouseXY(cx, cy)
 	MilliSleep(MouseSleep + msDelay)
+	return formatMouseError(int(code), "scroll")
 }
 
 // ScrollDir scroll the mouse with direction to (x, "up")
@@ -806,26 +831,27 @@ func Scroll(x, y int, args ...int) {
 //
 //	robotgo.ScrollDir(10, "down")
 //	robotgo.ScrollDir(10, "up")
-func ScrollDir(x int, direction ...interface{}) {
+func ScrollDir(x int, direction ...interface{}) error {
 	d := "down"
 	if len(direction) > 0 {
-		d = direction[0].(string)
+		s, ok := direction[0].(string)
+		if !ok {
+			return fmt.Errorf("unknown scroll direction: %v", direction[0])
+		}
+		d = s
 	}
 
-	if d == "down" {
-		Scroll(0, -x)
+	switch d {
+	case "down":
+		return Scroll(0, -x)
+	case "up":
+		return Scroll(0, x)
+	case "left":
+		return Scroll(x, 0)
+	case "right":
+		return Scroll(-x, 0)
 	}
-	if d == "up" {
-		Scroll(0, x)
-	}
-
-	if d == "left" {
-		Scroll(x, 0)
-	}
-	if d == "right" {
-		Scroll(-x, 0)
-	}
-	// MilliSleep(MouseSleep)
+	return fmt.Errorf("unknown scroll direction: %v", d)
 }
 
 // ScrollSmooth scroll the mouse smooth,
@@ -837,7 +863,7 @@ func ScrollDir(x int, direction ...interface{}) {
 //
 //	robotgo.ScrollSmooth(-10)
 //	robotgo.ScrollSmooth(-10, 6, 200, -10)
-func ScrollSmooth(to int, args ...int) {
+func ScrollSmooth(to int, args ...int) error {
 	i := 0
 	num := 5
 	if len(args) > 0 {
@@ -853,7 +879,9 @@ func ScrollSmooth(to int, args ...int) {
 	}
 
 	for {
-		Scroll(tox, to)
+		if err := Scroll(tox, to); err != nil {
+			return err
+		}
 		MilliSleep(tm)
 		i++
 		if i == num {
@@ -861,6 +889,7 @@ func ScrollSmooth(to int, args ...int) {
 		}
 	}
 	MilliSleep(MouseSleep)
+	return nil
 }
 
 /*

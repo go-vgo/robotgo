@@ -232,3 +232,26 @@ func TestTypeRunesStopsOnFailure(t *testing.T) {
 		t.Errorf("typeRunes partial surrogate: got %d, want 0", n)
 	}
 }
+
+func TestScrollDirInvalid(t *testing.T) {
+	// An invalid direction must error out before sending any input.
+	if err := ScrollDir(1, "sideways"); err == nil {
+		t.Error("ScrollDir(sideways): expected error")
+	}
+	if err := ScrollDir(1, 3); err == nil {
+		t.Error("ScrollDir(3): expected error")
+	}
+}
+
+func TestTypeErr(t *testing.T) {
+	if err := typeErr(2, "hé"); err != nil {
+		t.Errorf("typeErr(full): got %v, want nil", err)
+	}
+	err := typeErr(1, "héllo")
+	if err == nil || err.Error() != "robotgo: typed 1 of 5 characters" {
+		t.Errorf("typeErr(partial): got %v", err)
+	}
+	if err := TypeStr(""); err != nil {
+		t.Errorf("TypeStr(empty): got %v, want nil", err)
+	}
+}
