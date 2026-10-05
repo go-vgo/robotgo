@@ -34,6 +34,12 @@ func TestKeyAliases(t *testing.T) {
 		tt.Nil(t, err)
 		tt.Equal(t, want, got)
 	}
+
+	// Unknown names must error instead of resolving to keycode 0.
+	_, err := checkKeyCodes("nonexistent_key")
+	tt.Equal(t, keyErr, err)
+	_, err = checkKeyCodes("")
+	tt.Nil(t, err)
 }
 
 func TestLinuxNumpadKeyCodes(t *testing.T) {

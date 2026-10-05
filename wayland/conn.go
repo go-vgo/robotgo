@@ -90,6 +90,7 @@ type outputInfo struct {
 	x, y   int32
 	width  int32
 	height int32
+	scale  int32 // wl_output.scale factor; 0 until the event arrives (treated as 1)
 	name   string
 }
 
@@ -233,6 +234,11 @@ func (c *conn) handleGlobal(e client.RegistryGlobalEvent) {
 				info.height = int32(me.Height)
 				c.mu.Unlock()
 			}
+		})
+		out.SetScaleHandler(func(se client.OutputScaleEvent) { // wl_output v2+
+			c.mu.Lock()
+			info.scale = se.Factor
+			c.mu.Unlock()
 		})
 		c.mu.Lock()
 		c.outputs = append(c.outputs, info)

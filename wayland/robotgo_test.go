@@ -568,3 +568,19 @@ func TestLocationTracksOnlySuccessfulMoves(t *testing.T) {
 		t.Fatalf("Location without conn: got (%d,%d), want last (30,40)", x, y)
 	}
 }
+
+func TestScaleF(t *testing.T) {
+	installFakeConn(t,
+		&outputInfo{width: 3840, height: 2160, scale: 2},
+		&outputInfo{x: 3840, width: 1920, height: 1080}, // no scale event yet
+	)
+	if f := ScaleF(); f != 2 {
+		t.Errorf("ScaleF() = %v, want 2", f)
+	}
+	if f := ScaleF(1); f != 1 {
+		t.Errorf("ScaleF(1) without scale event = %v, want 1", f)
+	}
+	if w, h := GetScaleSize(); w != 7680 || h != 4320 {
+		t.Errorf("GetScaleSize() = %dx%d, want 7680x4320", w, h)
+	}
+}

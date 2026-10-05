@@ -252,9 +252,12 @@ func checkKeyCodes(k string) (key C.MMKeyCode, err error) {
 		key = v
 		if key == C.K_NOT_A_KEY {
 			err = keyErr
-			return
 		}
+		return
 	}
+	// Unknown names used to fall through as keycode 0 ("a" on macOS); report
+	// them like the pure-Go backends do.
+	err = keyErr
 	return
 }
 
@@ -292,7 +295,10 @@ func getFlagsFromValue(value []string) (flags C.MMKeyFlags) {
 
 func upKeyArr(keyArr []string, pid int) {
 	for _, k := range keyArr {
-		key1, _ := checkKeyCodes(k)
+		key1, err := checkKeyCodes(k)
+		if err != nil {
+			continue
+		}
 		C.toggleKeyCode(key1, false, C.MOD_NONE, C.uintptr(pid))
 	}
 }

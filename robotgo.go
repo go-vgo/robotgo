@@ -325,8 +325,12 @@ func ToMMBitmapRef(bit CBitmap) C.MMBitmapRef {
 	return C.MMBitmapRef(bit)
 }
 
-// ToBitmap trans C.MMBitmapRef to Bitmap
+// ToBitmap trans C.MMBitmapRef to Bitmap; a nil ref (failed capture, e.g.
+// macOS without the Screen Recording permission) yields an empty Bitmap.
 func ToBitmap(bit CBitmap) Bitmap {
+	if bit == nil {
+		return Bitmap{}
+	}
 	bitmap := Bitmap{
 		ImgBuf:        (*uint8)(bit.imageBuffer),
 		Width:         int(bit.width),

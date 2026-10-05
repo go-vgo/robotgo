@@ -34,6 +34,12 @@ func GetScreenSize() (int, int) {
 	return r.W, r.H
 }
 
+// ScaleF returns the HiDPI scale factor. The RemoteDesktop/ScreenCast portal
+// only reports logical stream geometry ("position"/"size"); the physical
+// pixel size is carried by the PipeWire video format, which this backend does
+// not consume, so the scale cannot be derived and is reported as 1.
+func ScaleF(displayId ...int) float64 { return 1 }
+
 // GetScaleSize returns the size of the stream selected by displayId (stream
 // geometry is already in logical pixels), or the union size when no display
 // is given.

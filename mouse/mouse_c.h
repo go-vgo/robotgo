@@ -317,7 +317,9 @@ static bool smoothlyMoveMouseImpl(MMPointInt32 endPoint, double lowSpeed, double
 	double velo_x = 0.0, velo_y = 0.0;
 	double distance;
 
-	while ((distance =crude_hypot((double)pos.x - endPoint.x, (double)pos.y - endPoint.y)) > 1.0) {
+	/* pos and endPoint are integer pixels, so the distance is 0 only at the
+	   target; "> 1.0" stopped one pixel short when arriving axis-aligned. */
+	while ((distance =crude_hypot((double)pos.x - endPoint.x, (double)pos.y - endPoint.y)) > 0.0) {
 		double gravity = DEADBEEF_UNIFORM(5.0, 500.0);
 		// double gravity = DEADBEEF_UNIFORM(lowSpeed, highSpeed);
 		double veloDistance;
@@ -345,16 +347,6 @@ static bool smoothlyMoveMouseImpl(MMPointInt32 endPoint, double lowSpeed, double
 		/* Wait 1 - 3 milliseconds. */
 		microsleep(DEADBEEF_UNIFORM(lowSpeed, highSpeed));
 		// microsleep(DEADBEEF_UNIFORM(1.0, 3.0));
-	}
-
-	/* The loop stops within 1px of the target; land exactly on it so
-	   location() afterwards reports endPoint. */
-	if (pos.x != endPoint.x || pos.y != endPoint.y) {
-		if (drag) {
-			dragMouse(endPoint, button);
-		} else {
-			moveMouse(endPoint);
-		}
 	}
 	return true;
 }

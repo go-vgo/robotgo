@@ -17,6 +17,8 @@ package x11
 import (
 	"errors"
 	"image"
+	"strconv"
+	"strings"
 
 	"github.com/jezek/xgb/xinerama"
 	"github.com/jezek/xgb/xproto"
@@ -32,10 +34,66 @@ func GetScreenSize() (int, int) {
 	return int(s.WidthInPixels), int(s.HeightInPixels)
 }
 
-// GetScaleSize returns the screen scale size. X11 reports physical pixels, so
-// this is identical to GetScreenSize.
+// GetScaleSize returns the screen size multiplied by ScaleF, like the Cgo
+// backend's GetScaleSize.
 func GetScaleSize(displayId ...int) (int, int) {
-	return GetScreenSize()
+	x, y := GetScreenSize()
+	f := ScaleF(displayId...)
+	return int(float64(x) * f), int(float64(y) * f)
+}
+
+// ScaleF returns the system scale factor, mirroring the Cgo backend's
+// sys_scale on X11: the screen's physical DPI (pixels / mm), overridden by
+// the Xft.dpi X resource when set, divided by 96.
+func ScaleF(displayId ...int) float64 {
+	c, err := ensureConn()
+	if err != nil {
+		return 1
+	}
+	s := c.xu.Setup().DefaultScreen(c.c)
+
+	dpi := 96.0
+	if s.WidthInMillimeters > 0 {
+		dpi = float64(s.WidthInPixels) * 25.4 / float64(s.WidthInMillimeters)
+	}
+	if v, ok := xftDPI(c, s.Root); ok {
+		dpi = v
+	}
+	if dpi <= 0 {
+		return 1
+	}
+	return dpi / 96.0
+}
+
+// xftDPI reads "Xft.dpi" from the RESOURCE_MANAGER property of the root
+// window (what XResourceManagerString returns in Xlib).
+func xftDPI(c *conn, root xproto.Window) (float64, bool) {
+	atom, err := xproto.InternAtom(c.c, true, uint16(len("RESOURCE_MANAGER")), "RESOURCE_MANAGER").Reply()
+	if err != nil || atom.Atom == xproto.AtomNone {
+		return 0, false
+	}
+	prop, err := xproto.GetProperty(c.c, false, root, atom.Atom, xproto.AtomString, 0, 1<<20).Reply()
+	if err != nil || prop == nil || prop.Format != 8 {
+		return 0, false
+	}
+	return parseXftDPI(string(prop.Value))
+}
+
+// parseXftDPI extracts the Xft.dpi value from X resource database text
+// ("Xft.dpi:\t144" lines).
+func parseXftDPI(db string) (float64, bool) {
+	for _, line := range strings.Split(db, "\n") {
+		key, val, ok := strings.Cut(line, ":")
+		if !ok || strings.TrimSpace(key) != "Xft.dpi" {
+			continue
+		}
+		f, err := strconv.ParseFloat(strings.TrimSpace(val), 64)
+		if err != nil || f <= 0 {
+			return 0, false
+		}
+		return f, true
+	}
+	return 0, false
 }
 
 // GetScreenRect returns the rect (x, y, w, h) of a display. With no displayId

@@ -267,3 +267,23 @@ func TestProcInfo(t *testing.T) {
 		t.Errorf("procInfo(-1) = %q, %q, %d", name, path, got)
 	}
 }
+
+func TestParseXftDPI(t *testing.T) {
+	tests := []struct {
+		db   string
+		want float64
+		ok   bool
+	}{
+		{"Xft.dpi:\t144\nXft.antialias:\t1\n", 144, true},
+		{"Xcursor.size: 24\nXft.dpi: 192.5", 192.5, true},
+		{"Xft.antialias: 1\n", 0, false},
+		{"Xft.dpi: nope\n", 0, false},
+		{"", 0, false},
+	}
+	for _, tt := range tests {
+		got, ok := parseXftDPI(tt.db)
+		if got != tt.want || ok != tt.ok {
+			t.Errorf("parseXftDPI(%q) = (%v, %v), want (%v, %v)", tt.db, got, ok, tt.want, tt.ok)
+		}
+	}
+}

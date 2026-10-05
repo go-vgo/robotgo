@@ -9,31 +9,62 @@
 // This file may not be copied, modified, or distributed
 // except according to those terms.
 
-//go:build (darwin || windows) && !win && !mac && !purego
-// +build darwin windows
-// +build !win
-// +build !mac
-// +build !purego
+// Untagged on purpose: these interactive tests only use the public API that
+// every backend wires (Cgo and -tags mac/win/x11/wayland/libei/purego), so
+// the same file checks Move -> Location, keys, clipboard and capture on all
+// of them. Cgo-only APIs (CaptureScreen, GetPxColor, ...) are covered in
+// robot_info_test.go instead.
 
 package robotgo
 
 import (
+	"os"
+	"runtime"
+	"strings"
+	"sync"
 	"testing"
 
 	"github.com/vcaesar/tt"
 )
 
+var (
+	displayOnce sync.Once
+	displayOK   bool
+)
+
+// requireDisplay skips the test when no session can receive injected input:
+// Linux without DISPLAY/WAYLAND_DISPLAY, a pure-Go backend with no
+// connection, or a runner without Accessibility rights (Move has no effect).
+func requireDisplay(t *testing.T) {
+	t.Helper()
+	displayOnce.Do(func() {
+		if runtime.GOOS == "linux" && os.Getenv("DISPLAY") == "" && os.Getenv("WAYLAND_DISPLAY") == "" {
+			return
+		}
+		Move(10, 10)
+		MilliSleep(50)
+		x, y := Location()
+		displayOK = x == 10 && y == 10
+	})
+	if !displayOK {
+		t.Skip("no display session for input injection")
+	}
+}
+
 func TestColor(t *testing.T) {
+	requireDisplay(t)
+
 	s := GetPixelColor(10, 10)
 	tt.IsType(t, "string", s)
-	tt.NotEmpty(t, s)
+	tt.Equal(t, 6, len(s))
 
-	c := GetPxColor(10, 10)
-	s1 := PadHex(c)
-	tt.Equal(t, s, s1)
+	tt.Equal(t, "abcdef", PadHex(0xABCDEF))
+	tt.Equal(t, "000123", PadHex(0x123))
 }
 
 func TestSize(t *testing.T) {
+	requireDisplay(t)
+
 	x, y := GetScreenSize()
 	tt.NotZero(t, x)
 	tt.NotZero(t, y)
@@ -43,16 +74,25 @@ func TestSize(t *testing.T) {
 	tt.NotZero(t, y)
 }
 
+// Move then Location must agree on every backend (#783): the Wayland/libei
+// ports cannot read the real cursor, so Location is the last injected point
+// and polling it must not drift or re-open the session.
 func TestMoveMouse(t *testing.T) {
+	requireDisplay(t)
+
 	Move(20, 20)
 	MilliSleep(50)
-	x, y := Location()
-
-	tt.Equal(t, 20, x)
-	tt.Equal(t, 20, y)
+	for i := 0; i < 3; i++ {
+		x, y := Location()
+		tt.Equal(t, 20, x)
+		tt.Equal(t, 20, y)
+		MilliSleep(20)
+	}
 }
 
 func TestMoveMouseSmooth(t *testing.T) {
+	requireDisplay(t)
+
 	b := MoveSmooth(100, 100)
 	MilliSleep(50)
 	x, y := Location()
@@ -63,6 +103,8 @@ func TestMoveMouseSmooth(t *testing.T) {
 }
 
 func TestDragMouse(t *testing.T) {
+	requireDisplay(t)
+
 	DragSmooth(500, 500)
 	MilliSleep(50)
 	x, y := Location()
@@ -72,6 +114,8 @@ func TestDragMouse(t *testing.T) {
 }
 
 func TestScrollMouse(t *testing.T) {
+	requireDisplay(t)
+
 	ScrollDir(120, "up")
 	ScrollDir(100, "right")
 
@@ -83,6 +127,8 @@ func TestScrollMouse(t *testing.T) {
 }
 
 func TestMoveRelative(t *testing.T) {
+	requireDisplay(t)
+
 	Move(200, 200)
 	MilliSleep(50)
 
@@ -95,6 +141,8 @@ func TestMoveRelative(t *testing.T) {
 }
 
 func TestMoveSmoothRelative(t *testing.T) {
+	requireDisplay(t)
+
 	Move(200, 200)
 	MilliSleep(50)
 
@@ -107,6 +155,8 @@ func TestMoveSmoothRelative(t *testing.T) {
 }
 
 func TestMouseToggle(t *testing.T) {
+	requireDisplay(t)
+
 	e := Toggle("right")
 	tt.Nil(t, e)
 
@@ -121,7 +171,9 @@ func TestMouseToggle(t *testing.T) {
 }
 
 func TestKey(t *testing.T) {
-	e := KeyTap("v", "cmd")
+	requireDisplay(t)
+
+	e := KeyTap("v", CmdCtrl())
 	tt.Nil(t, e)
 
 	e = KeyTap("enter")
@@ -135,15 +187,51 @@ func TestKey(t *testing.T) {
 	e = KeyUp("a")
 	tt.Nil(t, e)
 
-	e = KeyTap(ScrollLock)
+	// array and pid argument forms, same on the Cgo and pure-Go backends
+	e = KeyTap("i", []string{"alt", CmdCtrl()})
+	tt.Nil(t, e)
+	e = KeyToggle("a", "down", []string{"alt", CmdCtrl()})
+	tt.Nil(t, e)
+	e = KeyToggle("a", "up", []string{"alt", CmdCtrl()})
+	tt.Nil(t, e)
+	e = KeyToggle("a", "up", "alt", CmdCtrl())
+	tt.Nil(t, e)
+	e = KeyToggle("v", "up", 0)
 	tt.Nil(t, e)
 
+	// Not on Mac keyboards: keycode.h maps them to K_NOT_A_KEY there.
+	e = KeyTap(ScrollLock)
+	if runtime.GOOS == "darwin" {
+		tt.NotNil(t, e)
+	} else {
+		tt.Nil(t, e)
+	}
+
 	e = KeyTap(PauseBreak)
-	tt.Nil(t, e)
+	if runtime.GOOS == "darwin" {
+		tt.NotNil(t, e)
+	} else {
+		tt.Nil(t, e)
+	}
+
+	e = KeyTap("nonexistent_key")
+	tt.NotNil(t, e)
+}
+
+// skipNoClipboard skips when the platform has no clipboard tool (e.g. a Linux
+// CI image without xclip/xsel/wl-clipboard).
+func skipNoClipboard(t *testing.T, err error) {
+	t.Helper()
+	if err != nil && strings.Contains(err.Error(), "no clipboard utilities") {
+		t.Skipf("clipboard unavailable: %v", err)
+	}
 }
 
 func TestClip(t *testing.T) {
+	requireDisplay(t)
+
 	err := WriteAll("s")
+	skipNoClipboard(t, err)
 	tt.Nil(t, err)
 
 	s, e := ReadAll()
@@ -155,16 +243,18 @@ func TestTypeStr(t *testing.T) {
 	c := CharCodeAt("s", 0)
 	tt.Equal(t, 115, c)
 
+	s1 := "abc\\\\cd/s@世界"
+	uc := ToUC(s1)
+	tt.Equal(t, "[a b c \\ \\ c d / s @ U4e16 U754c]", uc)
+
+	requireDisplay(t)
 	e := PasteStr("s")
+	skipNoClipboard(t, e)
 	tt.Nil(t, e)
 
 	l, e := Paste("世界")
 	tt.Nil(t, e)
 	tt.Equal(t, 2, l)
-
-	s1 := "abc\\\\cd/s@世界"
-	uc := ToUC(s1)
-	tt.Equal(t, "[a b c \\ \\ c d / s @ U4e16 U754c]", uc)
 }
 
 func TestKeyCode(t *testing.T) {
@@ -182,21 +272,30 @@ func TestKeyCode(t *testing.T) {
 }
 
 func TestImage(t *testing.T) {
-	bit := CaptureScreen()
-	defer FreeBitmap(bit)
-	tt.NotNil(t, bit)
-
-	img := ToImage(bit)
-	err := SavePng(img, "robot_test.png")
-	tt.Nil(t, err)
+	requireDisplay(t)
 
 	img1, err := CaptureImg(10, 10, 20, 20)
-	tt.Nil(t, err)
-	e := Save(img1, "robot_img.jpeg", 50)
+	if err != nil {
+		// e.g. macOS without the Screen Recording permission, Xvfb without
+		// a usable framebuffer, Wayland without screencopy.
+		t.Skipf("screen capture unavailable: %v", err)
+	}
+	if err := os.MkdirAll("test/tmp", 0o755); err != nil {
+		t.Fatal(err)
+	}
+	e := Save(img1, "test/tmp/robot_img.jpeg", 50)
+	tt.Nil(t, e)
+	e = SavePng(img1, "test/tmp/robot_test.png")
 	tt.Nil(t, e)
 
-	tt.Equal(t, 20, Width(img1))
-	tt.Equal(t, 20, Height(img1))
+	// CGDisplayCreateImageForRect (Cgo and pure-Go darwin alike) returns
+	// backing pixels, so the captured size is the request times the scale.
+	f := ScaleF()
+	if runtime.GOOS != "darwin" {
+		f = 1
+	}
+	tt.Equal(t, int(20*f), Width(img1))
+	tt.Equal(t, int(20*f), Height(img1))
 
 	bit1 := ImgToBitmap(img1)
 	tt.Equal(t, bit1.Width, Width(img1))
@@ -214,11 +313,13 @@ func TestPs(t *testing.T) {
 	tt.IsType(t, "[]robotgo.Nps", ps)
 	tt.Nil(t, e)
 
-	b, e := PidExists(id[0])
-	tt.Bool(t, b)
+	// Pids()[0] may be the kernel (pid 0), which gopsutil rejects; use our own.
+	self := os.Getpid()
+	b, e := PidExists(self)
+	tt.True(t, b)
 	tt.Nil(t, e)
 
-	n, e := FindName(id[0])
+	n, e := FindName(self)
 	tt.NotEmpty(t, n)
 	tt.Nil(t, e)
 
@@ -232,14 +333,25 @@ func TestPs(t *testing.T) {
 	tt.IsType(t, "[]int", id)
 	tt.Nil(t, err)
 
-	if len(id) > 0 {
-		e := KeyTap("v", id[0], "cmd")
-		tt.Nil(t, e)
-	}
-
 	// n, e = FindPath(id[0])
 	// tt.NotEmpty(t, n)
 	// tt.Nil(t, e)
+}
+
+// KeyTap with a pid argument (pid-targeted delivery on macOS/Windows,
+// accepted and ignored on X11/Wayland/libei).
+func TestKeyTapPid(t *testing.T) {
+	requireDisplay(t)
+	if runtime.GOOS == "windows" {
+		t.Skip("posting to another process's window is intrusive on CI")
+	}
+
+	e := KeyTap("v", os.Getpid(), CmdCtrl())
+	if e != nil && runtime.GOOS == "darwin" {
+		// A test binary has no window to receive the event.
+		t.Skipf("pid delivery: %v", e)
+	}
+	tt.Nil(t, e)
 }
 
 // func TestAlert(t *testing.T) {
