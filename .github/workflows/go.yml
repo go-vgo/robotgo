@@ -1,60 +1,186 @@
 name: Go
-on: [push]
+# One run per change: pushes to master and pull requests (a push to a PR
+# branch no longer triggers a second run); a newer run cancels the older one.
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Jobs only build and test; the token never needs to write.
+permissions:
+  contents: read
+
+env:
+  GO_VERSION: 1.27.x
+
 jobs:
-  test:
-    # name: build
+  # Default Cgo backend on every OS. Linux needs X11 headers and runs under
+  # xvfb so the display-backed tests get a session; macOS/Windows runners
+  # lack Accessibility rights, so input tests skip via requireDisplay.
+  cgo:
+    name: cgo (${{ matrix.os }})
     strategy:
+      fail-fast: false
       matrix:
-        # go: [1.12.x, 1.13.x]
-        os: [macOS-latest, windows-latest] # ubuntu-latest
+        os: [macos-latest, windows-latest, ubuntu-latest]
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Set up Go 1.26.0
+      - name: Set up Go
         uses: actions/setup-go@v6
         with:
-          go-version: 1.26.x
-        id: go
+          go-version: ${{ env.GO_VERSION }}
 
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
-      - name: Get dependencies
+      - name: Install X11 dependencies
+        if: runner.os == 'Linux'
         run: |
-          go get -v -t -d ./...
+          sudo apt-get update
+          sudo apt-get install -y gcc libc6-dev libx11-dev xorg-dev libxtst-dev xvfb xsel xclip
+
+      - name: gofmt
+        if: runner.os == 'Linux'
+        run: |
+          out=$(gofmt -l .)
+          if [ -n "$out" ]; then
+            echo "files need gofmt:"; echo "$out"; exit 1
+          fi
 
       - name: Build
-        run: go build -v .
+        run: go build ./...
+
+      - name: Vet
+        run: go vet .
+
       - name: Test
-        run: go test -v robot_info_test.go
-        # run: go test -v .
+        if: runner.os != 'Linux'
+        run: go test -v -count=1 ./...
 
-      - name: Pure Go Test
-        run: go test -v -tags purego .
+      - name: Test (xvfb)
+        if: runner.os == 'Linux'
+        run: xvfb-run go test -v -count=1 ./...
 
-  purego-linux:
-    runs-on: ubuntu-latest
+  # Pure-Go backends (CGO_ENABLED=0) vetted and tested on their native OS:
+  # the backend and clipboard packages, then the root package once per
+  # backend tag. Sessions so the display-gated tests run instead of skip:
+  # Windows has a desktop, x11 gets Xvfb, wayland gets a headless sway
+  # (wlroots: virtual pointer/keyboard, screencopy, data-control). libei
+  # needs an xdg-desktop-portal session and macOS an Accessibility grant,
+  # neither exists on a runner, so there requireDisplay skips. The `purego`
+  # shortcut only aliases these tags, so it is built in the cross job.
+  purego:
+    name: purego (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            pkgs: ./darwin ./clipboard
+            tags: mac
+          - os: windows-latest
+            pkgs: ./win ./clipboard
+            tags: win
+          - os: ubuntu-latest
+            pkgs: ./x11 ./wayland/... ./libei ./clipboard
+            tags: x11 wayland libei
+    runs-on: ${{ matrix.os }}
+    env:
+      CGO_ENABLED: 0
 
     steps:
-      - name: Set up Go 1.26.0
+      - name: Set up Go
         uses: actions/setup-go@v6
         with:
-          go-version: 1.26.x
-        id: go
+          go-version: ${{ env.GO_VERSION }}
 
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
-      - name: Get dependencies
+      - name: Install Xvfb and headless sway
+        if: runner.os == 'Linux'
         run: |
-          go get -v -t -d ./...
+          sudo apt-get update
+          sudo apt-get install -y xvfb xsel xclip sway wl-clipboard
 
-      - name: Pure Go X11 Test
-        run: go test -v -tags "purego,x11" . ./x11
-        env:
-          CGO_ENABLED: 0
+      # Headless wlroots compositor for the wayland backend. If it fails to
+      # come up, WAYLAND_DISPLAY stays empty and the wayland tests skip.
+      - name: Start headless sway
+        if: runner.os == 'Linux'
+        run: |
+          export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/tmp/xdg-runtime}
+          mkdir -p -m 700 "$XDG_RUNTIME_DIR"
+          echo "XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR" >> "$GITHUB_ENV"
+          WLR_BACKENDS=headless WLR_LIBINPUT_NO_DEVICES=1 WLR_RENDERER=pixman \
+            sway -c /dev/null > sway.log 2>&1 &
+          for _ in $(seq 50); do
+            sock=$(cd "$XDG_RUNTIME_DIR" && ls wayland-[0-9]* 2>/dev/null | grep -v '\.lock$' | head -n1)
+            [ -n "$sock" ] && break
+            sleep 0.2
+          done
+          if [ -n "$sock" ]; then
+            echo "SWAY_DISPLAY=$sock" >> "$GITHUB_ENV"
+          else
+            echo "::warning::headless sway did not start, wayland tests will skip"
+            cat sway.log
+          fi
 
-      - name: Pure Go libei Test
-        run: go test -v -tags "purego,libei" . ./libei
-        env:
-          CGO_ENABLED: 0
+      - name: Vet and test
+        shell: bash
+        run: |
+          pkgrun=""
+          if [ "$RUNNER_OS" = Linux ]; then pkgrun=xvfb-run; fi
+          go vet ${{ matrix.pkgs }}
+          $pkgrun go test -count=1 ${{ matrix.pkgs }}
+          for tags in ${{ matrix.tags }}; do
+            echo "::group::root -tags $tags"
+            run=""
+            case $tags in
+              x11) run=xvfb-run ;;
+              wayland) run="env WAYLAND_DISPLAY=$SWAY_DISPLAY" ;;
+            esac
+            go vet -tags "$tags" .
+            $run go test -v -count=1 -tags "$tags" .
+            echo "::endgroup::"
+          done
+
+  # The purego job already compiles each backend for its native GOOS/GOARCH;
+  # this builds the remaining GOOS/GOARCH pairs and the `purego` shortcut
+  # spellings from one host (CGO_ENABLED=0, build only, no tests).
+  cross:
+    name: cross
+    runs-on: ubuntu-latest
+    env:
+      CGO_ENABLED: 0
+
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Check out code
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Build
+        run: |
+          for target in \
+            darwin/amd64/mac darwin/arm64/mac darwin/arm64/purego \
+            windows/arm64/win windows/386/win windows/amd64/purego \
+            linux/arm64/x11 linux/arm64/wayland linux/arm64/libei \
+            linux/amd64/purego linux/amd64/purego,x11 linux/amd64/purego,libei; do
+            IFS=/ read -r goos goarch tags <<< "$target"
+            echo "$goos/$goarch -tags $tags"
+            GOOS=$goos GOARCH=$goarch go build -tags "$tags" .
+          done

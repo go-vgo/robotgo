@@ -14,7 +14,11 @@
 
 package darwin
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/ebitengine/purego"
+)
 
 func TestKeyToCode(t *testing.T) {
 	named := []string{
@@ -263,6 +267,44 @@ func TestFrameworksLoaded(t *testing.T) {
 	// them. (Posting events may still require user-granted permissions.)
 	if !loaded {
 		t.Error("CoreGraphics/CoreFoundation frameworks failed to load")
+	}
+}
+
+// Synthetic events must never suppress the user's own mouse/keyboard: the
+// source handed to create has the local-events suppression interval cleared
+// (the CoreGraphics default is 0.25s per posted event).
+func TestWithSourceNoLocalSuppression(t *testing.T) {
+	if !loaded {
+		t.Skip("CoreGraphics not loaded")
+	}
+	cg, err := purego.Dlopen(
+		"/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics", purego.RTLD_NOW)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var getInterval func(source uintptr) float64
+	purego.RegisterLibFunc(&getInterval, cg, "CGEventSourceGetLocalEventsSuppressionInterval")
+
+	// sanity: a fresh source carries the 0.25s default this fix removes
+	src := cgEventSourceCreate(kCGEventSourceStateHIDSystemState)
+	if src == 0 {
+		t.Skip("CGEventSourceCreate returned nil")
+	}
+	if got := getInterval(src); got <= 0 {
+		t.Errorf("default suppression interval = %v, want > 0", got)
+	}
+	cfRelease(src)
+
+	called := false
+	withSource(func(source uintptr) uintptr {
+		called = true
+		if got := getInterval(source); got != 0 {
+			t.Errorf("withSource suppression interval = %v, want 0", got)
+		}
+		return 0
+	})
+	if !called {
+		t.Error("withSource did not invoke create")
 	}
 }
 

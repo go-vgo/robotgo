@@ -92,10 +92,13 @@ const kCGMouseEventClickState = 1
 // CoreGraphics / Quartz function bindings (loaded via purego).
 var (
 	// Events.
-	cgEventSourceCreate        func(state int32) uintptr
-	cgEventCreate              func(source uintptr) uintptr
-	cgEventCreateMouseEvent    func(source uintptr, mouseType uint32, point CGPoint, button uint32) uintptr
-	cgEventCreateKeyboardEvent func(source uintptr, keycode uint16, keyDown bool) uintptr
+	cgEventSourceCreate func(state int32) uintptr
+	// CGEventSourceSetLocalEventsSuppressionInterval takes a CFTimeInterval
+	// (double); purego passes float64 in a floating-point register.
+	cgEventSourceSetLocalEventsSuppressionInterval func(source uintptr, seconds float64)
+	cgEventCreate                                  func(source uintptr) uintptr
+	cgEventCreateMouseEvent                        func(source uintptr, mouseType uint32, point CGPoint, button uint32) uintptr
+	cgEventCreateKeyboardEvent                     func(source uintptr, keycode uint16, keyDown bool) uintptr
 	// CGEventCreateScrollWheelEvent is variadic (the wheelCount varargs do not
 	// survive purego's fixed-arity trampoline on arm64), so the fixed-arity
 	// CGEventCreateScrollWheelEvent2 variant is bound instead.
@@ -162,6 +165,7 @@ func init() {
 	}()
 
 	purego.RegisterLibFunc(&cgEventSourceCreate, cg, "CGEventSourceCreate")
+	purego.RegisterLibFunc(&cgEventSourceSetLocalEventsSuppressionInterval, cg, "CGEventSourceSetLocalEventsSuppressionInterval")
 	purego.RegisterLibFunc(&cgEventCreate, cg, "CGEventCreate")
 	purego.RegisterLibFunc(&cgEventCreateMouseEvent, cg, "CGEventCreateMouseEvent")
 	purego.RegisterLibFunc(&cgEventCreateKeyboardEvent, cg, "CGEventCreateKeyboardEvent")
@@ -202,8 +206,16 @@ func init() {
 // withSource runs create with a HID-system-state event source (mirroring the
 // Cgo backend) and releases the source afterwards. A nil source (0) is used
 // if the source cannot be created.
+//
+// Every event posted from a HID-state source suppresses the user's own
+// mouse/keyboard for 0.25s by default, which freezes the physical mouse for
+// as long as events keep coming (smooth moves, typing); the interval is set
+// to 0 so synthetic input never blocks the user.
 func withSource(create func(source uintptr) uintptr) uintptr {
 	source := cgEventSourceCreate(kCGEventSourceStateHIDSystemState)
+	if source != 0 {
+		cgEventSourceSetLocalEventsSuppressionInterval(source, 0)
+	}
 	ev := create(source)
 	if source != 0 {
 		cfRelease(source)

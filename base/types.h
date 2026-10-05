@@ -61,6 +61,14 @@ H_INLINE MMRectInt32 MMRectInt32Make(int32_t x, int32_t y, int32_t w, int32_t h)
 #if defined(IS_MACOSX)
 	#define CGPointFromMMPointInt32(p) CGPointMake((CGFloat)(p).x, (CGFloat)(p).y)
 	#define MMPointInt32FromCGPoint(p) MMPointInt32Make((int32_t)(p).x, (int32_t)(p).y)
+	/* HID-state event source for posting synthetic input. By default every
+	posted event suppresses the user's own mouse/keyboard for 0.25s
+	(CGEventSourceSetLocalEventsSuppressionInterval), which freezes the
+	physical mouse for as long as events keep coming; set it to 0. */
+	#define MMEventSourceCreate() ({ \
+		CGEventSourceRef _src = CGEventSourceCreate(kCGEventSourceStateHIDSystemState); \
+		if (_src != NULL) { CGEventSourceSetLocalEventsSuppressionInterval(_src, 0.0); } \
+		_src; })
 #elif defined(IS_WINDOWS)
 	#define MMPointInt32FromPOINT(p) MMPointInt32Make((int32_t)p.x, (int32_t)p.y)
 #endif

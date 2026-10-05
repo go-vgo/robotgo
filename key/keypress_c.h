@@ -193,6 +193,21 @@
 	}
 #endif
 
+#if defined(IS_MACOSX)
+/* isModKeyCode reports whether code is a modifier key, for which
+CGEventCreateKeyboardEvent builds a kCGEventFlagsChanged event. */
+static bool isModKeyCode(MMKeyCode code) {
+	switch (code) {
+	case K_META: case K_RMETA:
+	case K_ALT: case K_RALT:
+	case K_CONTROL: case K_RCONTROL:
+	case K_SHIFT: case K_RSHIFT:
+		return true;
+	}
+	return false;
+}
+#endif
+
 int toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags, uintptr pid) {
 #if defined(IS_MACOSX)
 	/* The media keys all have 1000 added to them to help us detect them. */
@@ -218,7 +233,7 @@ int toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags, uintptr pid
 			return kr;
 		}
 	} else {
-		CGEventSourceRef source = CGEventSourceCreate(kCGEventSourceStateHIDSystemState);
+		CGEventSourceRef source = MMEventSourceCreate();
 		CGEventRef keyEvent = CGEventCreateKeyboardEvent(source, (CGKeyCode)code, down);
 		// assert(keyEvent != NULL);
 		if (keyEvent == NULL) {
@@ -226,11 +241,18 @@ int toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags, uintptr pid
 			return (int)kCGErrorCannotComplete;
 		}
 
-		CGEventSetType(keyEvent, down ? kCGEventKeyDown : kCGEventKeyUp);
-		if (flags != 0) {
+		/* Keep the type CGEventCreateKeyboardEvent chose: modifier keycodes
+		get kCGEventFlagsChanged; forcing KeyDown/KeyUp on them meant the
+		release was never applied and cmd/alt/shift stayed stuck down.
+
+		A modifier release always carries an explicit mask (flags = the
+		modifiers that remain held). The auto-filled mask is read from the
+		HID state asynchronously, so back-to-back releases (cmd+alt) saw a
+		stale state and re-asserted the modifier just released. */
+		if (flags != 0 || (!down && isModKeyCode(code))) {
 			CGEventSetFlags(keyEvent, (CGEventFlags) flags);
 		}
-		
+
 		SendTo(pid, keyEvent);
 		CFRelease(source);
 	}
@@ -319,7 +341,7 @@ int toggleKey(char c, const bool down, MMKeyFlags flags, uintptr pid) {
 #if defined(IS_MACOSX)
 	int toggleUnicode(UniChar ch, const bool down, uintptr pid) {
 		/* This function relies on the convenient CGEventKeyboardSetUnicodeString()*/
-		CGEventSourceRef source = CGEventSourceCreate(kCGEventSourceStateHIDSystemState);
+		CGEventSourceRef source = MMEventSourceCreate();
 		CGEventRef keyEvent = CGEventCreateKeyboardEvent(source, 0, down);
 		if (keyEvent == NULL) {
 			// fputs("Could not create keyboard event.\n", stderr);

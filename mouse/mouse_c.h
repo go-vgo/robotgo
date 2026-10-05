@@ -93,11 +93,14 @@
 /* Move the mouse to a specific point. */
 void moveMouse(MMPointInt32 point){
 	#if defined(IS_MACOSX)
-		CGEventSourceRef source = CGEventSourceCreate(kCGEventSourceStateHIDSystemState);
+		CGEventSourceRef source = MMEventSourceCreate();
 		CGEventRef move = CGEventCreateMouseEvent(source, kCGEventMouseMoved, 
 								CGPointFromMMPointInt32(point), kCGMouseButtonLeft);
 
-		calculateDeltas(&move, point);
+		/* No calculateDeltas(): on current macOS the HID tap applies the delta
+		fields as accelerated relative motion on top of the absolute point,
+		so the cursor landed a few px off and MoveSmooth kept drifting. */
+		// calculateDeltas(&drag, point);
 		CGEventPost(kCGHIDEventTap, move);
 		CFRelease(move);
 		CFRelease(source);
@@ -114,12 +117,12 @@ void moveMouse(MMPointInt32 point){
 void dragMouse(MMPointInt32 point, const MMMouseButton button){
 	#if defined(IS_MACOSX)
 		const CGEventType dragType = MMMouseDragToCGEventType(button);
-		CGEventSourceRef source = CGEventSourceCreate(kCGEventSourceStateHIDSystemState);
+		CGEventSourceRef source = MMEventSourceCreate();
 		CGEventRef drag = CGEventCreateMouseEvent(source, dragType, 
 								CGPointFromMMPointInt32(point), (CGMouseButton)button);
 
-		calculateDeltas(&drag, point);
-
+		/* No calculateDeltas(), see moveMouse(). */
+		// calculateDeltas(&drag, point);
 		CGEventPost(kCGHIDEventTap, drag);
 		CFRelease(drag);
 		CFRelease(source);
@@ -158,7 +161,7 @@ int toggleMouse(bool down, MMMouseButton button) {
 	#if defined(IS_MACOSX)
 		const CGPoint currentPos = CGPointFromMMPointInt32(location());
 		const CGEventType mouseType = MMMouseToCGEventType(down, button);
-		CGEventSourceRef source = CGEventSourceCreate(kCGEventSourceStateHIDSystemState);
+		CGEventSourceRef source = MMEventSourceCreate();
 		CGEventRef event = CGEventCreateMouseEvent(source, mouseType, currentPos, (CGMouseButton)button);
 
 		if (event == NULL) {
@@ -208,7 +211,7 @@ int doubleClick(MMMouseButton button, int count){
 		const CGEventType mouseTypeDown = MMMouseToCGEventType(true, button);
 		const CGEventType mouseTypeUP = MMMouseToCGEventType(false, button);
 
-		CGEventSourceRef source = CGEventSourceCreate(kCGEventSourceStateHIDSystemState);
+		CGEventSourceRef source = MMEventSourceCreate();
 		CGEventRef event = CGEventCreateMouseEvent(source, mouseTypeDown, currentPos, kCGMouseButtonLeft);
 		if (event == NULL) {
 			CFRelease(source);
@@ -245,7 +248,7 @@ void scrollMouseXY(int x, int y) {
 	#endif
 
 	#if defined(IS_MACOSX)
-		CGEventSourceRef source = CGEventSourceCreate(kCGEventSourceStateHIDSystemState);
+		CGEventSourceRef source = MMEventSourceCreate();
 		CGEventRef event = CGEventCreateScrollWheelEvent(source, kCGScrollEventUnitPixel, 2, y, x);	
 		CGEventPost(kCGHIDEventTap, event);
 
@@ -301,7 +304,10 @@ static double crude_hypot(double x, double y){
 	double big = fabs(x); /* max(|x|, |y|) */
 	double small = fabs(y); /* min(|x|, |y|) */
 
-	if (big > small) {
+	/* Swap only when they are the wrong way round. Swapping when big was
+	already the max returned 0.41*max + min, so the "unit" velocity was up
+	to 2.4px long, steps overshot the target and the loop never ended. */
+	if (big < small) {
 		double temp = big;
 		big = small;
 		small = temp;

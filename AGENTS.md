@@ -2,7 +2,7 @@
 
 Go native cross-platform desktop automation: mouse, keyboard, screen, bitmap, process, window handle, clipboard, and global event listener. Supports macOS, Windows, Linux; amd64 and arm64.
 
-Module: `github.com/go-vgo/robotgo` — `go.mod` declares `go 1.26.0` (GitHub Actions sets up Go 1.26.x).
+Module: `github.com/go-vgo/robotgo` — `go.mod` declares `go 1.26.0` (GitHub Actions sets up Go 1.27.x).
 
 ## Build/Test/Lint Commands
 
@@ -22,7 +22,7 @@ Prerequisites (default Cgo backend): `GCC` must be installed. `CGO_ENABLED=1` (d
 - **Pure-Go cross build**: `CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -tags mac .`; `GOOS` must match the backend — `GOOS=windows` for `win`, `GOOS=linux` for `x11`/`wayland`/`libei` (a mismatched `GOOS` leaves the root package with no backend). Build the module root `.`, not `./...` — `examples/` and some subpackages need the Cgo backend.
 
 There is no Makefile / Taskfile / linter config. CI:
-- `.github/workflows/go.yml` — job `test` (macOS + Windows, Go 1.26.x): `go build -v .`, `go test -v robot_info_test.go`, `go test -v -tags purego .`; job `purego-linux` (ubuntu, `CGO_ENABLED=0`): `-tags "purego,x11" . ./x11` and `-tags "purego,libei" . ./libei`.
+- `.github/workflows/go.yml` (Go 1.27.x; runs on push to `master` and on `pull_request`, newer run cancels older via `concurrency`; `permissions: contents: read`, checkouts use `persist-credentials: false`) — job `cgo` (macOS/Windows/Linux): `go build ./...`, `go vet .`, `go test -v .` (Linux: apt X11/xvfb deps, `gofmt -l .` must be empty, `xvfb-run go test -v ./...`); job `purego` (`CGO_ENABLED=0`, one job per OS: vet + test the backend pkgs, then `.` once per tag — `mac`/`purego` on macOS, `win`/`purego` on Windows, `x11`, `purego,x11`, `wayland`, `purego`, `libei`, `purego,libei` on Linux); job `cross` (`CGO_ENABLED=0` build of `.` for the GOOS/GOARCH pairs the purego job does not cover: darwin amd64/arm64 `mac`, windows arm64/386 `win`, linux arm64 `x11`/`wayland`/`libei`).
 - `.circleci/config.yml` — Linux Cgo full tests: `xvfb-run go test -v ./...`.
 
 The old `appveyor.yml` has been removed.
@@ -63,7 +63,7 @@ robotgo/
 ├── robotgo_fn_v1.go        # deprecated v1 aliases (kept for compat), Cgo only
 ├── robot_info_test.go      # Cgo smoke tests (used by GitHub Actions)
 ├── robot_mac_test.go       # darwin && (mac || purego) tests
-├── key_test.go             # Cgo-only unit tests; img_test.go untagged
+├── key_c_test.go           # Cgo-only key/mouse-arg unit tests; img_test.go untagged
 ├── robotgo_test.go         # interactive tests, (darwin || windows) Cgo only
 ├── base/       # C helpers (MMBitmap, rgb, microsleep, types, os, pubs, xdisplay)
 ├── mouse/      # Go pkg + C (mouse.h, mouse_c.h) with *_darwin.go/_windows.go/_x11.go
@@ -108,8 +108,8 @@ Key subpackage relationships: the root `robotgo` package pulls C code from `scre
 - Test files: `*_test.go` beside sources. Package declared as `robotgo_test` (external) for API-surface tests, or `robotgo` for internal.
 - **Cgo smoke tests** live in `robot_info_test.go` — explicitly selected by GitHub Actions on macOS/Windows. They query screen size/location/scale/window title (not truly headless) and are excluded from pure-Go test runs by build tags. Keep new lightweight Cgo tests here; match build tags to the APIs being tested.
 - **Pure-Go tests**: root `robot_mac_test.go` (darwin `mac`/`purego`) plus each backend's `*/robotgo_test.go` (`win/`, `darwin/`, `x11/`, `wayland/` + `keyboard_wire_test.go`, `libei/`). GitHub Actions runs `-tags purego .` on macOS/Windows and the x11/libei suites on Linux with `CGO_ENABLED=0`.
-- **Interactive / display-required tests** go in `robotgo_test.go`; its tags restrict it to darwin/windows Cgo, so CircleCI's Linux `xvfb-run go test -v ./...` does **not** include it (Linux root coverage there comes from `robot_info_test.go`, `key_test.go`, `img_test.go`).
-- Other unit tests: `key_test.go` (Cgo), `img_test.go` (untagged, also runs in pure-Go root jobs), `clipboard/*_test.go`.
+- **Interactive / display-required tests** go in `robotgo_test.go`; its tags restrict it to darwin/windows Cgo, so CircleCI's Linux `xvfb-run go test -v ./...` does **not** include it (Linux root coverage there comes from `robot_info_test.go`, `key_c_test.go`, `img_test.go`).
+- Other unit tests: `key_c_test.go` (Cgo), `img_test.go` (untagged, also runs in pure-Go root jobs), `clipboard/*_test.go`.
 - Run one test: `go test -v -run TestGetScreenSize .`
 - No fixtures, snapshots, or golden files in use. Screenshots produced by examples are `.gitignore`d.
 
