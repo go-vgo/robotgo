@@ -68,6 +68,13 @@ jobs:
         if: runner.os == 'Linux'
         run: xvfb-run go test -v -count=1 ./...
 
+      # robot_x11_test.go (#640 layout typing) reads keys back through an
+      # Xlib harness, so it needs cgo; the purego job runs -tags x11 with
+      # CGO_ENABLED=0 and would skip it.
+      - name: Test x11 backend layout (xvfb)
+        if: runner.os == 'Linux'
+        run: xvfb-run go test -v -count=1 -tags x11 -run TestTypeLayout .
+
   # Pure-Go backends (CGO_ENABLED=0) vetted and tested on their native OS:
   # the backend and clipboard packages, then the root package once per
   # backend tag. Sessions so the display-gated tests run instead of skip:

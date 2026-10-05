@@ -21,6 +21,7 @@ package xharness
 /*
 #cgo LDFLAGS: -lX11
 #include <string.h>
+#include <time.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
@@ -35,10 +36,22 @@ static int harnessOpen(void) {
 	hwin = XCreateSimpleWindow(hdpy, DefaultRootWindow(hdpy), 0, 0, 200, 100, 0, 0, 0);
 	XSelectInput(hdpy, hwin, KeyPressMask | StructureNotifyMask);
 	XMapWindow(hdpy, hwin);
+	// Bounded wait: window manager that redirects map may never map it.
 	XEvent ev;
-	do {
-		XNextEvent(hdpy, &ev);
-	} while (ev.type != MapNotify);
+	int mapped = 0;
+	for (int i = 0; i < 200 && !mapped; i++) {
+		mapped = XCheckTypedWindowEvent(hdpy, hwin, MapNotify, &ev);
+		if (!mapped) {
+			struct timespec delay = {0, 10 * 1000 * 1000};
+			nanosleep(&delay, NULL);
+		}
+	}
+	if (!mapped) {
+		XDestroyWindow(hdpy, hwin);
+		XCloseDisplay(hdpy);
+		hdpy = NULL;
+		return -1;
+	}
 	XSetInputFocus(hdpy, hwin, RevertToParent, CurrentTime);
 	XSync(hdpy, False);
 	return 1;
@@ -78,10 +91,14 @@ import (
 
 // Open maps a window on $DISPLAY and gives it the input focus.
 func Open() error {
-	if C.harnessOpen() == 0 {
+	switch C.harnessOpen() {
+	case 1:
+		return nil
+	case 0:
 		return errors.New("xharness: cannot open X display")
+	default:
+		return errors.New("xharness: timed out waiting for MapNotify")
 	}
-	return nil
 }
 
 // Read drains the KeyPress events the window received into text.

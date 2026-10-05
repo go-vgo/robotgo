@@ -281,6 +281,26 @@ func TestKeysymToKeycodeGermanLayout(t *testing.T) {
 	}
 }
 
+// Layout with AltGr symbols but no level-3 key: '@' must not be typed as
+// its bare base key 'q'; it falls back to scratch keycode. With
+// scratch disabled that path returns ErrNotSupported before any event is
+// sent (c.c is nil, so sending would panic).
+func TestPressKeysymNoLevel3Key(t *testing.T) {
+	c := germanConn()
+	c.level3Keycode = 0
+	c.scratchOK = false
+
+	if c.canReach(modLevel3) || c.canReach(modLevel3|modShift) {
+		t.Error("canReach(level3) = true without level-3 key")
+	}
+	if !c.canReach(0) || !c.canReach(modShift) {
+		t.Error("canReach(plain/shift) = false")
+	}
+	if err := c.pressKeysym('@'); err != ErrNotSupported {
+		t.Errorf("pressKeysym('@') = %v, want ErrNotSupported", err)
+	}
+}
+
 func TestGetVersion(t *testing.T) {
 	if GetVersion() == "" {
 		t.Error("GetVersion() returned empty string")

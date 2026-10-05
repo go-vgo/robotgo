@@ -318,6 +318,14 @@ int toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags, uintptr pid
 	KeyCode kc = X_KEYSYM_TO_KEYCODE(display, code, &level);
 	if (level & 1) { flags |= MOD_SHIFT; }
 	KeyCode level3 = (level & 2) ? X_LEVEL3_KEYCODE(display) : 0;
+	if ((level & 2) && level3 == 0) {
+		return -9; /* AltGr level, but layout has no level-3 key */
+	}
+
+	/* Release main key while its modifiers are still held, so the
+	release keeps the level its press had. */
+	int ret = 0;
+	if (!is_press) { ret = X_KEYCODE_EVENT(display, kc, is_press); }
 
 	/* Parse modifier keys. */
 	if (flags & MOD_META) { X_KEY_EVENT_WAIT(display, K_META, is_press); }
@@ -329,7 +337,8 @@ int toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags, uintptr pid
 		microsleep(DEADBEEF_UNIFORM(0.0, 0.5));
 	}
 
-	return X_KEYCODE_EVENT(display, kc, is_press);
+	if (is_press) { ret = X_KEYCODE_EVENT(display, kc, is_press); }
+	return ret;
 #endif
 }
 

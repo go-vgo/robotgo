@@ -47,6 +47,12 @@ func (c *conn) modKeycodesFor(mods uint8) []xproto.Keycode {
 	return out
 }
 
+// canReach reports whether layout has keys for modifier mask: AltGr
+// level is unreachable when no key selects level 3.
+func (c *conn) canReach(mods uint8) bool {
+	return mods&modLevel3 == 0 || c.level3Keycode != 0
+}
+
 // sendKeycode generates a press or release for the given keycode via XTEST.
 func (c *conn) sendKeycode(kc xproto.Keycode, press bool) {
 	t := byte(xproto.KeyRelease)
@@ -60,7 +66,7 @@ func (c *conn) sendKeycode(kc xproto.Keycode, press bool) {
 // AltGr) its level on the layout needs (#640).
 func (c *conn) pressKeysym(ks uint32) error {
 	kc, mods, ok := c.keysymToKeycode(ks)
-	if ok {
+	if ok && c.canReach(mods) {
 		held := c.modKeycodesFor(mods)
 		for _, m := range held {
 			c.sendKeycode(m, true)
@@ -74,7 +80,8 @@ func (c *conn) pressKeysym(ks uint32) error {
 		c.c.Sync()
 		return nil
 	}
-	// Not in the current layout — type it through the scratch keycode.
+	// Not in the current layout, or only on an AltGr level the layout has
+	// no key for: type it through the scratch keycode.
 	return c.pressScratch(ks)
 }
 
@@ -229,6 +236,9 @@ func KeyToggle(key string, args ...interface{}) error {
 	kc, lvl, ok := c.keysymToKeycode(ks)
 	if !ok {
 		return ErrNotFound
+	}
+	if !c.canReach(lvl) {
+		return ErrNotSupported
 	}
 	levelMods := c.modKeycodesFor(lvl)
 
