@@ -86,17 +86,22 @@ func TestKeyNamesResolve(t *testing.T) {
 	}
 }
 
-// Single characters go through keyCodeForChar (or the macOS table) and are
-// case-insensitive: "A" and "a" share a keycode, shift is added by
-// appendShift instead.
+// Single characters go through keyCodeForChar (or the macOS table). Only the
+// macOS table is a physical keycode where "A" and "a" share an entry; X11
+// returns the keysym and VkKeyScan carries the shift state in the high byte,
+// so there the case/shift variants differ and only resolution is checked.
 func TestCharKeyCodes(t *testing.T) {
+	sameKey := runtime.GOOS == "darwin"
+
 	for c := 'a'; c <= 'z'; c++ {
 		lower, err := checkKeyCodes(string(c))
 		tt.Nil(t, err, string(c))
 
 		upper, err := checkKeyCodes(strings.ToUpper(string(c)))
 		tt.Nil(t, err)
-		tt.Equal(t, lower, upper, string(c))
+		if sameKey {
+			tt.Equal(t, lower, upper, string(c))
+		}
 	}
 
 	for c := '0'; c <= '9'; c++ {
@@ -110,7 +115,9 @@ func TestCharKeyCodes(t *testing.T) {
 		tt.Nil(t, err, sym)
 		b, err := checkKeyCodes(base)
 		tt.Nil(t, err, base)
-		tt.Equal(t, b, s, sym)
+		if sameKey {
+			tt.Equal(t, b, s, sym)
+		}
 	}
 
 	space, err := checkKeyCodes(" ")

@@ -37,6 +37,7 @@ var (
 	globalLock   = kernel32.NewProc("GlobalLock")
 	globalUnlock = kernel32.NewProc("GlobalUnlock")
 	globalSize   = kernel32.NewProc("GlobalSize")
+	setLastError = kernel32.NewProc("SetLastError")
 
 	errUnknown = errors.New("clipboard: unknown windows error")
 )
@@ -71,8 +72,11 @@ func utf16Ptr(addr uintptr) *uint16 {
 }
 
 // unlock calls GlobalUnlock, a zero result with no error code means
-// the memory object is no longer locked, which is success.
+// the memory object is no longer locked, which is success. The last error
+// is cleared first: GetClipboardData can leave a stale code (such as
+// ERROR_CLIPBOARD_NOT_OPEN) behind that would otherwise fail a good unlock.
 func unlock(h uintptr) error {
+	setLastError.Call(0)
 	r, _, err := globalUnlock.Call(h)
 	if r == 0 && err != syscall.Errno(0) {
 		return err

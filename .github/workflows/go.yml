@@ -1,5 +1,18 @@
 name: Go
-on: [push, pull_request]
+# One run per change: pushes to master and pull requests (a push to a PR
+# branch no longer triggers a second run); a newer run cancels the older one.
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Jobs only build and test; the token never needs to write.
+permissions:
+  contents: read
 
 env:
   GO_VERSION: 1.27.x
@@ -24,6 +37,8 @@ jobs:
 
       - name: Check out code
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
       - name: Install X11 dependencies
         if: runner.os == 'Linux'
@@ -31,18 +46,19 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y gcc libc6-dev libx11-dev xorg-dev libxtst-dev xvfb xsel xclip
 
-      - name: Get dependencies
-        run: go get -v -t -d ./...
+      - name: gofmt
+        if: runner.os == 'Linux'
+        run: |
+          out=$(gofmt -l .)
+          if [ -n "$out" ]; then
+            echo "files need gofmt:"; echo "$out"; exit 1
+          fi
 
       - name: Build
-        run: go build -v ./...
+        run: go build ./...
 
       - name: Vet
         run: go vet .
-
-      - name: Smoke test
-        if: runner.os != 'Linux'
-        run: go test -v robot_info_test.go
 
       - name: Test
         if: runner.os != 'Linux'
@@ -52,44 +68,24 @@ jobs:
         if: runner.os == 'Linux'
         run: xvfb-run go test -v ./...
 
-  # Pure-Go backends on their native OS: root package with the backend tag
-  # plus the backend package itself, and the `purego` shortcut tag.
+  # Pure-Go backends (CGO_ENABLED=0) vetted and tested on their native OS:
+  # the backend packages, then the root package once per backend tag and
+  # once with the `purego` shortcut. One job per OS loops over its tags.
   purego:
-    name: purego (${{ matrix.os }}, ${{ matrix.tags }})
+    name: purego (${{ matrix.os }})
     strategy:
       fail-fast: false
       matrix:
         include:
           - os: macos-latest
-            tags: mac
             pkgs: ./darwin
-          - os: macos-latest
-            tags: purego
-            pkgs: ./darwin
+            tags: mac purego
           - os: windows-latest
-            tags: win
             pkgs: ./win
-          - os: windows-latest
-            tags: purego
-            pkgs: ./win
+            tags: win purego
           - os: ubuntu-latest
-            tags: x11
-            pkgs: ./x11
-          - os: ubuntu-latest
-            tags: purego,x11
-            pkgs: ./x11
-          - os: ubuntu-latest
-            tags: wayland
-            pkgs: ./wayland
-          - os: ubuntu-latest
-            tags: purego
-            pkgs: ./wayland
-          - os: ubuntu-latest
-            tags: libei
-            pkgs: ./libei
-          - os: ubuntu-latest
-            tags: purego,libei
-            pkgs: ./libei
+            pkgs: ./x11 ./wayland ./libei
+            tags: x11 purego,x11 wayland purego libei purego,libei
     runs-on: ${{ matrix.os }}
     env:
       CGO_ENABLED: 0
@@ -102,39 +98,29 @@ jobs:
 
       - name: Check out code
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
-      - name: Get dependencies
-        run: go get -v -t -d ./...
+      - name: Vet and test
+        shell: bash
+        run: |
+          go vet ${{ matrix.pkgs }}
+          go test ${{ matrix.pkgs }}
+          for tags in ${{ matrix.tags }}; do
+            echo "::group::-tags $tags"
+            go vet -tags "$tags" .
+            go test -tags "$tags" .
+            echo "::endgroup::"
+          done
 
-      - name: Vet
-        run: go vet -tags "${{ matrix.tags }}" . ${{ matrix.pkgs }}
-
-      - name: Test
-        run: go test -v -tags "${{ matrix.tags }}" . ${{ matrix.pkgs }}
-
-  # Every pure-Go backend must cross-compile with CGO_ENABLED=0 from one host.
+  # The purego job already compiles each backend for its native GOOS/GOARCH;
+  # this builds the remaining GOOS/GOARCH pairs from one host (CGO_ENABLED=0,
+  # build only, no tests).
   cross:
-    name: cross (${{ matrix.goos }}/${{ matrix.goarch }}, ${{ matrix.tags }})
+    name: cross
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - { goos: darwin, goarch: amd64, tags: mac }
-          - { goos: darwin, goarch: arm64, tags: mac }
-          - { goos: windows, goarch: amd64, tags: win }
-          - { goos: windows, goarch: arm64, tags: win }
-          - { goos: windows, goarch: "386", tags: win }
-          - { goos: linux, goarch: amd64, tags: x11 }
-          - { goos: linux, goarch: arm64, tags: x11 }
-          - { goos: linux, goarch: amd64, tags: wayland }
-          - { goos: linux, goarch: arm64, tags: wayland }
-          - { goos: linux, goarch: amd64, tags: libei }
-          - { goos: linux, goarch: arm64, tags: libei }
     env:
       CGO_ENABLED: 0
-      GOOS: ${{ matrix.goos }}
-      GOARCH: ${{ matrix.goarch }}
 
     steps:
       - name: Set up Go
@@ -144,28 +130,16 @@ jobs:
 
       - name: Check out code
         uses: actions/checkout@v6
-
-      - name: Get dependencies
-        run: go get -v -t -d ./...
+        with:
+          persist-credentials: false
 
       - name: Build
-        run: go build -v -tags "${{ matrix.tags }}" .
-
-  fmt:
-    name: gofmt
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set up Go
-        uses: actions/setup-go@v6
-        with:
-          go-version: ${{ env.GO_VERSION }}
-
-      - name: Check out code
-        uses: actions/checkout@v6
-
-      - name: gofmt
         run: |
-          out=$(gofmt -l .)
-          if [ -n "$out" ]; then
-            echo "files need gofmt:"; echo "$out"; exit 1
-          fi
+          for target in \
+            darwin/amd64/mac darwin/arm64/mac \
+            windows/arm64/win windows/386/win \
+            linux/arm64/x11 linux/arm64/wayland linux/arm64/libei; do
+            IFS=/ read -r goos goarch tags <<< "$target"
+            echo "$goos/$goarch -tags $tags"
+            GOOS=$goos GOARCH=$goarch go build -tags "$tags" .
+          done

@@ -1,3 +1,6 @@
+//go:build linux
+// +build linux
+
 package wlr_foreign_toplevel
 
 import "testing"
