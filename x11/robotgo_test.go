@@ -18,6 +18,8 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/jezek/xgb/xproto"
 )
 
 // --- Pure Go tests (run anywhere, no X server needed) ---
@@ -216,6 +218,66 @@ func TestTypes(t *testing.T) {
 	n := Nps{Pid: 42, Name: "test"}
 	if n.Pid != 42 || n.Name != "test" {
 		t.Errorf("Nps: got %+v", n)
+	}
+}
+
+// germanConn builds a conn around the core keyboard mapping an XKB server
+// exposes for a German (de) layout, as read with xmodmap -pke under Xvfb:
+// columns 0/1 are the plain/Shift levels, 2/3 repeat them, 4/5 hold the AltGr
+// levels. Keycode 25 is left empty so a scratch keycode exists.
+func germanConn() *conn {
+	const per = 7
+	rows := map[xproto.Keycode][]xproto.Keysym{
+		16:  {'7', '/', '7', '/', '{', 0xbe, '{'},  // 7 slash ... braceleft seveneighths
+		24:  {'q', 'Q', 'q', 'Q', '@', 0x7d9, '@'}, // q Q ... at Greek_OMEGA
+		50:  {xkShiftL, 0, xkShiftL},
+		52:  {'y', 'Y', 'y', 'Y', 0xbb, 0xab, 0xbb}, // y Y (z/y swap) ... guillemotright
+		108: {xkISOLevel3Shift, 0, xkISOLevel3Shift},
+	}
+	c := &conn{minKeycode: 16, keysymsPerKeycode: per}
+	for kc := xproto.Keycode(16); kc <= 108; kc++ {
+		row := make([]xproto.Keysym, per)
+		copy(row, rows[kc])
+		c.keysyms = append(c.keysyms, row...)
+	}
+	c.findModKeycodes()
+	c.scratch, c.scratchOK = c.findScratchKeycode()
+	return c
+}
+
+// #640: on a German layout '@' lives on the AltGr level of q and '/' on the
+// Shift level of 7. The lookup must report those levels so pressKeysym holds
+// AltGr/Shift, instead of returning q+Shift for '@' (which types 'Q').
+func TestKeysymToKeycodeGermanLayout(t *testing.T) {
+	c := germanConn()
+	if !c.scratchOK || c.shiftKeycode != 50 || c.level3Keycode != 108 {
+		t.Fatalf("setup: scratchOK=%v shift=%d level3=%d", c.scratchOK, c.shiftKeycode, c.level3Keycode)
+	}
+	tests := []struct {
+		ks   uint32
+		kc   xproto.Keycode
+		mods uint8
+		ok   bool
+	}{
+		{'7', 16, 0, true},
+		{'/', 16, modShift, true},
+		{'{', 16, modLevel3, true},
+		{'q', 24, 0, true},
+		{'Q', 24, modShift, true},
+		{'@', 24, modLevel3, true},
+		{0x7d9, 24, modLevel3 | modShift, true}, // Greek_OMEGA (legacy keysym)
+		{'y', 52, 0, true},
+		{'z', 0, 0, false}, // not on these rows: scratch keycode
+	}
+	for _, tt := range tests {
+		kc, mods, ok := c.keysymToKeycode(tt.ks)
+		if kc != tt.kc || mods != tt.mods || ok != tt.ok {
+			t.Errorf("keysymToKeycode(%#x) = (%d, mods=%#b, ok=%v), want (%d, %#b, %v)",
+				tt.ks, kc, mods, ok, tt.kc, tt.mods, tt.ok)
+		}
+	}
+	if got := c.modKeycodesFor(modLevel3 | modShift); len(got) != 2 || got[0] != 108 || got[1] != 50 {
+		t.Errorf("modKeycodesFor(level3|shift) = %v, want [108 50]", got)
 	}
 }
 

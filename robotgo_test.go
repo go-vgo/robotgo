@@ -35,29 +35,39 @@ var (
 // requireDisplay skips the test when no session can receive injected input:
 // Linux without DISPLAY/WAYLAND_DISPLAY, a pure-Go backend with no
 // connection, or a runner without Accessibility rights (Move has no effect).
+// The probe is retried once: the first event a process posts to the HID tap
+// can land a px or two off while the WindowServer connection settles.
 func requireDisplay(t *testing.T) {
 	t.Helper()
 	displayOnce.Do(func() {
 		if runtime.GOOS == "linux" && os.Getenv("DISPLAY") == "" && os.Getenv("WAYLAND_DISPLAY") == "" {
 			return
 		}
-		Move(10, 10)
-		MilliSleep(50)
-		x, y := Location()
-		displayOK = x == 10 && y == 10
+		for i := 0; i < 2 && !displayOK; i++ {
+			Move(10, 10)
+			MilliSleep(50)
+			x, y := Location()
+			displayOK = x == 10 && y == 10
+		}
 	})
 	if !displayOK {
 		t.Skip("no display session for input injection")
 	}
 }
 
-// requireScreen skips only when there is no screen at all (Linux without
-// DISPLAY/WAYLAND_DISPLAY). Screen-read APIs work without Accessibility or
-// an input session, so these tests also run on macOS/Windows CI runners.
+// requireScreen skips only when there is no screen at all: Linux without
+// DISPLAY/WAYLAND_DISPLAY, or a backend that reports a zero screen size
+// (libei without a portal ScreenCast stream, wayland/darwin without a
+// compositor or WindowServer connection). Screen-read APIs work without
+// Accessibility or an input session, so these tests also run on
+// macOS/Windows CI runners.
 func requireScreen(t *testing.T) {
 	t.Helper()
 	if runtime.GOOS == "linux" && os.Getenv("DISPLAY") == "" && os.Getenv("WAYLAND_DISPLAY") == "" {
 		t.Skip("no display for screen reads")
+	}
+	if w, h := GetScreenSize(); w == 0 || h == 0 {
+		t.Skipf("screen size unavailable: %dx%d", w, h)
 	}
 }
 

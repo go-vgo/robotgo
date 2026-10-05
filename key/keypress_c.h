@@ -21,6 +21,7 @@
 	#import <IOKit/hidsystem/ev_keymap.h>
 #elif defined(USE_X11)
 	#include <X11/extensions/XTest.h>
+	#include <X11/XKBlib.h>
 	// #include "../base/xdisplay_c.h"
 #endif
 
@@ -57,16 +58,54 @@
 #elif defined(USE_X11)
 	Display *XGetMainDisplay(void);
 
-	// X_KEY_EVENT returns 0 on success, 1 if XTest rejected the event.
-	int X_KEY_EVENT(Display *display, MMKeyCode key, bool is_press) {
-		Bool ok = XTestFakeKeyEvent(display, XKeysymToKeycode(display, key), is_press, CurrentTime); 
+	// X_KEYCODE_EVENT returns 0 on success, 1 if XTest rejected the event.
+	int X_KEYCODE_EVENT(Display *display, KeyCode code, bool is_press) {
+		Bool ok = XTestFakeKeyEvent(display, code, is_press, CurrentTime);
 		XSync(display, false);
 		return ok ? 0 : 1;
+	}
+
+	int X_KEY_EVENT(Display *display, MMKeyCode key, bool is_press) {
+		return X_KEYCODE_EVENT(display, XKeysymToKeycode(display, key), is_press);
 	}
 
 	void X_KEY_EVENT_WAIT(Display *display, MMKeyCode key, bool is_press) {
 		X_KEY_EVENT(display, key, is_press);
 		microsleep(DEADBEEF_UNIFORM(0.0, 0.5));
+	}
+
+	/* Keycode and shift level that produce sym in the active XKB group, lowest
+	level first: 0 plain, 1 Shift, 2 ISO_Level3_Shift (AltGr), 3 both (the
+	pc/complete key types). XKeysymToKeycode alone drops the level, so on a
+	German layout '@' (AltGr+q) came out as Shift+q = 'Q' and '/' (Shift+7)
+	as '7' (#640). Falls back to XKeysymToKeycode for syms not on the layout. */
+	KeyCode X_KEYSYM_TO_KEYCODE(Display *display, KeySym sym, int *level) {
+		XkbStateRec state;
+		unsigned int group = 0;
+		if (XkbGetState(display, XkbUseCoreKbd, &state) == Success) {
+			group = state.group;
+		}
+		int min = 8, max = 255;
+		XDisplayKeycodes(display, &min, &max);
+		for (int lv = 0; lv < 4; lv++) {
+			for (int kc = min; kc <= max; kc++) {
+				if (XkbKeycodeToKeysym(display, (KeyCode)kc, group, lv) == sym) {
+					*level = lv;
+					return (KeyCode)kc;
+				}
+			}
+		}
+		*level = 0;
+		return XKeysymToKeycode(display, sym);
+	}
+
+	/* Keycode of the level-3 chooser (AltGr on pc layouts), 0 if none. */
+	KeyCode X_LEVEL3_KEYCODE(Display *display) {
+		KeyCode kc = XKeysymToKeycode(display, XK_ISO_Level3_Shift);
+		if (kc == 0) {
+			kc = XKeysymToKeycode(display, XK_Mode_switch);
+		}
+		return kc;
 	}
 #endif
 
@@ -274,13 +313,23 @@ int toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags, uintptr pid
 	}
 	const Bool is_press = down ? True : False; /* Just to be safe. */
 
+	/* The layout decides which modifiers the keysym needs (#640). */
+	int level = 0;
+	KeyCode kc = X_KEYSYM_TO_KEYCODE(display, code, &level);
+	if (level & 1) { flags |= MOD_SHIFT; }
+	KeyCode level3 = (level & 2) ? X_LEVEL3_KEYCODE(display) : 0;
+
 	/* Parse modifier keys. */
 	if (flags & MOD_META) { X_KEY_EVENT_WAIT(display, K_META, is_press); }
 	if (flags & MOD_ALT) { X_KEY_EVENT_WAIT(display, K_ALT, is_press); }
 	if (flags & MOD_CONTROL) { X_KEY_EVENT_WAIT(display, K_CONTROL, is_press); }
 	if (flags & MOD_SHIFT) { X_KEY_EVENT_WAIT(display, K_SHIFT, is_press); }
+	if (level3 != 0) {
+		X_KEYCODE_EVENT(display, level3, is_press);
+		microsleep(DEADBEEF_UNIFORM(0.0, 0.5));
+	}
 
-	return X_KEY_EVENT(display, code, is_press);
+	return X_KEYCODE_EVENT(display, kc, is_press);
 #endif
 }
 
@@ -290,31 +339,13 @@ int toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags, uintptr pid
 // 	toggleKeyCode(code, false, flags);
 // }
 
-#if defined(USE_X11)
-	bool toUpper(char c) {
-		if (isupper(c)) {
-			return true;
-		}
-
-		char *special = "~!@#$%^&*()_+{}|:\"<>?";
-		while (*special) {
-			if (*special == c) {
-				return true;
-			}
-			special++;
-		}
-		return false;
-	}
-#endif
-
 int toggleKey(char c, const bool down, MMKeyFlags flags, uintptr pid) {
 	MMKeyCode keyCode = keyCodeForChar(c);
 
-	#if defined(USE_X11)
-		if (toUpper(c) && !(flags & MOD_SHIFT)) {
-			flags |= MOD_SHIFT; /* Not sure if this is safe for all layouts. */
-		}
-	#else
+	/* On X11 toggleKeyCode reads the shift level off the layout; a fixed US
+	shifted-character list ("~!@#...") was what mistyped '@' and '/' on a
+	German layout (#640). */
+	#if !defined(USE_X11)
 		if (isupper(c) && !(flags & MOD_SHIFT)) {
 			flags |= MOD_SHIFT; /* Not sure if this is safe for all layouts. */
 		}

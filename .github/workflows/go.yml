@@ -44,7 +44,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y gcc libc6-dev libx11-dev xorg-dev libxtst-dev xvfb xsel xclip
+          sudo apt-get install -y gcc libc6-dev libx11-dev xorg-dev libxtst-dev xvfb xsel xclip x11-xkb-utils xkb-data
 
       - name: gofmt
         if: runner.os == 'Linux'
@@ -110,7 +110,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y xvfb xsel xclip sway wl-clipboard
+          sudo apt-get install -y xvfb xsel xclip sway wl-clipboard x11-xkb-utils xkb-data
 
       # Headless wlroots compositor for the wayland backend. If it fails to
       # come up, WAYLAND_DISPLAY stays empty and the wayland tests skip.

@@ -28,6 +28,25 @@ var KeySleep = 10
 // keyDelay is the time spent between a key press and its release.
 const keyDelay = 5 * time.Millisecond
 
+// Modifier bits returned by keysymToKeycode.
+const (
+	modShift  uint8 = 1 << 0
+	modLevel3 uint8 = 1 << 1 // ISO_Level3_Shift / Mode_switch (AltGr)
+)
+
+// modKeycodesFor lists the keycodes to hold for a modifier mask, skipping
+// modifiers the layout has no key for.
+func (c *conn) modKeycodesFor(mods uint8) []xproto.Keycode {
+	var out []xproto.Keycode
+	if mods&modLevel3 != 0 && c.level3Keycode != 0 {
+		out = append(out, c.level3Keycode)
+	}
+	if mods&modShift != 0 && c.shiftKeycode != 0 {
+		out = append(out, c.shiftKeycode)
+	}
+	return out
+}
+
 // sendKeycode generates a press or release for the given keycode via XTEST.
 func (c *conn) sendKeycode(kc xproto.Keycode, press bool) {
 	t := byte(xproto.KeyRelease)
@@ -37,19 +56,20 @@ func (c *conn) sendKeycode(kc xproto.Keycode, press bool) {
 	xtest.FakeInput(c.c, t, byte(kc), 0, c.root, 0, 0, 0)
 }
 
-// pressKeysym presses and releases a keysym, holding Shift if the keysym sits
-// in the shifted column of its keycode.
+// pressKeysym presses and releases a keysym, holding the modifiers (Shift,
+// AltGr) its level on the layout needs (#640).
 func (c *conn) pressKeysym(ks uint32) error {
-	kc, shift, ok := c.keysymToKeycode(ks)
+	kc, mods, ok := c.keysymToKeycode(ks)
 	if ok {
-		if shift && c.shiftKeycode != 0 {
-			c.sendKeycode(c.shiftKeycode, true)
+		held := c.modKeycodesFor(mods)
+		for _, m := range held {
+			c.sendKeycode(m, true)
 		}
 		c.sendKeycode(kc, true)
 		time.Sleep(keyDelay)
 		c.sendKeycode(kc, false)
-		if shift && c.shiftKeycode != 0 {
-			c.sendKeycode(c.shiftKeycode, false)
+		for i := len(held) - 1; i >= 0; i-- {
+			c.sendKeycode(held[i], false)
 		}
 		c.c.Sync()
 		return nil
@@ -153,6 +173,9 @@ func KeyTap(key string, args ...interface{}) error {
 	}
 	c.mu.Lock()
 	defer c.mu.Unlock()
+	if err := c.loadKeymap(); err != nil {
+		return err
+	}
 
 	ks, ok := keyKeysym(key)
 	if !ok {
@@ -195,15 +218,19 @@ func KeyToggle(key string, args ...interface{}) error {
 	}
 	c.mu.Lock()
 	defer c.mu.Unlock()
+	if err := c.loadKeymap(); err != nil {
+		return err
+	}
 
 	ks, ok := keyKeysym(key)
 	if !ok {
 		return ErrNotFound
 	}
-	kc, shift, ok := c.keysymToKeycode(ks)
+	kc, lvl, ok := c.keysymToKeycode(ks)
 	if !ok {
 		return ErrNotFound
 	}
+	levelMods := c.modKeycodesFor(lvl)
 
 	mods, down, _ := extractMods(args)
 	mkc := c.modKeycodes(mods)
@@ -212,14 +239,14 @@ func KeyToggle(key string, args ...interface{}) error {
 		for _, m := range mkc {
 			c.sendKeycode(m, true)
 		}
-		if shift && c.shiftKeycode != 0 {
-			c.sendKeycode(c.shiftKeycode, true)
+		for _, m := range levelMods {
+			c.sendKeycode(m, true)
 		}
 		c.sendKeycode(kc, true)
 	} else {
 		c.sendKeycode(kc, false)
-		if shift && c.shiftKeycode != 0 {
-			c.sendKeycode(c.shiftKeycode, false)
+		for i := len(levelMods) - 1; i >= 0; i-- {
+			c.sendKeycode(levelMods[i], false)
 		}
 		for i := len(mkc) - 1; i >= 0; i-- {
 			c.sendKeycode(mkc[i], false)
@@ -253,6 +280,9 @@ func Type(str string, args ...int) int {
 	}
 	c.mu.Lock()
 	defer c.mu.Unlock()
+	if err := c.loadKeymap(); err != nil {
+		return 0
+	}
 
 	n := 0
 	for _, r := range str {

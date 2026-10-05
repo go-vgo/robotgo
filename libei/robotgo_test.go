@@ -297,10 +297,12 @@ func TestCmdCtrl(t *testing.T) {
 // fakeInjector records injected pointer events; used to test position
 // tracking without a portal.
 type fakeInjector struct {
-	abs  []absCall
-	rel  []relCall
-	axis []axisCall
-	err  error
+	abs   []absCall
+	rel   []relCall
+	axis  []axisCall
+	syms  []int32 // keyboardKeysym calls (press and release)
+	codes []int32 // keyboardKeycode calls
+	err   error
 }
 
 type absCall struct {
@@ -315,9 +317,15 @@ type axisCall struct {
 	steps int32
 }
 
-func (f *fakeInjector) keyboardKeycode(int32, uint32) error { return nil }
-func (f *fakeInjector) keyboardKeysym(int32, uint32) error  { return nil }
-func (f *fakeInjector) pointerButton(int32, uint32) error   { return nil }
+func (f *fakeInjector) keyboardKeycode(c int32, _ uint32) error {
+	f.codes = append(f.codes, c)
+	return f.err
+}
+func (f *fakeInjector) keyboardKeysym(s int32, _ uint32) error {
+	f.syms = append(f.syms, s)
+	return f.err
+}
+func (f *fakeInjector) pointerButton(int32, uint32) error { return nil }
 func (f *fakeInjector) pointerAxisDiscrete(axis uint32, steps int32) error {
 	f.axis = append(f.axis, axisCall{axis, steps})
 	return f.err
@@ -690,6 +698,36 @@ func TestUnsupportedSurface(t *testing.T) {
 	}
 	if w, h := GetScreenSize(); w != 0 || h != 0 {
 		t.Errorf("GetScreenSize without streams: got (%d,%d), want (0,0)", w, h)
+	}
+}
+
+// #640: Type must send every rune as a keysym (layout independent), never as
+// a US-layout keycode, so '@' and '/' come out right on a German layout.
+func TestTypeUsesKeysyms(t *testing.T) {
+	inj := installFakeConn(t)
+	old := KeySleep
+	KeySleep = 0
+	t.Cleanup(func() { KeySleep = old })
+
+	const text = `test@example.org/ <>|{}\~7Qzy"'`
+	if n := Type(text); n != len(text) {
+		t.Fatalf("Type returned %d, want %d", n, len(text))
+	}
+	if len(inj.codes) != 0 {
+		t.Errorf("Type sent %d raw keycodes, want 0: %v", len(inj.codes), inj.codes)
+	}
+	var want []int32
+	for _, r := range text {
+		ks := runeToKeysym(r)
+		want = append(want, ks, ks) // press, release
+	}
+	if len(inj.syms) != len(want) {
+		t.Fatalf("got %d keysym events, want %d", len(inj.syms), len(want))
+	}
+	for i := range want {
+		if inj.syms[i] != want[i] {
+			t.Fatalf("keysym event %d = 0x%x, want 0x%x", i, inj.syms[i], want[i])
+		}
 	}
 }
 

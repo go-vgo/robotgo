@@ -52,6 +52,10 @@ const (
 	xkSuperL   = 0xffeb
 	xkSuperR   = 0xffec
 
+	// level-3 choosers (AltGr on pc layouts)
+	xkISOLevel3Shift = 0xfe03
+	xkModeSwitch     = 0xff7e
+
 	// keypad
 	xkKP0        = 0xffb0
 	xkKPDecimal  = 0xffae
@@ -216,23 +220,32 @@ func runeKeysym(r rune) uint32 {
 	return 0x01000000 | uint32(r)
 }
 
-// keysymToKeycode looks up the keycode (and whether Shift is required) that
-// produces the given keysym in the cached keyboard mapping.
-func (c *conn) keysymToKeycode(ks uint32) (xproto.Keycode, bool, bool) {
+// keysymToKeycode looks up the keycode that produces the given keysym in the
+// cached keyboard mapping and the modifiers needed to reach it (modShift,
+// modLevel3). In the XKB core-compatibility map a single-group key is laid out
+// as [L1 L2 L1 L2 L3 L4 L3 ...]: columns 0/1 are the plain and Shift levels,
+// 4/5 the AltGr and AltGr+Shift levels (#640: '@' on a German layout).
+// Columns 2/3 are skipped, they belong to a second group when one is set.
+func (c *conn) keysymToKeycode(ks uint32) (xproto.Keycode, uint8, bool) {
 	per := int(c.keysymsPerKeycode)
 	if per <= 0 {
-		return 0, false, false
+		return 0, 0, false
 	}
-	for i := 0; i*per+per <= len(c.keysyms); i++ {
-		col0 := uint32(c.keysyms[i*per])
-		if col0 == ks {
-			return c.minKeycode + xproto.Keycode(i), false, true
+	cols := []struct {
+		col  int
+		mods uint8
+	}{{0, 0}, {1, modShift}, {4, modLevel3}, {5, modLevel3 | modShift}}
+	for _, cm := range cols {
+		if cm.col >= per {
+			break
 		}
-		if per > 1 && uint32(c.keysyms[i*per+1]) == ks {
-			return c.minKeycode + xproto.Keycode(i), true, true
+		for i := 0; i*per+per <= len(c.keysyms); i++ {
+			if uint32(c.keysyms[i*per+cm.col]) == ks {
+				return c.minKeycode + xproto.Keycode(i), cm.mods, true
+			}
 		}
 	}
-	return 0, false, false
+	return 0, 0, false
 }
 
 // findScratchKeycode returns a keycode whose every column is NoSymbol (0); such

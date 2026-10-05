@@ -15,6 +15,7 @@
 package wayland
 
 import (
+	"strings"
 	"testing"
 )
 
@@ -202,6 +203,45 @@ func TestShiftedChars(t *testing.T) {
 		_, ok := keyToEvdev(baseKey)
 		if !ok {
 			t.Errorf("shiftedChars[%q] = %q, but %q has no evdev mapping", string(ch), baseKey, baseKey)
+		}
+	}
+}
+
+// #640: Type resolves characters against the pc+us keymap this backend
+// uploads to its virtual keyboard, so the evdev codes it sends mean the same
+// thing whatever layout the user runs. Pin the keymap and the resolution of
+// the characters that misfired on a German layout.
+func TestTypeUSKeymap(t *testing.T) {
+	if !strings.Contains(keymap, `"pc+us+inet(evdev)"`) {
+		t.Fatalf("virtual keyboard keymap is not pc+us:\n%s", keymap)
+	}
+	tests := []struct {
+		ch    rune
+		base  string
+		shift bool
+	}{
+		{'@', "2", true},
+		{'/', "/", false},
+		{'<', ",", true},
+		{'>', ".", true},
+		{'|', "\\", true},
+		{'{', "[", true},
+		{'~', "`", true},
+		{'"', "'", true},
+		{'\'', "'", false},
+		{'7', "7", false},
+		{'z', "z", false},
+	}
+	for _, tt := range tests {
+		base, shift := string(tt.ch), false
+		if s, ok := shiftedChars[tt.ch]; ok {
+			base, shift = s, true
+		}
+		if base != tt.base || shift != tt.shift {
+			t.Errorf("%q resolves to key %q shift=%v, want %q shift=%v", tt.ch, base, shift, tt.base, tt.shift)
+		}
+		if _, ok := keyToEvdev(base); !ok {
+			t.Errorf("%q: base key %q has no evdev code", tt.ch, base)
 		}
 	}
 }
