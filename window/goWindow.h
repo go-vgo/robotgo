@@ -17,8 +17,11 @@ bool min_window(uintptr pid, bool state, int8_t isPid){
 	#if defined(IS_MACOSX)
 		// return 0;
 		AXUIElementRef axID = AXUIElementCreateApplication(pid);
-		return AXUIElementSetAttributeValue(axID, kAXMinimizedAttribute, 
-										state ? kCFBooleanTrue : kCFBooleanFalse) == kAXErrorSuccess;
+		if (axID == NULL) { return false; }
+		AXError err = AXUIElementSetAttributeValue(axID, kAXMinimizedAttribute, 
+										state ? kCFBooleanTrue : kCFBooleanFalse);
+		CFRelease(axID);
+		return err == kAXErrorSuccess;
 	#elif defined(USE_X11)
 		// Ignore X errors
 		XDismissErrors();
@@ -26,7 +29,7 @@ bool min_window(uintptr pid, bool state, int8_t isPid){
 		return false;
 	#elif defined(IS_WINDOWS)
         HWND hwnd = getHwnd(pid, isPid);
-		if (hwnd == NULL) { return false; }
+		if (hwnd == NULL || !IsWindow(hwnd)) { return false; }
 		win_min(hwnd, state);
 		return true;
 	#endif
@@ -43,7 +46,7 @@ bool max_window(uintptr pid, bool state, int8_t isPid){
 		return false;
 	#elif defined(IS_WINDOWS)
         HWND hwnd = getHwnd(pid, isPid);
-		if (hwnd == NULL) { return false; }
+		if (hwnd == NULL || !IsWindow(hwnd)) { return false; }
 		win_max(hwnd, state);
 		return true;
 	#endif

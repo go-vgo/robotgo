@@ -16,16 +16,20 @@ package cliplock
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
 )
 
 // Lock blocks until tb holds the clipboard lock; it is released when tb
-// finishes. The OS drops the lock if the process dies.
+// finishes. The OS drops the lock if the process dies. It is not reentrant:
+// calling Lock again before tb finishes (e.g. in a subtest) deadlocks.
 func Lock(tb testing.TB) {
 	tb.Helper()
-	unlock, err := acquire(filepath.Join(os.TempDir(), "robotgo-clipboard.lock"))
+	// Per user: another user's lock file in a shared /tmp is not writable.
+	name := fmt.Sprintf("robotgo-clipboard-%d.lock", os.Getuid())
+	unlock, err := acquire(filepath.Join(os.TempDir(), name))
 	if err != nil {
 		tb.Fatal(err)
 	}

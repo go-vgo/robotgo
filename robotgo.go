@@ -1018,9 +1018,12 @@ func MinWindow(pid int, args ...interface{}) error {
 	if len(args) > 1 || NotPid {
 		isPid = 1
 	}
+	if runtime.GOOS != "darwin" && runtime.GOOS != "windows" {
+		return ErrNotSupported
+	}
 
 	if !C.min_window(C.uintptr(pid), C.bool(state), C.int8_t(isPid)) {
-		return errors.New("robotgo: min window failed")
+		return errMinWindow
 	}
 	return nil
 }
@@ -1038,9 +1041,12 @@ func MaxWindow(pid int, args ...interface{}) error {
 	if len(args) > 1 || NotPid {
 		isPid = 1
 	}
+	if runtime.GOOS != "windows" {
+		return ErrNotSupported
+	}
 
 	if !C.max_window(C.uintptr(pid), C.bool(state), C.int8_t(isPid)) {
-		return errors.New("robotgo: max window failed")
+		return errMaxWindow
 	}
 	return nil
 }
@@ -1061,6 +1067,10 @@ func CloseWindow(args ...int) error {
 	if len(args) > 1 || NotPid {
 		isPid = 1
 	}
+	pid, isPid, err := windowArg(pid, isPid)
+	if err != nil {
+		return err
+	}
 
 	if !C.close_window_by_PId(C.uintptr(pid), C.int8_t(isPid)) {
 		return errCloseWindow
@@ -1068,7 +1078,15 @@ func CloseWindow(args ...int) error {
 	return nil
 }
 
-var errCloseWindow = errors.New("robotgo: close window failed")
+// ErrNotSupported is returned by window operations this platform's
+// Cgo backend does not implement.
+var ErrNotSupported = errors.New("robotgo: operation not supported")
+
+var (
+	errMinWindow   = errors.New("robotgo: min window failed")
+	errMaxWindow   = errors.New("robotgo: max window failed")
+	errCloseWindow = errors.New("robotgo: close window failed")
+)
 
 // SetHandle set the window handle
 func SetHandle(hwnd int) {

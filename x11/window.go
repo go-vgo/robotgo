@@ -242,19 +242,24 @@ func MaxWindow(pid int, args ...interface{}) error {
 }
 
 // CloseWindow closes the window. With no argument it closes the active window;
-// otherwise it closes the first window owned by pid (args[0]).
+// otherwise it closes the first window owned by pid (args[0]), and pid <= 0
+// (e.g. a failed lookup) returns ErrNotFound instead of the active window.
 func CloseWindow(args ...int) error {
 	c, err := ensureConn()
 	if err != nil {
 		return err
 	}
-	pid := 0
-	if len(args) > 0 {
-		pid = args[0]
+	var w xproto.Window
+	if len(args) == 0 {
+		w, err = ewmh.ActiveWindowGet(c.xu)
+	} else {
+		w, err = c.xidByPid(args[0])
 	}
-	w, err := c.targetWindow(pid)
 	if err != nil {
 		return err
+	}
+	if w == 0 {
+		return ErrNotFound
 	}
 	return ewmh.CloseWindow(c.xu, w)
 }

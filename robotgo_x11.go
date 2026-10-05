@@ -156,6 +156,22 @@ func GetXidFromPid(xu *xgbutil.XUtil, pid int) (xproto.Window, error) {
 	return GetXidByPid(xu, pid)
 }
 
+// windowArg resolves pid to an X window id for the C window helpers, which
+// treat their argument as a window id; isPid != 0 means it already is one.
+func windowArg(pid, isPid int) (int, int, error) {
+	if isPid != 0 {
+		return pid, isPid, nil
+	}
+	if xu == nil {
+		var err error
+		if xu, err = xgbutil.NewConn(); err != nil {
+			return 0, 0, err
+		}
+	}
+	xid, err := GetXidByPid(xu, pid)
+	return int(xid), 1, err
+}
+
 // GetXidByPid get the xid from pid
 func GetXidByPid(xu *xgbutil.XUtil, pid int) (xproto.Window, error) {
 	windows, err := ewmh.ClientListGet(xu)

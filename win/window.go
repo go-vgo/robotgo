@@ -15,6 +15,7 @@
 package win
 
 import (
+	"fmt"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -196,9 +197,10 @@ func GetClient(pid int, isHandle bool) (int, int, int, int) {
 	return int(p.X), int(p.Y), int(r.Right - r.Left), int(r.Bottom - r.Top)
 }
 
-// MinWindow minimizes (or restores, if the bool arg is false) a window.
+// MinWindow minimizes (or restores, if the bool arg is false) pid's window;
+// pid <= 0 returns ErrNotFound instead of acting on the foreground window.
 func MinWindow(pid int, args ...interface{}) error {
-	hwnd := targetWindow(pid)
+	hwnd := pidWindow(pid)
 	if hwnd == 0 {
 		return ErrNotFound
 	}
@@ -216,9 +218,10 @@ func MinWindow(pid int, args ...interface{}) error {
 	return nil
 }
 
-// MaxWindow maximizes (or restores, if the bool arg is false) a window.
+// MaxWindow maximizes (or restores, if the bool arg is false) pid's window;
+// pid <= 0 returns ErrNotFound instead of acting on the foreground window.
 func MaxWindow(pid int, args ...interface{}) error {
-	hwnd := targetWindow(pid)
+	hwnd := pidWindow(pid)
 	if hwnd == 0 {
 		return ErrNotFound
 	}
@@ -237,20 +240,31 @@ func MaxWindow(pid int, args ...interface{}) error {
 }
 
 // CloseWindow closes a window by posting WM_CLOSE. With no args the
-// foreground window is closed; the first arg may specify a pid.
+// foreground window is closed; otherwise the first arg is a pid, and
+// pid <= 0 (e.g. a failed lookup) returns ErrNotFound. A nil error means the
+// request was sent, not that the window has closed.
 func CloseWindow(args ...int) error {
-	pid := 0
-	if len(args) > 0 {
-		pid = args[0]
+	var hwnd win.HWND
+	if len(args) == 0 {
+		hwnd = win.GetForegroundWindow()
+	} else {
+		hwnd = pidWindow(args[0])
 	}
-	hwnd := targetWindow(pid)
 	if hwnd == 0 {
 		return ErrNotFound
 	}
 	if r, _, err := procPostMessageW.Call(uintptr(hwnd), uintptr(wmClose), 0, 0); r == 0 {
-		return err
+		return fmt.Errorf("robotgo: PostMessageW(WM_CLOSE): %w", err)
 	}
 	return nil
+}
+
+// pidWindow is targetWindow without the pid <= 0 foreground fallback.
+func pidWindow(pid int) win.HWND {
+	if pid <= 0 {
+		return 0
+	}
+	return targetWindow(pid)
 }
 
 // CheckAccess reports whether input injection is permitted. Windows has no

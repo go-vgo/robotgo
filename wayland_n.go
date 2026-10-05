@@ -47,6 +47,7 @@ import (
 var (
 	ErrNotSupported = wl.ErrNotSupported
 	ErrNoConnection = wl.ErrNoConnection
+	ErrNotFound     = wl.ErrNotFound
 )
 
 // --- General ---

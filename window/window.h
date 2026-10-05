@@ -465,14 +465,17 @@ bool close_main_window () {
 
 bool close_window_by_PId(uintptr pid, int8_t isPid){
 	MData win = set_handle_pid(pid, isPid);
-	return close_window_by_Id(win);
+	bool ok = close_window_by_Id(win);
+#if defined(IS_MACOSX)
+	if (win.AxID != NULL) { CFRelease(win.AxID); }
+#endif
+	return ok;
 }
 
 // CloseWindow
 bool close_window_by_Id(MData m_data){
-	// Check window validity
-	if (!is_valid()) { return false; }
 #if defined(IS_MACOSX)
+	if (m_data.AxID == NULL) { return false; }
 	AXUIElementRef b = NULL;
 	// Retrieve the close button of this window
 	if (AXUIElementCopyAttributeValue(m_data.AxID, kAXCloseButtonAttribute, (CFTypeRef*) &b) 
@@ -484,18 +487,22 @@ bool close_window_by_Id(MData m_data){
 	CFRelease(b);
 	return err == kAXErrorSuccess;
 #elif defined(USE_X11)
+	if (m_data.XWin == 0) { return false; }
 	Display *rDisplay = XOpenDisplay(NULL);
 	if (rDisplay == NULL) { return false; }
-	// Ignore X errors
-	XDismissErrors();
-
-	// Close the window
-	XDestroyWindow(rDisplay, m_data.XWin);
+	// Validate m_data itself; the no-op handler, held through XSync on this
+	// display, keeps a BadWindow from exiting the process.
+	XErrorHandler old = XSetErrorHandler(XHandleError);
+	XWindowAttributes attr;
+	bool ok = XGetWindowAttributes(rDisplay, m_data.XWin, &attr) != 0;
+	if (ok) { XDestroyWindow(rDisplay, m_data.XWin); }
+	XSync(rDisplay, False);
+	XSetErrorHandler(old);
 	XCloseDisplay(rDisplay);
-	return true;
+	return ok;
 #elif defined(IS_WINDOWS)
 	// A NULL hwnd would post to this thread's queue and report success.
-	if (m_data.HWnd == NULL) { return false; }
+	if (m_data.HWnd == NULL || !IsWindow(m_data.HWnd)) { return false; }
 	return PostMessage(m_data.HWnd, WM_CLOSE, 0, 0) != 0;
 #endif
 }

@@ -112,6 +112,9 @@ var ErrNotSupported = errors.New("robotgo: required wayland protocol not support
 // ErrNoConnection is returned when the Wayland connection is not established.
 var ErrNoConnection = errors.New("robotgo: wayland connection not established")
 
+// ErrNotFound is returned when no activated window is available.
+var ErrNotFound = errors.New("robotgo: window not found")
+
 // ensureConn lazily initializes the global Wayland connection, re-establishing
 // it if it was never created or has since been closed. A mutex (instead of
 // sync.Once) keeps the backend recoverable after a failed connect or Close.

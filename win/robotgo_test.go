@@ -320,6 +320,16 @@ func TestWindowForHandle(t *testing.T) {
 	if err := CloseWindow(bogus); err != ErrNotFound {
 		t.Errorf("CloseWindow(bogus): got %v, want ErrNotFound", err)
 	}
+	// pid <= 0 (e.g. a failed FindIds) must not hit the foreground window.
+	if err := CloseWindow(0); err != ErrNotFound {
+		t.Errorf("CloseWindow(0): got %v, want ErrNotFound", err)
+	}
+	if err := MinWindow(0); err != ErrNotFound {
+		t.Errorf("MinWindow(0): got %v, want ErrNotFound", err)
+	}
+	if err := MaxWindow(-1); err != ErrNotFound {
+		t.Errorf("MaxWindow(-1): got %v, want ErrNotFound", err)
+	}
 	if x, y, w, h := GetBounds(bogus, true); x|y|w|h != 0 {
 		t.Errorf("GetBounds(bogus, handle): got %d,%d,%d,%d", x, y, w, h)
 	}

@@ -83,9 +83,9 @@ func ActiveName(name string) error {
 	return c.do(func() error { return handle.Activate(c.seat) })
 }
 
-// withActive runs fn on the active toplevel's handle; it returns
-// ErrNotSupported when the compositor lacks foreign-toplevel or no
-// toplevel exists.
+// withActive runs fn on the activated toplevel's handle. It returns
+// ErrNotSupported without foreign-toplevel and ErrNotFound when no toplevel
+// is activated (activeToplevel's fallback could pick an arbitrary window).
 func withActive(fn func(h *wlr_foreign_toplevel.ZwlrForeignToplevelHandleV1) error) error {
 	c, err := ensureConn()
 	if err != nil {
@@ -95,8 +95,11 @@ func withActive(fn func(h *wlr_foreign_toplevel.ZwlrForeignToplevelHandleV1) err
 		return ErrNotSupported
 	}
 	info := c.activeToplevel()
-	if info == nil {
-		return ErrNotSupported
+	c.mu.Lock()
+	ok := info != nil && isActivated(info.states)
+	c.mu.Unlock()
+	if !ok {
+		return ErrNotFound
 	}
 	return c.do(func() error { return fn(info.handle) })
 }
@@ -135,8 +138,13 @@ func MaxWindow(pid int, args ...interface{}) error {
 	})
 }
 
-// CloseWindow closes the active window.
+// CloseWindow closes the active window. A pid argument returns
+// ErrNotSupported: the protocol has no pid mapping, and closing the active
+// window instead could close another app's window.
 func CloseWindow(args ...int) error {
+	if len(args) > 0 {
+		return ErrNotSupported
+	}
 	return withActive(func(h *wlr_foreign_toplevel.ZwlrForeignToplevelHandleV1) error {
 		return h.Close()
 	})

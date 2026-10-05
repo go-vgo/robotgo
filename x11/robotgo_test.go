@@ -508,4 +508,8 @@ func TestWindowOpsError(t *testing.T) {
 	if err := CloseWindow(bogus); err == nil {
 		t.Error("CloseWindow(bogus): got nil, want error")
 	}
+	// pid 0 (e.g. a failed FindIds) must not close the active window.
+	if err := CloseWindow(0); err == nil {
+		t.Error("CloseWindow(0): got nil, want error")
+	}
 }
