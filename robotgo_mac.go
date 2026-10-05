@@ -29,6 +29,17 @@ static double eventSourceSuppression(int mm) {
 	CFRelease(src);
 	return v;
 }
+
+// Type of the event CGEventCreateKeyboardEvent builds for a keycode, without
+// posting it: kCGEventKeyDown/KeyUp for ordinary keys, kCGEventFlagsChanged
+// for modifiers (which toggleKeyCode must not override).
+static int keyboardEventType(int code, int down) {
+	CGEventRef ev = CGEventCreateKeyboardEvent(NULL, (CGKeyCode)code, down ? true : false);
+	if (ev == NULL) { return -1; }
+	int t = (int)CGEventGetType(ev);
+	CFRelease(ev);
+	return t;
+}
 */
 import "C"
 
@@ -45,4 +56,14 @@ func eventSourceSuppression(mm bool) float64 {
 		v = 1
 	}
 	return float64(C.eventSourceSuppression(C.int(v)))
+}
+
+// keyboardEventType reports the CGEventType CGEventCreateKeyboardEvent picks
+// for a keycode (10 KeyDown, 11 KeyUp, 12 FlagsChanged); nothing is posted.
+func keyboardEventType(code int, down bool) int {
+	d := 0
+	if down {
+		d = 1
+	}
+	return int(C.keyboardEventType(C.int(code), C.int(d)))
 }

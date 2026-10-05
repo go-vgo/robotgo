@@ -2,7 +2,7 @@
 
 Go native cross-platform desktop automation: mouse, keyboard, screen, bitmap, process, window handle, clipboard, and global event listener. Supports macOS, Windows, Linux; amd64 and arm64.
 
-Module: `github.com/go-vgo/robotgo` — `go.mod` declares `go 1.26.0` (GitHub Actions sets up Go 1.26.x).
+Module: `github.com/go-vgo/robotgo` — `go.mod` declares `go 1.26.0` (GitHub Actions sets up Go 1.27.x).
 
 ## Build/Test/Lint Commands
 
@@ -22,7 +22,7 @@ Prerequisites (default Cgo backend): `GCC` must be installed. `CGO_ENABLED=1` (d
 - **Pure-Go cross build**: `CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -tags mac .`; `GOOS` must match the backend — `GOOS=windows` for `win`, `GOOS=linux` for `x11`/`wayland`/`libei` (a mismatched `GOOS` leaves the root package with no backend). Build the module root `.`, not `./...` — `examples/` and some subpackages need the Cgo backend.
 
 There is no Makefile / Taskfile / linter config. CI:
-- `.github/workflows/go.yml` (Go 1.26.x) — job `cgo` (macOS/Windows/Linux): `go build -v ./...`, `go vet .`, `go test -v robot_info_test.go` + `go test -v .` (Linux: apt X11/xvfb deps, `xvfb-run go test -v ./...`); job `purego` (`CGO_ENABLED=0`, vet + test of `.` and the backend pkg for every tag on its native OS: `mac`/`purego` on macOS, `win`/`purego` on Windows, `x11`, `purego,x11`, `wayland`, `purego`, `libei`, `purego,libei` on Linux); job `cross` (`CGO_ENABLED=0` cross-build of `.` for every backend tag × GOOS/GOARCH); job `fmt` (`gofmt -l .` must be empty).
+- `.github/workflows/go.yml` (Go 1.27.x; runs on push to `master` and on `pull_request`, newer run cancels older via `concurrency`; `permissions: contents: read`, checkouts use `persist-credentials: false`) — job `cgo` (macOS/Windows/Linux): `go build ./...`, `go vet .`, `go test -v .` (Linux: apt X11/xvfb deps, `gofmt -l .` must be empty, `xvfb-run go test -v ./...`); job `purego` (`CGO_ENABLED=0`, one job per OS: vet + test the backend pkgs, then `.` once per tag — `mac`/`purego` on macOS, `win`/`purego` on Windows, `x11`, `purego,x11`, `wayland`, `purego`, `libei`, `purego,libei` on Linux); job `cross` (`CGO_ENABLED=0` build of `.` for the GOOS/GOARCH pairs the purego job does not cover: darwin amd64/arm64 `mac`, windows arm64/386 `win`, linux arm64 `x11`/`wayland`/`libei`).
 - `.circleci/config.yml` — Linux Cgo full tests: `xvfb-run go test -v ./...`.
 
 The old `appveyor.yml` has been removed.

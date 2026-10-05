@@ -32,3 +32,27 @@ func TestEventSourceNoLocalSuppression(t *testing.T) {
 	tt.True(t, def > 0, "default interval")
 	tt.Equal(t, 0.0, eventSourceSuppression(true))
 }
+
+// CGEventCreateKeyboardEvent picks kCGEventFlagsChanged for modifier keycodes
+// and KeyDown/KeyUp for everything else. toggleKeyCode relies on that and must
+// not force the type (which left cmd/alt/shift stuck down). Create-only, no
+// events are posted.
+func TestKeyboardEventTypeForModifiers(t *testing.T) {
+	const keyDown, keyUp, flagsChanged = 10, 11, 12
+
+	if keyboardEventType(0, true) < 0 {
+		t.Skip("CGEventCreateKeyboardEvent returned nil")
+	}
+	for _, name := range []string{KeyA, Enter, Space, F1, Num0} {
+		code, err := checkKeyCodes(name)
+		tt.Nil(t, err)
+		tt.Equal(t, keyDown, keyboardEventType(int(code), true), name)
+		tt.Equal(t, keyUp, keyboardEventType(int(code), false), name)
+	}
+	for _, name := range []string{Cmd, CmdR, Alt, AltR, Ctrl, CtrlR, Shift, ShiftR, Capslock, Fn} {
+		code, err := checkKeyCodes(name)
+		tt.Nil(t, err)
+		tt.Equal(t, flagsChanged, keyboardEventType(int(code), true), name)
+		tt.Equal(t, flagsChanged, keyboardEventType(int(code), false), name)
+	}
+}

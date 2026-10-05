@@ -69,8 +69,9 @@ jobs:
         run: xvfb-run go test -v ./...
 
   # Pure-Go backends (CGO_ENABLED=0) vetted and tested on their native OS:
-  # the backend packages, then the root package once per backend tag and
-  # once with the `purego` shortcut. One job per OS loops over its tags.
+  # the backend packages, then the root package once per backend tag. One
+  # job per OS; Linux covers x11, wayland and libei. The `purego` shortcut
+  # only aliases these tags, so it is build-checked in the cross job.
   purego:
     name: purego (${{ matrix.os }})
     strategy:
@@ -79,13 +80,13 @@ jobs:
         include:
           - os: macos-latest
             pkgs: ./darwin
-            tags: mac purego
+            tags: mac
           - os: windows-latest
             pkgs: ./win
-            tags: win purego
+            tags: win
           - os: ubuntu-latest
             pkgs: ./x11 ./wayland ./libei
-            tags: x11 purego,x11 wayland purego libei purego,libei
+            tags: x11 wayland libei
     runs-on: ${{ matrix.os }}
     env:
       CGO_ENABLED: 0
@@ -114,8 +115,8 @@ jobs:
           done
 
   # The purego job already compiles each backend for its native GOOS/GOARCH;
-  # this builds the remaining GOOS/GOARCH pairs from one host (CGO_ENABLED=0,
-  # build only, no tests).
+  # this builds the remaining GOOS/GOARCH pairs and the `purego` shortcut
+  # spellings from one host (CGO_ENABLED=0, build only, no tests).
   cross:
     name: cross
     runs-on: ubuntu-latest
@@ -136,9 +137,10 @@ jobs:
       - name: Build
         run: |
           for target in \
-            darwin/amd64/mac darwin/arm64/mac \
-            windows/arm64/win windows/386/win \
-            linux/arm64/x11 linux/arm64/wayland linux/arm64/libei; do
+            darwin/amd64/mac darwin/arm64/mac darwin/arm64/purego \
+            windows/arm64/win windows/386/win windows/amd64/purego \
+            linux/arm64/x11 linux/arm64/wayland linux/arm64/libei \
+            linux/amd64/purego linux/amd64/purego,x11 linux/amd64/purego,libei; do
             IFS=/ read -r goos goarch tags <<< "$target"
             echo "$goos/$goarch -tags $tags"
             GOOS=$goos GOARCH=$goarch go build -tags "$tags" .

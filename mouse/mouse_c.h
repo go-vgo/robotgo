@@ -97,7 +97,10 @@ void moveMouse(MMPointInt32 point){
 		CGEventRef move = CGEventCreateMouseEvent(source, kCGEventMouseMoved, 
 								CGPointFromMMPointInt32(point), kCGMouseButtonLeft);
 
-		calculateDeltas(&move, point);
+		/* No calculateDeltas(): on current macOS the HID tap applies the delta
+		fields as accelerated relative motion on top of the absolute point,
+		so the cursor landed a few px off and MoveSmooth kept drifting. */
+		// calculateDeltas(&drag, point);
 		CGEventPost(kCGHIDEventTap, move);
 		CFRelease(move);
 		CFRelease(source);
@@ -118,8 +121,8 @@ void dragMouse(MMPointInt32 point, const MMMouseButton button){
 		CGEventRef drag = CGEventCreateMouseEvent(source, dragType, 
 								CGPointFromMMPointInt32(point), (CGMouseButton)button);
 
-		calculateDeltas(&drag, point);
-
+		/* No calculateDeltas(), see moveMouse(). */
+		// calculateDeltas(&drag, point);
 		CGEventPost(kCGHIDEventTap, drag);
 		CFRelease(drag);
 		CFRelease(source);
@@ -301,7 +304,10 @@ static double crude_hypot(double x, double y){
 	double big = fabs(x); /* max(|x|, |y|) */
 	double small = fabs(y); /* min(|x|, |y|) */
 
-	if (big > small) {
+	/* Swap only when they are the wrong way round. Swapping when big was
+	already the max returned 0.41*max + min, so the "unit" velocity was up
+	to 2.4px long, steps overshot the target and the loop never ended. */
+	if (big < small) {
 		double temp = big;
 		big = small;
 		small = temp;
