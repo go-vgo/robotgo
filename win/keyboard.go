@@ -128,7 +128,8 @@ var vkMap = map[string]uint16{
 	"insert": win.VK_INSERT,
 
 	"shift": win.VK_SHIFT, "shiftl": win.VK_LSHIFT, "shiftr": win.VK_RSHIFT,
-	"ctrl": win.VK_CONTROL, "control": win.VK_CONTROL,
+	"right_shift": win.VK_RSHIFT,
+	"ctrl":        win.VK_CONTROL, "control": win.VK_CONTROL,
 	"ctrll": win.VK_LCONTROL, "ctrlr": win.VK_RCONTROL,
 	"alt": win.VK_MENU, "altl": win.VK_LMENU, "altr": win.VK_RMENU,
 	"cmd": win.VK_LWIN, "command": win.VK_LWIN, "cmdl": win.VK_LWIN, "win": win.VK_LWIN,
@@ -138,7 +139,7 @@ var vkMap = map[string]uint16{
 	"print":    win.VK_SNAPSHOT, "printscreen": win.VK_SNAPSHOT,
 	"menu":     win.VK_APPS,
 	"num_lock": win.VK_NUMLOCK, "scroll_lock": win.VK_SCROLL,
-	"pause": win.VK_PAUSE,
+	"pause": win.VK_PAUSE, "pause_break": win.VK_PAUSE,
 
 	"f1": win.VK_F1, "f2": win.VK_F2, "f3": win.VK_F3, "f4": win.VK_F4,
 	"f5": win.VK_F5, "f6": win.VK_F6, "f7": win.VK_F7, "f8": win.VK_F8,
@@ -154,6 +155,12 @@ var vkMap = map[string]uint16{
 	"num.": win.VK_DECIMAL, "num+": win.VK_ADD, "num-": win.VK_SUBTRACT,
 	"num*": win.VK_MULTIPLY, "num/": win.VK_DIVIDE, "num_enter": win.VK_RETURN,
 	"num_clear": win.VK_CLEAR,
+	"num_equal": win.VK_OEM_PLUS, // same as the Cgo K_NUMPAD_EQUAL
+	// deprecated numpad_* aliases (see keyNames in the root key.go)
+	"numpad_0": win.VK_NUMPAD0, "numpad_1": win.VK_NUMPAD1, "numpad_2": win.VK_NUMPAD2,
+	"numpad_3": win.VK_NUMPAD3, "numpad_4": win.VK_NUMPAD4, "numpad_5": win.VK_NUMPAD5,
+	"numpad_6": win.VK_NUMPAD6, "numpad_7": win.VK_NUMPAD7, "numpad_8": win.VK_NUMPAD8,
+	"numpad_9": win.VK_NUMPAD9, "numpad_lock": win.VK_NUMLOCK,
 
 	"audio_mute": win.VK_VOLUME_MUTE, "audio_vol_down": win.VK_VOLUME_DOWN,
 	"audio_vol_up": win.VK_VOLUME_UP, "audio_play": win.VK_MEDIA_PLAY_PAUSE,

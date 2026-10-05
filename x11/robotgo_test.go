@@ -51,6 +51,10 @@ func TestKeyKeysym(t *testing.T) {
 		{"up", xkUp, true},
 		{"num5", xkKP0 + 5, true},
 		{"audio_mute", xkAudioMute, true},
+		{"audio_random", 0x1008ff99, true},
+		{"right_shift", xkShiftR, true},
+		{"numpad_7", xkKP0 + 7, true},
+		{"numpad_lock", xkNumLock, true},
 		{"", 0, false},
 		{"no_such_key", 0, false},
 	}

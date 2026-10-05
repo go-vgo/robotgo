@@ -56,7 +56,11 @@ func TestLinuxNumpadKeyCodes(t *testing.T) {
 }
 
 func TestGetToggleArgs(t *testing.T) {
-	pid, arr := getToggleArgs("up", []string{"alt", "cmd"})
+	pid, arr := getToggleArgs([]string{"alt", "cmd"})
+	tt.Equal(t, 0, pid)
+	tt.Equal(t, []string{"alt", "cmd"}, arr)
+
+	pid, arr = getToggleArgs("up", []string{"alt", "cmd"})
 	tt.Equal(t, 0, pid)
 	tt.Equal(t, []string{"up", "alt", "cmd"}, arr)
 
@@ -64,15 +68,13 @@ func TestGetToggleArgs(t *testing.T) {
 	tt.Equal(t, 123, pid)
 	tt.Equal(t, []string{"ctrl", "shift"}, arr)
 
-	// Shift appended by appendShift after a []string must not be dropped.
+	// appendShift appends "shift" after a []string; it must be kept.
 	key, args := appendShift("A", 0, []string{"ctrl"})
 	_, arr = getToggleArgs(args...)
 	tt.Equal(t, "a", key)
 	tt.Equal(t, []string{"ctrl", "shift"}, arr)
 
-	down, mods := getKeyDown(keyArgs([]interface{}{[]string{"up", "ctrl"}}))
-	tt.False(t, down)
-	tt.Equal(t, []string{"ctrl"}, mods)
+	tt.Equal(t, C.MMKeyFlags(C.MOD_CONTROL|C.MOD_SHIFT), getFlagsFromValue([]string{"ctrl", "shiftr", "x"}))
 }
 
 func TestFormatClickErrorKey(t *testing.T) {

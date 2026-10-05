@@ -76,6 +76,7 @@ const (
 	xkAudioRewind      = 0x1008ff3e
 	xkAudioForward     = 0x1008ff97
 	xkAudioRepeat      = 0x1008ff3d
+	xkAudioRandomPlay  = 0x1008ff99
 	xkMonBrightnessUp  = 0x1008ff02
 	xkMonBrightnessDn  = 0x1008ff03
 	xkKbdLightOnOff    = 0x1008ff04
@@ -126,6 +127,8 @@ var specialKeysyms = map[string]uint32{
 	"shift":   xkShiftL,
 	"shiftl":  xkShiftL,
 	"shiftr":  xkShiftR,
+	// legacy alias kept for parity with the Cgo keyNames table
+	"right_shift": xkShiftR,
 
 	// audio / media
 	"audio_mute":     xkAudioMute,
@@ -139,6 +142,7 @@ var specialKeysyms = map[string]uint32{
 	"audio_rewind":   xkAudioRewind,
 	"audio_forward":  xkAudioForward,
 	"audio_repeat":   xkAudioRepeat,
+	"audio_random":   xkAudioRandomPlay,
 
 	// brightness / backlight
 	"lights_mon_up":     xkMonBrightnessUp,
@@ -166,6 +170,19 @@ var specialKeysyms = map[string]uint32{
 	"num_enter": xkKPEnter,
 	"num_equal": xkKPEqual,
 	"num_lock":  xkNumLock,
+
+	// deprecated numpad_* aliases (see keyNames in the root key.go)
+	"numpad_0":    xkKP0 + 0,
+	"numpad_1":    xkKP0 + 1,
+	"numpad_2":    xkKP0 + 2,
+	"numpad_3":    xkKP0 + 3,
+	"numpad_4":    xkKP0 + 4,
+	"numpad_5":    xkKP0 + 5,
+	"numpad_6":    xkKP0 + 6,
+	"numpad_7":    xkKP0 + 7,
+	"numpad_8":    xkKP0 + 8,
+	"numpad_9":    xkKP0 + 9,
+	"numpad_lock": xkNumLock,
 }
 
 // keyKeysym resolves a robotgo key name to an X11 keysym.
