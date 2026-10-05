@@ -47,6 +47,7 @@ import (
 var (
 	ErrNotSupported = wl.ErrNotSupported
 	ErrNoConnection = wl.ErrNoConnection
+	ErrNotFound     = wl.ErrNotFound
 )
 
 // --- General ---
@@ -183,13 +184,13 @@ func GetActiveApp() (string, string, int) { return wl.GetActiveApp() }
 func ActiveName(name string) error { return wl.ActiveName(name) }
 
 // MinWindow set the window min.
-func MinWindow(pid int, args ...any) { wl.MinWindow(pid, args...) }
+func MinWindow(pid int, args ...any) error { return wl.MinWindow(pid, args...) }
 
 // MaxWindow set the window max.
-func MaxWindow(pid int, args ...any) { wl.MaxWindow(pid, args...) }
+func MaxWindow(pid int, args ...any) error { return wl.MaxWindow(pid, args...) }
 
 // CloseWindow close the window.
-func CloseWindow(args ...int) { wl.CloseWindow(args...) }
+func CloseWindow(args ...int) error { return wl.CloseWindow(args...) }
 
 // ActivePid active the window by pid; args are accepted for API parity.
 func ActivePid(pid int, args ...int) error { return wl.ActivePid(pid, args...) }

@@ -19,6 +19,7 @@
 package robotgo
 
 import (
+	"errors"
 	"runtime"
 	"strings"
 	"syscall"
@@ -307,6 +308,24 @@ func TestInputUTFX11(t *testing.T) {
 			t.Errorf("inputUTF(%q) succeeded for an invalid keysym", sym)
 		}
 	}
+}
+
+// Window ops must report failure for a pid with no window instead of
+// silently doing nothing.
+// Unimplemented ops must say so (ErrNotSupported) rather than look like a
+// transient failure.
+func TestWindowOpsBogusPid(t *testing.T) {
+	const bogus = 0x7ffffff0
+	check := func(name string, err error, unsupported bool) {
+		t.Helper()
+		if err == nil || unsupported != errors.Is(err, ErrNotSupported) {
+			t.Errorf("%s(bogus) = %v, want error with unsupported=%v", name, err, unsupported)
+		}
+	}
+	x11 := runtime.GOOS != "darwin" && runtime.GOOS != "windows"
+	check("MinWindow", MinWindow(bogus), x11)
+	check("MaxWindow", MaxWindow(bogus, false), runtime.GOOS != "windows")
+	check("CloseWindow", CloseWindow(bogus), false)
 }
 
 func TestTypeStrInvalidKeysymX11(t *testing.T) {

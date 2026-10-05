@@ -15,6 +15,7 @@
 package win
 
 import (
+	"fmt"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -196,11 +197,12 @@ func GetClient(pid int, isHandle bool) (int, int, int, int) {
 	return int(p.X), int(p.Y), int(r.Right - r.Left), int(r.Bottom - r.Top)
 }
 
-// MinWindow minimizes (or restores, if the bool arg is false) a window.
-func MinWindow(pid int, args ...interface{}) {
-	hwnd := targetWindow(pid)
+// MinWindow minimizes (or restores, if the bool arg is false) pid's window;
+// pid <= 0 returns ErrNotFound instead of acting on the foreground window.
+func MinWindow(pid int, args ...interface{}) error {
+	hwnd := pidWindow(pid)
 	if hwnd == 0 {
-		return
+		return ErrNotFound
 	}
 	minimize := true
 	if len(args) > 0 {
@@ -213,13 +215,15 @@ func MinWindow(pid int, args ...interface{}) {
 	} else {
 		win.ShowWindow(hwnd, win.SW_RESTORE)
 	}
+	return nil
 }
 
-// MaxWindow maximizes (or restores, if the bool arg is false) a window.
-func MaxWindow(pid int, args ...interface{}) {
-	hwnd := targetWindow(pid)
+// MaxWindow maximizes (or restores, if the bool arg is false) pid's window;
+// pid <= 0 returns ErrNotFound instead of acting on the foreground window.
+func MaxWindow(pid int, args ...interface{}) error {
+	hwnd := pidWindow(pid)
 	if hwnd == 0 {
-		return
+		return ErrNotFound
 	}
 	maximize := true
 	if len(args) > 0 {
@@ -232,20 +236,35 @@ func MaxWindow(pid int, args ...interface{}) {
 	} else {
 		win.ShowWindow(hwnd, win.SW_RESTORE)
 	}
+	return nil
 }
 
 // CloseWindow closes a window by posting WM_CLOSE. With no args the
-// foreground window is closed; the first arg may specify a pid.
-func CloseWindow(args ...int) {
-	pid := 0
-	if len(args) > 0 {
-		pid = args[0]
+// foreground window is closed; otherwise the first arg is a pid, and
+// pid <= 0 (e.g. a failed lookup) returns ErrNotFound. A nil error means the
+// request was sent, not that the window has closed.
+func CloseWindow(args ...int) error {
+	var hwnd win.HWND
+	if len(args) == 0 {
+		hwnd = win.GetForegroundWindow()
+	} else {
+		hwnd = pidWindow(args[0])
 	}
-	hwnd := targetWindow(pid)
 	if hwnd == 0 {
-		return
+		return ErrNotFound
 	}
-	procPostMessageW.Call(uintptr(hwnd), uintptr(wmClose), 0, 0)
+	if r, _, err := procPostMessageW.Call(uintptr(hwnd), uintptr(wmClose), 0, 0); r == 0 {
+		return fmt.Errorf("robotgo: PostMessageW(WM_CLOSE): %w", err)
+	}
+	return nil
+}
+
+// pidWindow is targetWindow without the pid <= 0 foreground fallback.
+func pidWindow(pid int) win.HWND {
+	if pid <= 0 {
+		return 0
+	}
+	return targetWindow(pid)
 }
 
 // CheckAccess reports whether input injection is permitted. Windows has no

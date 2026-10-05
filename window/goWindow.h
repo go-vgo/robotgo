@@ -13,32 +13,43 @@
 #include "window.h"
 #include "win_sys.h"
 
-void min_window(uintptr pid, bool state, int8_t isPid){
+bool min_window(uintptr pid, bool state, int8_t isPid){
 	#if defined(IS_MACOSX)
 		// return 0;
-		AXUIElementRef axID = AXUIElementCreateApplication(pid);
-		AXUIElementSetAttributeValue(axID, kAXMinimizedAttribute, 
+		// Restoring needs a minimized window, minimizing a visible one.
+		AXUIElementRef win = AppWindow((pid_t)pid, !state);
+		if (win == NULL) { return false; }
+		AXError err = AXUIElementSetAttributeValue(win, kAXMinimizedAttribute, 
 										state ? kCFBooleanTrue : kCFBooleanFalse);
+		CFRelease(win);
+		return err == kAXErrorSuccess;
 	#elif defined(USE_X11)
 		// Ignore X errors
 		XDismissErrors();
 		// SetState((Window)pid, STATE_MINIMIZE, state);
+		return false;
 	#elif defined(IS_WINDOWS)
         HWND hwnd = getHwnd(pid, isPid);
+		if (hwnd == NULL || !IsWindow(hwnd)) { return false; }
 		win_min(hwnd, state);
+		return true;
 	#endif
 }
 
-void max_window(uintptr pid, bool state, int8_t isPid){
+bool max_window(uintptr pid, bool state, int8_t isPid){
 	#if defined(IS_MACOSX)
 		// return 0;
+		return false;
 	#elif defined(USE_X11)
 		XDismissErrors();
 		// SetState((Window)pid, STATE_MINIMIZE, false);
 		// SetState((Window)pid, STATE_MAXIMIZE, state);
+		return false;
 	#elif defined(IS_WINDOWS)
         HWND hwnd = getHwnd(pid, isPid);
+		if (hwnd == NULL || !IsWindow(hwnd)) { return false; }
 		win_max(hwnd, state);
+		return true;
 	#endif
 }
 

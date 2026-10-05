@@ -172,13 +172,13 @@ func GetActiveApp() (string, string, int) { return win.GetActiveApp() }
 func ActiveName(name string) error { return win.ActiveName(name) }
 
 // MinWindow set the window min.
-func MinWindow(pid int, args ...any) { win.MinWindow(pid, args...) }
+func MinWindow(pid int, args ...any) error { return win.MinWindow(pid, args...) }
 
 // MaxWindow set the window max.
-func MaxWindow(pid int, args ...any) { win.MaxWindow(pid, args...) }
+func MaxWindow(pid int, args ...any) error { return win.MaxWindow(pid, args...) }
 
 // CloseWindow close the window.
-func CloseWindow(args ...int) { win.CloseWindow(args...) }
+func CloseWindow(args ...int) error { return win.CloseWindow(args...) }
 
 // ActivePid active the window by pid; with args or NotPid, pid is an HWND.
 func ActivePid(pid int, args ...int) error { return win.ActivePid(pid, isHandle(args)) }

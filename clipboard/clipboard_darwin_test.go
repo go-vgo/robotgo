@@ -17,6 +17,8 @@ package clipboard
 import (
 	"slices"
 	"testing"
+
+	"github.com/go-vgo/robotgo/internal/cliplock"
 )
 
 func TestUTF8EnvOverridesLocale(t *testing.T) {
@@ -37,6 +39,7 @@ func TestUTF8EnvOverridesLocale(t *testing.T) {
 }
 
 func TestRoundTripCLocale(t *testing.T) {
+	cliplock.Lock(t)
 	t.Setenv("LC_ALL", "C")
 	const want = "日本語 💩"
 	if err := writeAll(want); err != nil {

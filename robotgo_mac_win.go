@@ -17,6 +17,9 @@
 
 package robotgo
 
+// windowArg passes pid through: the C helpers resolve pids on macOS/Windows.
+func windowArg(pid, isPid int) (int, int, error) { return pid, isPid, nil }
+
 // GetBounds get the window bounds
 func GetBounds(pid int, args ...int) (int, int, int, int) {
 	var isPid int

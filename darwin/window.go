@@ -507,18 +507,14 @@ func minWindow(pid int, state bool) error {
 }
 
 // MinWindow minimizes (or restores, if the bool arg is false) pid's window.
-func MinWindow(pid int, args ...interface{}) {
-	if err := minWindow(pid, boolArg(args, true)); err != nil {
-		return
-	}
+func MinWindow(pid int, args ...interface{}) error {
+	return minWindow(pid, boolArg(args, true))
 }
 
 // MaxWindow enters (or exits, if the bool arg is false) native full screen
 // for pid's window.
-func MaxWindow(pid int, args ...interface{}) {
-	if err := setWindowAttr(pid, false, axFullScreen, boolArg(args, true), "full screen"); err != nil {
-		return
-	}
+func MaxWindow(pid int, args ...interface{}) error {
+	return setWindowAttr(pid, false, axFullScreen, boolArg(args, true), "full screen")
 }
 
 // closeWindowPid closes pid's window; pid <= 0 closes nothing.
@@ -531,16 +527,11 @@ func closeWindowPid(pid int) error {
 
 // CloseWindow closes the frontmost app's window (no argument), or the window
 // of the pid given as the first argument, by pressing its close button.
-func CloseWindow(args ...int) {
-	var err error
+func CloseWindow(args ...int) error {
 	if len(args) == 0 {
-		err = withWindow(0, false, pressClose)
-	} else {
-		err = closeWindowPid(args[0])
+		return withWindow(0, false, pressClose)
 	}
-	if err != nil {
-		return
-	}
+	return closeWindowPid(args[0])
 }
 
 func pressClose(win uintptr) error {

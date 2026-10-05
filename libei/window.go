@@ -25,14 +25,14 @@ func GetTitle(args ...int) string { return "" }
 // ActiveName is not supported by this backend.
 func ActiveName(name string) error { return ErrNotSupported }
 
-// MinWindow is a no-op on this backend.
-func MinWindow(pid int, args ...interface{}) {}
+// MinWindow is not supported by this backend.
+func MinWindow(pid int, args ...interface{}) error { return ErrNotSupported }
 
-// MaxWindow is a no-op on this backend.
-func MaxWindow(pid int, args ...interface{}) {}
+// MaxWindow is not supported by this backend.
+func MaxWindow(pid int, args ...interface{}) error { return ErrNotSupported }
 
-// CloseWindow is a no-op on this backend.
-func CloseWindow(args ...int) {}
+// CloseWindow is not supported by this backend.
+func CloseWindow(args ...int) error { return ErrNotSupported }
 
 // CheckAccess reports whether input injection is permitted. Access is
 // granted per session by the portal dialog, so it always returns true here;

@@ -107,6 +107,48 @@ typedef struct _Bounds Bounds;
 		CFRelease(application);
 		return result;
 	}
+
+	// AppWindow returns pid's window element (caller releases it), or NULL:
+	// the focused or main window, else its first window whose minimized
+	// state equals minimized. Window attributes such as kAXMinimized and
+	// kAXCloseButton do not exist on the application element.
+	static AXUIElementRef AppWindow(pid_t pid, bool minimized) {
+		AXUIElementRef app = AXUIElementCreateApplication(pid);
+		if (app == NULL) { return NULL; }
+
+		AXUIElementRef win = NULL;
+		if (!minimized &&
+			AXUIElementCopyAttributeValue(app, kAXFocusedWindowAttribute, (CFTypeRef*)&win)
+				!= kAXErrorSuccess) {
+			win = NULL;
+		}
+		if (!minimized && win == NULL &&
+			AXUIElementCopyAttributeValue(app, kAXMainWindowAttribute, (CFTypeRef*)&win)
+				!= kAXErrorSuccess) {
+			win = NULL;
+		}
+
+		CFArrayRef windows = NULL;
+		if (win == NULL &&
+			AXUIElementCopyAttributeValues(app, kAXWindowsAttribute, 0, 1024, &windows)
+				== kAXErrorSuccess && windows != NULL) {
+			for (CFIndex i = 0; i < CFArrayGetCount(windows); ++i) {
+				AXUIElementRef el = (AXUIElementRef)CFArrayGetValueAtIndex(windows, i);
+				CFTypeRef v = NULL;
+				bool isMin = AXUIElementCopyAttributeValue(el, kAXMinimizedAttribute, &v)
+					== kAXErrorSuccess && v == kCFBooleanTrue;
+				if (v != NULL) { CFRelease(v); }
+				if (isMin == minimized) {
+					win = (AXUIElementRef)CFRetain(el);
+					break;
+				}
+			}
+			CFRelease(windows);
+		}
+
+		CFRelease(app);
+		return win;
+	}
 #elif defined(USE_X11)
 	// Error Handling
 	typedef int (*XErrorHandler) (Display*, XErrorEvent*);

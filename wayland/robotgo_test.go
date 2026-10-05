@@ -19,6 +19,8 @@ import (
 	"slices"
 	"strings"
 	"testing"
+
+	"github.com/go-vgo/robotgo/wayland/internal/protocols/wlr_foreign_toplevel"
 )
 
 // --- Pure Go tests (run anywhere, no Wayland needed) ---
@@ -556,6 +558,45 @@ func installFakeConn(t *testing.T, outputs ...*outputInfo) *fakePointer {
 		setPos(0, 0)
 	})
 	return fp
+}
+
+// Window ops must report, not swallow, a missing foreign-toplevel manager.
+func TestWindowOpsNotSupported(t *testing.T) {
+	installFakeConn(t)
+	if err := MinWindow(0); err != ErrNotSupported {
+		t.Errorf("MinWindow: got %v, want ErrNotSupported", err)
+	}
+	if err := MaxWindow(0, false); err != ErrNotSupported {
+		t.Errorf("MaxWindow: got %v, want ErrNotSupported", err)
+	}
+	if err := CloseWindow(); err != ErrNotSupported {
+		t.Errorf("CloseWindow: got %v, want ErrNotSupported", err)
+	}
+	// No pid mapping: never close the active (possibly another app's) window.
+	if err := CloseWindow(1234); err != ErrNotSupported {
+		t.Errorf("CloseWindow(pid): got %v, want ErrNotSupported", err)
+	}
+}
+
+// Without an activated toplevel, window ops must not fall back to an
+// arbitrary window.
+func TestWindowOpsNoActiveToplevel(t *testing.T) {
+	installFakeConn(t)
+	connMu.Lock()
+	c := globalConn
+	connMu.Unlock()
+	c.toplevelMgr = &wlr_foreign_toplevel.ZwlrForeignToplevelManagerV1{}
+	c.toplevels = map[uint32]*toplevelInfo{1: {title: "bg"}}
+
+	if err := MinWindow(0); err != ErrNotFound {
+		t.Errorf("MinWindow: got %v, want ErrNotFound", err)
+	}
+	if err := MaxWindow(0); err != ErrNotFound {
+		t.Errorf("MaxWindow: got %v, want ErrNotFound", err)
+	}
+	if err := CloseWindow(); err != ErrNotFound {
+		t.Errorf("CloseWindow: got %v, want ErrNotFound", err)
+	}
 }
 
 // Move then Location must agree (#783): Wayland never reports the real

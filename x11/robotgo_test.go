@@ -494,3 +494,22 @@ func TestWindowForXid(t *testing.T) {
 		t.Errorf("ActivePid(0): got %v, want ErrNotFound", err)
 	}
 }
+
+// Window ops must report a missing display or window instead of
+// silently doing nothing.
+func TestWindowOpsError(t *testing.T) {
+	const bogus = 0x7ffffff0
+	if err := MinWindow(bogus); err == nil {
+		t.Error("MinWindow(bogus): got nil, want error")
+	}
+	if err := MaxWindow(bogus, false); err == nil {
+		t.Error("MaxWindow(bogus): got nil, want error")
+	}
+	if err := CloseWindow(bogus); err == nil {
+		t.Error("CloseWindow(bogus): got nil, want error")
+	}
+	// pid 0 (e.g. a failed FindIds) must not close the active window.
+	if err := CloseWindow(0); err == nil {
+		t.Error("CloseWindow(0): got nil, want error")
+	}
+}

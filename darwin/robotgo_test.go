@@ -290,9 +290,21 @@ func TestWindowNotFound(t *testing.T) {
 		t.Errorf("GetTitle(0): got %q, want empty", got)
 	}
 	// Must not panic or touch any real window.
-	MinWindow(noPid)
-	MaxWindow(noPid, false)
-	CloseWindow(noPid)
+	if err := MinWindow(noPid); err == nil {
+		t.Error("MinWindow(noPid): got nil, want error")
+	}
+	if err := MaxWindow(noPid, false); err == nil {
+		t.Error("MaxWindow(noPid): got nil, want error")
+	}
+	if err := CloseWindow(noPid); err == nil {
+		t.Error("CloseWindow(noPid): got nil, want error")
+	}
+	if err := MinWindow(0); err != ErrNotFound {
+		t.Errorf("MinWindow(0): got %v, want ErrNotFound", err)
+	}
+	if err := CloseWindow(0); err != ErrNotFound {
+		t.Errorf("CloseWindow(0): got %v, want ErrNotFound", err)
+	}
 }
 
 func TestLoadAX(t *testing.T) {

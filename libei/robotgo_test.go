@@ -912,6 +912,15 @@ func TestUnsupportedSurface(t *testing.T) {
 	if err := ActivePid(1); err != ErrNotSupported {
 		t.Errorf("ActivePid: got %v, want ErrNotSupported", err)
 	}
+	if err := MinWindow(1); err != ErrNotSupported {
+		t.Errorf("MinWindow: got %v, want ErrNotSupported", err)
+	}
+	if err := MaxWindow(1); err != ErrNotSupported {
+		t.Errorf("MaxWindow: got %v, want ErrNotSupported", err)
+	}
+	if err := CloseWindow(); err != ErrNotSupported {
+		t.Errorf("CloseWindow: got %v, want ErrNotSupported", err)
+	}
 	if x, y, w, h := GetBounds(1); x != 0 || y != 0 || w != 0 || h != 0 {
 		t.Errorf("GetBounds: got (%d,%d,%d,%d), want zeros", x, y, w, h)
 	}
