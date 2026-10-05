@@ -139,6 +139,7 @@ func TestExtractModifiers(t *testing.T) {
 		{"mixed types", []interface{}{"ctrl", 42, true, "alt"}, []string{"ctrl", "alt"}},
 		{"non-modifier string", []interface{}{"hello"}, nil},
 		{"[]string slice", []interface{}{[]string{"cmd", "shift"}}, []string{"cmd", "shift"}},
+		{"right_shift alias", []interface{}{"right_shift"}, []string{"right_shift"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -162,6 +163,9 @@ func TestFlagsFromMods(t *testing.T) {
 	}
 	if got := flagsFromMods(nil); got != 0 {
 		t.Errorf("flagsFromMods(nil): got 0x%x, want 0", got)
+	}
+	if got := flagsFromMods([]string{"right_shift"}); got != kCGEventFlagMaskShift {
+		t.Errorf("flagsFromMods(right_shift): got 0x%x", got)
 	}
 }
 

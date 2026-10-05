@@ -212,7 +212,7 @@ enum _MMKeyCode {
 	K_NUMPAD_DIV     = XK_KP_Divide,
 	K_NUMPAD_CLEAR   = K_NOT_A_KEY,
 	K_NUMPAD_ENTER   = XK_KP_Enter,
-	K_NUMPAD_EQUAL   = XK_equal,
+	K_NUMPAD_EQUAL   = XK_KP_Equal,
 	K_NUMPAD_LB 	 = XK_bracketleft,
 	K_NUMPAD_RB 	 = XK_bracketright,
 	K_Backslash 	 = XK_backslash,

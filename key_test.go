@@ -47,6 +47,7 @@ func TestLinuxNumpadKeyCodes(t *testing.T) {
 		"num*":      0xffaa, // XK_KP_Multiply
 		"num/":      0xffaf, // XK_KP_Divide
 		"num_enter": 0xff8d, // XK_KP_Enter
+		"num_equal": 0xffbd, // XK_KP_Equal
 	}
 	for key, want := range keys {
 		got, err := checkKeyCodes(key)
@@ -87,6 +88,26 @@ func TestGetToggleArgs(t *testing.T) {
 	want := checkKeyFlags("ctrl") | checkKeyFlags("shift")
 	tt.Equal(t, want, getFlagsFromValue([]string{"ctrl", "shiftr", "x"}))
 	tt.Equal(t, checkKeyFlags("none"), checkKeyFlags("x"))
+	tt.Equal(t, checkKeyFlags("shift"), checkKeyFlags("right_shift"))
+}
+
+// KeyToggle("a", "up", []string{"alt", "cmd"}): the direction is stripped and
+// the array becomes the modifier flags (this panicked before the flattening).
+func TestKeyToggleArrayArgs(t *testing.T) {
+	key, args := appendShift("a", 1, "up", []string{"alt", "cmd"})
+	tt.Equal(t, "a", key)
+	pid, arr := getToggleArgs(args...)
+	tt.Equal(t, 0, pid)
+
+	down, mods := getKeyDown(arr)
+	tt.False(t, down)
+	tt.Equal(t, []string{"alt", "cmd"}, mods)
+	tt.Equal(t, checkKeyFlags("alt")|checkKeyFlags("cmd"), getFlagsFromValue(mods))
+
+	// no direction defaults to down and keeps the array intact
+	down, mods = getKeyDown([]string{"alt", "cmd"})
+	tt.True(t, down)
+	tt.Equal(t, []string{"alt", "cmd"}, mods)
 }
 
 func TestFormatClickErrorKey(t *testing.T) {

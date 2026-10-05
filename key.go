@@ -274,7 +274,9 @@ var keyFlags = map[string]C.MMKeyFlags{
 	"shift":   C.MOD_SHIFT,
 	"shiftr":  C.MOD_SHIFT,
 	"shiftl":  C.MOD_SHIFT,
-	"none":    C.MOD_NONE,
+	// legacy key name (keyNames) accepted as a modifier too
+	"right_shift": C.MOD_SHIFT,
+	"none":        C.MOD_NONE,
 }
 
 func checkKeyFlags(f string) C.MMKeyFlags {
@@ -440,6 +442,7 @@ func getToggleArgs(args ...interface{}) (pid int, keyArr []string) {
 //	robotgo.KeyToggle("a", "up")
 //
 //	robotgo.KeyToggle("a", "up", "alt", "cmd")
+//	robotgo.KeyToggle("a", "up", []string{"alt", "cmd"})
 //	robotgo.KeyToggle("k", pid int)
 func KeyToggle(key string, args ...interface{}) error {
 	key, args = appendShift(key, 1, args...)

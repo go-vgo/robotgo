@@ -346,6 +346,16 @@ static bool smoothlyMoveMouseImpl(MMPointInt32 endPoint, double lowSpeed, double
 		microsleep(DEADBEEF_UNIFORM(lowSpeed, highSpeed));
 		// microsleep(DEADBEEF_UNIFORM(1.0, 3.0));
 	}
+
+	/* The loop stops within 1px of the target; land exactly on it so
+	   location() afterwards reports endPoint. */
+	if (pos.x != endPoint.x || pos.y != endPoint.y) {
+		if (drag) {
+			dragMouse(endPoint, button);
+		} else {
+			moveMouse(endPoint);
+		}
+	}
 	return true;
 }
 

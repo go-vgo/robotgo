@@ -348,6 +348,36 @@ func installFakeConn(t *testing.T, streams ...stream) *fakeInjector {
 	return inj
 }
 
+// Location is a pure query (#783): it must not negotiate a portal session
+// when there is none, and must keep reporting the last injected position
+// after the portal closed the session.
+func TestLocationIsReadOnly(t *testing.T) {
+	connMu.Lock()
+	prev := globalConn
+	globalConn = nil
+	connMu.Unlock()
+	t.Cleanup(func() {
+		connMu.Lock()
+		globalConn = prev
+		connMu.Unlock()
+	})
+
+	if x, y := Location(); x != 0 || y != 0 {
+		t.Fatalf("Location without session: got (%d,%d), want (0,0)", x, y)
+	}
+	connMu.Lock()
+	if globalConn != nil {
+		connMu.Unlock()
+		t.Fatal("Location opened a portal session")
+	}
+	globalConn = &conn{posX: 40, posY: 50, posKnown: true, closed: true}
+	connMu.Unlock()
+
+	if x, y := Location(); x != 40 || y != 50 {
+		t.Fatalf("Location after session closed: got (%d,%d), want (40,50)", x, y)
+	}
+}
+
 func TestMoveAbsoluteWithStreams(t *testing.T) {
 	inj := installFakeConn(t,
 		stream{nodeID: 1, x: 0, y: 0, width: 1920, height: 1080},

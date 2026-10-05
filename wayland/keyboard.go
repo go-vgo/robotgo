@@ -406,10 +406,11 @@ func keyArgs(args []interface{}) []string {
 	return out
 }
 
-// hasShift reports whether mods (lowercased) contains shift, shiftl or shiftr.
+// hasShift reports whether mods (lowercased) contains any shift variant
+// (shift, shiftl, shiftr, right_shift).
 func hasShift(mods []string) bool {
 	for _, m := range mods {
-		if strings.HasPrefix(m, "shift") {
+		if strings.Contains(m, "shift") {
 			return true
 		}
 	}
@@ -424,7 +425,7 @@ func extractModifiers(args []interface{}) []string {
 		s = strings.ToLower(s)
 		switch s {
 		case "ctrl", "control", "ctrll", "ctrlr",
-			"shift", "shiftl", "shiftr",
+			"shift", "shiftl", "shiftr", "right_shift",
 			"alt", "altl", "altr",
 			"cmd", "command", "cmdl", "cmdr":
 			mods = append(mods, s)

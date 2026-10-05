@@ -83,8 +83,8 @@ var namedCodes = map[string]uint16{
 var modifierFlags = map[string]uint64{
 	"shift": kCGEventFlagMaskShift, "shiftl": kCGEventFlagMaskShift,
 	"lshift": kCGEventFlagMaskShift, "shiftr": kCGEventFlagMaskShift,
-	"rshift": kCGEventFlagMaskShift,
-	"ctrl":   kCGEventFlagMaskControl, "control": kCGEventFlagMaskControl,
+	"rshift": kCGEventFlagMaskShift, "right_shift": kCGEventFlagMaskShift,
+	"ctrl": kCGEventFlagMaskControl, "control": kCGEventFlagMaskControl,
 	"ctrll": kCGEventFlagMaskControl, "ctrlr": kCGEventFlagMaskControl,
 	"alt": kCGEventFlagMaskAlternate, "option": kCGEventFlagMaskAlternate,
 	"altl": kCGEventFlagMaskAlternate, "altr": kCGEventFlagMaskAlternate,

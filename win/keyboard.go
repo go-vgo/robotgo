@@ -386,7 +386,8 @@ func toggleKeys(key string, args []interface{}) (vks []uint16, up bool, err erro
 // left/right variants and aliases) is already present.
 func appendUniqueMod(mods []string, mod string) []string {
 	for _, m := range mods {
-		if m == mod || m == mod+"l" || m == mod+"r" || (mod == "ctrl" && m == "control") {
+		if m == mod || m == mod+"l" || m == mod+"r" ||
+			(mod == "ctrl" && m == "control") || (mod == "shift" && m == "right_shift") {
 			return mods
 		}
 	}
@@ -539,7 +540,7 @@ func extractModifiers(args []interface{}) []string {
 		s = strings.ToLower(s)
 		switch s {
 		case "ctrl", "control", "ctrll", "ctrlr",
-			"shift", "shiftl", "shiftr",
+			"shift", "shiftl", "shiftr", "right_shift",
 			"alt", "altl", "altr",
 			"cmd", "command", "cmdl", "cmdr", "win", "rwin":
 			mods = append(mods, s)

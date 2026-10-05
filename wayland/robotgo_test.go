@@ -453,3 +453,118 @@ func TestDoRejectsClosedConn(t *testing.T) {
 		t.Errorf("live conn: got %v", err)
 	}
 }
+
+// fakePointer records zwlr_virtual_pointer_v1 requests instead of sending
+// them to a compositor; fail makes every motion request error.
+type fakePointer struct {
+	abs  [][2]uint32
+	rel  [][2]float64
+	fail bool
+}
+
+func (f *fakePointer) Motion(_ uint32, dx, dy float64) error {
+	if f.fail {
+		return ErrNoConnection
+	}
+	f.rel = append(f.rel, [2]float64{dx, dy})
+	return nil
+}
+
+func (f *fakePointer) MotionAbsolute(_, x, y, _, _ uint32) error {
+	if f.fail {
+		return ErrNoConnection
+	}
+	f.abs = append(f.abs, [2]uint32{x, y})
+	return nil
+}
+
+func (f *fakePointer) Button(_, _, _ uint32) error                        { return nil }
+func (f *fakePointer) AxisSource(uint32) error                            { return nil }
+func (f *fakePointer) AxisDiscrete(_, _ uint32, _ float64, _ int32) error { return nil }
+func (f *fakePointer) Frame() error                                       { return nil }
+func (f *fakePointer) Destroy() error                                     { return nil }
+
+// installFakeConn makes ensureConn return a conn backed by fakePointer with
+// the given outputs, and resets the tracked position.
+func installFakeConn(t *testing.T, outputs ...*outputInfo) *fakePointer {
+	t.Helper()
+	fp := &fakePointer{}
+	connMu.Lock()
+	prev := globalConn
+	globalConn = &conn{pointer: fp, outputs: outputs, dispatchDone: make(chan struct{})}
+	connMu.Unlock()
+	setPos(0, 0)
+	t.Cleanup(func() {
+		connMu.Lock()
+		globalConn = prev
+		connMu.Unlock()
+		setPos(0, 0)
+	})
+	return fp
+}
+
+// Move then Location must agree (#783): Wayland never reports the real
+// cursor, so Location is the last position this backend injected.
+func TestMoveThenLocation(t *testing.T) {
+	fp := installFakeConn(t,
+		&outputInfo{x: 0, y: 0, width: 1920, height: 1080},
+		&outputInfo{x: 1920, y: 0, width: 1280, height: 720},
+	)
+
+	Move(20, 20)
+	if x, y := Location(); x != 20 || y != 20 {
+		t.Fatalf("Location after Move: got (%d,%d), want (20,20)", x, y)
+	}
+	if len(fp.abs) != 1 || fp.abs[0] != [2]uint32{20, 20} {
+		t.Fatalf("motion_absolute: got %v", fp.abs)
+	}
+
+	// Second output: layout coordinates are passed through unchanged.
+	Move(2000, 50)
+	if x, y := Location(); x != 2000 || y != 50 {
+		t.Fatalf("Location on 2nd output: got (%d,%d), want (2000,50)", x, y)
+	}
+
+	// Outside the layout is clamped to the union extent, and Location
+	// reports the clamped point actually injected.
+	Move(5000, -10)
+	if x, y := Location(); x != 3200 || y != 0 {
+		t.Fatalf("Location after clamped Move: got (%d,%d), want (3200,0)", x, y)
+	}
+
+	Move(200, 200)
+	MoveRelative(10, -10)
+	if x, y := Location(); x != 210 || y != 190 {
+		t.Fatalf("Location after MoveRelative: got (%d,%d), want (210,190)", x, y)
+	}
+	if last := fp.rel[len(fp.rel)-1]; last != [2]float64{10, -10} {
+		t.Fatalf("relative motion: got %v", last)
+	}
+
+	if !MoveSmooth(100, 100, 5, 0) {
+		t.Fatal("MoveSmooth returned false")
+	}
+	if x, y := Location(); x != 100 || y != 100 {
+		t.Fatalf("Location after MoveSmooth: got (%d,%d), want (100,100)", x, y)
+	}
+}
+
+// A failed injection must not move the tracked position, and Location
+// must stay a pure query when there is no connection at all.
+func TestLocationTracksOnlySuccessfulMoves(t *testing.T) {
+	fp := installFakeConn(t, &outputInfo{width: 1920, height: 1080})
+	Move(30, 40)
+	fp.fail = true
+	Move(500, 500)
+	MoveRelative(5, 5)
+	if x, y := Location(); x != 30 || y != 40 {
+		t.Fatalf("Location after failed moves: got (%d,%d), want (30,40)", x, y)
+	}
+
+	connMu.Lock()
+	globalConn = nil
+	connMu.Unlock()
+	if x, y := Location(); x != 30 || y != 40 {
+		t.Fatalf("Location without conn: got (%d,%d), want last (30,40)", x, y)
+	}
+}

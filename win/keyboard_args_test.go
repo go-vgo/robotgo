@@ -30,6 +30,7 @@ func TestExtractModifiersSlice(t *testing.T) {
 		{"slice", []interface{}{[]string{"ctrl", "shift"}}, []string{"ctrl", "shift"}},
 		{"mixed", []interface{}{42, "alt", []string{"CTRL", "hello", "SHIFT"}}, []string{"alt", "ctrl", "shift"}},
 		{"command alias", []interface{}{[]string{"command", "cmdr", "rwin"}}, []string{"command", "cmdr", "rwin"}},
+		{"right_shift alias", []interface{}{"Right_Shift"}, []string{"right_shift"}},
 		{"direction only", []interface{}{[]string{"up", "down"}}, nil},
 		{"empty slice", []interface{}{[]string{}}, nil},
 	}
@@ -63,6 +64,7 @@ func TestToggleKeys(t *testing.T) {
 		{"side-specific", "f1", []interface{}{"ctrll", "ctrlr"}, []uint16{win.VK_LCONTROL, win.VK_RCONTROL, win.VK_F1}, false},
 		{"implicit shift", "A", []interface{}{"up"}, []uint16{win.VK_SHIFT, 0x41}, true},
 		{"explicit side shift kept", "A", []interface{}{"shiftl"}, []uint16{win.VK_LSHIFT, 0x41}, false},
+		{"right_shift satisfies implied", "A", []interface{}{"right_shift"}, []uint16{win.VK_RSHIFT, 0x41}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

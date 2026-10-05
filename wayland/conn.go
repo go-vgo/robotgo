@@ -53,7 +53,7 @@ type conn struct {
 	outputs []*outputInfo
 
 	pointerManager  *wlr_virtual_pointer.ZwlrVirtualPointerManagerV1
-	pointer         *wlr_virtual_pointer.ZwlrVirtualPointerV1
+	pointer         virtualPointer
 	keyboardManager *wlr_virtual_keyboard.ZwpVirtualKeyboardManagerV1
 	keyboard        *wlr_virtual_keyboard.ZwpVirtualKeyboardV1
 	screencopyMgr   *wlr_screencopy.ZwlrScreencopyManagerV1
@@ -70,6 +70,18 @@ type conn struct {
 	// dispatch loop
 	dispatchDone chan struct{}
 	closed       atomic.Bool
+}
+
+// virtualPointer is the zwlr_virtual_pointer_v1 request surface used by the
+// mouse functions; tests swap in a fake, like libei's injector.
+type virtualPointer interface {
+	Motion(time uint32, dx, dy float64) error
+	MotionAbsolute(time, x, y, xExtent, yExtent uint32) error
+	Button(time, button, state uint32) error
+	AxisSource(axisSource uint32) error
+	AxisDiscrete(time, axis uint32, value float64, discrete int32) error
+	Frame() error
+	Destroy() error
 }
 
 // outputInfo tracks wl_output geometry.
