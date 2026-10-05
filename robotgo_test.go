@@ -51,8 +51,18 @@ func requireDisplay(t *testing.T) {
 	}
 }
 
+// requireScreen skips only when there is no screen at all (Linux without
+// DISPLAY/WAYLAND_DISPLAY). Screen-read APIs work without Accessibility or
+// an input session, so these tests also run on macOS/Windows CI runners.
+func requireScreen(t *testing.T) {
+	t.Helper()
+	if runtime.GOOS == "linux" && os.Getenv("DISPLAY") == "" && os.Getenv("WAYLAND_DISPLAY") == "" {
+		t.Skip("no display for screen reads")
+	}
+}
+
 func TestColor(t *testing.T) {
-	requireDisplay(t)
+	requireScreen(t)
 
 	s := GetPixelColor(10, 10)
 	tt.IsType(t, "string", s)
@@ -63,7 +73,7 @@ func TestColor(t *testing.T) {
 }
 
 func TestSize(t *testing.T) {
-	requireDisplay(t)
+	requireScreen(t)
 
 	x, y := GetScreenSize()
 	tt.NotZero(t, x)
@@ -192,7 +202,7 @@ func TestClip(t *testing.T) {
 }
 
 func TestImage(t *testing.T) {
-	requireDisplay(t)
+	requireScreen(t)
 
 	img1, err := CaptureImg(10, 10, 20, 20)
 	if err != nil {
