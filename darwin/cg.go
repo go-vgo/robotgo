@@ -81,7 +81,7 @@ const (
 	kCGScrollEventUnitPixel = 0
 	kCGScrollEventUnitLine  = 1
 	// kCGScrollWheelEventDeltaAxis1 = 11 // vertical
-    // kCGScrollWheelEventDeltaAxis2 = 12 // horizontal
+	// kCGScrollWheelEventDeltaAxis2 = 12 // horizontal
 )
 
 // kCGMouseEventClickState is the CGEventField holding the click state:

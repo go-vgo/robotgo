@@ -24,6 +24,7 @@ Prerequisites (default Cgo backend): `GCC` must be installed. `CGO_ENABLED=1` (d
 
 There is no Makefile / Taskfile. CI:
 - `.github/workflows/go.yml` (Go 1.27.x; runs on push to `master` and on `pull_request`, newer run cancels older via `concurrency`; `permissions: contents: read`, checkouts use `persist-credentials: false`) — job `cgo` (macOS/Windows/Linux): `go build ./...`, `go vet .`, `go test -v .` (Linux: apt X11/xvfb deps, `gofmt -l .` must be empty, `xvfb-run go test -v ./...`); job `purego` (`CGO_ENABLED=0`, one job per OS: vet + test the backend pkgs, then `.` once per tag — `mac`/`purego` on macOS, `win`/`purego` on Windows, `x11`, `purego,x11`, `wayland`, `purego`, `libei`, `purego,libei` on Linux); job `cross` (`CGO_ENABLED=0` build of `.` for the GOOS/GOARCH pairs the purego job does not cover: darwin amd64/arm64 `mac`, windows arm64/386 `win`, linux arm64 `x11`/`wayland`/`libei`).
+- Coverage: the `cgo` job runs tests with `-coverprofile=coverage.out` and uploads each OS (flag `cgo-<OS>`) via `codecov/codecov-action@v7` (`CODECOV_TOKEN` secret, non-fatal) for the README codecov badge; `codecov.yml` ignores `examples/` and `test/`, status checks are informational.
 - `.github/workflows/lint.yml` — golangci-lint (README badge, replaces Go Report Card): per OS, `cgo` (`./...`) plus each native pure-Go tag (`x11`/`wayland`/`libei` on Linux, `mac` on macOS, `win` on Windows) with `CGO_ENABLED=0`.
 - `.circleci/config.yml` — Linux Cgo full tests: `xvfb-run go test -v ./...`.
 

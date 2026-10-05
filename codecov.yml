@@ -1,0 +1,15 @@
+# Coverage for the README badge, uploaded by .github/workflows/go.yml.
+coverage:
+  status:
+    # Informational only: coverage changes never fail a PR.
+    project:
+      default:
+        informational: true
+    patch:
+      default:
+        informational: true
+
+# Demos and scratch code have no tests; keep them out of the ratio.
+ignore:
+  - "examples"
+  - "test"
