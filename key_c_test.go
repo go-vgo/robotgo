@@ -291,6 +291,43 @@ func TestUnicodeTypeCgo(t *testing.T) {
 	tt.Nil(t, inputUTF("space"))
 }
 
+func TestInputUTFX11(t *testing.T) {
+	if runtime.GOOS != "linux" {
+		t.Skip("inputUTF uses Xlib only on Linux")
+	}
+	requireDisplay(t)
+
+	for _, sym := range ToUC("世😀") {
+		if err := inputUTF(sym); err != nil {
+			t.Errorf("inputUTF(%q): %v", sym, err)
+		}
+	}
+	for _, sym := range []string{"", "no_such_keysym", `\U0001f600`} {
+		if err := inputUTF(sym); err == nil {
+			t.Errorf("inputUTF(%q) succeeded for an invalid keysym", sym)
+		}
+	}
+}
+
+func TestTypeStrInvalidKeysymX11(t *testing.T) {
+	if runtime.GOOS != "linux" {
+		t.Skip("TypeStr uses Xlib keysyms only on Linux")
+	}
+	requireDisplay(t)
+
+	// ToUC leaves the newline as an escape that Xlib cannot resolve.
+	n, err := typeStr("a\nb", 0, 0, 0)
+	if n != 1 || err == nil {
+		t.Fatalf("typeStr returned (%d, %v), want (1, error)", n, err)
+	}
+	if err := TypeStr("\n", 0, 0, 0); err == nil {
+		t.Error("TypeStr succeeded for an invalid keysym")
+	}
+	if n := Type("\n", 0, 0, 0); n != 0 {
+		t.Errorf("Type returned %d, want 0", n)
+	}
+}
+
 func TestCheckMouse(t *testing.T) {
 	for _, btn := range []string{Mleft, Mright, Center, WheelDown, WheelUp, WheelLeft, WheelRight} {
 		tt.Equal(t, btn, MouseButtonString(CheckMouse(btn)))
