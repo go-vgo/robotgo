@@ -15,11 +15,34 @@
 package robotgo
 
 /*
+#include "base/types.h"
 #include <CoreGraphics/CoreGraphics.h>
+
+// Interval a source created by MMEventSourceCreate (or, with mm == 0, a
+// plain HID-state source) suppresses the user's own input for after each
+// posted event; -1 if no source could be created.
+static double eventSourceSuppression(int mm) {
+	CGEventSourceRef src = mm ? MMEventSourceCreate()
+		: CGEventSourceCreate(kCGEventSourceStateHIDSystemState);
+	if (src == NULL) { return -1; }
+	double v = CGEventSourceGetLocalEventsSuppressionInterval(src);
+	CFRelease(src);
+	return v;
+}
 */
 import "C"
 
 // GetMainId get the main display id
 func GetMainId() int {
 	return int(C.CGMainDisplayID())
+}
+
+// eventSourceSuppression reports the local-events suppression interval of a
+// Cgo event source (see MMEventSourceCreate in base/types.h).
+func eventSourceSuppression(mm bool) float64 {
+	v := 0
+	if mm {
+		v = 1
+	}
+	return float64(C.eventSourceSuppression(C.int(v)))
 }

@@ -93,7 +93,7 @@
 /* Move the mouse to a specific point. */
 void moveMouse(MMPointInt32 point){
 	#if defined(IS_MACOSX)
-		CGEventSourceRef source = CGEventSourceCreate(kCGEventSourceStateHIDSystemState);
+		CGEventSourceRef source = MMEventSourceCreate();
 		CGEventRef move = CGEventCreateMouseEvent(source, kCGEventMouseMoved, 
 								CGPointFromMMPointInt32(point), kCGMouseButtonLeft);
 
@@ -114,7 +114,7 @@ void moveMouse(MMPointInt32 point){
 void dragMouse(MMPointInt32 point, const MMMouseButton button){
 	#if defined(IS_MACOSX)
 		const CGEventType dragType = MMMouseDragToCGEventType(button);
-		CGEventSourceRef source = CGEventSourceCreate(kCGEventSourceStateHIDSystemState);
+		CGEventSourceRef source = MMEventSourceCreate();
 		CGEventRef drag = CGEventCreateMouseEvent(source, dragType, 
 								CGPointFromMMPointInt32(point), (CGMouseButton)button);
 
@@ -158,7 +158,7 @@ int toggleMouse(bool down, MMMouseButton button) {
 	#if defined(IS_MACOSX)
 		const CGPoint currentPos = CGPointFromMMPointInt32(location());
 		const CGEventType mouseType = MMMouseToCGEventType(down, button);
-		CGEventSourceRef source = CGEventSourceCreate(kCGEventSourceStateHIDSystemState);
+		CGEventSourceRef source = MMEventSourceCreate();
 		CGEventRef event = CGEventCreateMouseEvent(source, mouseType, currentPos, (CGMouseButton)button);
 
 		if (event == NULL) {
@@ -208,7 +208,7 @@ int doubleClick(MMMouseButton button, int count){
 		const CGEventType mouseTypeDown = MMMouseToCGEventType(true, button);
 		const CGEventType mouseTypeUP = MMMouseToCGEventType(false, button);
 
-		CGEventSourceRef source = CGEventSourceCreate(kCGEventSourceStateHIDSystemState);
+		CGEventSourceRef source = MMEventSourceCreate();
 		CGEventRef event = CGEventCreateMouseEvent(source, mouseTypeDown, currentPos, kCGMouseButtonLeft);
 		if (event == NULL) {
 			CFRelease(source);
@@ -245,7 +245,7 @@ void scrollMouseXY(int x, int y) {
 	#endif
 
 	#if defined(IS_MACOSX)
-		CGEventSourceRef source = CGEventSourceCreate(kCGEventSourceStateHIDSystemState);
+		CGEventSourceRef source = MMEventSourceCreate();
 		CGEventRef event = CGEventCreateScrollWheelEvent(source, kCGScrollEventUnitPixel, 2, y, x);	
 		CGEventPost(kCGHIDEventTap, event);
 

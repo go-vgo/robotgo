@@ -293,13 +293,21 @@ func getFlagsFromValue(value []string) (flags C.MMKeyFlags) {
 	return
 }
 
+// upKeyArr releases every modifier in keyArr. On macOS each release carries
+// the mask of modifiers still held (see toggleKeyCode) so back-to-back
+// releases cannot re-assert a modifier from stale HID state.
 func upKeyArr(keyArr []string, pid int) {
+	var remaining C.MMKeyFlags
+	if runtime.GOOS == "darwin" {
+		remaining = getFlagsFromValue(keyArr)
+	}
 	for _, k := range keyArr {
 		key1, err := checkKeyCodes(k)
 		if err != nil {
 			continue
 		}
-		C.toggleKeyCode(key1, false, C.MOD_NONE, C.uintptr(pid))
+		remaining &^= checkKeyFlags(k)
+		C.toggleKeyCode(key1, false, remaining, C.uintptr(pid))
 	}
 }
 
@@ -379,7 +387,8 @@ func toErr(str *C.char) error {
 }
 
 func appendShift(key string, len1 int, args ...interface{}) (string, []interface{}) {
-	if len(key) > 0 && unicode.IsUpper([]rune(key)[0]) {
+	// only a single upper-case char implies shift; "Enter" is just "enter"
+	if r := []rune(key); len(r) == 1 && unicode.IsUpper(r[0]) {
 		args = append(args, "shift")
 	}
 

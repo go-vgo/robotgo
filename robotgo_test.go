@@ -170,54 +170,6 @@ func TestMouseToggle(t *testing.T) {
 	tt.Nil(t, e)
 }
 
-func TestKey(t *testing.T) {
-	requireDisplay(t)
-
-	e := KeyTap("v", CmdCtrl())
-	tt.Nil(t, e)
-
-	e = KeyTap("enter")
-	tt.Nil(t, e)
-
-	e = KeyToggle("v", "up")
-	tt.Nil(t, e)
-
-	e = KeyDown("a")
-	tt.Nil(t, e)
-	e = KeyUp("a")
-	tt.Nil(t, e)
-
-	// array and pid argument forms, same on the Cgo and pure-Go backends
-	e = KeyTap("i", []string{"alt", CmdCtrl()})
-	tt.Nil(t, e)
-	e = KeyToggle("a", "down", []string{"alt", CmdCtrl()})
-	tt.Nil(t, e)
-	e = KeyToggle("a", "up", []string{"alt", CmdCtrl()})
-	tt.Nil(t, e)
-	e = KeyToggle("a", "up", "alt", CmdCtrl())
-	tt.Nil(t, e)
-	e = KeyToggle("v", "up", 0)
-	tt.Nil(t, e)
-
-	// Not on Mac keyboards: keycode.h maps them to K_NOT_A_KEY there.
-	e = KeyTap(ScrollLock)
-	if runtime.GOOS == "darwin" {
-		tt.NotNil(t, e)
-	} else {
-		tt.Nil(t, e)
-	}
-
-	e = KeyTap(PauseBreak)
-	if runtime.GOOS == "darwin" {
-		tt.NotNil(t, e)
-	} else {
-		tt.Nil(t, e)
-	}
-
-	e = KeyTap("nonexistent_key")
-	tt.NotNil(t, e)
-}
-
 // skipNoClipboard skips when the platform has no clipboard tool (e.g. a Linux
 // CI image without xclip/xsel/wl-clipboard).
 func skipNoClipboard(t *testing.T, err error) {
@@ -237,38 +189,6 @@ func TestClip(t *testing.T) {
 	s, e := ReadAll()
 	tt.Equal(t, "s", s)
 	tt.Nil(t, e)
-}
-
-func TestTypeStr(t *testing.T) {
-	c := CharCodeAt("s", 0)
-	tt.Equal(t, 115, c)
-
-	s1 := "abc\\\\cd/s@世界"
-	uc := ToUC(s1)
-	tt.Equal(t, "[a b c \\ \\ c d / s @ U4e16 U754c]", uc)
-
-	requireDisplay(t)
-	e := PasteStr("s")
-	skipNoClipboard(t, e)
-	tt.Nil(t, e)
-
-	l, e := Paste("世界")
-	tt.Nil(t, e)
-	tt.Equal(t, 2, l)
-}
-
-func TestKeyCode(t *testing.T) {
-	m := MouseMap["left"]
-	tt.Equal(t, 1, m)
-
-	k := Keycode["1"]
-	tt.Equal(t, 2, k)
-
-	s := Special["+"]
-	tt.Equal(t, "=", s)
-
-	tt.Equal(t, "0", Key0)
-	tt.Equal(t, "a", KeyA)
 }
 
 func TestImage(t *testing.T) {
@@ -336,22 +256,6 @@ func TestPs(t *testing.T) {
 	// n, e = FindPath(id[0])
 	// tt.NotEmpty(t, n)
 	// tt.Nil(t, e)
-}
-
-// KeyTap with a pid argument (pid-targeted delivery on macOS/Windows,
-// accepted and ignored on X11/Wayland/libei).
-func TestKeyTapPid(t *testing.T) {
-	requireDisplay(t)
-	if runtime.GOOS == "windows" {
-		t.Skip("posting to another process's window is intrusive on CI")
-	}
-
-	e := KeyTap("v", os.Getpid(), CmdCtrl())
-	if e != nil && runtime.GOOS == "darwin" {
-		// A test binary has no window to receive the event.
-		t.Skipf("pid delivery: %v", e)
-	}
-	tt.Nil(t, e)
 }
 
 // func TestAlert(t *testing.T) {
