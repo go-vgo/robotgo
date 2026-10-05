@@ -284,8 +284,8 @@ struct XSpecialCharacterMapping XSpecialCharacterTable[] = {
   	{'/', XK_slash},
 	{'\\', XK_backslash},
 	{'`', XK_grave},
-	{'"', XK_quoteright},
-  	{'\'', XK_quotedbl},
+	{'"', XK_quotedbl},
+  	{'\'', XK_apostrophe},
   	{'\t', XK_Tab},
   	{'\n', XK_Return}
 };

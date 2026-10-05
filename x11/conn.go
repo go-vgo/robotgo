@@ -40,9 +40,10 @@ type conn struct {
 	keysymsPerKeycode byte
 	keysyms           []xproto.Keysym
 
-	shiftKeycode xproto.Keycode // keycode that produces Shift_L (0 if none)
-	scratch      xproto.Keycode // spare keycode used for Unicode typing
-	scratchOK    bool
+	shiftKeycode  xproto.Keycode // keycode that produces Shift_L (0 if none)
+	level3Keycode xproto.Keycode // keycode that selects level 3 (AltGr), 0 if none
+	scratch       xproto.Keycode // spare keycode used for Unicode typing
+	scratchOK     bool
 
 	xineramaOK bool
 }
@@ -104,8 +105,10 @@ func newConn() (*conn, error) {
 	return c, nil
 }
 
-// loadKeymap fetches the full keyboard mapping and locates the Shift keycode
-// and a spare keycode for Unicode typing.
+// loadKeymap fetches the full keyboard mapping and locates the Shift and
+// level-3 (AltGr) keycodes and a spare keycode for Unicode typing. Key
+// functions call it on entry so a layout switched since the last call (which
+// changes what every keycode types) is picked up, see TestTypeLayout.
 func (c *conn) loadKeymap() error {
 	setup := c.xu.Setup()
 	c.minKeycode = setup.MinKeycode
@@ -117,12 +120,24 @@ func (c *conn) loadKeymap() error {
 	}
 	c.keysymsPerKeycode = reply.KeysymsPerKeycode
 	c.keysyms = reply.Keysyms
+	c.findModKeycodes()
+	c.scratch, c.scratchOK = c.findScratchKeycode()
+	return nil
+}
 
+// findModKeycodes resolves the Shift and level-3 chooser keycodes from the
+// cached mapping (0 when the layout has none).
+func (c *conn) findModKeycodes() {
+	c.shiftKeycode, c.level3Keycode = 0, 0
 	if kc, _, ok := c.keysymToKeycode(xkShiftL); ok {
 		c.shiftKeycode = kc
 	}
-	c.scratch, c.scratchOK = c.findScratchKeycode()
-	return nil
+	for _, ks := range []uint32{xkISOLevel3Shift, xkModeSwitch} {
+		if kc, _, ok := c.keysymToKeycode(ks); ok {
+			c.level3Keycode = kc
+			break
+		}
+	}
 }
 
 // sync forces the server to process queued requests (used after remapping a

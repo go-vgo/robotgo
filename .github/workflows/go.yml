@@ -44,7 +44,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y gcc libc6-dev libx11-dev xorg-dev libxtst-dev xvfb xsel xclip
+          sudo apt-get install -y gcc libc6-dev libx11-dev xorg-dev libxtst-dev xvfb xsel xclip x11-xkb-utils xkb-data
 
       - name: gofmt
         if: runner.os == 'Linux'
@@ -67,6 +67,13 @@ jobs:
       - name: Test (xvfb)
         if: runner.os == 'Linux'
         run: xvfb-run go test -v -count=1 ./...
+
+      # robot_x11_test.go (#640 layout typing) reads keys back through an
+      # Xlib harness, so it needs cgo; the purego job runs -tags x11 with
+      # CGO_ENABLED=0 and would skip it.
+      - name: Test x11 backend layout (xvfb)
+        if: runner.os == 'Linux'
+        run: xvfb-run go test -v -count=1 -tags x11 -run TestTypeLayout .
 
   # Pure-Go backends (CGO_ENABLED=0) vetted and tested on their native OS:
   # the backend and clipboard packages, then the root package once per
@@ -110,7 +117,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y xvfb xsel xclip sway wl-clipboard
+          sudo apt-get install -y xvfb xsel xclip sway wl-clipboard x11-xkb-utils xkb-data
 
       # Headless wlroots compositor for the wayland backend. If it fails to
       # come up, WAYLAND_DISPLAY stays empty and the wayland tests skip.
