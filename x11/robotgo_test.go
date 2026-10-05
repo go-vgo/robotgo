@@ -119,6 +119,8 @@ func TestExtractMods(t *testing.T) {
 		{"ctrl+shift", []interface{}{"ctrl", "shift"}, []string{"ctrl", "shift"}, true, false},
 		{"slice", []interface{}{[]string{"ctrl", "alt"}}, []string{"ctrl", "alt"}, true, false},
 		{"up dir", []interface{}{"up"}, nil, false, true},
+		{"up dir in slice", []interface{}{[]string{"up", "ctrl"}}, []string{"ctrl"}, false, true},
+		{"last dir wins", []interface{}{"ctrl", "up", []string{"down"}}, []string{"ctrl"}, true, true},
 		{"down dir + mod", []interface{}{"down", "ctrl"}, []string{"ctrl"}, true, true},
 		{"ignore ints", []interface{}{"ctrl", 42, "shift"}, []string{"ctrl", "shift"}, true, false},
 	}

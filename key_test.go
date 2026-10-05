@@ -15,6 +15,7 @@
 package robotgo
 
 import (
+	"runtime"
 	"testing"
 
 	"github.com/vcaesar/tt"
@@ -33,6 +34,45 @@ func TestKeyAliases(t *testing.T) {
 		tt.Nil(t, err)
 		tt.Equal(t, want, got)
 	}
+}
+
+func TestLinuxNumpadKeyCodes(t *testing.T) {
+	if runtime.GOOS != "linux" {
+		t.Skip("X11 keysyms are specific to the Linux backend")
+	}
+
+	keys := map[string]int{
+		"num+":      0xffab, // XK_KP_Add
+		"num-":      0xffad, // XK_KP_Subtract
+		"num*":      0xffaa, // XK_KP_Multiply
+		"num/":      0xffaf, // XK_KP_Divide
+		"num_enter": 0xff8d, // XK_KP_Enter
+	}
+	for key, want := range keys {
+		got, err := checkKeyCodes(key)
+		tt.Nil(t, err)
+		tt.Equal(t, want, int(got))
+	}
+}
+
+func TestGetToggleArgs(t *testing.T) {
+	pid, arr := getToggleArgs("up", []string{"alt", "cmd"})
+	tt.Equal(t, 0, pid)
+	tt.Equal(t, []string{"up", "alt", "cmd"}, arr)
+
+	pid, arr = getToggleArgs(123, []string{"ctrl"}, "shift")
+	tt.Equal(t, 123, pid)
+	tt.Equal(t, []string{"ctrl", "shift"}, arr)
+
+	// Shift appended by appendShift after a []string must not be dropped.
+	key, args := appendShift("A", 0, []string{"ctrl"})
+	_, arr = getToggleArgs(args...)
+	tt.Equal(t, "a", key)
+	tt.Equal(t, []string{"ctrl", "shift"}, arr)
+
+	down, mods := getKeyDown(keyArgs([]interface{}{[]string{"up", "ctrl"}}))
+	tt.False(t, down)
+	tt.Equal(t, []string{"ctrl"}, mods)
 }
 
 func TestFormatClickErrorKey(t *testing.T) {

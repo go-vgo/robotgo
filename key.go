@@ -23,7 +23,6 @@ import "C"
 import (
 	"errors"
 	"math/rand"
-	"reflect"
 	"runtime"
 	"strings"
 	"unicode"
@@ -413,34 +412,33 @@ func appendShift(key string, len1 int, args ...interface{}) (string, []interface
 //
 //	robotgo.KeyTap("k", pid int)
 func KeyTap(key string, args ...interface{}) error {
-	var keyArr []string
 	key, args = appendShift(key, 0, args...)
-
-	pid := 0
-	if len(args) > 0 {
-		if reflect.TypeOf(args[0]) == reflect.TypeOf(keyArr) {
-			keyArr = args[0].([]string)
-		} else {
-			if reflect.TypeOf(args[0]) == reflect.TypeOf(pid) {
-				pid = args[0].(int)
-				keyArr = ToStrings(args[1:])
-			} else {
-				keyArr = ToStrings(args)
-			}
-		}
-	}
-
+	pid, keyArr := getToggleArgs(args...)
 	return keyTaps(key, keyArr, pid)
 }
 
-func getToggleArgs(args ...interface{}) (pid int, keyArr []string) {
-	if len(args) > 0 && reflect.TypeOf(args[0]) == reflect.TypeOf(pid) {
-		pid = args[0].(int)
-		keyArr = ToStrings(args[1:])
-	} else {
-		keyArr = ToStrings(args)
+// keyArgs flattens string and []string args into a key array, skipping
+// other types.
+func keyArgs(args []interface{}) []string {
+	var keyArr []string
+	for _, arg := range args {
+		switch v := arg.(type) {
+		case string:
+			keyArr = append(keyArr, v)
+		case []string:
+			keyArr = append(keyArr, v...)
+		}
 	}
-	return
+	return keyArr
+}
+
+func getToggleArgs(args ...interface{}) (pid int, keyArr []string) {
+	if len(args) > 0 {
+		if v, ok := args[0].(int); ok {
+			return v, keyArgs(args[1:])
+		}
+	}
+	return 0, keyArgs(args)
 }
 
 // KeyToggle toggles the keyboard, if there not have args default is "down"
@@ -455,6 +453,7 @@ func getToggleArgs(args ...interface{}) (pid int, keyArr []string) {
 //	robotgo.KeyToggle("a", "up")
 //
 //	robotgo.KeyToggle("a", "up", "alt", "cmd")
+//	robotgo.KeyToggle("a", "up", []string{"alt", "cmd"})
 //	robotgo.KeyToggle("k", pid int)
 func KeyToggle(key string, args ...interface{}) error {
 	key, args = appendShift(key, 1, args...)

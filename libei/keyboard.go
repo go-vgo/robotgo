@@ -16,6 +16,7 @@ package libei
 
 import (
 	"errors"
+	"strings"
 	"time"
 	"unicode"
 )
@@ -129,6 +130,7 @@ func resolveKey(key string) (code int32, shift bool, ok bool) {
 //	KeyTap("a")
 //	KeyTap("a", "ctrl")
 //	KeyTap("a", "ctrl", "shift")
+//	KeyTap("a", []string{"ctrl", "shift"})
 func KeyTap(key string, args ...interface{}) error {
 	c, err := keyboardReady()
 	if err != nil {
@@ -189,28 +191,67 @@ func releaseKeys(codes []int32, send func(code int32) error) error {
 	return errors.Join(errs...)
 }
 
-// KeyToggle toggles a key down or up. Default is "down".
+// toggleKeys resolves a KeyToggle call into evdev codes in press order
+// (modifiers, implied shift, then the key) and its direction; the last "up"
+// or "down" argument wins. Codes are deduplicated so aliases press once.
+func toggleKeys(key string, args []interface{}) (codes []int32, up bool, err error) {
+	code, shift, ok := resolveKey(key)
+	if !ok {
+		return nil, false, errors.New("robotgo/libei: unknown key: " + key)
+	}
+	for _, s := range keyArgs(args) {
+		switch s {
+		case "up":
+			up = true
+		case "down":
+			up = false
+		}
+	}
+
+	mods := extractModifiers(args)
+	if shift {
+		mods = append(mods, "shift")
+	}
+	seen := map[int32]bool{code: true}
+	for _, mod := range mods {
+		if mc, ok := keyToEvdev(mod); ok && !seen[mc] {
+			seen[mc] = true
+			codes = append(codes, mc)
+		}
+	}
+	return append(codes, code), up, nil
+}
+
+// KeyToggle toggles a key down or up. Default is "down". Modifiers (strings
+// or a []string) are pressed before the key and released in reverse order
+// after it.
 //
 //	KeyToggle("a")        // press
 //	KeyToggle("a", "up")  // release
+//	KeyToggle("a", "down", []string{"ctrl", "shift"})
+//	KeyToggle("a", "up", []string{"ctrl", "shift"})
 func KeyToggle(key string, args ...interface{}) error {
 	c, err := keyboardReady()
 	if err != nil {
 		return err
 	}
 
-	state := statePressed
-	for _, arg := range args {
-		if s, ok := arg.(string); ok && s == "up" {
-			state = stateReleased
+	codes, up, err := toggleKeys(key, args)
+	if err != nil {
+		return err
+	}
+	release := func(code int32) error {
+		return c.inj.keyboardKeycode(code, stateReleased)
+	}
+	if up {
+		return releaseKeys(codes, release)
+	}
+	for i, code := range codes {
+		if err := c.inj.keyboardKeycode(code, statePressed); err != nil {
+			return errors.Join(err, releaseKeys(codes[:i], release))
 		}
 	}
-
-	code, _, ok := resolveKey(key)
-	if !ok {
-		return errors.New("robotgo/libei: unknown key: " + key)
-	}
-	return c.inj.keyboardKeycode(code, state)
+	return nil
 }
 
 // KeyDown presses a key down. Extra args are forwarded to KeyToggle for API
@@ -276,21 +317,33 @@ func SetDelay(d ...int) {
 // CmdCtrl returns "ctrl" on Linux (mirrors robotgo's cross-platform helper).
 func CmdCtrl() string { return "ctrl" }
 
-// extractModifiers pulls modifier key names out of variadic args.
+// keyArgs flattens the string and []string arguments of KeyTap/KeyToggle,
+// skipping other types (such as an int pid).
+func keyArgs(args []interface{}) []string {
+	var out []string
+	for _, arg := range args {
+		switch v := arg.(type) {
+		case string:
+			out = append(out, v)
+		case []string:
+			out = append(out, v...)
+		}
+	}
+	return out
+}
+
+// extractModifiers picks the (case-insensitive) modifier names out of the
+// variadic args, expanding []string entries; results are lowercased.
 func extractModifiers(args []interface{}) []string {
 	var mods []string
-	for _, arg := range args {
-		if s, ok := arg.(string); ok {
-			switch s {
-			case "ctrl", "control", "ctrll", "ctrlr":
-				mods = append(mods, s)
-			case "shift", "shiftl", "shiftr":
-				mods = append(mods, s)
-			case "alt", "altl", "altr":
-				mods = append(mods, s)
-			case "cmd", "cmdl", "cmdr":
-				mods = append(mods, s)
-			}
+	for _, s := range keyArgs(args) {
+		s = strings.ToLower(s)
+		switch s {
+		case "ctrl", "control", "ctrll", "ctrlr",
+			"shift", "shiftl", "shiftr",
+			"alt", "altl", "altr",
+			"cmd", "command", "cmdl", "cmdr":
+			mods = append(mods, s)
 		}
 	}
 	return mods
