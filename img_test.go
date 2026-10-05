@@ -189,6 +189,14 @@ func TestToByteStrImg(t *testing.T) {
 	if s != string(b) {
 		t.Fatal("ToStringImg differs from ToByteImg")
 	}
+	// Strict: no trailing padding or garbage after the base64 payload.
+	raw, err := base64.StdEncoding.Strict().DecodeString(s)
+	if err != nil {
+		t.Fatalf("ToStringImg is not strict base64: %v", err)
+	}
+	if !bytes.HasPrefix(raw, []byte("\x89PNG")) {
+		t.Fatalf("decoded data is not PNG: % x", raw[:min(8, len(raw))])
+	}
 
 	img, err := StrToImg(s)
 	if err != nil {
@@ -204,6 +212,43 @@ func TestToByteStrImg(t *testing.T) {
 
 	if ToByteImg(src, "webp") != nil {
 		t.Error("ToByteImg unsupported format: want nil")
+	}
+}
+
+// DecodeImg and OpenImg must close the file: Windows refuses to delete an
+// open file (TempDir cleanup failed on the Windows runners).
+func TestDecodeImgReleasesFile(t *testing.T) {
+	dir := t.TempDir()
+	for _, open := range []struct {
+		name string
+		fn   func(string) error
+	}{
+		{"decode.png", func(p string) error { _, _, err := DecodeImg(p); return err }},
+		{"open.png", func(p string) error { _, err := OpenImg(p); return err }},
+		{"read.png", func(p string) error { _, err := Read(p); return err }},
+		{"size.png", func(p string) error { _, _, err := ImgSize(p); return err }},
+	} {
+		path := filepath.Join(dir, open.name)
+		if err := SavePng(testRGBA(2, 2), path); err != nil {
+			t.Fatal(err)
+		}
+		if err := open.fn(path); err != nil {
+			t.Fatalf("%s: %v", open.name, err)
+		}
+		if err := os.Remove(path); err != nil {
+			t.Fatalf("%s left file open: %v", open.name, err)
+		}
+	}
+
+	bad := filepath.Join(dir, "bad.png")
+	if err := os.WriteFile(bad, []byte("not an image"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if _, _, err := DecodeImg(bad); err == nil {
+		t.Error("DecodeImg garbage: want error")
+	}
+	if err := os.Remove(bad); err != nil {
+		t.Fatalf("DecodeImg error path left file open: %v", err)
 	}
 }
 

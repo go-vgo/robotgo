@@ -30,15 +30,15 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Set up Go
-        uses: actions/setup-go@v6
-        with:
-          go-version: ${{ env.GO_VERSION }}
-
       - name: Check out code
         uses: actions/checkout@v6
         with:
           persist-credentials: false
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ env.GO_VERSION }}
 
       - name: Install X11 dependencies
         if: runner.os == 'Linux'
@@ -114,15 +114,15 @@ jobs:
       CGO_ENABLED: 0
 
     steps:
-      - name: Set up Go
-        uses: actions/setup-go@v6
-        with:
-          go-version: ${{ env.GO_VERSION }}
-
       - name: Check out code
         uses: actions/checkout@v6
         with:
           persist-credentials: false
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ env.GO_VERSION }}
 
       - name: Install Xvfb and headless sway
         if: runner.os == 'Linux'
@@ -181,15 +181,15 @@ jobs:
       CGO_ENABLED: 0
 
     steps:
-      - name: Set up Go
-        uses: actions/setup-go@v6
-        with:
-          go-version: ${{ env.GO_VERSION }}
-
       - name: Check out code
         uses: actions/checkout@v6
         with:
           persist-credentials: false
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ env.GO_VERSION }}
 
       - name: Build
         run: |

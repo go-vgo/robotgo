@@ -84,7 +84,28 @@ func unlock(h uintptr) error {
 	return nil
 }
 
+// readTimeout bounds how long readAll retries a failed read.
+var readTimeout = time.Second
+
+// readAll retries the whole open-read-close cycle: right after a write,
+// clipboard listeners (clipboard history, RDP) can briefly take over and
+// GetClipboardData fails with ERROR_CLIPBOARD_NOT_OPEN.
 func readAll() (string, error) {
+	return retryRead(readOnce)
+}
+
+func retryRead(read func() (string, error)) (string, error) {
+	limit := time.Now().Add(readTimeout)
+	for {
+		text, err := read()
+		if err == nil || time.Now().After(limit) {
+			return text, err
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+}
+
+func readOnce() (string, error) {
 	// OpenClipboard and CloseClipboard must run on the same OS thread
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()

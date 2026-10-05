@@ -54,7 +54,8 @@ func SaveJpeg(img image.Image, path string, quality ...int) error {
 	return imgo.SaveToJpeg(path, img, quality...)
 }
 
-// ToByteImg convert image.Image to []byte
+// ToByteImg convert image.Image to base64-encoded []byte
+// in format fm (default "jpeg"), nil on failure
 func ToByteImg(img image.Image, fm ...string) []byte {
 	return imgo.ToByte(img, fm...)
 }

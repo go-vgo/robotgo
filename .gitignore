@@ -20,7 +20,7 @@ test/test.png
 *.dSYM/
 *.su
 debug
-# v1
+v1
 v0
 .v0
 test/tmp
