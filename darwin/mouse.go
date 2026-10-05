@@ -15,6 +15,7 @@
 package darwin
 
 import (
+	"fmt"
 	"math"
 	"time"
 )
@@ -36,41 +37,43 @@ func mouseButton(btn string) (down, up, dragged uint32, button uint32) {
 }
 
 // postMouse creates and posts a single mouse event at point p.
-func postMouse(eventType uint32, p CGPoint, button uint32) {
-	postMouseState(eventType, p, button, 1)
+func postMouse(eventType uint32, p CGPoint, button uint32) error {
+	return postMouseState(eventType, p, button, 1)
 }
 
 // postMouseState creates and posts a single mouse event at point p carrying
 // an explicit click state (kCGMouseEventClickState: 1 = single click,
 // 2 = double click). macOS only recognizes a double click when the second
 // down/up pair carries click state 2.
-func postMouseState(eventType uint32, p CGPoint, button uint32, clickState int64) {
+func postMouseState(eventType uint32, p CGPoint, button uint32, clickState int64) error {
 	if !loaded {
-		return
+		return errNotLoaded
 	}
 	ev := withSource(func(src uintptr) uintptr {
 		return cgEventCreateMouseEvent(src, eventType, p, button)
 	})
 	if ev == 0 {
-		return
+		return errEventCreate
 	}
 	if clickState > 1 {
 		cgEventSetIntegerValueField(ev, kCGMouseEventClickState, clickState)
 	}
 	postEvent(ev)
+	return nil
 }
 
 // Move moves the mouse to absolute position (x, y).
 // The optional displayId is accepted for API parity but ignored.
-func Move(x, y int, displayId ...int) {
-	postMouse(kCGEventMouseMoved, CGPoint{X: float64(x), Y: float64(y)}, kCGMouseButtonLeft)
+func Move(x, y int, displayId ...int) error {
+	err := postMouse(kCGEventMouseMoved, CGPoint{X: float64(x), Y: float64(y)}, kCGMouseButtonLeft)
 	mouseDelay()
+	return err
 }
 
 // MoveRelative moves the mouse relative to its current position.
-func MoveRelative(x, y int) {
+func MoveRelative(x, y int) error {
 	cx, cy := Location()
-	Move(cx+x, cy+y)
+	return Move(cx+x, cy+y)
 }
 
 // MoveSmooth moves the mouse smoothly to (x, y) with an ease-in-out curve.
@@ -106,8 +109,10 @@ func MoveSmooth(x, y int, args ...interface{}) bool {
 		// Post directly (not via Move) so the global MouseSleep delay is not
 		// added to every step — matching the win/wayland backends, where only
 		// sleepMs applies per step and MouseSleep once at the end.
-		postMouse(kCGEventMouseMoved,
-			CGPoint{X: math.Round(cx), Y: math.Round(cy)}, kCGMouseButtonLeft)
+		if err := postMouse(kCGEventMouseMoved,
+			CGPoint{X: math.Round(cx), Y: math.Round(cy)}, kCGMouseButtonLeft); err != nil {
+			return false
+		}
 		time.Sleep(time.Duration(sleepMs) * time.Millisecond)
 	}
 	mouseDelay()
@@ -138,8 +143,12 @@ func Click(args ...interface{}) error {
 		// The second down/up pair must carry click state 2, otherwise macOS
 		// treats the pairs as two independent single clicks.
 		clickState := int64(i + 1)
-		postMouseState(down, p, num, clickState)
-		postMouseState(up, p, num, clickState)
+		if err := postMouseState(down, p, num, clickState); err != nil {
+			return err
+		}
+		if err := postMouseState(up, p, num, clickState); err != nil {
+			return err
+		}
 		if i < count-1 {
 			time.Sleep(50 * time.Millisecond)
 		}
@@ -171,11 +180,9 @@ func Toggle(key ...interface{}) error {
 	downType, upType, _, num := mouseButton(button)
 	p := locationPoint()
 	if up {
-		postMouse(upType, p, num)
-	} else {
-		postMouse(downType, p, num)
+		return postMouse(upType, p, num)
 	}
-	return nil
+	return postMouse(downType, p, num)
 }
 
 // MouseDown sends a mouse button down event.
@@ -191,53 +198,59 @@ func MouseUp(key ...interface{}) error {
 // Scroll scrolls the mouse by wheel notches. Positive y scrolls up, negative
 // scrolls down; positive x scrolls left, negative scrolls right (matching
 // robotgo's Cgo backend convention). Optional arg: delay ms.
-func Scroll(x, y int, args ...int) {
+func Scroll(x, y int, args ...int) error {
 	msDelay := 10
 	if len(args) > 0 {
 		msDelay = args[0]
 	}
-	if loaded {
-		// Create a line-unit scroll event via the fixed-arity
-		// CGEventCreateScrollWheelEvent2 (the plain variant is variadic and
-		// unsafe to call through purego). Axis 1 is vertical, axis 2
-		// horizontal; CoreGraphics counts positive deltas as up/left, the
-		// same convention robotgo uses, so the values pass straight through.
-		ev := withSource(func(src uintptr) uintptr {
-			return cgEventCreateScrollWheelEvent2(src, kCGScrollEventUnitLine, 2, int32(y), int32(x), 0)
-		})
-		if ev != 0 {
-			postEvent(ev)
-		}
+	if !loaded {
+		return errNotLoaded
 	}
+	// Create a line-unit scroll event via the fixed-arity
+	// CGEventCreateScrollWheelEvent2 (the plain variant is variadic and
+	// unsafe to call through purego). Axis 1 is vertical, axis 2
+	// horizontal; CoreGraphics counts positive deltas as up/left, the
+	// same convention robotgo uses, so the values pass straight through.
+	ev := withSource(func(src uintptr) uintptr {
+		return cgEventCreateScrollWheelEvent2(src, kCGScrollEventUnitLine, 2, int32(y), int32(x), 0)
+	})
+	if ev == 0 {
+		return errEventCreate
+	}
+	postEvent(ev)
 	if msDelay > 0 {
 		time.Sleep(time.Duration(msDelay) * time.Millisecond)
 	}
+	return nil
 }
 
 // ScrollDir scrolls in a named direction: "up", "down", "left", "right".
-func ScrollDir(x int, direction ...interface{}) {
+func ScrollDir(x int, direction ...interface{}) error {
 	dir := "down"
 	if len(direction) > 0 {
-		if s, ok := direction[0].(string); ok {
-			dir = s
+		s, ok := direction[0].(string)
+		if !ok {
+			return fmt.Errorf("robotgo: unknown scroll direction: %v", direction[0])
 		}
+		dir = s
 	}
 	switch dir {
 	case "down":
-		Scroll(0, -x)
+		return Scroll(0, -x)
 	case "up":
-		Scroll(0, x)
+		return Scroll(0, x)
 	case "left":
-		Scroll(x, 0)
+		return Scroll(x, 0)
 	case "right":
-		Scroll(-x, 0)
+		return Scroll(-x, 0)
 	}
+	return fmt.Errorf("robotgo: unknown scroll direction: %v", dir)
 }
 
 // ScrollSmooth scrolls the mouse smoothly by `to` steps, repeating `num`
 // times (default 5) with `tm` ms between steps (default 100). An optional
 // third arg sets the horizontal offset per step.
-func ScrollSmooth(to int, args ...int) {
+func ScrollSmooth(to int, args ...int) error {
 	num := 5
 	if len(args) > 0 {
 		num = args[0]
@@ -252,44 +265,55 @@ func ScrollSmooth(to int, args ...int) {
 	}
 
 	for i := 0; i < num; i++ {
-		Scroll(tox, to)
+		if err := Scroll(tox, to); err != nil {
+			return err
+		}
 		MilliSleep(tm)
 	}
 	MilliSleep(MouseSleep)
+	return nil
 }
 
 // DragSmooth moves the mouse smoothly while holding the left button down.
-func DragSmooth(x, y int, args ...interface{}) {
+func DragSmooth(x, y int, args ...interface{}) error {
 	btn := "left"
 	if len(args) > 0 {
 		if s, ok := args[0].(string); ok {
 			btn = s
 		}
 	}
-	_ = Toggle(btn, "down")
+	if err := Toggle(btn, "down"); err != nil {
+		return err
+	}
 	time.Sleep(50 * time.Millisecond)
 
 	// Move with the button held so apps see drag events.
-	downType, upType, dragType, num := mouseButton(btn)
-	_, _ = downType, upType
+	_, _, dragType, num := mouseButton(btn)
 	sx, sy := Location()
 	steps := 20
-	for i := 1; i <= steps; i++ {
+	var err error
+	for i := 1; i <= steps && err == nil; i++ {
 		t := float64(i) / float64(steps)
 		cx := float64(sx) + float64(x-sx)*t
 		cy := float64(sy) + float64(y-sy)*t
-		postMouse(dragType, CGPoint{X: math.Round(cx), Y: math.Round(cy)}, num)
+		err = postMouse(dragType, CGPoint{X: math.Round(cx), Y: math.Round(cy)}, num)
 		time.Sleep(5 * time.Millisecond)
 	}
 
 	time.Sleep(50 * time.Millisecond)
-	_ = Toggle(btn, "up")
+	// Always release the button, even if the drag failed.
+	if upErr := Toggle(btn, "up"); err == nil {
+		err = upErr
+	}
+	return err
 }
 
 // MoveClick moves to (x, y) then clicks.
-func MoveClick(x, y int, args ...interface{}) {
-	Move(x, y)
-	_ = Click(args...)
+func MoveClick(x, y int, args ...interface{}) error {
+	if err := Move(x, y); err != nil {
+		return err
+	}
+	return Click(args...)
 }
 
 // locationPoint returns the current mouse position as a CGPoint.

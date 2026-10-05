@@ -14,7 +14,10 @@
 
 package libei
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 // Linux evdev button codes (input-event-codes.h). The RemoteDesktop portal's
 // NotifyPointerButton expects these evdev codes.
@@ -39,21 +42,24 @@ const cornerReset = 1 << 16
 // motion, so Move sends a delta from the last tracked position; when no
 // position has been tracked yet the pointer is first parked in the top-left
 // corner with a large relative move so the origin is known.
-func Move(x, y int, displayId ...int) { move(x, y, displayId...) }
+func Move(x, y int, displayId ...int) error {
+	_, err := move(x, y, displayId...)
+	return err
+}
 
 // move implements Move and reports whether the pointer was injected exactly at
 // (x, y): false when injection fails or the target was clamped into a stream.
-func move(x, y int, displayId ...int) bool {
+func move(x, y int, displayId ...int) (bool, error) {
 	c, err := pointerReady()
 	if err != nil {
-		return false
+		return false, err
 	}
 
 	if len(c.streams) == 0 {
 		cx, cy, ok := c.position()
 		if !ok {
 			if err := c.inj.pointerMotion(-cornerReset, -cornerReset); err != nil {
-				return false
+				return false, err
 			}
 			c.setPos(0, 0)
 			cx, cy = 0, 0
@@ -63,7 +69,7 @@ func move(x, y int, displayId ...int) bool {
 			c.setPos(x, y)
 		}
 		mouseDelay()
-		return err == nil
+		return err == nil, err
 	}
 
 	idx, found := c.streamAt(x, y)
@@ -84,31 +90,41 @@ func move(x, y int, displayId ...int) bool {
 		c.setPos(lx+int(s.x), ly+int(s.y))
 	}
 	mouseDelay()
-	return err == nil && found
+	return err == nil && found, err
 }
 
 // MoveRelative moves the mouse relative to its current position.
-func MoveRelative(x, y int) {
+func MoveRelative(x, y int) error {
 	c, err := pointerReady()
 	if err != nil {
-		return
+		return err
 	}
-	if err := c.inj.pointerMotion(float64(x), float64(y)); err == nil {
+	err = c.inj.pointerMotion(float64(x), float64(y))
+	if err == nil {
 		c.addPos(x, y)
 	}
 	mouseDelay()
+	return err
 }
 
 // MoveSmooth moves the mouse smoothly to absolute position (x, y). Optional
 // args: steps (default 20), sleep ms between steps (default 5). Returns true
-// on success.
+// on success; false when a step fails or the target was clamped into a
+// linked stream.
 //
 // When the current position is unknown, it jumps via Move, using a corner
 // reset first if no stream is linked.
 func MoveSmooth(x, y int, args ...interface{}) bool {
+	reached, err := moveSmooth(x, y, args...)
+	return err == nil && reached
+}
+
+// moveSmooth implements MoveSmooth, stopping at the first failed step. It
+// reports whether the pointer ended exactly at (x, y).
+func moveSmooth(x, y int, args ...interface{}) (bool, error) {
 	c, err := pointerReady()
 	if err != nil {
-		return false
+		return false, err
 	}
 
 	steps := 20
@@ -137,16 +153,19 @@ func MoveSmooth(x, y int, args ...interface{}) bool {
 			continue
 		}
 		if len(c.streams) > 0 {
-			Move(tx, ty)
+			err = Move(tx, ty)
 		} else {
-			MoveRelative(tx-cx, ty-cy)
+			err = MoveRelative(tx-cx, ty-cy)
+		}
+		if err != nil {
+			return false, err
 		}
 		if sleepMs > 0 {
 			time.Sleep(time.Duration(sleepMs) * time.Millisecond)
 		}
 	}
 	cx, cy, _ := c.position()
-	return cx == x && cy == y
+	return cx == x && cy == y, nil
 }
 
 // Click clicks a mouse button. Default is the left button. Pass a bool true to
@@ -230,10 +249,10 @@ func MouseUp(key ...interface{}) error {
 // Scroll scrolls the mouse by wheel notches. Positive y scrolls up, negative
 // scrolls down; positive x scrolls left, negative scrolls right (matching
 // robotgo's Cgo backend convention). Optional arg: delay ms.
-func Scroll(x, y int, args ...int) {
+func Scroll(x, y int, args ...int) error {
 	c, err := pointerReady()
 	if err != nil {
-		return
+		return err
 	}
 
 	msDelay := 10
@@ -242,40 +261,49 @@ func Scroll(x, y int, args ...int) {
 	}
 	// The portal counts positive steps as down/right.
 	if y != 0 {
-		_ = c.inj.pointerAxisDiscrete(axisVertical, int32(-y))
+		if err := c.inj.pointerAxisDiscrete(axisVertical, int32(-y)); err != nil {
+			return err
+		}
 	}
 	if x != 0 {
-		_ = c.inj.pointerAxisDiscrete(axisHorizontal, int32(-x))
+		if err := c.inj.pointerAxisDiscrete(axisHorizontal, int32(-x)); err != nil {
+			return err
+		}
 	}
 	if msDelay > 0 {
 		time.Sleep(time.Duration(msDelay) * time.Millisecond)
 	}
+	return nil
 }
 
-// ScrollDir scrolls in a named direction: "up", "down", "left", "right".
-func ScrollDir(x int, direction ...interface{}) {
+// ScrollDir scrolls in a named direction: "up", "down" (default), "left",
+// "right". Any other direction is an error.
+func ScrollDir(x int, direction ...interface{}) error {
 	dir := "down"
 	if len(direction) > 0 {
-		if s, ok := direction[0].(string); ok {
-			dir = s
+		s, ok := direction[0].(string)
+		if !ok {
+			return fmt.Errorf("robotgo: unknown scroll direction: %v", direction[0])
 		}
+		dir = s
 	}
 	switch dir {
 	case "down":
-		Scroll(0, -x)
+		return Scroll(0, -x)
 	case "up":
-		Scroll(0, x)
+		return Scroll(0, x)
 	case "left":
-		Scroll(x, 0)
+		return Scroll(x, 0)
 	case "right":
-		Scroll(-x, 0)
+		return Scroll(-x, 0)
 	}
+	return fmt.Errorf("robotgo: unknown scroll direction: %v", dir)
 }
 
 // ScrollSmooth scrolls the mouse smoothly by `to` steps, repeating `num` times
 // (default 5) with `tm` ms between steps (default 100). An optional third arg
-// sets the horizontal offset per step.
-func ScrollSmooth(to int, args ...int) {
+// sets the horizontal offset per step. It stops at the first failed scroll.
+func ScrollSmooth(to int, args ...int) error {
 	num := 5
 	if len(args) > 0 {
 		num = args[0]
@@ -289,31 +317,43 @@ func ScrollSmooth(to int, args ...int) {
 		tox = args[2]
 	}
 	for i := 0; i < num; i++ {
-		Scroll(tox, to)
+		if err := Scroll(tox, to); err != nil {
+			return err
+		}
 		MilliSleep(tm)
 	}
 	MilliSleep(MouseSleep)
+	return nil
 }
 
-// DragSmooth moves the mouse smoothly while holding a button down.
-func DragSmooth(x, y int, args ...interface{}) {
+// DragSmooth moves the mouse smoothly while holding a button down. The button
+// is released even if the move fails; the first error of the press, move and
+// release is returned. A target clamped into a linked stream is not an error.
+func DragSmooth(x, y int, args ...interface{}) error {
 	btn := "left"
 	if len(args) > 0 {
 		if s, ok := args[0].(string); ok {
 			btn = s
 		}
 	}
-	_ = Toggle(btn, "down")
+	if err := Toggle(btn, "down"); err != nil {
+		return err
+	}
 	time.Sleep(50 * time.Millisecond)
-	MoveSmooth(x, y)
+	_, err := moveSmooth(x, y)
 	time.Sleep(50 * time.Millisecond)
-	_ = Toggle(btn, "up")
+	if upErr := Toggle(btn, "up"); err == nil {
+		err = upErr
+	}
+	return err
 }
 
-// MoveClick moves to (x, y) then clicks.
-func MoveClick(x, y int, args ...interface{}) {
-	Move(x, y)
-	_ = Click(args...)
+// MoveClick moves to (x, y) then clicks. It does not click if the move fails.
+func MoveClick(x, y int, args ...interface{}) error {
+	if err := Move(x, y); err != nil {
+		return err
+	}
+	return Click(args...)
 }
 
 // Location returns the current mouse position.

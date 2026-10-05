@@ -15,10 +15,12 @@
 package x11
 
 import (
+	"errors"
+	"fmt"
 	"time"
+	"unicode/utf8"
 
 	"github.com/jezek/xgb/xproto"
-	"github.com/jezek/xgb/xtest"
 )
 
 // KeySleep is the global keyboard delay in milliseconds, applied after a key
@@ -54,12 +56,35 @@ func (c *conn) canReach(mods uint8) bool {
 }
 
 // sendKeycode generates a press or release for the given keycode via XTEST.
-func (c *conn) sendKeycode(kc xproto.Keycode, press bool) {
+func (c *conn) sendKeycode(kc xproto.Keycode, press bool) error {
 	t := byte(xproto.KeyRelease)
 	if press {
 		t = byte(xproto.KeyPress)
 	}
-	xtest.FakeInput(c.c, t, byte(kc), 0, c.root, 0, 0, 0)
+	return c.fakeInput(t, byte(kc), 0, 0)
+}
+
+// pressKeycodes presses kcs in order. If a press fails, the keys already
+// pressed are released so none stays held, and the errors are returned.
+func (c *conn) pressKeycodes(kcs []xproto.Keycode) error {
+	for i, kc := range kcs {
+		if err := c.sendKeycode(kc, true); err != nil {
+			return errors.Join(err, c.releaseKeycodes(kcs[:i]))
+		}
+	}
+	return nil
+}
+
+// releaseKeycodes releases kcs in reverse order. It keeps going past failures
+// so every key gets a release attempt, and returns the errors joined.
+func (c *conn) releaseKeycodes(kcs []xproto.Keycode) error {
+	var errs []error
+	for i := len(kcs) - 1; i >= 0; i-- {
+		if err := c.sendKeycode(kcs[i], false); err != nil {
+			errs = append(errs, err)
+		}
+	}
+	return errors.Join(errs...)
 }
 
 // pressKeysym presses and releases a keysym, holding the modifiers (Shift,
@@ -67,18 +92,12 @@ func (c *conn) sendKeycode(kc xproto.Keycode, press bool) {
 func (c *conn) pressKeysym(ks uint32) error {
 	kc, mods, ok := c.keysymToKeycode(ks)
 	if ok && c.canReach(mods) {
-		held := c.modKeycodesFor(mods)
-		for _, m := range held {
-			c.sendKeycode(m, true)
+		keys := append(c.modKeycodesFor(mods), kc)
+		if err := c.pressKeycodes(keys); err != nil {
+			return err
 		}
-		c.sendKeycode(kc, true)
 		time.Sleep(keyDelay)
-		c.sendKeycode(kc, false)
-		for i := len(held) - 1; i >= 0; i-- {
-			c.sendKeycode(held[i], false)
-		}
-		c.c.Sync()
-		return nil
+		return c.releaseKeycodes(keys)
 	}
 	// Not in the current layout, or only on an AltGr level the layout has
 	// no key for: type it through the scratch keycode.
@@ -103,18 +122,19 @@ func (c *conn) pressScratch(ks uint32) error {
 	}
 	c.sync()
 
-	c.sendKeycode(c.scratch, true)
-	time.Sleep(keyDelay)
-	c.sendKeycode(c.scratch, false)
-	c.c.Sync()
+	err := c.sendKeycode(c.scratch, true)
+	if err == nil {
+		time.Sleep(keyDelay)
+		err = c.sendKeycode(c.scratch, false)
+	}
 
 	// Restore the scratch keycode to NoSymbol so we leave the map as we found it.
 	for i := range syms {
 		syms[i] = 0
 	}
-	_ = xproto.ChangeKeyboardMappingChecked(c.c, 1, c.scratch, per, syms).Check()
+	rerr := xproto.ChangeKeyboardMappingChecked(c.c, 1, c.scratch, per, syms).Check()
 	c.sync()
-	return nil
+	return errors.Join(err, rerr)
 }
 
 // modKeycodes resolves modifier names ("ctrl", "shift", "alt", "cmd", ...) to
@@ -191,21 +211,16 @@ func KeyTap(key string, args ...interface{}) error {
 
 	mods, _, _ := extractMods(args)
 	mkc := c.modKeycodes(mods)
-
-	for _, kc := range mkc {
-		c.sendKeycode(kc, true)
+	if err := c.pressKeycodes(mkc); err != nil {
+		return err
 	}
-	c.c.Sync()
 
 	perr := c.pressKeysym(ks)
-
-	for i := len(mkc) - 1; i >= 0; i-- {
-		c.sendKeycode(mkc[i], false)
-	}
-	c.c.Sync()
+	// Release the modifiers even if the key failed, so none stays held.
+	rerr := c.releaseKeycodes(mkc)
 
 	keySleep()
-	return perr
+	return errors.Join(perr, rerr)
 }
 
 // KeyPress is an alias of KeyTap.
@@ -245,26 +260,15 @@ func KeyToggle(key string, args ...interface{}) error {
 	mods, down, _ := extractMods(args)
 	mkc := c.modKeycodes(mods)
 
+	// Press order: modifiers, level modifiers, key; release is the reverse.
+	keys := append(append(mkc, levelMods...), kc)
 	if down {
-		for _, m := range mkc {
-			c.sendKeycode(m, true)
-		}
-		for _, m := range levelMods {
-			c.sendKeycode(m, true)
-		}
-		c.sendKeycode(kc, true)
+		err = c.pressKeycodes(keys)
 	} else {
-		c.sendKeycode(kc, false)
-		for i := len(levelMods) - 1; i >= 0; i-- {
-			c.sendKeycode(levelMods[i], false)
-		}
-		for i := len(mkc) - 1; i >= 0; i-- {
-			c.sendKeycode(mkc[i], false)
-		}
+		err = c.releaseKeycodes(keys)
 	}
-	c.c.Sync()
 	keySleep()
-	return nil
+	return err
 }
 
 // KeyDown presses a key down (and holds it).
@@ -307,15 +311,26 @@ func Type(str string, args ...int) int {
 	return n
 }
 
-// TypeStr types a string (alias of Type).
-func TypeStr(str string, args ...int) {
-	Type(str, args...)
+// TypeStr types a string (alias of Type). It returns an error if not every
+// character was typed.
+func TypeStr(str string, args ...int) error {
+	return typeErr(Type(str, args...), str)
 }
 
-// TypeDelay types a string then sleeps for delay milliseconds.
-func TypeDelay(str string, delay int) {
-	Type(str)
+// TypeDelay types a string then sleeps for delay milliseconds. It returns an
+// error if not every character was typed.
+func TypeDelay(str string, delay int) error {
+	n := Type(str)
 	MilliSleep(delay)
+	return typeErr(n, str)
+}
+
+// typeErr reports an error when fewer than all runes of str were typed.
+func typeErr(n int, str string) error {
+	if total := utf8.RuneCountInString(str); n < total {
+		return fmt.Errorf("robotgo: typed %d of %d characters", n, total)
+	}
+	return nil
 }
 
 // SetDelay sets the default keyboard and mouse delay (default 10).

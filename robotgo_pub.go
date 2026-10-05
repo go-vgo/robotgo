@@ -12,6 +12,7 @@
 package robotgo
 
 import (
+	"errors"
 	"runtime"
 	"strconv"
 	"strings"
@@ -152,24 +153,32 @@ func MoveArgs(x, y int) (int, int) {
 	return mx, my
 }
 
+// ErrSmoothMove is returned when MoveSmooth reports a failure
+var ErrSmoothMove = errors.New("robotgo: smooth move failed")
+
 // MoveRelative move mouse with relative
-func MoveRelative(x, y int) {
-	Move(MoveArgs(x, y))
+func MoveRelative(x, y int) error {
+	return Move(MoveArgs(x, y))
 }
 
 // MoveSmoothRelative move mouse smooth with relative
-func MoveSmoothRelative(x, y int, args ...interface{}) {
+func MoveSmoothRelative(x, y int, args ...interface{}) error {
 	mx, my := MoveArgs(x, y)
-	MoveSmooth(mx, my, args...)
+	if !MoveSmooth(mx, my, args...) {
+		return ErrSmoothMove
+	}
+	return nil
 }
 
 // MovesClick move smooth and click the mouse
 //
 // use the `robotgo.MouseSleep = 100`
-func MovesClick(x, y int, args ...interface{}) {
-	MoveSmooth(x, y)
+func MovesClick(x, y int, args ...interface{}) error {
+	if !MoveSmooth(x, y) {
+		return ErrSmoothMove
+	}
 	MilliSleep(50)
-	Click(args...) //nolint:errcheck // v1 signature has no error result
+	return Click(args...)
 }
 
 // ScrollRelative scroll mouse with relative
@@ -177,9 +186,9 @@ func MovesClick(x, y int, args ...interface{}) {
 // Examples:
 //
 //	robotgo.ScrollRelative(10, 10)
-func ScrollRelative(x, y int, args ...int) {
+func ScrollRelative(x, y int, args ...int) error {
 	mx, my := MoveArgs(x, y)
-	Scroll(mx, my, args...)
+	return Scroll(mx, my, args...)
 }
 
 // CharCodeAt char code at utf-8
@@ -196,6 +205,8 @@ func CharCodeAt(s string, n int) rune {
 }
 
 // ToUC trans string to unicode []string
+//
+// Runes outside ASCII become the Xlib keysym name ("U4e16", "U1F600").
 func ToUC(text string) []string {
 	var uc []string
 
@@ -203,7 +214,10 @@ func ToUC(text string) []string {
 		textQ := strconv.QuoteToASCII(string(r))
 		textUnQ := textQ[1 : len(textQ)-1]
 
+		// QuoteToASCII spells BMP runes as \uXXXX and the rest as \UXXXXXXXX;
+		// Xlib wants a plain U prefix for both.
 		st := strings.Replace(textUnQ, "\\u", "U", -1)
+		st = strings.Replace(st, "\\U", "U", -1)
 		if st == "\\\\" {
 			st = "\\"
 		}
@@ -259,15 +273,16 @@ func Paste(str string, pid ...int) (int, error) {
 // TypeStrDelay type string width delay
 //
 // Deprecated: use the TypeDelay()
-func TypeStrDelay(str string, delay int) {
-	TypeDelay(str, delay)
+func TypeStrDelay(str string, delay int) error {
+	return TypeDelay(str, delay)
 }
 
 // TypeDelay type string with delayed
 // And you can use robotgo.KeySleep = 100 to delayed not this function
-func TypeDelay(str string, delay int) {
-	Type(str)
+func TypeDelay(str string, delay int) error {
+	err := TypeStr(str)
 	MilliSleep(delay)
+	return err
 }
 
 // SetDelay sets the key and mouse delay

@@ -21,3 +21,12 @@ var ErrNotFound = errors.New("robotgo: window not found")
 
 // ErrNotSupported is returned when an operation is not supported.
 var ErrNotSupported = errors.New("robotgo: operation not supported")
+
+// errSendInput is returned when SendInput does not insert an input event.
+var errSendInput = errors.New("robotgo: SendInput failed")
+
+// errPostMessage is returned when PostMessageW fails.
+var errPostMessage = errors.New("robotgo: PostMessageW failed")
+
+// errSetCursorPos is returned when SetCursorPos fails.
+var errSetCursorPos = errors.New("robotgo: SetCursorPos failed")

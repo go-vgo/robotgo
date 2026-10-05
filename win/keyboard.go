@@ -16,9 +16,11 @@ package win
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 	"time"
 	"unicode/utf16"
+	"unicode/utf8"
 	"unsafe"
 
 	"github.com/tailscale/win"
@@ -219,7 +221,7 @@ func keyToVK(key string) (vk uint16, mods uint8, ok bool) {
 }
 
 // sendVK dispatches a single virtual-key event (down or up).
-func sendVK(vk uint16, up bool) {
+func sendVK(vk uint16, up bool) error {
 	flags := uint32(0)
 	if extendedVKs[vk] {
 		flags |= win.KEYEVENTF_EXTENDEDKEY
@@ -235,7 +237,10 @@ func sendVK(vk uint16, up bool) {
 			DwFlags: flags,
 		},
 	}
-	win.SendInput(1, unsafe.Pointer(&in), int32(unsafe.Sizeof(in)))
+	if win.SendInput(1, unsafe.Pointer(&in), int32(unsafe.Sizeof(in))) != 1 {
+		return errSendInput
+	}
+	return nil
 }
 
 // sendUnicode dispatches a single UTF-16 code unit as a Unicode key event.
@@ -282,12 +287,15 @@ func keyHwnd(pid int) win.HWND {
 
 // postKey posts a WM_KEYDOWN/WM_KEYUP message for a virtual-key code to a
 // window, mirroring the PostMessageW path in key/keypress_c.h.
-func postKey(hwnd win.HWND, vk uint16, up bool) {
+func postKey(hwnd win.HWND, vk uint16, up bool) error {
 	msg := uintptr(wmKeyDown)
 	if up {
 		msg = wmKeyUp
 	}
-	procPostMessageW.Call(uintptr(hwnd), msg, uintptr(vk), 0)
+	if r, _, _ := procPostMessageW.Call(uintptr(hwnd), msg, uintptr(vk), 0); r == 0 {
+		return errPostMessage
+	}
+	return nil
 }
 
 // postChar posts a WM_CHAR message carrying a single UTF-16 code unit to a
@@ -321,21 +329,44 @@ func KeyTap(key string, args ...interface{}) error {
 		return err
 	}
 
-	// Press modifiers then the key, and release in reverse order.
-	for _, vk := range vks {
-		send(vk, false)
-	}
+	// Press modifiers then the key, and release in reverse order. Only the
+	// keys that were actually pressed are released after a failure, so none
+	// is left stuck down and keys held by the user are not released.
+	pressed, err := pressKeys(send, vks)
 	time.Sleep(time.Duration(KeySleep) * time.Millisecond)
-	for i := len(vks) - 1; i >= 0; i-- {
-		send(vks[i], true)
+	if upErr := releaseKeys(send, pressed); err == nil {
+		err = upErr
 	}
-	return nil
+	return err
+}
+
+// pressKeys sends key down for vks in order and stops at the first error,
+// returning the prefix that was successfully pressed.
+func pressKeys(send func(vk uint16, up bool) error, vks []uint16) ([]uint16, error) {
+	for i, vk := range vks {
+		if err := send(vk, false); err != nil {
+			return vks[:i], err
+		}
+	}
+	return vks, nil
+}
+
+// releaseKeys sends key up for vks in reverse order and returns the first
+// error.
+func releaseKeys(send func(vk uint16, up bool) error, vks []uint16) error {
+	var err error
+	for i := len(vks) - 1; i >= 0; i-- {
+		if e := send(vks[i], true); err == nil {
+			err = e
+		}
+	}
+	return err
 }
 
 // keySender returns the function delivering virtual-key events: PostMessageW
 // to the pid's window (mirroring key/keypress_c.h) when pid != 0, otherwise
 // SendInput to the focused window.
-func keySender(pid int) (func(vk uint16, up bool), error) {
+func keySender(pid int) (func(vk uint16, up bool) error, error) {
 	if pid == 0 {
 		return sendVK, nil
 	}
@@ -343,7 +374,7 @@ func keySender(pid int) (func(vk uint16, up bool), error) {
 	if hwnd == 0 {
 		return nil, ErrNotFound
 	}
-	return func(vk uint16, up bool) { postKey(hwnd, vk, up) }, nil
+	return func(vk uint16, up bool) error { return postKey(hwnd, vk, up) }, nil
 }
 
 // toggleKeys resolves a key and its modifiers into virtual keys in press
@@ -415,15 +446,15 @@ func KeyToggle(key string, args ...interface{}) error {
 		return err
 	}
 	if up {
-		for i := len(vks) - 1; i >= 0; i-- {
-			send(vks[i], true)
-		}
-		return nil
+		return releaseKeys(send, vks)
 	}
-	for _, vk := range vks {
-		send(vk, false)
+	// A partial press releases the keys pressed so far instead of leaving
+	// modifiers stuck down.
+	pressed, err := pressKeys(send, vks)
+	if err != nil {
+		releaseKeys(send, pressed) //nolint:errcheck // best-effort cleanup, the press error is reported
 	}
-	return nil
+	return err
 }
 
 // KeyDown presses a key down. Extra args (e.g. modifiers) are forwarded to
@@ -489,17 +520,27 @@ func typeRunes(str string, send func(u uint16) bool) int {
 	return n
 }
 
-// TypeStr types a string. Alias of Type, mirroring the robotgo API.
-func TypeStr(str string, args ...int) {
-	Type(str, args...)
+// TypeStr types a string, mirroring the robotgo API. It returns an error if
+// not every character was typed.
+func TypeStr(str string, args ...int) error {
+	return typeErr(Type(str, args...), str)
 }
 
 // TypeDelay types a string with a per-character delay in milliseconds.
-func TypeDelay(str string, delay int) {
+func TypeDelay(str string, delay int) error {
 	old := KeySleep
 	KeySleep = delay
-	Type(str)
+	n := Type(str)
 	KeySleep = old
+	return typeErr(n, str)
+}
+
+// typeErr reports an error when fewer than all runes of str were typed.
+func typeErr(n int, str string) error {
+	if total := utf8.RuneCountInString(str); n < total {
+		return fmt.Errorf("robotgo: typed %d of %d characters", n, total)
+	}
+	return nil
 }
 
 // SetDelay sets both KeySleep and MouseSleep.

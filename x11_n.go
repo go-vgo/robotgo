@@ -75,7 +75,7 @@ func KeyPress(key string, args ...any) error { return x11.KeyPress(key, args...)
 func Type(str string, args ...int) int { return x11.Type(str, args...) }
 
 // TypeStr type a string.
-func TypeStr(str string, args ...int) { x11.TypeStr(str, args...) }
+func TypeStr(str string, args ...int) error { return x11.TypeStr(str, args...) }
 
 // TypeDelay, SetDelay and CmdCtrl live in robotgo_pub.go (build-tag-free) — they
 // call the package-level Type/KeySleep/MouseSleep — so they are NOT re-declared
@@ -84,7 +84,7 @@ func TypeStr(str string, args ...int) { x11.TypeStr(str, args...) }
 // --- Mouse ---
 
 // Move move the mouse to (x, y).
-func Move(x, y int, displayId ...int) { x11.Move(x, y, displayId...) }
+func Move(x, y int, displayId ...int) error { return x11.Move(x, y, displayId...) }
 
 // MoveSmooth move the mouse smoothly to (x, y).
 func MoveSmooth(x, y int, args ...any) bool { return x11.MoveSmooth(x, y, args...) }
@@ -102,19 +102,19 @@ func MouseDown(key ...any) error { return x11.MouseDown(key...) }
 func MouseUp(key ...any) error { return x11.MouseUp(key...) }
 
 // Scroll scroll the mouse to (x, y).
-func Scroll(x, y int, args ...int) { x11.Scroll(x, y, args...) }
+func Scroll(x, y int, args ...int) error { return x11.Scroll(x, y, args...) }
 
 // ScrollDir scroll the mouse to a direction.
-func ScrollDir(x int, direction ...any) { x11.ScrollDir(x, direction...) }
+func ScrollDir(x int, direction ...any) error { return x11.ScrollDir(x, direction...) }
 
 // ScrollSmooth scroll the mouse smoothly.
-func ScrollSmooth(to int, args ...int) { x11.ScrollSmooth(to, args...) }
+func ScrollSmooth(to int, args ...int) error { return x11.ScrollSmooth(to, args...) }
 
 // DragSmooth drag the mouse smoothly to (x, y).
-func DragSmooth(x, y int, args ...any) { x11.DragSmooth(x, y, args...) }
+func DragSmooth(x, y int, args ...any) error { return x11.DragSmooth(x, y, args...) }
 
 // MoveClick move and click the mouse.
-func MoveClick(x, y int, args ...any) { x11.MoveClick(x, y, args...) }
+func MoveClick(x, y int, args ...any) error { return x11.MoveClick(x, y, args...) }
 
 // Location get the mouse location position, return x, y.
 func Location() (int, int) { return x11.Location() }

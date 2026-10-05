@@ -107,7 +107,10 @@ func TestToUC(t *testing.T) {
 
 	tt.Equal(t, []string{`"`}, ToUC(`"`))
 	tt.Equal(t, []string{"\\"}, ToUC("\\"))
+	tt.Equal(t, []string{"U4e16", "U0001f600", "U0010ffff"}, ToUC("世😀\U0010ffff"))
 	tt.Equal(t, 0, len(ToUC("")))
+	// Runes above the BMP use the Xlib U spelling, not Go's \U escape.
+	tt.Equal(t, []string{"U0001f600"}, ToUC("\U0001F600"))
 }
 
 func TestSetDelay(t *testing.T) {
@@ -127,9 +130,9 @@ func TestSetDelay(t *testing.T) {
 func TestTypeEmpty(t *testing.T) {
 	tt.Equal(t, 0, Type(""))
 	tt.Equal(t, 0, Type("", 0))
-	TypeStr("")
-	TypeDelay("", 0)
-	TypeStrDelay("", 0)
+	tt.Nil(t, TypeStr(""))
+	tt.Nil(t, TypeDelay("", 0))
+	tt.Nil(t, TypeStrDelay("", 0))
 }
 
 // Unknown key names must fail on every backend, with or without a session.
@@ -215,8 +218,8 @@ func TestType(t *testing.T) {
 
 	tt.Equal(t, 2, Type("ab"))
 	tt.Equal(t, 1, Type("c", 0))
-	TypeStr("d")
-	TypeDelay("e", 1)
+	tt.Nil(t, TypeStr("d"))
+	tt.Nil(t, TypeDelay("e", 1))
 }
 
 func TestTypeStr(t *testing.T) {

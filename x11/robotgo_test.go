@@ -15,6 +15,7 @@
 package x11
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"testing"
@@ -284,7 +285,7 @@ func TestKeysymToKeycodeGermanLayout(t *testing.T) {
 // Layout with AltGr symbols but no level-3 key: '@' must not be typed as
 // its bare base key 'q'; it falls back to scratch keycode. With
 // scratch disabled that path returns ErrNotSupported before any event is
-// sent (c.c is nil, so sending would panic).
+// sent (c.c is nil, so sending would fail with ErrNoConnection).
 func TestPressKeysymNoLevel3Key(t *testing.T) {
 	c := germanConn()
 	c.level3Keycode = 0
@@ -298,6 +299,116 @@ func TestPressKeysymNoLevel3Key(t *testing.T) {
 	}
 	if err := c.pressKeysym('@'); err != ErrNotSupported {
 		t.Errorf("pressKeysym('@') = %v, want ErrNotSupported", err)
+	}
+}
+
+// installNilConn makes ensureConn return a conn with no X connection, so
+// every XTEST request fails with ErrNoConnection instead of reaching a server.
+func installNilConn(t *testing.T) {
+	t.Helper()
+	connMu.Lock()
+	prev := globalConn
+	globalConn = &conn{}
+	connMu.Unlock()
+	t.Cleanup(func() {
+		connMu.Lock()
+		globalConn = prev
+		connMu.Unlock()
+	})
+}
+
+// Mouse functions must return send failures instead of nil.
+func TestMouseErrorsWithoutConnection(t *testing.T) {
+	installNilConn(t)
+	tests := []struct {
+		name string
+		fn   func() error
+	}{
+		{"Move", func() error { return Move(1, 2) }},
+		{"Click", func() error { return Click() }},
+		{"Toggle", func() error { return Toggle("left") }},
+		{"MouseDown", func() error { return MouseDown() }},
+		{"MouseUp", func() error { return MouseUp("right") }},
+		{"Scroll", func() error { return Scroll(0, 1) }},
+		{"ScrollDir", func() error { return ScrollDir(1, "left") }},
+		{"ScrollSmooth", func() error { return ScrollSmooth(1, 3, 0) }},
+		{"MoveClick", func() error { return MoveClick(1, 2) }},
+		{"DragSmooth", func() error { return DragSmooth(1, 2) }},
+	}
+	for _, tt := range tests {
+		if err := tt.fn(); !errors.Is(err, ErrNoConnection) {
+			t.Errorf("%s: got %v, want ErrNoConnection", tt.name, err)
+		}
+	}
+}
+
+// The XTEST send helpers must report a missing connection instead of
+// panicking, and pressKeysym must surface a failed key event.
+func TestSendHelpersWithoutConnection(t *testing.T) {
+	c := germanConn() // c.c is nil
+
+	// 'q' is a plain key; '@' holds AltGr first.
+	for _, ks := range []uint32{'q', '@'} {
+		if err := c.pressKeysym(ks); !errors.Is(err, ErrNoConnection) {
+			t.Errorf("pressKeysym(%q) = %v, want ErrNoConnection", rune(ks), err)
+		}
+	}
+	// Every release is attempted even after a failure.
+	err := c.releaseKeycodes([]xproto.Keycode{50, 108})
+	if j, ok := err.(interface{ Unwrap() []error }); !ok || len(j.Unwrap()) != 2 {
+		t.Errorf("releaseKeycodes = %v, want both releases attempted", err)
+	}
+	if err := c.wheel(btnWheelUp, 0); err != nil {
+		t.Errorf("wheel(0 notches) = %v, want nil", err)
+	}
+	if err := c.wheel(btnWheelUp, 2); !errors.Is(err, ErrNoConnection) {
+		t.Errorf("wheel = %v, want ErrNoConnection", err)
+	}
+}
+
+// ScrollDir must reject directions other than up/down/left/right instead of
+// silently doing nothing; no direction means down.
+func TestScrollDirUnknown(t *testing.T) {
+	installNilConn(t) // a scroll that gets through fails with ErrNoConnection
+	tests := []struct {
+		dir  interface{}
+		want string
+	}{
+		{"diagonal", "robotgo: unknown scroll direction: diagonal"},
+		{"Up", "robotgo: unknown scroll direction: Up"},
+		{42, "robotgo: unknown scroll direction: 42"},
+		{nil, "robotgo: unknown scroll direction: <nil>"},
+	}
+	for _, tt := range tests {
+		if err := ScrollDir(1, tt.dir); err == nil || err.Error() != tt.want {
+			t.Errorf("ScrollDir(1, %#v) = %v, want %q", tt.dir, err, tt.want)
+		}
+	}
+	if err := ScrollDir(1); !errors.Is(err, ErrNoConnection) {
+		t.Errorf("ScrollDir(1) = %v, want it to scroll (ErrNoConnection here)", err)
+	}
+}
+
+// typeErr counts runes, not bytes, and only fails on a short count.
+func TestTypeErr(t *testing.T) {
+	tests := []struct {
+		n    int
+		str  string
+		want string
+	}{
+		{0, "", ""},
+		{5, "héllo", ""},
+		{2, "héllo", "robotgo: typed 2 of 5 characters"},
+		{1, "中文", "robotgo: typed 1 of 2 characters"},
+	}
+	for _, tt := range tests {
+		got := ""
+		if err := typeErr(tt.n, tt.str); err != nil {
+			got = err.Error()
+		}
+		if got != tt.want {
+			t.Errorf("typeErr(%d, %q) = %q, want %q", tt.n, tt.str, got, tt.want)
+		}
 	}
 }
 

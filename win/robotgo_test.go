@@ -14,7 +14,10 @@
 
 package win
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func TestKeyToVK(t *testing.T) {
 	// Named keys must resolve.
@@ -230,5 +233,64 @@ func TestTypeRunesStopsOnFailure(t *testing.T) {
 	failSecond := func(uint16) bool { calls++; return calls < 2 }
 	if n := typeRunes("😀", failSecond); n != 0 {
 		t.Errorf("typeRunes partial surrogate: got %d, want 0", n)
+	}
+}
+
+func TestScrollDirInvalid(t *testing.T) {
+	// An invalid direction must error out before sending any input.
+	if err := ScrollDir(1, "sideways"); err == nil {
+		t.Error("ScrollDir(sideways): expected error")
+	}
+	if err := ScrollDir(1, 3); err == nil {
+		t.Error("ScrollDir(3): expected error")
+	}
+}
+
+func TestTypeErr(t *testing.T) {
+	if err := typeErr(2, "hé"); err != nil {
+		t.Errorf("typeErr(full): got %v, want nil", err)
+	}
+	err := typeErr(1, "héllo")
+	if err == nil || err.Error() != "robotgo: typed 1 of 5 characters" {
+		t.Errorf("typeErr(partial): got %v", err)
+	}
+	if err := TypeStr(""); err != nil {
+		t.Errorf("TypeStr(empty): got %v, want nil", err)
+	}
+}
+
+// A failed press releases only the keys that were pressed so far; keys the
+// user holds (never pressed by us) must not get a key up.
+func TestPressKeysPartial(t *testing.T) {
+	var log []string
+	fail := uint16(0x42)
+	send := func(vk uint16, up bool) error {
+		if !up && vk == fail {
+			return errSendInput
+		}
+		log = append(log, fmt.Sprintf("%x:%v", vk, up))
+		return nil
+	}
+	vks := []uint16{0x10, 0x11, fail, 0x41}
+	pressed, err := pressKeys(send, vks)
+	if err != errSendInput {
+		t.Fatalf("pressKeys: got %v, want errSendInput", err)
+	}
+	if len(pressed) != 2 || pressed[0] != 0x10 || pressed[1] != 0x11 {
+		t.Fatalf("pressKeys prefix: got %x", pressed)
+	}
+	if err := releaseKeys(send, pressed); err != nil {
+		t.Fatalf("releaseKeys: %v", err)
+	}
+	want := []string{"10:false", "11:false", "11:true", "10:true"}
+	if fmt.Sprint(log) != fmt.Sprint(want) {
+		t.Errorf("events: got %v, want %v", log, want)
+	}
+
+	// All presses succeed: the whole list is returned.
+	log = nil
+	pressed, err = pressKeys(send, []uint16{0x10, 0x41})
+	if err != nil || len(pressed) != 2 {
+		t.Errorf("pressKeys ok: got %x, %v", pressed, err)
 	}
 }

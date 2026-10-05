@@ -146,6 +146,16 @@ func (c *conn) sync() {
 	c.c.Sync()
 }
 
+// fakeInput sends one XTEST event as a checked request and waits for the
+// server to process it, so a rejected event (or io.EOF once the connection is
+// closed) is reported instead of dropped.
+func (c *conn) fakeInput(typ, detail byte, x, y int16) error {
+	if c.c == nil {
+		return ErrNoConnection
+	}
+	return xtest.FakeInputChecked(c.c, typ, detail, 0, c.root, x, y, 0).Check()
+}
+
 // Close shuts down the X11 connection. After Close, a subsequent call into the
 // backend re-establishes a fresh connection.
 func Close() {

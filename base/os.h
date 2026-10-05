@@ -23,6 +23,11 @@
 	#error "Sorry, this platform isn't supported yet!"
 #endif
 
+/* Returned by the input functions when SendInput/SetCursorPos fail without
+   setting a last error, i.e. the input was rejected by UIPI or the secure
+   desktop. Negative so it never collides with a Win32 error code. */
+#define MM_ERR_INPUT_BLOCKED (-1)
+
 /* Interval to align by for large buffers (e.g. bitmaps). Must be a power of 2. */
 #ifndef BYTE_ALIGN
 	#define BYTE_ALIGN 4 /* Bytes to align pixel buffers to. */

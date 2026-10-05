@@ -21,6 +21,7 @@ package robotgo
 import (
 	"runtime"
 	"strings"
+	"syscall"
 	"testing"
 
 	"github.com/vcaesar/tt"
@@ -284,10 +285,47 @@ func TestKeyInjectCgo(t *testing.T) {
 func TestUnicodeTypeCgo(t *testing.T) {
 	requireDisplay(t)
 
-	UnicodeType(uint32(' '))
-	UnicodeType(uint32(' '), 0)
-	UnicodeType(uint32(' '), 0, 0)
-	inputUTF("space")
+	tt.Nil(t, UnicodeType(uint32(' ')))
+	tt.Nil(t, UnicodeType(uint32(' '), 0))
+	tt.Nil(t, UnicodeType(uint32(' '), 0, 0))
+	tt.Nil(t, inputUTF("space"))
+}
+
+func TestInputUTFX11(t *testing.T) {
+	if runtime.GOOS != "linux" {
+		t.Skip("inputUTF uses Xlib only on Linux")
+	}
+	requireDisplay(t)
+
+	for _, sym := range ToUC("世😀") {
+		if err := inputUTF(sym); err != nil {
+			t.Errorf("inputUTF(%q): %v", sym, err)
+		}
+	}
+	for _, sym := range []string{"", "no_such_keysym", `\U0001f600`} {
+		if err := inputUTF(sym); err == nil {
+			t.Errorf("inputUTF(%q) succeeded for an invalid keysym", sym)
+		}
+	}
+}
+
+func TestTypeStrInvalidKeysymX11(t *testing.T) {
+	if runtime.GOOS != "linux" {
+		t.Skip("TypeStr uses Xlib keysyms only on Linux")
+	}
+	requireDisplay(t)
+
+	// ToUC leaves the newline as an escape that Xlib cannot resolve.
+	n, err := typeStr("a\nb", 0, 0, 0)
+	if n != 1 || err == nil {
+		t.Fatalf("typeStr returned (%d, %v), want (1, error)", n, err)
+	}
+	if err := TypeStr("\n", 0, 0, 0); err == nil {
+		t.Error("TypeStr succeeded for an invalid keysym")
+	}
+	if n := Type("\n", 0, 0, 0); n != 0 {
+		t.Errorf("Type returned %d, want 0", n)
+	}
 }
 
 func TestCheckMouse(t *testing.T) {
@@ -314,7 +352,12 @@ func TestFormatClickErrorButton(t *testing.T) {
 		tt.True(t, strings.HasSuffix(err.Error(), "code=42"), err.Error())
 	case "linux":
 		err = formatClickError(1, "a", "up", 1)
-		tt.True(t, strings.Contains(err.Error(), "XTestFakeButtonEvent"), err.Error())
+		tt.True(t, strings.Contains(err.Error(), "XTest request failed"), err.Error())
+		err = formatClickError(2, "a", "up", 1)
+		tt.True(t, strings.Contains(err.Error(), "no X display"), err.Error())
+	case "windows":
+		err = formatClickError(5, "a", "up", 1)
+		tt.True(t, strings.Contains(err.Error(), syscall.Errno(5).Error()), err.Error())
 	}
 }
 
@@ -423,4 +466,94 @@ func TestKeyToggleArrayArgs(t *testing.T) {
 func TestFormatClickErrorKey(t *testing.T) {
 	tt.Nil(t, formatClickError(0, "a", "down", 1))
 	tt.NotNil(t, formatClickError(5, "a", "up", 1))
+}
+
+func TestFormatMouseError(t *testing.T) {
+	tt.Nil(t, formatMouseError(0, "move"))
+
+	err := formatMouseError(42, "scroll")
+	tt.NotNil(t, err)
+	tt.True(t, strings.HasPrefix(err.Error(), "mouse scroll failed"), err.Error())
+	tt.True(t, strings.Contains(err.Error(), "code=42"), err.Error())
+
+	switch runtime.GOOS {
+	case "darwin":
+		err = formatMouseError(1004, "move")
+		tt.True(t, strings.Contains(err.Error(), "kCGErrorCannotComplete"), err.Error())
+	case "windows":
+		// GetLastError codes are described via syscall.Errno
+		tt.True(t, strings.Contains(err.Error(), syscall.Errno(42).Error()), err.Error())
+	}
+}
+
+func TestFormatKeyError(t *testing.T) {
+	tt.Nil(t, formatKeyError(0, 'a'))
+
+	err := formatKeyError(42, 'é')
+	tt.NotNil(t, err)
+	tt.True(t, strings.HasPrefix(err.Error(), `type 'é' failed`), err.Error())
+	tt.True(t, strings.Contains(err.Error(), "code=42"), err.Error())
+}
+
+// codeDetail only describes codes it knows; everything else is empty so the
+// callers fall back to the bare "code=N" form.
+func TestCodeDetail(t *testing.T) {
+	switch runtime.GOOS {
+	case "windows":
+		tt.Equal(t, syscall.Errno(5).Error(), codeDetail(5))
+		// MM_ERR_INPUT_BLOCKED: SendInput failed without a last error.
+		tt.Equal(t, "input blocked (UIPI or secure desktop)", codeDetail(-1))
+		// win32KeyEvent: no window for the pid.
+		tt.Equal(t, "window not found", codeDetail(-5))
+		tt.Equal(t, "", codeDetail(-42))
+	case "darwin":
+		tt.Equal(t, "kCGErrorCannotComplete", codeDetail(1004))
+		tt.Equal(t, "", codeDetail(42))
+	default:
+		tt.Equal(t, "XTest request failed", codeDetail(1))
+		tt.Equal(t, "no X display", codeDetail(2))
+		tt.Equal(t, "no X display", codeDetail(-8))
+		tt.Equal(t, "", codeDetail(42))
+	}
+}
+
+// Wrong smooth-move args must be rejected instead of panicking, otherwise
+// DragSmooth would leave the button held down.
+func TestSmoothArgs(t *testing.T) {
+	low, high, delay, err := smoothArgs(nil)
+	tt.Nil(t, err)
+	tt.Equal(t, 1.0, low)
+	tt.Equal(t, 3.0, high)
+	tt.Equal(t, 1, delay)
+
+	low, high, delay, err = smoothArgs([]interface{}{2.0, 5.0, 7})
+	tt.Nil(t, err)
+	tt.Equal(t, 2.0, low)
+	tt.Equal(t, 5.0, high)
+	tt.Equal(t, 7, delay)
+
+	_, _, _, err = smoothArgs([]interface{}{"right", 5.0})
+	tt.NotNil(t, err)
+	_, _, _, err = smoothArgs([]interface{}{2.0, 5.0, "7"})
+	tt.NotNil(t, err)
+	// DragSmooth/MoveSmooth report the bad args without touching the mouse.
+	tt.NotNil(t, DragSmooth(1, 1, "right", 5.0))
+	tt.False(t, MoveSmooth(1, 1, "right", 5.0))
+}
+
+func TestInputUTFDetail(t *testing.T) {
+	for code := 1; code <= 4; code++ {
+		tt.NotEqual(t, "", inputUTFDetail[code])
+	}
+}
+
+// An invalid direction must error out before any scroll event is posted.
+func TestScrollDirInvalid(t *testing.T) {
+	err := ScrollDir(1, "sideways")
+	tt.NotNil(t, err)
+	tt.Equal(t, "unknown scroll direction: sideways", err.Error())
+
+	err = ScrollDir(1, 3)
+	tt.NotNil(t, err)
+	tt.Equal(t, "unknown scroll direction: 3", err.Error())
 }

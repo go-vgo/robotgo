@@ -16,9 +16,11 @@ package libei
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 	"time"
 	"unicode"
+	"unicode/utf8"
 )
 
 // KeySleep is the global keyboard delay in milliseconds (between press and
@@ -287,15 +289,26 @@ func Type(str string, args ...int) int {
 	return n
 }
 
-// TypeStr types a string (alias of Type).
-func TypeStr(str string, args ...int) { Type(str, args...) }
+// TypeStr types a string (alias of Type). It returns an error if not every
+// character was typed.
+func TypeStr(str string, args ...int) error { return typeErr(Type(str, args...), str) }
 
-// TypeDelay types a string with a per-character delay in milliseconds.
-func TypeDelay(str string, delay int) {
+// TypeDelay types a string with a per-character delay in milliseconds. It
+// returns an error if not every character was typed.
+func TypeDelay(str string, delay int) error {
 	old := KeySleep
 	KeySleep = delay
-	Type(str)
+	n := Type(str)
 	KeySleep = old
+	return typeErr(n, str)
+}
+
+// typeErr reports an error when fewer than all runes of str were typed.
+func typeErr(n int, str string) error {
+	if total := utf8.RuneCountInString(str); n < total {
+		return fmt.Errorf("robotgo: typed %d of %d characters", n, total)
+	}
+	return nil
 }
 
 // SetDelay sets both KeySleep and MouseSleep.
