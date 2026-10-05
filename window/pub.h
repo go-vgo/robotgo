@@ -109,8 +109,8 @@ typedef struct _Bounds Bounds;
 	}
 
 	// AppWindow returns pid's window element (caller releases it), or NULL:
-	// the focused or main window, else its first (minimized, when
-	// minimized is true) window. Window attributes such as kAXMinimized and
+	// the focused or main window, else its first window whose minimized
+	// state equals minimized. Window attributes such as kAXMinimized and
 	// kAXCloseButton do not exist on the application element.
 	static AXUIElementRef AppWindow(pid_t pid, bool minimized) {
 		AXUIElementRef app = AXUIElementCreateApplication(pid);
@@ -138,7 +138,7 @@ typedef struct _Bounds Bounds;
 				bool isMin = AXUIElementCopyAttributeValue(el, kAXMinimizedAttribute, &v)
 					== kAXErrorSuccess && v == kCFBooleanTrue;
 				if (v != NULL) { CFRelease(v); }
-				if (!minimized || isMin) {
+				if (isMin == minimized) {
 					win = (AXUIElementRef)CFRetain(el);
 					break;
 				}
