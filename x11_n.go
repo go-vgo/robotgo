@@ -202,14 +202,14 @@ func MaxWindow(pid int, args ...any) { x11.MaxWindow(pid, args...) }
 // CloseWindow close the window.
 func CloseWindow(args ...int) { x11.CloseWindow(args...) }
 
-// ActivePid active the window by pid; args are accepted for API parity.
-func ActivePid(pid int, args ...int) error { return x11.ActivePid(pid) }
+// ActivePid active the window by pid; with args or NotPid, pid is an X window id.
+func ActivePid(pid int, args ...int) error { return x11.ActivePid(pid, isHandle(args)) }
 
-// GetBounds get the window bounds (x, y, w, h); args are accepted for API parity.
-func GetBounds(pid int, args ...int) (int, int, int, int) { return x11.GetBounds(pid) }
+// GetBounds get the window bounds (x, y, w, h); with args or NotPid, pid is an X window id.
+func GetBounds(pid int, args ...int) (int, int, int, int) { return x11.GetBounds(pid, isHandle(args)) }
 
-// GetClient get the window client bounds (x, y, w, h); args are accepted for API parity.
-func GetClient(pid int, args ...int) (int, int, int, int) { return x11.GetClient(pid) }
+// GetClient get the window client bounds (x, y, w, h); with args or NotPid, pid is an X window id.
+func GetClient(pid int, args ...int) (int, int, int, int) { return x11.GetClient(pid, isHandle(args)) }
 
 // --- Process (Pids/Process/Kill/... come from the portable ps.go) ---
 

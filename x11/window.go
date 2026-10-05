@@ -98,8 +98,22 @@ func ActiveName(name string) error {
 	return ewmh.ActiveWindowReq(c.xu, w)
 }
 
-// ActivePid activates the first window owned by pid.
-func ActivePid(pid int) error {
+// windowFor resolves pid to a window: with isXid (the Cgo NotPid / extra arg
+// mode) pid is already an X window id, otherwise it is resolved like
+// targetWindow.
+func (c *conn) windowFor(pid int, isXid bool) (xproto.Window, error) {
+	if !isXid {
+		return c.targetWindow(pid)
+	}
+	if pid <= 0 {
+		return 0, ErrNotFound
+	}
+	return xproto.Window(pid), nil
+}
+
+// ActivePid activates the first window owned by pid, or the window pid
+// itself when isXid.
+func ActivePid(pid int, isXid bool) error {
 	if pid <= 0 {
 		return ErrNotFound
 	}
@@ -107,7 +121,7 @@ func ActivePid(pid int) error {
 	if err != nil {
 		return err
 	}
-	w, err := c.xidByPid(pid)
+	w, err := c.windowFor(pid, isXid)
 	if err != nil {
 		return err
 	}
@@ -124,17 +138,21 @@ func (c *conn) clientRect(w xproto.Window) (x, y, width, height int, err error) 
 	if err != nil {
 		return 0, 0, 0, 0, err
 	}
+	if !tr.SameScreen {
+		return 0, 0, 0, 0, ErrNotFound
+	}
 	return int(tr.DstX), int(tr.DstY), int(geom.Width), int(geom.Height), nil
 }
 
-// GetClient returns the client area (x, y, w, h) of pid's window; pid <= 0
-// selects the active window. It returns zeros when no window is found.
-func GetClient(pid int) (int, int, int, int) {
+// GetClient returns the client area (x, y, w, h) of pid's window (an X
+// window id when isXid); pid <= 0 selects the active window. It returns
+// zeros when no window is found.
+func GetClient(pid int, isXid bool) (int, int, int, int) {
 	c, err := ensureConn()
 	if err != nil {
 		return 0, 0, 0, 0
 	}
-	w, err := c.targetWindow(pid)
+	w, err := c.windowFor(pid, isXid)
 	if err != nil {
 		return 0, 0, 0, 0
 	}
@@ -146,14 +164,15 @@ func GetClient(pid int) (int, int, int, int) {
 }
 
 // GetBounds returns the window bounds (x, y, w, h) of pid's window including
-// the window manager frame (_NET_FRAME_EXTENTS); pid <= 0 selects the
-// active window. It returns zeros when no window is found.
-func GetBounds(pid int) (int, int, int, int) {
+// the window manager frame (_NET_FRAME_EXTENTS); pid is an X window id when
+// isXid, pid <= 0 selects the active window. It returns zeros when no window
+// is found.
+func GetBounds(pid int, isXid bool) (int, int, int, int) {
 	c, err := ensureConn()
 	if err != nil {
 		return 0, 0, 0, 0
 	}
-	w, err := c.targetWindow(pid)
+	w, err := c.windowFor(pid, isXid)
 	if err != nil {
 		return 0, 0, 0, 0
 	}

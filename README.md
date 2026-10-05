@@ -212,8 +212,10 @@ The runtime requirements above still apply. Cgo-only APIs such as
 `CaptureScreen` / `FreeBitmap` do not exist; use `CaptureImg`. Unsupported
 operations return `ErrNotSupported` (or an empty result).
 
-- **`mac`:** no window management — `ActiveName` returns `ErrNotSupported`,
-  `GetTitle` returns `""`, minimize/maximize/close are no-ops.
+- **`mac`:** window management (`GetTitle`, `GetBounds`, `ActivePid`,
+  `ActiveName`, `MinWindow`, `MaxWindow`, `CloseWindow`) uses Accessibility
+  and needs the Accessibility permission; `MaxWindow` toggles native full
+  screen and `GetClient` equals `GetBounds`.
 - **`wayland`, `libei`:** `Location()` returns the last position injected by
   RobotGo, not the physical cursor. Clipboard needs `wl-clipboard`.
 

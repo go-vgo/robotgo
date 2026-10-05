@@ -102,19 +102,21 @@ func CheckAccess(prompt bool) bool {
 }
 
 // GetActiveApp returns the frontmost app's localized name, bundle id and pid.
+// The pid comes from the live AX / window server state (NSWorkspace's
+// frontmostApplication is cached without a main run loop).
 func GetActiveApp() (name, bundleID string, pid int) {
-	if !loadApp() {
-		return "", "", 0
+	pid = frontmostPid()
+	if pid <= 0 || !loadApp() {
+		return "", "", pid
 	}
 	withPool(func() {
-		ws := objc.ID(objc.GetClass("NSWorkspace")).Send(objc.RegisterName("sharedWorkspace"))
-		app := ws.Send(objc.RegisterName("frontmostApplication"))
+		app := objc.ID(objc.GetClass("NSRunningApplication")).Send(
+			objc.RegisterName("runningApplicationWithProcessIdentifier:"), int32(pid))
 		if app == 0 {
 			return
 		}
 		name = nsString(app.Send(objc.RegisterName("localizedName")))
 		bundleID = nsString(app.Send(objc.RegisterName("bundleIdentifier")))
-		pid = int(objc.Send[int32](app, objc.RegisterName("processIdentifier")))
 	})
 	return name, bundleID, pid
 }

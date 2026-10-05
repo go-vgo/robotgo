@@ -25,6 +25,29 @@ func TestIs64Bit(t *testing.T) {
 	}
 }
 
+// Invalid code points must error before any key event is posted.
+func TestUnicodeTypeInvalid(t *testing.T) {
+	for _, r := range []uint32{0xD800, 0x110000} {
+		if err := UnicodeType(r); err == nil {
+			t.Errorf("UnicodeType(%#x): want error", r)
+		}
+	}
+}
+
+// Handle mode follows Cgo: any extra arg or NotPid.
+func TestIsHandle(t *testing.T) {
+	old := NotPid
+	defer func() { NotPid = old }()
+	NotPid = false
+	if isHandle(nil) || !isHandle([]int{1}) {
+		t.Error("isHandle: wrong result with NotPid=false")
+	}
+	NotPid = true
+	if !isHandle(nil) {
+		t.Error("isHandle: want true with NotPid=true")
+	}
+}
+
 // A non-positive count must not post any click.
 func TestMultiClickNoop(t *testing.T) {
 	for _, n := range []int{0, -1} {

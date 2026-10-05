@@ -131,10 +131,39 @@ var (
 	cgImageRelease              func(image uintptr)
 	cgDataProviderCopyData      func(provider uintptr) uintptr
 
+	// Window list (live, needs no permission for owner pid/name/layer).
+	cgWindowListCopyWindowInfo func(option uint32, relativeToWindow uint32) uintptr
+
 	// CoreFoundation.
 	cfDataGetBytePtr func(data uintptr) unsafe.Pointer
 	cfDataGetLength  func(data uintptr) int64
 	cfRelease        func(ref uintptr)
+
+	cfRetain                  func(ref uintptr) uintptr
+	cfGetTypeID               func(ref uintptr) uint64
+	cfArrayGetCount           func(arr uintptr) int64
+	cfArrayGetValueAtIndex    func(arr uintptr, idx int64) uintptr
+	cfDictionaryGetValue      func(dict, key uintptr) uintptr
+	cfNumberGetValue          func(num uintptr, typ int64, out unsafe.Pointer) bool
+	cfStringGetLength         func(str uintptr) int64
+	cfStringGetMaxSizeForEnc  func(length int64, encoding uint32) int64
+	cfStringGetCString        func(str uintptr, buf *byte, size int64, encoding uint32) bool
+	cfStringCreateWithCString func(alloc uintptr, cstr string, encoding uint32) uintptr
+	cfStringTypeID, cfArrayTypeID, cfDictionaryTypeID,
+	cfNumberTypeID, cfBooleanTypeID uint64
+
+	// CGWindowList dictionary keys (CFStringRef constants).
+	kCGWindowLayer, kCGWindowOwnerPID, kCGWindowOwnerName uintptr
+)
+
+// CoreFoundation / CGWindowList constants.
+const (
+	cfStringEncodingUTF8 = 0x08000100
+	cfNumberSInt64Type   = 4
+
+	kCGWindowListOptionAll              = 0
+	kCGWindowListOptionOnScreenOnly     = 1 << 0
+	kCGWindowListExcludeDesktopElements = 1 << 4
 )
 
 // loaded reports whether the system frameworks were resolved successfully.
@@ -195,9 +224,52 @@ func init() {
 	purego.RegisterLibFunc(&cgImageRelease, cg, "CGImageRelease")
 	purego.RegisterLibFunc(&cgDataProviderCopyData, cg, "CGDataProviderCopyData")
 
+	purego.RegisterLibFunc(&cgWindowListCopyWindowInfo, cg, "CGWindowListCopyWindowInfo")
+
 	purego.RegisterLibFunc(&cfDataGetBytePtr, cf, "CFDataGetBytePtr")
 	purego.RegisterLibFunc(&cfDataGetLength, cf, "CFDataGetLength")
 	purego.RegisterLibFunc(&cfRelease, cf, "CFRelease")
+
+	purego.RegisterLibFunc(&cfRetain, cf, "CFRetain")
+	purego.RegisterLibFunc(&cfGetTypeID, cf, "CFGetTypeID")
+	purego.RegisterLibFunc(&cfArrayGetCount, cf, "CFArrayGetCount")
+	purego.RegisterLibFunc(&cfArrayGetValueAtIndex, cf, "CFArrayGetValueAtIndex")
+	purego.RegisterLibFunc(&cfDictionaryGetValue, cf, "CFDictionaryGetValue")
+	purego.RegisterLibFunc(&cfNumberGetValue, cf, "CFNumberGetValue")
+	purego.RegisterLibFunc(&cfStringGetLength, cf, "CFStringGetLength")
+	purego.RegisterLibFunc(&cfStringGetMaxSizeForEnc, cf, "CFStringGetMaximumSizeForEncoding")
+	purego.RegisterLibFunc(&cfStringGetCString, cf, "CFStringGetCString")
+	purego.RegisterLibFunc(&cfStringCreateWithCString, cf, "CFStringCreateWithCString")
+
+	var typeID func() uint64
+	for _, t := range []struct {
+		dst *uint64
+		sym string
+	}{
+		{&cfStringTypeID, "CFStringGetTypeID"},
+		{&cfArrayTypeID, "CFArrayGetTypeID"},
+		{&cfDictionaryTypeID, "CFDictionaryGetTypeID"},
+		{&cfNumberTypeID, "CFNumberGetTypeID"},
+		{&cfBooleanTypeID, "CFBooleanGetTypeID"},
+	} {
+		purego.RegisterLibFunc(&typeID, cf, t.sym)
+		*t.dst = typeID()
+	}
+
+	for _, k := range []struct {
+		dst *uintptr
+		sym string
+	}{
+		{&kCGWindowLayer, "kCGWindowLayer"},
+		{&kCGWindowOwnerPID, "kCGWindowOwnerPID"},
+		{&kCGWindowOwnerName, "kCGWindowOwnerName"},
+	} {
+		sym, err := purego.Dlsym(cg, k.sym)
+		if err != nil {
+			return
+		}
+		*k.dst = **(**uintptr)(unsafe.Pointer(&sym))
+	}
 
 	loaded = true
 }

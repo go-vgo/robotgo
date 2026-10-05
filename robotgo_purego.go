@@ -17,7 +17,11 @@
 // x11_n.go, wayland_n.go, libei.go) forwards, so no backend redeclares them.
 package robotgo
 
-import "strconv"
+import (
+	"errors"
+	"strconv"
+	"unicode/utf8"
+)
 
 // GetLocationColor get the color of the pixel at the mouse location
 func GetLocationColor(displayId ...int) string {
@@ -43,15 +47,27 @@ func Is64Bit() bool {
 // UnicodeType tap uint32 unicode,
 // the optional args[0] is the target pid where the backend supports it
 func UnicodeType(str uint32, args ...int) error {
+	if !utf8.ValidRune(rune(str)) {
+		return errors.New("robotgo: invalid unicode code point " + strconv.FormatUint(uint64(str), 16))
+	}
 	if len(args) > 1 {
 		args = args[:1]
 	}
 	return TypeStr(string(rune(str)), args...)
 }
 
+// isHandle reports whether a window API's pid is a native window handle
+// (HWND / X11 window id): set by any extra arg or NotPid, as in Cgo.
+func isHandle(args []int) bool {
+	return len(args) > 0 || NotPid
+}
+
 // clickTimes clicks button count times, stopping at the first error.
 func clickTimes(button string, count int) error {
 	for i := 0; i < count; i++ {
+		if i > 0 {
+			MilliSleep(50)
+		}
 		if err := Click(button); err != nil {
 			return err
 		}

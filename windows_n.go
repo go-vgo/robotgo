@@ -180,14 +180,14 @@ func MaxWindow(pid int, args ...any) { win.MaxWindow(pid, args...) }
 // CloseWindow close the window.
 func CloseWindow(args ...int) { win.CloseWindow(args...) }
 
-// ActivePid active the window by pid; args are accepted for API parity.
-func ActivePid(pid int, args ...int) error { return win.ActivePid(pid) }
+// ActivePid active the window by pid; with args or NotPid, pid is an HWND.
+func ActivePid(pid int, args ...int) error { return win.ActivePid(pid, isHandle(args)) }
 
-// GetBounds get the window bounds (x, y, w, h); args are accepted for API parity.
-func GetBounds(pid int, args ...int) (int, int, int, int) { return win.GetBounds(pid) }
+// GetBounds get the window bounds (x, y, w, h); with args or NotPid, pid is an HWND.
+func GetBounds(pid int, args ...int) (int, int, int, int) { return win.GetBounds(pid, isHandle(args)) }
 
-// GetClient get the window client bounds (x, y, w, h); args are accepted for API parity.
-func GetClient(pid int, args ...int) (int, int, int, int) { return win.GetClient(pid) }
+// GetClient get the window client bounds (x, y, w, h); with args or NotPid, pid is an HWND.
+func GetClient(pid int, args ...int) (int, int, int, int) { return win.GetClient(pid, isHandle(args)) }
 
 // --- Process (Pids/Process/Kill/... come from the portable ps.go) ---
 

@@ -30,3 +30,6 @@ var errPostMessage = errors.New("robotgo: PostMessageW failed")
 
 // errSetCursorPos is returned when SetCursorPos fails.
 var errSetCursorPos = errors.New("robotgo: SetCursorPos failed")
+
+// errActivate is returned when Windows refuses the foreground change.
+var errActivate = errors.New("robotgo: failed to activate the window")
