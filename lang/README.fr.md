@@ -33,9 +33,9 @@ Je développe actuellement [Codg](https://github.com/vcaesar/codg), un système 
 - [Documentation](#docs)
 - [Binding](#binding)
 - [Prérequis](#requirements)
+- [Builds sans Cgo](#cgo-free-builds)
 - [Installation](#installation)
 - [Mise à jour](#update)
-- [Builds sans Cgo](#cgo-free-builds)
 - [Exemples](#examples)
 - [Conversion de types et touches](https://github.com/go-vgo/robotgo/blob/master/docs/keys.md)
 - [Compilation croisée](https://github.com/go-vgo/robotgo/blob/master/docs/install.md#crosscompiling)
@@ -48,211 +48,227 @@ Je développe actuellement [Codg](https://github.com/vcaesar/codg), un système 
 - [GoDoc](https://godoc.org/github.com/go-vgo/robotgo) <br>
 - [Documentation de l'API](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) (obsolète, plus mise à jour)
 
-## Binding:
+## Binding
 
 [ADB](https://github.com/vcaesar/adb), encapsulation de l'API adb d'Android.
 
-## Requirements:
+## Requirements
 
-Désormais, veuillez vous assurer que `Golang, GCC` sont correctement installés avant d'installer RobotGo.
+**Go 1.26+** (voir [go.mod](../go.mod)) et un backend :
 
-### Toutes les plateformes :
+- **Par défaut (Cgo) :** `CGO_ENABLED=1`, un compilateur C et les bibliothèques
+  système ci-dessous.
+- **Go pur (expérimental) :** aucune chaîne d'outils C ; voir [Builds sans Cgo](#cgo-free-builds).
 
-```
-Golang
+Les deux nécessitent les [dépendances par fonctionnalité](#feature-specific-dependencies)
+correspondant aux fonctionnalités utilisées.
 
-GCC
-```
+### Default Cgo setup
 
-#### Pour MacOS :
+#### macOS
 
-```
+Go et les Xcode Command Line Tools (Clang) :
+
+```sh
 brew install go
-```
-
-Outils en ligne de commande Xcode ; <br>
-Et dans les réglages de confidentialité, ajoutez « Enregistrement de l'écran » et « Accessibilité » dans : <br>
-`Réglages Système > Confidentialité et sécurité > Accessibilité, Enregistrement de l'écran et de l'audio système`.
-
-```
 xcode-select --install
 ```
 
-#### Pour Windows :
+**Autorisations (Cgo et Go pur) :** dans **Réglages Système > Confidentialité et
+sécurité**, accordez à l'application ou au terminal l'**Accessibilité** (saisie)
+et l'**Enregistrement de l'écran** (capture).
 
-```
-winget install Golang.go
+#### Windows
+
+```powershell
+winget install GoLang.Go
 ```
 
-[llvm-mingw](https://github.com/mstorsjo/llvm-mingw)
+Plus **une** chaîne d'outils C. [LLVM-MinGW](https://github.com/mstorsjo/llvm-mingw) :
 
-```
+```powershell
 winget install MartinStorsjo.LLVM-MinGW.UCRT
+$env:CC = "clang"
 ```
 
-ou [Mingw-w64](https://sourceforge.net/projects/mingw-w64/files)
+Ou [MinGW-w64 (WinLibs)](https://winlibs.com/) :
 
-```
+```powershell
 winget install BrechtSanders.WinLibs.POSIX.UCRT
+$env:CC = "gcc"
 ```
 
-Ou téléchargez [Mingw-w64](https://sourceforge.net/projects/mingw-w64/files) ainsi que d'autres gcc, puis ajoutez un chemin tel que `C:\mingw64\bin` à la variable d'environnement système `Path`.
-[Définir les variables d'environnement pour exécuter GCC depuis la ligne de commande](https://www.youtube.com/results?search_query=Set+environment+variables+to+run+GCC+from+command+line).
+Le répertoire `bin` de la chaîne d'outils (par exemple `C:\mingw64\bin`) doit
+figurer dans `PATH` et correspondre à `GOARCH`. Tout autre compilateur compatible
+Cgo, comme une installation manuelle de
+[MinGW-w64](https://sourceforge.net/projects/mingw-w64/files), fonctionne aussi.
 
-`Ou les autres GCC` (à l'exception de Mingw-w64, vous devez compiler vous-même la « libpng » lorsque vous utilisez [bitmap](https://github.com/vcaesar/bitmap).)
+[Bitmap](https://github.com/vcaesar/bitmap) ne fournit libpng que pour MinGW-w64 ;
+avec une autre chaîne d'outils, compilez libpng vous-même.
 
-#### Pour tout le reste :
+#### Linux (X11)
 
-```
-GCC
+Build : GCC, en-têtes libc, en-têtes X11/XTest. Exécution : un serveur X avec
+XTEST et `DISPLAY` défini. Pour Wayland natif, voir [Builds sans Cgo](#cgo-free-builds).
 
-X11 avec l'extension XTest (la bibliothèque Xtst)
+**Ubuntu / Debian :**
 
-"Clipboard" : xsel xclip
+```sh
+# Go (Snap si le paquet de la distribution est trop ancien)
+sudo snap install go --classic
+# ou : sudo apt install golang
 
-"Bitmap" : libpng (Utilisé uniquement par "bitmap".)
+# Base (Cgo) : compilateur, libc, X11, XTest
+sudo apt install gcc libc6-dev libx11-dev xorg-dev libxtst-dev
 
-"Event-Gohook" : xcb, xkb, libxkbcommon (Utilisé uniquement par "hook".)
-```
-
-##### Ubuntu :
-
-```yml
-# sudo apt install golang
-sudo snap install go  --classic
-
-# gcc
-sudo apt install gcc libc6-dev
-
-# x11
-sudo apt install libx11-dev xorg-dev libxtst-dev
-
-# Clipboard
+# Presse-papiers (X11)
 sudo apt install xsel xclip
 
-# Bitmap
+# Bitmap : libpng
 sudo apt install libpng++-dev
 
-# GoHook
+# GoHook : XCB, XKB
 sudo apt install xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev libxkbcommon-dev
 ```
 
-##### Fedora :
+**Fedora :**
 
-```yml
-# x11
-sudo dnf install libXtst-devel
+```sh
+# Base (Cgo) : compilateur, libc, X11, XTest
+sudo dnf install gcc glibc-devel libX11-devel libXtst-devel
 
-# Clipboard
+# Presse-papiers (X11)
 sudo dnf install xsel xclip
 
-# Bitmap
+# Bitmap : libpng
 sudo dnf install libpng-devel
 
-# GoHook
+# GoHook : XKB (Fedora < 34 : xorg-x11-xkb-utils-devel au lieu de xkbcomp-devel)
 sudo dnf install libxkbcommon-devel libxkbcommon-x11-devel xkbcomp-devel
-xorg-x11-xkb-utils-devel (< Fedora 34)
 ```
+
+### Feature-specific dependencies
+
+À ajouter à l'installation de base, uniquement pour les fonctionnalités utilisées :
+
+- **Presse-papiers Linux (Cgo et Go pur) :** `xclip` ou `xsel` sous X11 ;
+  `wl-clipboard` sous Wayland :
+
+  ```sh
+  sudo apt install wl-clipboard   # Ubuntu / Debian
+  sudo dnf install wl-clipboard   # Fedora
+  ```
+
+- **[Bitmap](https://github.com/vcaesar/bitmap) :** en-têtes libpng.
+- **[GoHook](https://github.com/robotn/gohook) :** en-têtes XCB/XKB sous Linux.
+
+Bitmap et GoHook sont des paquets Cgo distincts ; un backend RobotGo en Go pur ne
+supprime pas leurs dépendances C.
+
+## Cgo-free Builds
+
+Les **backends expérimentaux en Go pur** se compilent et se cross-compilent avec
+`CGO_ENABLED=0` (sans GCC, MinGW, Xcode ni en-têtes X11). Même chemin d'import et
+même API ; un **tag de build** sélectionne le backend — `CGO_ENABLED=0` seul ne
+sélectionne rien.
+
+| `GOOS` cible  | Tag de build | Paquet                 | Prérequis d'exécution                                                   |
+| ------------- | ------------ | ---------------------- | ----------------------------------------------------------------------- |
+| `windows`     | `win`        | [win](../win/)         | Win32 uniquement, aucun runtime supplémentaire                          |
+| `darwin`      | `mac`        | [darwin](../darwin/)   | frameworks système et [autorisations de confidentialité](#macos)        |
+| `linux`       | `x11`        | [x11](../x11/)         | serveur X avec XTEST, `DISPLAY` défini                                  |
+| `linux`       | `wayland`    | [wayland](../wayland/) | compositeur wlroots, voir [Wayland](#wayland)                           |
+| `linux`       | `libei`      | [libei](../libei/)     | portail RemoteDesktop (GNOME/KDE), voir [libei](#libei-gnome--kde)      |
+
+**`purego`** est un raccourci : `mac` sur macOS, `win` sur Windows, `wayland` sur
+Linux. Ajoutez `x11` ou `libei` pour le remplacer sous Linux (`-tags "purego,x11"`).
+
+Utilisez **un seul tag de backend** correspondant à `GOOS` ; les combinaisons
+telles que `x11,libei` ne compilent pas (`purego` plus un remplacement Linux est
+la seule exception).
+
+### Build commands
+
+```sh
+# OS courant
+CGO_ENABLED=0 go build -tags purego .
+
+# Compilation croisée
+CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags win .
+CGO_ENABLED=0 GOOS=darwin  GOARCH=arm64 go build -tags mac .
+CGO_ENABLED=0 GOOS=linux   GOARCH=amd64 go build -tags x11 .
+CGO_ENABLED=0 GOOS=linux   GOARCH=amd64 go build -tags wayland .
+CGO_ENABLED=0 GOOS=linux   GOARCH=amd64 go build -tags libei .
+```
+
+PowerShell : `$env:CGO_ENABLED = "0"; go build -tags purego .`
+
+Compilez la racine du module (`.`) ou votre propre paquet, pas `./...` :
+`examples/` et certains sous-paquets ont besoin d'API réservées à Cgo.
+
+### Limitations
+
+Les prérequis d'exécution ci-dessus s'appliquent toujours. Les API réservées à
+Cgo comme `CaptureScreen` / `FreeBitmap` n'existent pas ; utilisez `CaptureImg`.
+Les opérations non prises en charge renvoient `ErrNotSupported` (ou un résultat
+vide).
+
+- **`mac` :** pas de gestion des fenêtres — `ActiveName` renvoie
+  `ErrNotSupported`, `GetTitle` renvoie `""`, et réduire/agrandir/fermer n'ont
+  aucun effet.
+- **`wayland`, `libei` :** `Location()` renvoie la dernière position injectée par
+  RobotGo, pas le curseur physique. Le presse-papiers nécessite `wl-clipboard`.
 
 #### Wayland
 
-Le backend Wayland est une implémentation **100 % Go (sans Cgo)**, aucune
-bibliothèque C système n'est donc requise. Il nécessite un compositeur basé sur
-wlroots (Sway, Hyprland, Wayfire, ...) prenant en charge les protocoles suivants :
+Un compositeur wlroots (Sway, Hyprland, Wayfire, ...) avec `WAYLAND_DISPLAY` et
+`XDG_RUNTIME_DIR` définis, exposant :
 
-```
-zwlr_virtual_pointer_v1            (contrôle de la souris)
-zwp_virtual_keyboard_v1            (contrôle du clavier)
-zwlr_screencopy_v1                 (capture d'écran)
-zwlr_foreign_toplevel_management_v1 (gestion des fenêtres)
-```
+| Fonctionnalité        | Global du protocole                |
+| --------------------- | ---------------------------------- |
+| Contrôle de la souris | `zwlr_virtual_pointer_manager_v1`  |
+| Contrôle du clavier   | `zwp_virtual_keyboard_manager_v1`  |
+| Capture d'écran       | `zwlr_screencopy_manager_v1`       |
+| Gestion des fenêtres  | `zwlr_foreign_toplevel_manager_v1` |
 
-GNOME et KDE ne prennent **pas** en charge ces protocoles nativement.
+GNOME et KDE ne fournissent pas ces protocoles ; utilisez `libei` dans ce cas.
 
 #### libei (GNOME / KDE)
 
-Le backend libei est également une implémentation **100 % Go (sans Cgo)**. Il
-pilote les entrées via l'interface RemoteDesktop de `xdg-desktop-portal` de
-freedesktop, il fonctionne donc sur GNOME et KDE (contrairement au backend
-Wayland wlroots). Il nécessite :
+La saisie passe par l'interface D-Bus **RemoteDesktop** de
+`xdg-desktop-portal` : il faut un bus de session, `xdg-desktop-portal` et un
+backend qui l'implémente (`xdg-desktop-portal-gnome`, `-kde` ou `-wlr`). Au
+premier lancement, une boîte de dialogue de consentement s'affiche ; le jeton de
+restauration est mis en cache dans `$XDG_STATE_HOME/robotgo`.
 
+Les déplacements absolus utilisent un flux ScreenCast lié (par défaut) ;
+définissez `libei.LinkScreenCast = false` pour n'avoir que des déplacements
+relatifs. La capture d'écran et la gestion des fenêtres renvoient
+`ErrNotSupported`.
+
+## Installation
+
+```sh
+go get github.com/go-vgo/robotgo
 ```
-xdg-desktop-portal               (le service D-Bus du portail)
-xdg-desktop-portal-gnome / -kde  (le backend de portail de votre bureau)
-```
-
-Remarque : le backend libei ne gère que les entrées souris et clavier. La capture
-d'écran et la gestion des fenêtres renvoient `ErrNotSupported`.
-
-## Installation:
-
-Avec la prise en charge des modules Go (Go 1.11+), il suffit d'importer :
 
 ```go
 import "github.com/go-vgo/robotgo"
 ```
 
-Sinon, pour installer le paquet robotgo, exécutez la commande :
+`png.h: No such file or directory` avec Bitmap : consultez ses prérequis libpng
+et [issues/47](https://github.com/go-vgo/robotgo/issues/47).
 
-```
-go get github.com/go-vgo/robotgo
-```
+## Update
 
-png.h: No such file or directory ? Veuillez consulter [issues/47](https://github.com/go-vgo/robotgo/issues/47).
-
-## Update:
-
-```
+```sh
 go get -u github.com/go-vgo/robotgo
 ```
 
 Notez le problème de cache de compilation des fichiers C de go1.10.x, [golang #24355](https://github.com/golang/go/issues/24355).
 Problème de `go mod vendor`, [golang #26366](https://github.com/golang/go/issues/26366).
 
-## Cgo-free Builds:
-
-RobotGo fournit des backends **100 % Go (sans Cgo)** pour Windows, macOS, X11, Wayland et libei (Linux), c'est expérimental.
-Ils exposent la même API `robotgo`, votre code n'a donc pas besoin d'être modifié — il suffit d'un tag de build.
-Ces backends se compilent en cross-compilation avec `CGO_ENABLED=0` (sans GCC, MinGW, Xcode ni en-têtes X11).
-
-| Backend                          | Tag de build | Paquet Go                           |
-| -------------------------------- | ------------ | ----------------------------------- |
-| Windows (sans Cgo)               | `win`        | `github.com/go-vgo/robotgo/win`     |
-| macOS (Quartz via purego)        | `mac`        | `github.com/go-vgo/robotgo/darwin`  |
-| X11 (Linux, protocole X pur Go)  | `x11`        | `github.com/go-vgo/robotgo/x11`     |
-| Wayland (Linux, wlroots)         | `wayland`    | `github.com/go-vgo/robotgo/wayland` |
-| libei (Linux, portail GNOME/KDE) | `libei`      | `github.com/go-vgo/robotgo/libei`   |
-| Défaut pur Go (toutes plateformes) | `purego`   | sélectionne `mac`/`win`/`wayland` ci-dessus |
-
-```sh
-# Backend pur Go par défaut par plateforme, un seul tag pour toutes les cibles :
-# macOS -> mac, Windows -> win, Linux -> wayland (à combiner avec x11/libei pour remplacer)
-go build -tags purego .
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags "purego,x11" .
-
-# Windows, sans Cgo / sans MinGW
-CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags win .
-
-# macOS, Quartz/CoreGraphics chargé à l'exécution via purego (sans Xcode)
-CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -tags mac .
-
-# X11, protocole X pur Go (XTEST) — sans en-têtes X11
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags x11 .
-
-# Wayland, compositeur basé sur wlroots (Sway, Hyprland, Wayfire, ...)
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags wayland .
-
-# libei, GNOME/KDE via l'interface RemoteDesktop de xdg-desktop-portal
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags libei .
-```
-
-Remarque : les exemples compilent la racine du module (`.`) plutôt que `./...`, car `examples/` et certains sous-paquets spécifiques à l'OS utilisent des API disponibles uniquement avec le backend Cgo par défaut.
-
-Avec le tag `win`, le backend Cgo/Win32 par défaut est exclu et les appels sont redirigés vers le paquet Go pur `win` ; avec le tag `mac`, le backend Cgo/Quartz par défaut est exclu et les appels sont redirigés vers le paquet Go pur `darwin` (la gestion des fenêtres renvoie `ErrNotSupported`) ; avec le tag `x11`, le backend Cgo/X11 est exclu et les appels sont redirigés vers le paquet Go pur `x11` ; avec le tag `wayland`, le backend Cgo/X11 est exclu et les appels sont redirigés vers le paquet Go pur `wayland` ; avec le tag `libei`, les backends Cgo/X11 et Wayland wlroots sont tous deux exclus et les appels sont redirigés vers le paquet Go pur `libei`.
-
-Le tag `purego` est un raccourci multiplateforme : il exclut le backend Cgo partout et choisit le backend pur Go par défaut pour l'OS cible — `mac` sur macOS, `win` sur Windows et `wayland` sur Linux. Sous Linux, vous pouvez le combiner avec `x11` ou `libei` (par exemple `-tags "purego,libei"`) pour choisir un autre backend pur Go.
-
-## [Examples:](https://github.com/go-vgo/robotgo/blob/master/examples)
+## [Examples](https://github.com/go-vgo/robotgo/blob/master/examples)
 
 #### [Souris](https://github.com/go-vgo/robotgo/blob/master/examples/mouse/main.go)
 
@@ -603,9 +619,7 @@ func main() {
 
 ## Plans
 
-- Réécrire une partie du code C en Go (comme x11, windows)
 - Meilleure prise en charge du multi-écran
-- Prise en charge de Wayland
 - Mise à jour du handle de fenêtre
 - Essayer de prendre en charge Android et iOS
 
