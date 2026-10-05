@@ -64,6 +64,7 @@ func TestToggleKeys(t *testing.T) {
 		{"key is modifier", "ctrl", []interface{}{"ctrl"}, []int32{ctrl}, false},
 		{"implicit shift", "A", []interface{}{"up"}, []int32{shift, a}, true},
 		{"explicit shift dedup", "A", []interface{}{"shift"}, []int32{shift, a}, false},
+		{"side shift satisfies implied", "A", []interface{}{[]string{"shiftr"}}, []int32{54, a}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

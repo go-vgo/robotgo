@@ -137,14 +137,11 @@ func KeyTap(key string, args ...interface{}) error {
 		return err
 	}
 
-	code, shift, ok := resolveKey(key)
-	if !ok {
-		return errors.New("robotgo/libei: unknown key: " + key)
+	codes, _, err := toggleKeys(key, args)
+	if err != nil {
+		return err
 	}
-	mods := extractModifiers(args)
-	if shift {
-		mods = append(mods, "shift")
-	}
+	code := codes[len(codes)-1]
 
 	// Press modifiers, remembering the ones that actually went down so they
 	// are always released (the upKeyArr behavior of the C backend), even when
@@ -155,11 +152,7 @@ func KeyTap(key string, args ...interface{}) error {
 			return c.inj.keyboardKeycode(mc, stateReleased)
 		})
 	}
-	for _, mod := range mods {
-		mc, ok := keyToEvdev(mod)
-		if !ok {
-			continue
-		}
+	for _, mc := range codes[:len(codes)-1] {
 		if err := c.inj.keyboardKeycode(mc, statePressed); err != nil {
 			return errors.Join(err, upMods())
 		}
@@ -191,9 +184,10 @@ func releaseKeys(codes []int32, send func(code int32) error) error {
 	return errors.Join(errs...)
 }
 
-// toggleKeys resolves a KeyToggle call into evdev codes in press order
+// toggleKeys resolves a KeyTap/KeyToggle call into evdev codes in press order
 // (modifiers, implied shift, then the key) and its direction; the last "up"
-// or "down" argument wins. Codes are deduplicated so aliases press once.
+// or "down" argument wins. Codes are deduplicated so aliases press once, and
+// the implied shift is skipped when any shift variant is already given.
 func toggleKeys(key string, args []interface{}) (codes []int32, up bool, err error) {
 	code, shift, ok := resolveKey(key)
 	if !ok {
@@ -209,7 +203,7 @@ func toggleKeys(key string, args []interface{}) (codes []int32, up bool, err err
 	}
 
 	mods := extractModifiers(args)
-	if shift {
+	if shift && !hasShift(mods) {
 		mods = append(mods, "shift")
 	}
 	seen := map[int32]bool{code: true}
@@ -330,6 +324,16 @@ func keyArgs(args []interface{}) []string {
 		}
 	}
 	return out
+}
+
+// hasShift reports whether mods (lowercased) contains shift, shiftl or shiftr.
+func hasShift(mods []string) bool {
+	for _, m := range mods {
+		if strings.HasPrefix(m, "shift") {
+			return true
+		}
+	}
+	return false
 }
 
 // extractModifiers picks the (case-insensitive) modifier names out of the

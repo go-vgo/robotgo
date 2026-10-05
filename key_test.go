@@ -68,13 +68,25 @@ func TestGetToggleArgs(t *testing.T) {
 	tt.Equal(t, 123, pid)
 	tt.Equal(t, []string{"ctrl", "shift"}, arr)
 
+	// KeyUp("a", pid, "ctrl") prepends "up"; the pid must still be found.
+	pid, arr = getToggleArgs("up", 123, "ctrl")
+	tt.Equal(t, 123, pid)
+	tt.Equal(t, []string{"up", "ctrl"}, arr)
+
+	// Only the first int is the pid.
+	pid, arr = getToggleArgs([]string{"ctrl"}, 123, 456)
+	tt.Equal(t, 123, pid)
+	tt.Equal(t, []string{"ctrl"}, arr)
+
 	// appendShift appends "shift" after a []string; it must be kept.
 	key, args := appendShift("A", 0, []string{"ctrl"})
 	_, arr = getToggleArgs(args...)
 	tt.Equal(t, "a", key)
 	tt.Equal(t, []string{"ctrl", "shift"}, arr)
 
-	tt.Equal(t, C.MMKeyFlags(C.MOD_CONTROL|C.MOD_SHIFT), getFlagsFromValue([]string{"ctrl", "shiftr", "x"}))
+	want := checkKeyFlags("ctrl") | checkKeyFlags("shift")
+	tt.Equal(t, want, getFlagsFromValue([]string{"ctrl", "shiftr", "x"}))
+	tt.Equal(t, checkKeyFlags("none"), checkKeyFlags("x"))
 }
 
 func TestFormatClickErrorKey(t *testing.T) {

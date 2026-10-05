@@ -125,6 +125,8 @@ func TestExtractMods(t *testing.T) {
 		{"up dir", []interface{}{"up"}, nil, false, true},
 		{"up dir in slice", []interface{}{[]string{"up", "ctrl"}}, []string{"ctrl"}, false, true},
 		{"last dir wins", []interface{}{"ctrl", "up", []string{"down"}}, []string{"ctrl"}, true, true},
+		{"up dir in nested iface", []interface{}{[]interface{}{"up", "ctrl"}}, []string{"ctrl"}, false, true},
+		{"nested without dir keeps outer", []interface{}{"up", []interface{}{"ctrl"}}, []string{"ctrl"}, false, true},
 		{"down dir + mod", []interface{}{"down", "ctrl"}, []string{"ctrl"}, true, true},
 		{"ignore ints", []interface{}{"ctrl", 42, "shift"}, []string{"ctrl", "shift"}, true, false},
 	}

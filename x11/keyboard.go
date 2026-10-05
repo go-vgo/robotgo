@@ -130,8 +130,11 @@ func extractMods(args []interface{}) (mods []string, down bool, hasDir bool) {
 				add(s)
 			}
 		case []interface{}:
-			m, _, _ := extractMods(v)
+			m, d, ok := extractMods(v)
 			mods = append(mods, m...)
+			if ok {
+				down, hasDir = d, true
+			}
 		}
 	}
 	return mods, down, hasDir

@@ -258,48 +258,39 @@ func checkKeyCodes(k string) (key C.MMKeyCode, err error) {
 	return
 }
 
-func checkKeyFlags(f string) (flags C.MMKeyFlags) {
-	m := map[string]C.MMKeyFlags{
-		"alt":     C.MOD_ALT,
-		"altr":    C.MOD_ALT,
-		"altl":    C.MOD_ALT,
-		"cmd":     C.MOD_META,
-		"command": C.MOD_META,
-		"cmdr":    C.MOD_META,
-		"cmdl":    C.MOD_META,
-		"ctrl":    C.MOD_CONTROL,
-		"control": C.MOD_CONTROL,
-		"ctrlr":   C.MOD_CONTROL,
-		"ctrll":   C.MOD_CONTROL,
-		"shift":   C.MOD_SHIFT,
-		"shiftr":  C.MOD_SHIFT,
-		"shiftl":  C.MOD_SHIFT,
-		"none":    C.MOD_NONE,
-	}
+// keyFlags maps modifier names to MMKeyFlags.
+var keyFlags = map[string]C.MMKeyFlags{
+	"alt":     C.MOD_ALT,
+	"altr":    C.MOD_ALT,
+	"altl":    C.MOD_ALT,
+	"cmd":     C.MOD_META,
+	"command": C.MOD_META,
+	"cmdr":    C.MOD_META,
+	"cmdl":    C.MOD_META,
+	"ctrl":    C.MOD_CONTROL,
+	"control": C.MOD_CONTROL,
+	"ctrlr":   C.MOD_CONTROL,
+	"ctrll":   C.MOD_CONTROL,
+	"shift":   C.MOD_SHIFT,
+	"shiftr":  C.MOD_SHIFT,
+	"shiftl":  C.MOD_SHIFT,
+	"none":    C.MOD_NONE,
+}
 
-	if v, ok := m[f]; ok {
-		return v
-	}
-	return
+func checkKeyFlags(f string) C.MMKeyFlags {
+	return keyFlags[f]
 }
 
 func getFlagsFromValue(value []string) (flags C.MMKeyFlags) {
-	if len(value) <= 0 {
-		return
-	}
-
-	for i := 0; i < len(value); i++ {
-		var f C.MMKeyFlags = C.MOD_NONE
-
-		f = checkKeyFlags(value[i])
-		flags = (C.MMKeyFlags)(flags | f)
+	for _, v := range value {
+		flags |= checkKeyFlags(v)
 	}
 	return
 }
 
 func upKeyArr(keyArr []string, pid int) {
-	for i := 0; i < len(keyArr); i++ {
-		key1, _ := checkKeyCodes(keyArr[i])
+	for _, k := range keyArr {
+		key1, _ := checkKeyCodes(k)
 		C.toggleKeyCode(key1, false, C.MOD_NONE, C.uintptr(pid))
 	}
 }
@@ -417,28 +408,24 @@ func KeyTap(key string, args ...interface{}) error {
 	return keyTaps(key, keyArr, pid)
 }
 
-// keyArgs flattens string and []string args into a key array, skipping
-// other types.
-func keyArgs(args []interface{}) []string {
-	var keyArr []string
+// getToggleArgs splits args into the pid (the first int, at any position, so
+// KeyUp("a", pid) keeps it after the prepended "up") and the key array;
+// string and []string args are flattened in order, other types are skipped.
+func getToggleArgs(args ...interface{}) (pid int, keyArr []string) {
+	hasPid := false
 	for _, arg := range args {
 		switch v := arg.(type) {
+		case int:
+			if !hasPid {
+				pid, hasPid = v, true
+			}
 		case string:
 			keyArr = append(keyArr, v)
 		case []string:
 			keyArr = append(keyArr, v...)
 		}
 	}
-	return keyArr
-}
-
-func getToggleArgs(args ...interface{}) (pid int, keyArr []string) {
-	if len(args) > 0 {
-		if v, ok := args[0].(int); ok {
-			return v, keyArgs(args[1:])
-		}
-	}
-	return 0, keyArgs(args)
+	return
 }
 
 // KeyToggle toggles the keyboard, if there not have args default is "down"
@@ -453,7 +440,6 @@ func getToggleArgs(args ...interface{}) (pid int, keyArr []string) {
 //	robotgo.KeyToggle("a", "up")
 //
 //	robotgo.KeyToggle("a", "up", "alt", "cmd")
-//	robotgo.KeyToggle("a", "up", []string{"alt", "cmd"})
 //	robotgo.KeyToggle("k", pid int)
 func KeyToggle(key string, args ...interface{}) error {
 	key, args = appendShift(key, 1, args...)
