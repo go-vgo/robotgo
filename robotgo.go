@@ -507,10 +507,10 @@ func Drag(x, y int, args ...string) {
 //
 //	robotgo.DragSmooth(10, 10)
 func DragSmooth(x, y int, args ...interface{}) {
-	Toggle("left")
+	Toggle("left") //nolint:errcheck // "left" is always valid
 	MilliSleep(50)
 	smoothMove(x, y, true, args...)
-	Toggle("left", "up")
+	Toggle("left", "up") //nolint:errcheck // "left" is always valid
 }
 
 func smoothMove(x, y int, drag bool, args ...interface{}) bool {
@@ -736,7 +736,7 @@ func formatClickError(code int, key interface{}, stage string, count int) error 
 func MoveClick(x, y int, args ...interface{}) {
 	Move(x, y)
 	MilliSleep(50)
-	Click(args...)
+	Click(args...) //nolint:errcheck // v1 signature has no error result
 }
 
 // Toggle toggle the mouse, support button:

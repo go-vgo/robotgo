@@ -20,9 +20,11 @@ Prerequisites (default Cgo backend): `GCC` must be installed. `CGO_ENABLED=1` (d
 - **Pure-Go backend test**: `go test -v -tags purego .` (picks `mac`/`win`/`wayland` per OS)
 - **Pure-Go Linux tests**: `CGO_ENABLED=0 go test -v -tags "purego,x11" . ./x11` and `CGO_ENABLED=0 go test -v -tags "purego,libei" . ./libei`
 - **Pure-Go cross build**: `CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -tags mac .`; `GOOS` must match the backend — `GOOS=windows` for `win`, `GOOS=linux` for `x11`/`wayland`/`libei` (a mismatched `GOOS` leaves the root package with no backend). Build the module root `.`, not `./...` — `examples/` and some subpackages need the Cgo backend.
+- **Lint**: `golangci-lint run ./...` (v2, config `.golangci.yml`); pure-Go backends: `CGO_ENABLED=0 golangci-lint run --build-tags=x11 . ./x11/... ./clipboard/...` (`mac` lints `./darwin/...`)
 
-There is no Makefile / Taskfile / linter config. CI:
+There is no Makefile / Taskfile. CI:
 - `.github/workflows/go.yml` (Go 1.27.x; runs on push to `master` and on `pull_request`, newer run cancels older via `concurrency`; `permissions: contents: read`, checkouts use `persist-credentials: false`) — job `cgo` (macOS/Windows/Linux): `go build ./...`, `go vet .`, `go test -v .` (Linux: apt X11/xvfb deps, `gofmt -l .` must be empty, `xvfb-run go test -v ./...`); job `purego` (`CGO_ENABLED=0`, one job per OS: vet + test the backend pkgs, then `.` once per tag — `mac`/`purego` on macOS, `win`/`purego` on Windows, `x11`, `purego,x11`, `wayland`, `purego`, `libei`, `purego,libei` on Linux); job `cross` (`CGO_ENABLED=0` build of `.` for the GOOS/GOARCH pairs the purego job does not cover: darwin amd64/arm64 `mac`, windows arm64/386 `win`, linux arm64 `x11`/`wayland`/`libei`).
+- `.github/workflows/lint.yml` — golangci-lint (README badge, replaces Go Report Card): per OS, `cgo` (`./...`) plus each native pure-Go tag (`x11`/`wayland`/`libei` on Linux, `mac` on macOS, `win` on Windows) with `CGO_ENABLED=0`.
 - `.circleci/config.yml` — Linux Cgo full tests: `xvfb-run go test -v ./...`.
 
 The old `appveyor.yml` has been removed.

@@ -76,13 +76,12 @@ const (
 	kCGEventFlagMaskCommand   = 0x00100000
 )
 
-// CoreGraphics scroll-wheel units and delta fields.
+// CoreGraphics scroll-wheel units.
 const (
 	kCGScrollEventUnitPixel = 0
 	kCGScrollEventUnitLine  = 1
-
-	kCGScrollWheelEventDeltaAxis1 = 11 // vertical
-	kCGScrollWheelEventDeltaAxis2 = 12 // horizontal
+	// kCGScrollWheelEventDeltaAxis1 = 11 // vertical
+    // kCGScrollWheelEventDeltaAxis2 = 12 // horizontal
 )
 
 // kCGMouseEventClickState is the CGEventField holding the click state:
