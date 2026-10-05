@@ -180,12 +180,9 @@ func GetXidByPid(xu *xgbutil.XUtil, pid int) (xproto.Window, error) {
 	}
 
 	for _, window := range windows {
+		// Windows without a readable _NET_WM_PID cannot match; keep looking.
 		wmPid, err := ewmh.WmPidGet(xu, window)
-		if err != nil {
-			return 0, err
-		}
-
-		if uint(pid) == wmPid {
+		if err == nil && uint(pid) == wmPid {
 			return window, nil
 		}
 	}

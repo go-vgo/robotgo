@@ -16,7 +16,6 @@ package cliplock
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -27,9 +26,11 @@ import (
 // calling Lock again before tb finishes (e.g. in a subtest) deadlocks.
 func Lock(tb testing.TB) {
 	tb.Helper()
-	// Per user: another user's lock file in a shared /tmp is not writable.
-	name := fmt.Sprintf("robotgo-clipboard-%d.lock", os.Getuid())
-	unlock, err := acquire(filepath.Join(os.TempDir(), name))
+	path, err := lockPath()
+	if err != nil {
+		tb.Fatal(err)
+	}
+	unlock, err := acquire(path)
 	if err != nil {
 		tb.Fatal(err)
 	}
@@ -40,8 +41,22 @@ func Lock(tb testing.TB) {
 	})
 }
 
+// lockPath returns the lock file in a private per-user directory: in a
+// shared /tmp another user could pre-create the file and hold the lock.
+func lockPath() (string, error) {
+	base, err := os.UserCacheDir()
+	if err != nil {
+		return "", err
+	}
+	dir := filepath.Join(base, "robotgo")
+	if err := os.MkdirAll(dir, 0o700); err != nil {
+		return "", err
+	}
+	return filepath.Join(dir, "clipboard.lock"), nil
+}
+
 func acquire(path string) (func() error, error) {
-	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE, 0o666)
+	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE, 0o600)
 	if err != nil {
 		return nil, err
 	}

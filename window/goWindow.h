@@ -16,11 +16,12 @@
 bool min_window(uintptr pid, bool state, int8_t isPid){
 	#if defined(IS_MACOSX)
 		// return 0;
-		AXUIElementRef axID = AXUIElementCreateApplication(pid);
-		if (axID == NULL) { return false; }
-		AXError err = AXUIElementSetAttributeValue(axID, kAXMinimizedAttribute, 
+		// Restoring needs a minimized window, minimizing a visible one.
+		AXUIElementRef win = AppWindow((pid_t)pid, !state);
+		if (win == NULL) { return false; }
+		AXError err = AXUIElementSetAttributeValue(win, kAXMinimizedAttribute, 
 										state ? kCFBooleanTrue : kCFBooleanFalse);
-		CFRelease(axID);
+		CFRelease(win);
 		return err == kAXErrorSuccess;
 	#elif defined(USE_X11)
 		// Ignore X errors

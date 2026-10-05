@@ -464,12 +464,16 @@ bool close_main_window () {
 }
 
 bool close_window_by_PId(uintptr pid, int8_t isPid){
-	MData win = set_handle_pid(pid, isPid);
-	bool ok = close_window_by_Id(win);
 #if defined(IS_MACOSX)
+	// kAXCloseButton is a window attribute: resolve pid's window first.
+	MData win = { 0 };
+	win.AxID = AppWindow((pid_t)pid, false);
+	bool ok = close_window_by_Id(win);
 	if (win.AxID != NULL) { CFRelease(win.AxID); }
-#endif
 	return ok;
+#else
+	return close_window_by_Id(set_handle_pid(pid, isPid));
+#endif
 }
 
 // CloseWindow

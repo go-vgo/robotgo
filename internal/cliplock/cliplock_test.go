@@ -15,7 +15,10 @@
 package cliplock
 
 import (
+	"os"
 	"path/filepath"
+	"runtime"
+	"strings"
 	"testing"
 	"time"
 )
@@ -62,4 +65,25 @@ func TestLockCleanup(t *testing.T) {
 	t.Run("hold", func(t *testing.T) { Lock(t) })
 	// Released by the subtest's cleanup, so this must not deadlock.
 	Lock(t)
+}
+
+// The lock must live in a private per-user directory, not shared /tmp.
+func TestLockPathPrivate(t *testing.T) {
+	path, err := lockPath()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.HasPrefix(path, os.TempDir()) {
+		t.Errorf("lockPath %q is in shared TempDir", path)
+	}
+	if runtime.GOOS == "windows" {
+		return
+	}
+	fi, err := os.Stat(filepath.Dir(path))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if perm := fi.Mode().Perm(); perm&0o077 != 0 {
+		t.Errorf("lock dir mode %v, want no group/other access", perm)
+	}
 }
