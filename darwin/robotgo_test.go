@@ -253,12 +253,64 @@ func TestTypes(t *testing.T) {
 	}
 }
 
-func TestWindowUnsupported(t *testing.T) {
-	if err := ActiveName("nope"); err != ErrNotSupported {
-		t.Errorf("ActiveName: got %v, want ErrNotSupported", err)
+// noPid is a pid no running process can have (above kern.maxproc).
+const noPid = 0x7ffffff0
+
+func TestWindowNotFound(t *testing.T) {
+	if err := ActiveName("robotgo-no-such-app-0x7ff"); err != ErrNotFound {
+		t.Errorf("ActiveName: got %v, want ErrNotFound", err)
 	}
-	if GetTitle() != "" {
-		t.Error("GetTitle: expected empty string")
+	if err := ActivePid(noPid); err != ErrNotFound {
+		t.Errorf("ActivePid: got %v, want ErrNotFound", err)
+	}
+	if err := ActivePid(0); err != ErrNotFound {
+		t.Errorf("ActivePid(0): got %v, want ErrNotFound", err)
+	}
+	if got := GetTitle(noPid); got != "" {
+		t.Errorf("GetTitle: got %q, want empty", got)
+	}
+	if x, y, w, h := GetBounds(noPid); x != 0 || y != 0 || w != 0 || h != 0 {
+		t.Errorf("GetBounds: got %d,%d,%d,%d, want zeros", x, y, w, h)
+	}
+	if err := withWindow(noPid, func(uintptr) error { return nil }); err != ErrNotFound {
+		t.Errorf("withWindow: got %v, want ErrNotFound", err)
+	}
+	// Must not panic or touch any real window.
+	MinWindow(noPid)
+	MaxWindow(noPid, false)
+	CloseWindow(noPid)
+}
+
+func TestLoadAX(t *testing.T) {
+	if !loadAX() {
+		t.Fatal("AX API failed to load")
+	}
+	if cfBool(true) == 0 || cfBool(false) == 0 || cfBool(true) == cfBool(false) {
+		t.Error("cfBool: kCFBooleanTrue/False not resolved")
+	}
+	for i, s := range []uintptr{axFocusedWindow, axMainWindow, axWindows, axTitle,
+		axPosition, axSize, axMinimized, axFullScreen, axCloseButton, axPress, axRaise} {
+		if s == 0 {
+			t.Errorf("AX attribute %d not created", i)
+		}
+	}
+}
+
+func TestBoolArgAndAXError(t *testing.T) {
+	if !boolArg(nil, true) || boolArg([]interface{}{false}, true) || !boolArg([]interface{}{"x"}, true) {
+		t.Error("boolArg: unexpected result")
+	}
+	if axError(kAXErrorSuccess, "op") != nil {
+		t.Error("axError(success): want nil")
+	}
+	if err := axError(-25204, "close"); err == nil || err.Error() != "robotgo: close failed, AXError -25204" {
+		t.Errorf("axError: got %v", err)
+	}
+}
+
+func TestMultiClickZero(t *testing.T) {
+	if err := MultiClick("left", 0); err != nil {
+		t.Errorf("MultiClick(0): got %v, want nil", err)
 	}
 }
 

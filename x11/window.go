@@ -98,6 +98,77 @@ func ActiveName(name string) error {
 	return ewmh.ActiveWindowReq(c.xu, w)
 }
 
+// ActivePid activates the first window owned by pid.
+func ActivePid(pid int) error {
+	if pid <= 0 {
+		return ErrNotFound
+	}
+	c, err := ensureConn()
+	if err != nil {
+		return err
+	}
+	w, err := c.xidByPid(pid)
+	if err != nil {
+		return err
+	}
+	return ewmh.ActiveWindowReq(c.xu, w)
+}
+
+// clientRect returns the client area of w in root coordinates.
+func (c *conn) clientRect(w xproto.Window) (x, y, width, height int, err error) {
+	geom, err := xproto.GetGeometry(c.c, xproto.Drawable(w)).Reply()
+	if err != nil {
+		return 0, 0, 0, 0, err
+	}
+	tr, err := xproto.TranslateCoordinates(c.c, w, c.root, 0, 0).Reply()
+	if err != nil {
+		return 0, 0, 0, 0, err
+	}
+	return int(tr.DstX), int(tr.DstY), int(geom.Width), int(geom.Height), nil
+}
+
+// GetClient returns the client area (x, y, w, h) of pid's window; pid <= 0
+// selects the active window. It returns zeros when no window is found.
+func GetClient(pid int) (int, int, int, int) {
+	c, err := ensureConn()
+	if err != nil {
+		return 0, 0, 0, 0
+	}
+	w, err := c.targetWindow(pid)
+	if err != nil {
+		return 0, 0, 0, 0
+	}
+	x, y, width, height, err := c.clientRect(w)
+	if err != nil {
+		return 0, 0, 0, 0
+	}
+	return x, y, width, height
+}
+
+// GetBounds returns the window bounds (x, y, w, h) of pid's window including
+// the window manager frame (_NET_FRAME_EXTENTS); pid <= 0 selects the
+// active window. It returns zeros when no window is found.
+func GetBounds(pid int) (int, int, int, int) {
+	c, err := ensureConn()
+	if err != nil {
+		return 0, 0, 0, 0
+	}
+	w, err := c.targetWindow(pid)
+	if err != nil {
+		return 0, 0, 0, 0
+	}
+	x, y, width, height, err := c.clientRect(w)
+	if err != nil {
+		return 0, 0, 0, 0
+	}
+	// Undecorated windows or WMs without the property have no frame.
+	if ext, err := ewmh.FrameExtentsGet(c.xu, w); err == nil {
+		x, y = x-ext.Left, y-ext.Top
+		width, height = width+ext.Left+ext.Right, height+ext.Top+ext.Bottom
+	}
+	return x, y, width, height
+}
+
 // MinWindow minimizes (or restores) the window owned by pid.
 //
 //	MinWindow(pid)        // minimize

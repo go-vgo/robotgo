@@ -172,3 +172,13 @@ func isActivated(states []byte) bool {
 	}
 	return false
 }
+
+// ActivePid is not supported: wlr-foreign-toplevel exposes no pid mapping.
+// Use ActiveName to activate a window by title or app_id.
+func ActivePid(pid int) error { return ErrNotSupported }
+
+// GetBounds returns zeros: wlr-foreign-toplevel exposes no window geometry.
+func GetBounds(pid int) (int, int, int, int) { return 0, 0, 0, 0 }
+
+// GetClient returns zeros: wlr-foreign-toplevel exposes no window geometry.
+func GetClient(pid int) (int, int, int, int) { return 0, 0, 0, 0 }

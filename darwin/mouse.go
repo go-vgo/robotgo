@@ -133,12 +133,21 @@ func Click(args ...interface{}) error {
 		}
 	}
 
-	down, up, _, num := mouseButton(button)
-	p := locationPoint()
 	count := 1
 	if double {
 		count = 2
 	}
+	return MultiClick(button, count)
+}
+
+// MultiClick clicks button count times at the current location; the n-th
+// click carries click state n, so macOS sees a double/triple... click.
+func MultiClick(button string, count int) error {
+	if count < 1 {
+		return nil
+	}
+	down, up, _, num := mouseButton(button)
+	p := locationPoint()
 	for i := 0; i < count; i++ {
 		// The second down/up pair must carry click state 2, otherwise macOS
 		// treats the pairs as two independent single clicks.

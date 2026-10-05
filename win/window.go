@@ -132,6 +132,45 @@ func ActiveName(name string) error {
 	return nil
 }
 
+// ActivePid brings the first visible window owned by pid to the foreground.
+func ActivePid(pid int) error {
+	if pid <= 0 {
+		return ErrNotFound
+	}
+	hwnd := targetWindow(pid)
+	if hwnd == 0 {
+		return ErrNotFound
+	}
+	win.SetForegroundWindow(hwnd)
+	return nil
+}
+
+// GetBounds returns the window rect (x, y, w, h) of pid's window; pid <= 0
+// selects the foreground window. It returns zeros when no window is found.
+func GetBounds(pid int) (int, int, int, int) {
+	hwnd := targetWindow(pid)
+	var r win.RECT
+	if hwnd == 0 || !win.GetWindowRect(hwnd, &r) {
+		return 0, 0, 0, 0
+	}
+	return int(r.Left), int(r.Top), int(r.Right - r.Left), int(r.Bottom - r.Top)
+}
+
+// GetClient returns the client area (x, y, w, h) of pid's window in screen
+// coordinates; pid <= 0 selects the foreground window.
+func GetClient(pid int) (int, int, int, int) {
+	hwnd := targetWindow(pid)
+	var r win.RECT
+	if hwnd == 0 || !win.GetClientRect(hwnd, &r) {
+		return 0, 0, 0, 0
+	}
+	p := win.POINT{}
+	if !win.ClientToScreen(hwnd, &p) {
+		return 0, 0, 0, 0
+	}
+	return int(p.X), int(p.Y), int(r.Right - r.Left), int(r.Bottom - r.Top)
+}
+
 // MinWindow minimizes (or restores, if the bool arg is false) a window.
 func MinWindow(pid int, args ...interface{}) {
 	hwnd := targetWindow(pid)

@@ -42,3 +42,12 @@ func CheckAccess(prompt bool) bool { return true }
 // GetActiveApp returns empty values; the portal does not expose the
 // focused application.
 func GetActiveApp() (string, string, int) { return "", "", 0 }
+
+// ActivePid is not supported by the portal backend.
+func ActivePid(pid int) error { return ErrNotSupported }
+
+// GetBounds returns zeros; the portal does not expose window geometry.
+func GetBounds(pid int) (int, int, int, int) { return 0, 0, 0, 0 }
+
+// GetClient returns zeros; the portal does not expose window geometry.
+func GetClient(pid int) (int, int, int, int) { return 0, 0, 0, 0 }

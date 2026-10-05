@@ -909,6 +909,15 @@ func TestUnsupportedSurface(t *testing.T) {
 	if err := ActiveName("x"); err != ErrNotSupported {
 		t.Errorf("ActiveName: got %v, want ErrNotSupported", err)
 	}
+	if err := ActivePid(1); err != ErrNotSupported {
+		t.Errorf("ActivePid: got %v, want ErrNotSupported", err)
+	}
+	if x, y, w, h := GetBounds(1); x != 0 || y != 0 || w != 0 || h != 0 {
+		t.Errorf("GetBounds: got (%d,%d,%d,%d), want zeros", x, y, w, h)
+	}
+	if x, y, w, h := GetClient(1); x != 0 || y != 0 || w != 0 || h != 0 {
+		t.Errorf("GetClient: got (%d,%d,%d,%d), want zeros", x, y, w, h)
+	}
 	if got := GetPixelColor(0, 0); got != "000000" {
 		t.Errorf("GetPixelColor: got %q, want 000000", got)
 	}

@@ -107,6 +107,9 @@ func ScrollSmooth(to int, args ...int) error { return win.ScrollSmooth(to, args.
 // DragSmooth drag the mouse smoothly to (x, y).
 func DragSmooth(x, y int, args ...any) error { return win.DragSmooth(x, y, args...) }
 
+// MultiClick click the mouse button count times; click is accepted for API parity.
+func MultiClick(button string, count int, click ...bool) error { return clickTimes(button, count) }
+
 // MoveClick move and click the mouse.
 func MoveClick(x, y int, args ...any) error { return win.MoveClick(x, y, args...) }
 
@@ -176,6 +179,15 @@ func MaxWindow(pid int, args ...any) { win.MaxWindow(pid, args...) }
 
 // CloseWindow close the window.
 func CloseWindow(args ...int) { win.CloseWindow(args...) }
+
+// ActivePid active the window by pid; args are accepted for API parity.
+func ActivePid(pid int, args ...int) error { return win.ActivePid(pid) }
+
+// GetBounds get the window bounds (x, y, w, h); args are accepted for API parity.
+func GetBounds(pid int, args ...int) (int, int, int, int) { return win.GetBounds(pid) }
+
+// GetClient get the window client bounds (x, y, w, h); args are accepted for API parity.
+func GetClient(pid int, args ...int) (int, int, int, int) { return win.GetClient(pid) }
 
 // --- Process (Pids/Process/Kill/... come from the portable ps.go) ---
 
