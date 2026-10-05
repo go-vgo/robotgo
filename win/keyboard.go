@@ -329,18 +329,26 @@ func KeyTap(key string, args ...interface{}) error {
 		return err
 	}
 
-	// Press modifiers then the key, and release in reverse order. Every key
-	// is released even after a failure so none is left stuck down.
-	for _, vk := range vks {
-		if err = send(vk, false); err != nil {
-			break
-		}
-	}
+	// Press modifiers then the key, and release in reverse order. Only the
+	// keys that were actually pressed are released after a failure, so none
+	// is left stuck down and keys held by the user are not released.
+	pressed, err := pressKeys(send, vks)
 	time.Sleep(time.Duration(KeySleep) * time.Millisecond)
-	if upErr := releaseKeys(send, vks); err == nil {
+	if upErr := releaseKeys(send, pressed); err == nil {
 		err = upErr
 	}
 	return err
+}
+
+// pressKeys sends key down for vks in order and stops at the first error,
+// returning the prefix that was successfully pressed.
+func pressKeys(send func(vk uint16, up bool) error, vks []uint16) ([]uint16, error) {
+	for i, vk := range vks {
+		if err := send(vk, false); err != nil {
+			return vks[:i], err
+		}
+	}
+	return vks, nil
 }
 
 // releaseKeys sends key up for vks in reverse order and returns the first
@@ -440,12 +448,13 @@ func KeyToggle(key string, args ...interface{}) error {
 	if up {
 		return releaseKeys(send, vks)
 	}
-	for _, vk := range vks {
-		if err := send(vk, false); err != nil {
-			return err
-		}
+	// A partial press releases the keys pressed so far instead of leaving
+	// modifiers stuck down.
+	pressed, err := pressKeys(send, vks)
+	if err != nil {
+		releaseKeys(send, pressed) //nolint:errcheck // best-effort cleanup, the press error is reported
 	}
-	return nil
+	return err
 }
 
 // KeyDown presses a key down. Extra args (e.g. modifiers) are forwarded to

@@ -111,7 +111,7 @@ int moveMouse(MMPointInt32 point){
 		return 0;
 	#elif defined(USE_X11)
 		Display *display = XGetMainDisplay();
-		if (display == NULL) { return 1; }
+		if (display == NULL) { return 2; }
 		XWarpPointer(display, None, DefaultRootWindow(display), 0, 0, 0, 0, point.x, point.y);
 
 		XSync(display, false);
@@ -119,7 +119,7 @@ int moveMouse(MMPointInt32 point){
 	#elif defined(IS_WINDOWS)
 		if (!SetCursorPos(point.x, point.y)) {
 			DWORD err = GetLastError();
-			return err != 0 ? (int)err : -1;
+			return err != 0 ? (int)err : MM_ERR_INPUT_BLOCKED;
 		}
 		return 0;
 	#endif
@@ -279,7 +279,7 @@ int scrollMouseXY(int x, int y) {
 		int ydir = 4; /* Button 4 is up, 5 is down. */
 		int xdir = 6;
 		Display *display = XGetMainDisplay();
-		if (display == NULL) { return 1; }
+		if (display == NULL) { return 2; }
 
 		if (y < 0) { ydir = 5; }
 		if (x < 0) { xdir = 7; }
@@ -320,7 +320,7 @@ int scrollMouseXY(int x, int y) {
 		if (SendInput(1, &mouseScrollInputH, sizeof(mouseScrollInputH)) != 1 ||
 			SendInput(1, &mouseScrollInputV, sizeof(mouseScrollInputV)) != 1) {
 			DWORD err = GetLastError();
-			return err != 0 ? (int)err : -1;
+			return err != 0 ? (int)err : MM_ERR_INPUT_BLOCKED;
 		}
 		return 0;
 	#endif

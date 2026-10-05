@@ -509,50 +509,65 @@ func Drag(x, y int, args ...string) error {
 //
 //	robotgo.DragSmooth(10, 10)
 func DragSmooth(x, y int, args ...interface{}) error {
+	low, high, delay, err := smoothArgs(args)
+	if err != nil {
+		return err
+	}
 	if err := Toggle("left"); err != nil {
 		return err
 	}
 	MilliSleep(50)
-	ok := smoothMove(x, y, true, args...)
+	ok := smoothMoveC(x, y, true, low, high, delay)
 	// always release the button, even if the drag failed
-	if err := Toggle("left", "up"); err != nil {
-		return err
-	}
+	upErr := Toggle("left", "up")
 	if !ok {
 		return errors.New("mouse drag failed")
 	}
-	return nil
+	return upErr
+}
+
+// smoothArgs parses the optional (low, high float64, mouseDelay int) args of
+// MoveSmooth/DragSmooth. It rejects wrong types instead of panicking so
+// DragSmooth never leaves the button down.
+func smoothArgs(args []interface{}) (low, high float64, delay int, err error) {
+	low, high, delay = 1.0, 3.0, 1
+	if len(args) > 1 {
+		l, ok1 := args[0].(float64)
+		h, ok2 := args[1].(float64)
+		if !ok1 || !ok2 {
+			return 0, 0, 0, fmt.Errorf("smooth move: low/high must be float64, got %T, %T", args[0], args[1])
+		}
+		low, high = l, h
+	}
+	if len(args) > 2 {
+		d, ok := args[2].(int)
+		if !ok {
+			return 0, 0, 0, fmt.Errorf("smooth move: mouseDelay must be int, got %T", args[2])
+		}
+		delay = d
+	}
+	return low, high, delay, nil
 }
 
 func smoothMove(x, y int, drag bool, args ...interface{}) bool {
+	low, high, delay, err := smoothArgs(args)
+	if err != nil {
+		return false
+	}
+	return smoothMoveC(x, y, drag, low, high, delay)
+}
+
+func smoothMoveC(x, y int, drag bool, low, high float64, mouseDelay int) bool {
 	x, y = MoveScale(x, y)
 
 	cx := C.int32_t(x)
 	cy := C.int32_t(y)
 
-	var (
-		mouseDelay = 1
-		low        C.double
-		high       C.double
-	)
-
-	if len(args) > 2 {
-		mouseDelay = args[2].(int)
-	}
-
-	if len(args) > 1 {
-		low = C.double(args[0].(float64))
-		high = C.double(args[1].(float64))
-	} else {
-		low = 1.0
-		high = 3.0
-	}
-
 	var cbool C.bool
 	if drag {
-		cbool = C.smoothlyDragMouse(C.MMPointInt32Make(cx, cy), low, high, C.LEFT_BUTTON)
+		cbool = C.smoothlyDragMouse(C.MMPointInt32Make(cx, cy), C.double(low), C.double(high), C.LEFT_BUTTON)
 	} else {
-		cbool = C.smoothlyMoveMouse(C.MMPointInt32Make(cx, cy), low, high)
+		cbool = C.smoothlyMoveMouse(C.MMPointInt32Make(cx, cy), C.double(low), C.double(high))
 	}
 	MilliSleep(MouseSleep + mouseDelay)
 
@@ -701,9 +716,6 @@ func formatClickError(code int, key interface{}, stage string, count int) error 
 		btnName = MouseButtonString(key.(C.MMMouseButton))
 	}
 	detail := codeDetail(code)
-	if detail == "" && runtime.GOOS != "windows" && runtime.GOOS != "darwin" && code == 1 {
-		detail = "XTestFakeButtonEvent returned false"
-	}
 
 	if detail != "" {
 		return fmt.Errorf("click %s failed (%s, count=%d): %s (code=%d)", stage, btnName, count, detail, code)
@@ -722,29 +734,41 @@ func formatMouseError(code int, op string) error {
 	return fmt.Errorf("mouse %s failed, code=%d", op, code)
 }
 
-// codeDetail describes a non-zero C error code
-// (Windows GetLastError or macOS CGError)
+// cgErrors names the CGError codes the C mouse/key functions return on macOS.
+var cgErrors = map[int]string{
+	1000: "kCGErrorFailure",
+	1001: "kCGErrorIllegalArgument",
+	1002: "kCGErrorInvalidConnection",
+	1003: "kCGErrorInvalidContext",
+	1004: "kCGErrorCannotComplete",
+	1005: "kCGErrorNotImplemented",
+	1006: "kCGErrorRangeCheck",
+	1007: "kCGErrorTypeCheck",
+	1008: "kCGErrorNoCurrentPoint",
+	1010: "kCGErrorInvalidOperation",
+}
+
+// x11Errors names the codes the C X11 mouse/key functions return.
+var x11Errors = map[int]string{
+	1:  "XTest request failed",
+	2:  "no X display",
+	-8: "no X display",
+	-9: "AltGr level, but layout has no level-3 key",
+}
+
+// codeDetail describes a non-zero C error code: Windows GetLastError (or
+// MM_ERR_INPUT_BLOCKED), macOS CGError, X11 status.
 func codeDetail(code int) string {
 	switch runtime.GOOS {
 	case "windows":
+		if code < 0 {
+			return "input blocked (UIPI or secure desktop)"
+		}
 		return syscall.Errno(code).Error()
 	case "darwin":
-		cgErrors := map[int]string{
-			0:    "kCGErrorSuccess",
-			1000: "kCGErrorFailure",
-			1001: "kCGErrorIllegalArgument",
-			1002: "kCGErrorInvalidConnection",
-			1003: "kCGErrorInvalidContext",
-			1004: "kCGErrorCannotComplete",
-			1005: "kCGErrorNotImplemented",
-			1006: "kCGErrorRangeCheck",
-			1007: "kCGErrorTypeCheck",
-			1008: "kCGErrorNoCurrentPoint",
-			1010: "kCGErrorInvalidOperation",
-		}
 		return cgErrors[code]
 	}
-	return ""
+	return x11Errors[code]
 }
 
 // MoveClick move and click the mouse

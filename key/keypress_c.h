@@ -228,7 +228,7 @@
 			return 0;
 		}
 		DWORD err = GetLastError();
-		return err != 0 ? (int)err : -1;
+		return err != 0 ? (int)err : MM_ERR_INPUT_BLOCKED;
 	}
 #endif
 
@@ -276,7 +276,7 @@ int toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags, uintptr pid
 		CGEventRef keyEvent = CGEventCreateKeyboardEvent(source, (CGKeyCode)code, down);
 		// assert(keyEvent != NULL);
 		if (keyEvent == NULL) {
-			CFRelease(source);
+			if (source != NULL) { CFRelease(source); }
 			return (int)kCGErrorCannotComplete;
 		}
 
@@ -293,7 +293,7 @@ int toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags, uintptr pid
 		}
 
 		SendTo(pid, keyEvent);
-		CFRelease(source);
+		if (source != NULL) { CFRelease(source); }
 	}
 	return 0;
 #elif defined(IS_WINDOWS)
@@ -379,62 +379,98 @@ int toggleKey(char c, const bool down, MMKeyFlags flags, uintptr pid) {
 // }
 
 #if defined(IS_MACOSX)
-	int toggleUnicode(UniChar ch, const bool down, uintptr pid) {
+	/* Post one key event carrying a UTF-16 string (1 code unit, or a
+	   surrogate pair for runes above the BMP). */
+	int toggleUnicode(const UniChar *ch, UniCharCount len, const bool down, uintptr pid) {
 		/* This function relies on the convenient CGEventKeyboardSetUnicodeString()*/
 		CGEventSourceRef source = MMEventSourceCreate();
 		CGEventRef keyEvent = CGEventCreateKeyboardEvent(source, 0, down);
 		if (keyEvent == NULL) {
 			// fputs("Could not create keyboard event.\n", stderr);
-			CFRelease(source);
+			if (source != NULL) { CFRelease(source); }
 			return (int)kCGErrorCannotComplete;
 		}
 
-		CGEventKeyboardSetUnicodeString(keyEvent, 1, &ch);
+		CGEventKeyboardSetUnicodeString(keyEvent, len, ch);
 		SendTo(pid, keyEvent);
-		CFRelease(source);
+		if (source != NULL) { CFRelease(source); }
 		return 0;
 	}
 #else
 	#define toggleUniKey(c, down) toggleKey(c, down, MOD_NONE, 0)
 #endif
 
+#if defined(IS_MACOSX) || defined(IS_WINDOWS)
+	/* Encode a code point as UTF-16 into out[2]; returns the unit count. */
+	static int utf16Units(unsigned value, uint16_t out[2]) {
+		if (value < 0x10000) {
+			out[0] = (uint16_t)value;
+			return 1;
+		}
+		value -= 0x10000;
+		out[0] = (uint16_t)(0xD800 | (value >> 10));
+		out[1] = (uint16_t)(0xDC00 | (value & 0x3FF));
+		return 2;
+	}
+#endif
+
 // unicode type
 int unicodeType(const unsigned value, uintptr pid, int8_t isPid) {
 	#if defined(IS_MACOSX)
-		UniChar ch = (UniChar)value; // Convert to unsigned char
+		uint16_t units[2];
+		UniCharCount len = (UniCharCount)utf16Units(value, units);
 
-		int err = toggleUnicode(ch, true, pid);
+		int err = toggleUnicode((const UniChar *)units, len, true, pid);
 		microsleep(5.0);
-		int err1 = toggleUnicode(ch, false, pid);
+		int err1 = toggleUnicode((const UniChar *)units, len, false, pid);
 		return err != 0 ? err : err1;
 	#elif defined(IS_WINDOWS)
+		uint16_t units[2];
+		int len = utf16Units(value, units);
+
 		if (pid != 0) {
 			HWND hwnd = getHwnd(pid, isPid);
+			if (hwnd == NULL) {
+				/* PostMessageW(NULL, ...) would post to our own queue and
+				   "succeed". */
+				return ERROR_INVALID_WINDOW_HANDLE;
+			}
 
 			// SendMessage(hwnd, down, value, 0);
-			UINT sent = PostMessageW(hwnd, WM_CHAR, value, 0);
-			return sent == 1 ? 0 : (int)GetLastError();
+			int i;
+			for (i = 0; i < len; i++) {
+				if (!PostMessageW(hwnd, WM_CHAR, units[i], 0)) {
+					DWORD err = GetLastError();
+					return err != 0 ? (int)err : MM_ERR_INPUT_BLOCKED;
+				}
+			}
+			return 0;
 		}
 
-		INPUT input[2];
-        memset(input, 0, sizeof(input));
+		/* down/up per UTF-16 unit: 2 inputs for the BMP, 4 for a pair. */
+		INPUT input[4];
+		memset(input, 0, sizeof(input));
+		UINT n = 0;
+		int i;
+		for (i = 0; i < len; i++) {
+			input[n].type = INPUT_KEYBOARD;
+			input[n].ki.wScan = units[i];
+			input[n].ki.dwFlags = KEYEVENTF_UNICODE;
+			n++;
+		}
+		for (i = 0; i < len; i++) {
+			input[n].type = INPUT_KEYBOARD;
+			input[n].ki.wScan = units[i];
+			input[n].ki.dwFlags = KEYEVENTF_KEYUP | KEYEVENTF_UNICODE;
+			n++;
+		}
 
-        input[0].type = INPUT_KEYBOARD;
-  		input[0].ki.wVk = 0;
-  		input[0].ki.wScan = value;
-  		input[0].ki.dwFlags = 0x4; // KEYEVENTF_UNICODE;
-
-  		input[1].type = INPUT_KEYBOARD;
-  		input[1].ki.wVk = 0;
-  		input[1].ki.wScan = value;
-  		input[1].ki.dwFlags = KEYEVENTF_KEYUP | 0x4; // KEYEVENTF_UNICODE;
-
-  		UINT sent = SendInput(2, input, sizeof(INPUT));
-		if (sent == 2) {
+		UINT sent = SendInput(n, input, sizeof(INPUT));
+		if (sent == n) {
 			return 0;
 		}
 		DWORD err = GetLastError();
-		return err != 0 ? (int)err : -1;
+		return err != 0 ? (int)err : MM_ERR_INPUT_BLOCKED;
 	#elif defined(USE_X11)
 		int err = toggleUniKey(value, true);
 		microsleep(5.0);
@@ -444,28 +480,41 @@ int unicodeType(const unsigned value, uintptr pid, int8_t isPid) {
 }
 
 #if defined(USE_X11)
+	/* Type a keysym name (e.g. "U1F600") by remapping a spare keycode.
+	   Returns 0 on success, 1 when there is no display, 2 for an unknown
+	   keysym, 3 when the keyboard mapping is unavailable and 4 when XTEST
+	   rejects the key event. */
 	int input_utf(const char *utf) {
 		Display *dpy = XOpenDisplay(NULL);
 		if (dpy == NULL) { return 1; }
 		KeySym sym = XStringToKeysym(utf);
+		if (sym == NoSymbol) {
+			XCloseDisplay(dpy);
+			return 2;
+		}
 		// KeySym sym = XKeycodeToKeysym(dpy, utf);
 
 		int min, max, numcodes;
 		XDisplayKeycodes(dpy, &min, &max);
 		KeySym *keysym;
 		keysym = XGetKeyboardMapping(dpy, min, max-min+1, &numcodes);
+		if (keysym == NULL) {
+			XCloseDisplay(dpy);
+			return 3;
+		}
 		keysym[(max-min-1)*numcodes] = sym;
 		XChangeKeyboardMapping(dpy, min, numcodes, keysym, (max-min));
 		XFree(keysym);
 		XFlush(dpy);
 
 		KeyCode code = XKeysymToKeycode(dpy, sym);
-		XTestFakeKeyEvent(dpy, code, True, 1);
-		XTestFakeKeyEvent(dpy, code, False, 1);
+		int ok = code != 0
+			&& XTestFakeKeyEvent(dpy, code, True, 1)
+			&& XTestFakeKeyEvent(dpy, code, False, 1);
 
 		XFlush(dpy);
 		XCloseDisplay(dpy);
-		return 0;
+		return ok ? 0 : 4;
 	}
 #else
 	int input_utf(const char *utf){

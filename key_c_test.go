@@ -21,6 +21,7 @@ package robotgo
 import (
 	"runtime"
 	"strings"
+	"syscall"
 	"testing"
 
 	"github.com/vcaesar/tt"
@@ -315,6 +316,9 @@ func TestFormatClickErrorButton(t *testing.T) {
 	case "linux":
 		err = formatClickError(1, "a", "up", 1)
 		tt.True(t, strings.Contains(err.Error(), "XTestFakeButtonEvent"), err.Error())
+	case "windows":
+		err = formatClickError(5, "a", "up", 1)
+		tt.True(t, strings.Contains(err.Error(), syscall.Errno(5).Error()), err.Error())
 	}
 }
 
@@ -431,11 +435,15 @@ func TestFormatMouseError(t *testing.T) {
 	err := formatMouseError(42, "scroll")
 	tt.NotNil(t, err)
 	tt.True(t, strings.HasPrefix(err.Error(), "mouse scroll failed"), err.Error())
-	tt.True(t, strings.HasSuffix(err.Error(), "code=42"), err.Error())
+	tt.True(t, strings.Contains(err.Error(), "code=42"), err.Error())
 
-	if runtime.GOOS == "darwin" {
+	switch runtime.GOOS {
+	case "darwin":
 		err = formatMouseError(1004, "move")
 		tt.True(t, strings.Contains(err.Error(), "kCGErrorCannotComplete"), err.Error())
+	case "windows":
+		// GetLastError codes are described via syscall.Errno
+		tt.True(t, strings.Contains(err.Error(), syscall.Errno(42).Error()), err.Error())
 	}
 }
 
@@ -445,7 +453,56 @@ func TestFormatKeyError(t *testing.T) {
 	err := formatKeyError(42, 'é')
 	tt.NotNil(t, err)
 	tt.True(t, strings.HasPrefix(err.Error(), `type 'é' failed`), err.Error())
-	tt.True(t, strings.HasSuffix(err.Error(), "code=42"), err.Error())
+	tt.True(t, strings.Contains(err.Error(), "code=42"), err.Error())
+}
+
+// codeDetail only describes codes it knows; everything else is empty so the
+// callers fall back to the bare "code=N" form.
+func TestCodeDetail(t *testing.T) {
+	switch runtime.GOOS {
+	case "windows":
+		tt.Equal(t, syscall.Errno(5).Error(), codeDetail(5))
+		// MM_ERR_INPUT_BLOCKED: SendInput failed without a last error.
+		tt.Equal(t, "input blocked (UIPI or secure desktop)", codeDetail(-1))
+	case "darwin":
+		tt.Equal(t, "kCGErrorCannotComplete", codeDetail(1004))
+		tt.Equal(t, "", codeDetail(42))
+	default:
+		tt.Equal(t, "XTest request failed", codeDetail(1))
+		tt.Equal(t, "no X display", codeDetail(2))
+		tt.Equal(t, "no X display", codeDetail(-8))
+		tt.Equal(t, "", codeDetail(42))
+	}
+}
+
+// Wrong smooth-move args must be rejected instead of panicking, otherwise
+// DragSmooth would leave the button held down.
+func TestSmoothArgs(t *testing.T) {
+	low, high, delay, err := smoothArgs(nil)
+	tt.Nil(t, err)
+	tt.Equal(t, 1.0, low)
+	tt.Equal(t, 3.0, high)
+	tt.Equal(t, 1, delay)
+
+	low, high, delay, err = smoothArgs([]interface{}{2.0, 5.0, 7})
+	tt.Nil(t, err)
+	tt.Equal(t, 2.0, low)
+	tt.Equal(t, 5.0, high)
+	tt.Equal(t, 7, delay)
+
+	_, _, _, err = smoothArgs([]interface{}{"right", 5.0})
+	tt.NotNil(t, err)
+	_, _, _, err = smoothArgs([]interface{}{2.0, 5.0, "7"})
+	tt.NotNil(t, err)
+	// DragSmooth/MoveSmooth report the bad args without touching the mouse.
+	tt.NotNil(t, DragSmooth(1, 1, "right", 5.0))
+	tt.False(t, MoveSmooth(1, 1, "right", 5.0))
+}
+
+func TestInputUTFDetail(t *testing.T) {
+	for code := 1; code <= 4; code++ {
+		tt.NotEqual(t, "", inputUTFDetail[code])
+	}
 }
 
 // An invalid direction must error out before any scroll event is posted.

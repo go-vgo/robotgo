@@ -506,13 +506,21 @@ func UnicodeType(str uint32, args ...int) error {
 	return formatKeyError(int(code), str)
 }
 
+// inputUTFDetail describes the non-zero codes of C input_utf (X11 only).
+var inputUTFDetail = map[int]string{
+	1: "no X display",
+	2: "unknown keysym",
+	3: "keyboard mapping unavailable",
+	4: "XTestFakeKeyEvent returned false",
+}
+
 func inputUTF(str string) error {
 	cstr := C.CString(str)
 	code := C.input_utf(cstr)
 
 	C.free(unsafe.Pointer(cstr))
 	if code != 0 {
-		return fmt.Errorf("input %q failed, code=%d", str, int(code))
+		return fmt.Errorf("input %q failed: %s (code=%d)", str, inputUTFDetail[int(code)], int(code))
 	}
 	return nil
 }
@@ -529,8 +537,6 @@ func formatKeyError(code int, r uint32) error {
 }
 
 // TypeStr tap a string and return error
-//
-// Deprecated: use the Type()
 func TypeStr(str string, args ...int) error {
 	_, err := typeStr(str, args...)
 	return err
@@ -566,6 +572,11 @@ func typeStr(str string, args ...int) (int, error) {
 	if len(args) > 0 {
 		pid = args[0]
 	}
+	// Windows: NotPid makes pid an HWND, like the other key APIs.
+	isPid := 0
+	if NotPid {
+		isPid = 1
+	}
 
 	if runtime.GOOS == "linux" {
 		strUc := ToUC(str)
@@ -574,7 +585,7 @@ func typeStr(str string, args ...int) (int, error) {
 			var err error
 			if len(ru) <= 1 {
 				ustr := uint32(CharCodeAt(strUc[i], 0))
-				err = UnicodeType(ustr, pid)
+				err = UnicodeType(ustr, pid, isPid)
 			} else {
 				err = inputUTF(strUc[i])
 				MilliSleep(tm1)
@@ -591,7 +602,7 @@ func typeStr(str string, args ...int) (int, error) {
 	l1 := len([]rune(str))
 	for i := 0; i < l1; i++ {
 		ustr := uint32(CharCodeAt(str, i))
-		if err := UnicodeType(ustr, pid); err != nil {
+		if err := UnicodeType(ustr, pid, isPid); err != nil {
 			return i, err
 		}
 		// if len(args) > 0 {

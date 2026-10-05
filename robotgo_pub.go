@@ -153,8 +153,8 @@ func MoveArgs(x, y int) (int, int) {
 	return mx, my
 }
 
-// errSmoothMove is returned when MoveSmooth reports a failure
-var errSmoothMove = errors.New("robotgo: smooth move failed")
+// ErrSmoothMove is returned when MoveSmooth reports a failure
+var ErrSmoothMove = errors.New("robotgo: smooth move failed")
 
 // MoveRelative move mouse with relative
 func MoveRelative(x, y int) error {
@@ -165,7 +165,7 @@ func MoveRelative(x, y int) error {
 func MoveSmoothRelative(x, y int, args ...interface{}) error {
 	mx, my := MoveArgs(x, y)
 	if !MoveSmooth(mx, my, args...) {
-		return errSmoothMove
+		return ErrSmoothMove
 	}
 	return nil
 }
@@ -175,7 +175,7 @@ func MoveSmoothRelative(x, y int, args ...interface{}) error {
 // use the `robotgo.MouseSleep = 100`
 func MovesClick(x, y int, args ...interface{}) error {
 	if !MoveSmooth(x, y) {
-		return errSmoothMove
+		return ErrSmoothMove
 	}
 	MilliSleep(50)
 	return Click(args...)
@@ -205,6 +205,8 @@ func CharCodeAt(s string, n int) rune {
 }
 
 // ToUC trans string to unicode []string
+//
+// Runes outside ASCII become the Xlib keysym name ("U4e16", "U1F600").
 func ToUC(text string) []string {
 	var uc []string
 
@@ -212,7 +214,10 @@ func ToUC(text string) []string {
 		textQ := strconv.QuoteToASCII(string(r))
 		textUnQ := textQ[1 : len(textQ)-1]
 
+		// QuoteToASCII spells BMP runes as \uXXXX and the rest as \UXXXXXXXX;
+		// Xlib wants a plain U prefix for both.
 		st := strings.Replace(textUnQ, "\\u", "U", -1)
+		st = strings.Replace(st, "\\U", "U", -1)
 		if st == "\\\\" {
 			st = "\\"
 		}

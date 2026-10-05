@@ -108,6 +108,8 @@ func TestToUC(t *testing.T) {
 	tt.Equal(t, []string{`"`}, ToUC(`"`))
 	tt.Equal(t, []string{"\\"}, ToUC("\\"))
 	tt.Equal(t, 0, len(ToUC("")))
+	// Runes above the BMP use the Xlib U spelling, not Go's \U escape.
+	tt.Equal(t, []string{"U0001f600"}, ToUC("\U0001F600"))
 }
 
 func TestSetDelay(t *testing.T) {
