@@ -382,7 +382,8 @@ func GetTitle(args ...int) string {
 
 // GetBounds returns the window bounds (x, y, w, h) of pid's window;
 // pid <= 0 selects the frontmost app. It returns zeros when not reachable.
-func GetBounds(pid int) (x, y, w, h int) {
+// args are accepted for API parity: as in Cgo, pid is always an app pid.
+func GetBounds(pid int, args ...int) (x, y, w, h int) {
 	err := withWindow(pid, false, func(win uintptr) error {
 		var p CGPoint
 		var s CGSize
@@ -410,8 +411,9 @@ func axValue(elem, attr uintptr, typ uint32, out unsafe.Pointer) bool {
 }
 
 // ActivePid brings the application with pid to the foreground, restoring
-// and raising its window.
-func ActivePid(pid int) error {
+// and raising its window. args are accepted for API parity: as in Cgo,
+// pid is always an app pid.
+func ActivePid(pid int, args ...int) error {
 	if !validPid(pid) {
 		return ErrNotFound
 	}

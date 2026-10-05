@@ -189,13 +189,13 @@ func MaxWindow(pid int, args ...any) { lb.MaxWindow(pid, args...) }
 func CloseWindow(args ...int) { lb.CloseWindow(args...) }
 
 // ActivePid active the window by pid; args are accepted for API parity.
-func ActivePid(pid int, args ...int) error { return lb.ActivePid(pid) }
+func ActivePid(pid int, args ...int) error { return lb.ActivePid(pid, args...) }
 
 // GetBounds get the window bounds (x, y, w, h); args are accepted for API parity.
-func GetBounds(pid int, args ...int) (int, int, int, int) { return lb.GetBounds(pid) }
+func GetBounds(pid int, args ...int) (int, int, int, int) { return lb.GetBounds(pid, args...) }
 
 // GetClient get the window client bounds (x, y, w, h); args are accepted for API parity.
-func GetClient(pid int, args ...int) (int, int, int, int) { return lb.GetClient(pid) }
+func GetClient(pid int, args ...int) (int, int, int, int) { return lb.GetClient(pid, args...) }
 
 // --- Process ---
 

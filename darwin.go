@@ -208,13 +208,13 @@ func CloseWindow(args ...int) { dm.CloseWindow(args...) }
 
 // ActivePid active the app by pid and raise its window;
 // args are accepted for API parity.
-func ActivePid(pid int, args ...int) error { return dm.ActivePid(pid) }
+func ActivePid(pid int, args ...int) error { return dm.ActivePid(pid, args...) }
 
 // GetBounds get the window bounds (x, y, w, h); args are accepted for API parity.
-func GetBounds(pid int, args ...int) (int, int, int, int) { return dm.GetBounds(pid) }
+func GetBounds(pid int, args ...int) (int, int, int, int) { return dm.GetBounds(pid, args...) }
 
 // GetClient get the window client bounds, the same as GetBounds on macOS.
-func GetClient(pid int, args ...int) (int, int, int, int) { return dm.GetBounds(pid) }
+func GetClient(pid int, args ...int) (int, int, int, int) { return dm.GetBounds(pid, args...) }
 
 // --- Process (Pids/Process/Kill/... come from the portable ps.go) ---
 

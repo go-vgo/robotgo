@@ -192,13 +192,13 @@ func MaxWindow(pid int, args ...any) { wl.MaxWindow(pid, args...) }
 func CloseWindow(args ...int) { wl.CloseWindow(args...) }
 
 // ActivePid active the window by pid; args are accepted for API parity.
-func ActivePid(pid int, args ...int) error { return wl.ActivePid(pid) }
+func ActivePid(pid int, args ...int) error { return wl.ActivePid(pid, args...) }
 
 // GetBounds get the window bounds (x, y, w, h); args are accepted for API parity.
-func GetBounds(pid int, args ...int) (int, int, int, int) { return wl.GetBounds(pid) }
+func GetBounds(pid int, args ...int) (int, int, int, int) { return wl.GetBounds(pid, args...) }
 
 // GetClient get the window client bounds (x, y, w, h); args are accepted for API parity.
-func GetClient(pid int, args ...int) (int, int, int, int) { return wl.GetClient(pid) }
+func GetClient(pid int, args ...int) (int, int, int, int) { return wl.GetClient(pid, args...) }
 
 // --- Process (Pids/Process/Kill/... come from the portable ps.go) ---
 
