@@ -309,6 +309,21 @@ func TestInputUTFX11(t *testing.T) {
 	}
 }
 
+// Window ops must report failure for a pid with no window instead of
+// silently doing nothing.
+func TestWindowOpsBogusPid(t *testing.T) {
+	const bogus = 0x7ffffff0
+	if err := MinWindow(bogus); err == nil {
+		t.Error("MinWindow(bogus): got nil, want error")
+	}
+	if err := MaxWindow(bogus, false); err == nil {
+		t.Error("MaxWindow(bogus): got nil, want error")
+	}
+	if err := CloseWindow(bogus); err == nil {
+		t.Error("CloseWindow(bogus): got nil, want error")
+	}
+}
+
 func TestTypeStrInvalidKeysymX11(t *testing.T) {
 	if runtime.GOOS != "linux" {
 		t.Skip("TypeStr uses Xlib keysyms only on Linux")

@@ -194,13 +194,13 @@ func GetActiveApp() (string, string, int) { return x11.GetActiveApp() }
 func ActiveName(name string) error { return x11.ActiveName(name) }
 
 // MinWindow set the window min.
-func MinWindow(pid int, args ...any) { x11.MinWindow(pid, args...) }
+func MinWindow(pid int, args ...any) error { return x11.MinWindow(pid, args...) }
 
 // MaxWindow set the window max.
-func MaxWindow(pid int, args ...any) { x11.MaxWindow(pid, args...) }
+func MaxWindow(pid int, args ...any) error { return x11.MaxWindow(pid, args...) }
 
 // CloseWindow close the window.
-func CloseWindow(args ...int) { x11.CloseWindow(args...) }
+func CloseWindow(args ...int) error { return x11.CloseWindow(args...) }
 
 // ActivePid active the window by pid; with args or NotPid, pid is an X window id.
 func ActivePid(pid int, args ...int) error { return x11.ActivePid(pid, isHandle(args)) }

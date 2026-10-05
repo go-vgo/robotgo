@@ -83,29 +83,34 @@ func ActiveName(name string) error {
 	return c.do(func() error { return handle.Activate(c.seat) })
 }
 
-// withActive runs fn on the active toplevel's handle, if any.
-func withActive(fn func(h *wlr_foreign_toplevel.ZwlrForeignToplevelHandleV1) error) {
+// withActive runs fn on the active toplevel's handle; it returns
+// ErrNotSupported when the compositor lacks foreign-toplevel or no
+// toplevel exists.
+func withActive(fn func(h *wlr_foreign_toplevel.ZwlrForeignToplevelHandleV1) error) error {
 	c, err := ensureConn()
-	if err != nil || c.toplevelMgr == nil {
-		return
+	if err != nil {
+		return err
+	}
+	if c.toplevelMgr == nil {
+		return ErrNotSupported
 	}
 	info := c.activeToplevel()
 	if info == nil {
-		return
+		return ErrNotSupported
 	}
-	_ = c.do(func() error { return fn(info.handle) })
+	return c.do(func() error { return fn(info.handle) })
 }
 
 // MinWindow minimizes the active window. If the first arg is false, unminimize.
 // The pid is accepted for API parity; the protocol exposes no pid mapping.
-func MinWindow(pid int, args ...interface{}) {
+func MinWindow(pid int, args ...interface{}) error {
 	minimize := true
 	if len(args) > 0 {
 		if b, ok := args[0].(bool); ok {
 			minimize = b
 		}
 	}
-	withActive(func(h *wlr_foreign_toplevel.ZwlrForeignToplevelHandleV1) error {
+	return withActive(func(h *wlr_foreign_toplevel.ZwlrForeignToplevelHandleV1) error {
 		if minimize {
 			return h.SetMinimized()
 		}
@@ -115,14 +120,14 @@ func MinWindow(pid int, args ...interface{}) {
 
 // MaxWindow maximizes the active window. If the first arg is false, unmaximize.
 // The pid is accepted for API parity; the protocol exposes no pid mapping.
-func MaxWindow(pid int, args ...interface{}) {
+func MaxWindow(pid int, args ...interface{}) error {
 	maximize := true
 	if len(args) > 0 {
 		if b, ok := args[0].(bool); ok {
 			maximize = b
 		}
 	}
-	withActive(func(h *wlr_foreign_toplevel.ZwlrForeignToplevelHandleV1) error {
+	return withActive(func(h *wlr_foreign_toplevel.ZwlrForeignToplevelHandleV1) error {
 		if maximize {
 			return h.SetMaximized()
 		}
@@ -131,8 +136,8 @@ func MaxWindow(pid int, args ...interface{}) {
 }
 
 // CloseWindow closes the active window.
-func CloseWindow(args ...int) {
-	withActive(func(h *wlr_foreign_toplevel.ZwlrForeignToplevelHandleV1) error {
+func CloseWindow(args ...int) error {
+	return withActive(func(h *wlr_foreign_toplevel.ZwlrForeignToplevelHandleV1) error {
 		return h.Close()
 	})
 }

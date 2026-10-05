@@ -198,13 +198,13 @@ func GetActiveApp() (string, string, int) { return dm.GetActiveApp() }
 func ActiveName(name string) error { return dm.ActiveName(name) }
 
 // MinWindow set the window min.
-func MinWindow(pid int, args ...any) { dm.MinWindow(pid, args...) }
+func MinWindow(pid int, args ...any) error { return dm.MinWindow(pid, args...) }
 
 // MaxWindow set the window max.
-func MaxWindow(pid int, args ...any) { dm.MaxWindow(pid, args...) }
+func MaxWindow(pid int, args ...any) error { return dm.MaxWindow(pid, args...) }
 
 // CloseWindow close the window.
-func CloseWindow(args ...int) { dm.CloseWindow(args...) }
+func CloseWindow(args ...int) error { return dm.CloseWindow(args...) }
 
 // ActivePid active the app by pid and raise its window;
 // args are accepted for API parity.

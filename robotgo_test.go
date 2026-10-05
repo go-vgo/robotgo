@@ -23,8 +23,8 @@ import (
 	"strings"
 	"sync"
 	"testing"
-	"time"
 
+	"github.com/go-vgo/robotgo/internal/cliplock"
 	"github.com/vcaesar/tt"
 )
 
@@ -205,24 +205,15 @@ func skipNoClipboard(t *testing.T, err error) {
 
 func TestClip(t *testing.T) {
 	requireDisplay(t)
+	cliplock.Lock(t)
 
-	// Retry: clipboard/ tests share the clipboard and run in parallel
-	// under go test ./..., so the write may be overwritten before ReadAll.
-	var s string
-	for range 5 {
-		err := WriteAll("s")
-		skipNoClipboard(t, err)
-		tt.Nil(t, err)
+	err := WriteAll("s")
+	skipNoClipboard(t, err)
+	tt.Nil(t, err)
 
-		var e error
-		s, e = ReadAll()
-		tt.Nil(t, e)
-		if s == "s" {
-			break
-		}
-		time.Sleep(100 * time.Millisecond)
-	}
+	s, e := ReadAll()
 	tt.Equal(t, "s", s)
+	tt.Nil(t, e)
 }
 
 func TestImage(t *testing.T) {

@@ -558,6 +558,20 @@ func installFakeConn(t *testing.T, outputs ...*outputInfo) *fakePointer {
 	return fp
 }
 
+// Window ops must report, not swallow, a missing foreign-toplevel manager.
+func TestWindowOpsNotSupported(t *testing.T) {
+	installFakeConn(t)
+	if err := MinWindow(0); err != ErrNotSupported {
+		t.Errorf("MinWindow: got %v, want ErrNotSupported", err)
+	}
+	if err := MaxWindow(0, false); err != ErrNotSupported {
+		t.Errorf("MaxWindow: got %v, want ErrNotSupported", err)
+	}
+	if err := CloseWindow(); err != ErrNotSupported {
+		t.Errorf("CloseWindow: got %v, want ErrNotSupported", err)
+	}
+}
+
 // Move then Location must agree (#783): Wayland never reports the real
 // cursor, so Location is the last position this backend injected.
 func TestMoveThenLocation(t *testing.T) {

@@ -180,13 +180,13 @@ func GetActiveApp() (string, string, int) { return lb.GetActiveApp() }
 func ActiveName(name string) error { return lb.ActiveName(name) }
 
 // MinWindow set the window min.
-func MinWindow(pid int, args ...any) { lb.MinWindow(pid, args...) }
+func MinWindow(pid int, args ...any) error { return lb.MinWindow(pid, args...) }
 
 // MaxWindow set the window max.
-func MaxWindow(pid int, args ...any) { lb.MaxWindow(pid, args...) }
+func MaxWindow(pid int, args ...any) error { return lb.MaxWindow(pid, args...) }
 
 // CloseWindow close the window.
-func CloseWindow(args ...int) { lb.CloseWindow(args...) }
+func CloseWindow(args ...int) error { return lb.CloseWindow(args...) }
 
 // ActivePid active the window by pid; args are accepted for API parity.
 func ActivePid(pid int, args ...int) error { return lb.ActivePid(pid, args...) }

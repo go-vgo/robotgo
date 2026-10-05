@@ -197,10 +197,10 @@ func GetClient(pid int, isHandle bool) (int, int, int, int) {
 }
 
 // MinWindow minimizes (or restores, if the bool arg is false) a window.
-func MinWindow(pid int, args ...interface{}) {
+func MinWindow(pid int, args ...interface{}) error {
 	hwnd := targetWindow(pid)
 	if hwnd == 0 {
-		return
+		return ErrNotFound
 	}
 	minimize := true
 	if len(args) > 0 {
@@ -213,13 +213,14 @@ func MinWindow(pid int, args ...interface{}) {
 	} else {
 		win.ShowWindow(hwnd, win.SW_RESTORE)
 	}
+	return nil
 }
 
 // MaxWindow maximizes (or restores, if the bool arg is false) a window.
-func MaxWindow(pid int, args ...interface{}) {
+func MaxWindow(pid int, args ...interface{}) error {
 	hwnd := targetWindow(pid)
 	if hwnd == 0 {
-		return
+		return ErrNotFound
 	}
 	maximize := true
 	if len(args) > 0 {
@@ -232,20 +233,24 @@ func MaxWindow(pid int, args ...interface{}) {
 	} else {
 		win.ShowWindow(hwnd, win.SW_RESTORE)
 	}
+	return nil
 }
 
 // CloseWindow closes a window by posting WM_CLOSE. With no args the
 // foreground window is closed; the first arg may specify a pid.
-func CloseWindow(args ...int) {
+func CloseWindow(args ...int) error {
 	pid := 0
 	if len(args) > 0 {
 		pid = args[0]
 	}
 	hwnd := targetWindow(pid)
 	if hwnd == 0 {
-		return
+		return ErrNotFound
 	}
-	procPostMessageW.Call(uintptr(hwnd), uintptr(wmClose), 0, 0)
+	if r, _, err := procPostMessageW.Call(uintptr(hwnd), uintptr(wmClose), 0, 0); r == 0 {
+		return err
+	}
+	return nil
 }
 
 // CheckAccess reports whether input injection is permitted. Windows has no

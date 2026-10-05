@@ -192,10 +192,10 @@ func GetBounds(pid int, isXid bool) (int, int, int, int) {
 //
 //	MinWindow(pid)        // minimize
 //	MinWindow(pid, false) // restore
-func MinWindow(pid int, args ...interface{}) {
+func MinWindow(pid int, args ...interface{}) error {
 	c, err := ensureConn()
 	if err != nil {
-		return
+		return err
 	}
 	state := true
 	if len(args) > 0 {
@@ -205,24 +205,23 @@ func MinWindow(pid int, args ...interface{}) {
 	}
 	w, err := c.xidByPid(pid)
 	if err != nil {
-		return
+		return err
 	}
 	if state {
 		// WM_CHANGE_STATE -> IconicState minimizes via the window manager.
-		_ = ewmh.ClientEvent(c.xu, w, "WM_CHANGE_STATE", icccm.StateIconic)
-		return
+		return ewmh.ClientEvent(c.xu, w, "WM_CHANGE_STATE", icccm.StateIconic)
 	}
-	_ = ewmh.ActiveWindowReq(c.xu, w)
+	return ewmh.ActiveWindowReq(c.xu, w)
 }
 
 // MaxWindow maximizes (or unmaximizes) the window owned by pid.
 //
 //	MaxWindow(pid)        // maximize
 //	MaxWindow(pid, false) // unmaximize
-func MaxWindow(pid int, args ...interface{}) {
+func MaxWindow(pid int, args ...interface{}) error {
 	c, err := ensureConn()
 	if err != nil {
-		return
+		return err
 	}
 	state := true
 	if len(args) > 0 {
@@ -232,22 +231,22 @@ func MaxWindow(pid int, args ...interface{}) {
 	}
 	w, err := c.xidByPid(pid)
 	if err != nil {
-		return
+		return err
 	}
 	action := ewmh.StateAdd
 	if !state {
 		action = ewmh.StateRemove
 	}
-	_ = ewmh.WmStateReqExtra(c.xu, w, action,
+	return ewmh.WmStateReqExtra(c.xu, w, action,
 		"_NET_WM_STATE_MAXIMIZED_VERT", "_NET_WM_STATE_MAXIMIZED_HORZ", 2)
 }
 
 // CloseWindow closes the window. With no argument it closes the active window;
 // otherwise it closes the first window owned by pid (args[0]).
-func CloseWindow(args ...int) {
+func CloseWindow(args ...int) error {
 	c, err := ensureConn()
 	if err != nil {
-		return
+		return err
 	}
 	pid := 0
 	if len(args) > 0 {
@@ -255,9 +254,9 @@ func CloseWindow(args ...int) {
 	}
 	w, err := c.targetWindow(pid)
 	if err != nil {
-		return
+		return err
 	}
-	_ = ewmh.CloseWindow(c.xu, w)
+	return ewmh.CloseWindow(c.xu, w)
 }
 
 // CheckAccess reports whether input injection is permitted. X11 has no

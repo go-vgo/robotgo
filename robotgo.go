@@ -1006,7 +1006,7 @@ func GetActiveC() C.MData {
 }
 
 // MinWindow set the window min
-func MinWindow(pid int, args ...interface{}) {
+func MinWindow(pid int, args ...interface{}) error {
 	var (
 		state = true
 		isPid int
@@ -1019,11 +1019,14 @@ func MinWindow(pid int, args ...interface{}) {
 		isPid = 1
 	}
 
-	C.min_window(C.uintptr(pid), C.bool(state), C.int8_t(isPid))
+	if !C.min_window(C.uintptr(pid), C.bool(state), C.int8_t(isPid)) {
+		return errors.New("robotgo: min window failed")
+	}
+	return nil
 }
 
 // MaxWindow set the window max
-func MaxWindow(pid int, args ...interface{}) {
+func MaxWindow(pid int, args ...interface{}) error {
 	var (
 		state = true
 		isPid int
@@ -1036,14 +1039,19 @@ func MaxWindow(pid int, args ...interface{}) {
 		isPid = 1
 	}
 
-	C.max_window(C.uintptr(pid), C.bool(state), C.int8_t(isPid))
+	if !C.max_window(C.uintptr(pid), C.bool(state), C.int8_t(isPid)) {
+		return errors.New("robotgo: max window failed")
+	}
+	return nil
 }
 
 // CloseWindow close the window
-func CloseWindow(args ...int) {
+func CloseWindow(args ...int) error {
 	if len(args) <= 0 {
-		C.close_main_window()
-		return
+		if !C.close_main_window() {
+			return errCloseWindow
+		}
+		return nil
 	}
 
 	var pid, isPid int
@@ -1054,8 +1062,13 @@ func CloseWindow(args ...int) {
 		isPid = 1
 	}
 
-	C.close_window_by_PId(C.uintptr(pid), C.int8_t(isPid))
+	if !C.close_window_by_PId(C.uintptr(pid), C.int8_t(isPid)) {
+		return errCloseWindow
+	}
+	return nil
 }
+
+var errCloseWindow = errors.New("robotgo: close window failed")
 
 // SetHandle set the window handle
 func SetHandle(hwnd int) {

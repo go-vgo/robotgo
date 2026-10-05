@@ -21,6 +21,7 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/go-vgo/robotgo/internal/cliplock"
 	"github.com/vcaesar/tt"
 )
 
@@ -224,6 +225,7 @@ func TestType(t *testing.T) {
 
 func TestTypeStr(t *testing.T) {
 	requireDisplay(t)
+	cliplock.Lock(t)
 	e := PasteStr("s")
 	skipNoClipboard(t, e)
 	tt.Nil(t, e)
