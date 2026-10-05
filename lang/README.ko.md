@@ -33,9 +33,9 @@ RobotGo는 Mac, Windows, Linux를 지원하며, arm64와 x86-amd64 아키텍처�
 - [문서](#docs)
 - [바인딩](#binding)
 - [요구 사항](#requirements)
+- [Cgo 없는 빌드](#cgo-free-builds)
 - [설치](#installation)
 - [업데이트](#update)
-- [Cgo 없는 빌드](#cgo-free-builds)
 - [예제](#examples)
 - [타입 변환과 키](https://github.com/go-vgo/robotgo/blob/master/docs/keys.md)
 - [크로스 컴파일](https://github.com/go-vgo/robotgo/blob/master/docs/install.md#crosscompiling)
@@ -48,210 +48,218 @@ RobotGo는 Mac, Windows, Linux를 지원하며, arm64와 x86-amd64 아키텍처�
 - [GoDoc](https://godoc.org/github.com/go-vgo/robotgo) <br>
 - [API 문서](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) (지원 중단, 더 이상 업데이트되지 않음)
 
-## Binding:
+## Binding
 
 [ADB](https://github.com/vcaesar/adb), Android adb API를 래핑한 패키지.
 
-## Requirements:
+## Requirements
 
-이제 RobotGo를 설치하기 전에 `Golang, GCC`가 올바르게 설치되어 있는지 확인하세요.
+**Go 1.26+**([go.mod](../go.mod) 참조)와 백엔드 하나가 필요합니다:
 
-### 전체 플랫폼:
+- **기본(Cgo):** `CGO_ENABLED=1`, C 컴파일러, 그리고 아래의 플랫폼 라이브러리.
+- **순수 Go(실험적):** C 툴체인 불필요. [Cgo 없는 빌드](#cgo-free-builds) 참조.
 
-```
-Golang
+두 방식 모두 사용하는 기능에 맞는 [기능별 의존성](#feature-specific-dependencies)이
+필요합니다.
 
-GCC
-```
+### Default Cgo setup
 
-#### MacOS:
+#### macOS
 
-```
+Go와 Xcode 명령줄 도구(Clang):
+
+```sh
 brew install go
-```
-
-Xcode 명령줄 도구; <br>
-그리고 개인정보 보호 설정에서 다음 위치에 "화면 기록"과 "손쉬운 사용" 권한을 추가하세요: <br>
-`시스템 설정 > 개인정보 보호 및 보안 > 손쉬운 사용, 화면 및 시스템 오디오 기록`.
-
-```
 xcode-select --install
 ```
 
-#### Windows:
+**권한(Cgo와 순수 Go 공통):** **시스템 설정 > 개인정보 보호 및 보안**에서 앱 또는
+터미널에 **손쉬운 사용**(입력)과 **화면 기록**(캡처) 권한을 부여하세요.
 
-```
-winget install Golang.go
+#### Windows
+
+```powershell
+winget install GoLang.Go
 ```
 
-[llvm-mingw](https://github.com/mstorsjo/llvm-mingw)
+추가로 C 툴체인 **하나**가 필요합니다. [LLVM-MinGW](https://github.com/mstorsjo/llvm-mingw):
 
-```
+```powershell
 winget install MartinStorsjo.LLVM-MinGW.UCRT
+$env:CC = "clang"
 ```
 
-또는 [Mingw-w64](https://sourceforge.net/projects/mingw-w64/files)
+또는 [MinGW-w64 (WinLibs)](https://winlibs.com/):
 
-```
+```powershell
 winget install BrechtSanders.WinLibs.POSIX.UCRT
+$env:CC = "gcc"
 ```
 
-또는 [Mingw-w64](https://sourceforge.net/projects/mingw-w64/files)와 다른 gcc를 다운로드한 다음, `C:\mingw64\bin`과 같은 경로를 시스템 환경 변수 `Path`에 설정하세요.
-[명령줄에서 GCC를 실행하도록 환경 변수 설정하기](https://www.youtube.com/results?search_query=Set+environment+variables+to+run+GCC+from+command+line).
+툴체인의 `bin` 경로(예: `C:\mingw64\bin`)가 `PATH`에 있어야 하고 `GOARCH`와 일치해야
+합니다. 수동으로 설치한 [MinGW-w64](https://sourceforge.net/projects/mingw-w64/files)
+처럼 Cgo와 호환되는 다른 컴파일러도 사용할 수 있습니다.
 
-`또는 다른 GCC 사용`(Mingw-w64를 제외하고, [bitmap](https://github.com/vcaesar/bitmap)을 사용할 때는 "libpng"를 직접 컴파일해야 합니다.)
+[Bitmap](https://github.com/vcaesar/bitmap)은 MinGW-w64용 libpng만 포함합니다.
+다른 툴체인을 쓸 때는 libpng를 직접 빌드하세요.
 
-#### 그 외 모든 플랫폼:
+#### Linux (X11)
 
-```
-GCC
+빌드: GCC, libc 헤더, X11/XTest 헤더. 런타임: XTEST를 지원하는 X 서버와 `DISPLAY`
+설정. 네이티브 Wayland는 [Cgo 없는 빌드](#cgo-free-builds)를 참조하세요.
 
-XTest 확장이 포함된 X11 (즉 Xtst 라이브러리)
+**Ubuntu / Debian:**
 
-"클립보드": xsel xclip
+```sh
+# Go (배포판 패키지가 너무 오래되었으면 Snap 사용)
+sudo snap install go --classic
+# 또는: sudo apt install golang
 
-"비트맵": libpng (오직 "bitmap"에서만 사용.)
+# 핵심(Cgo): 컴파일러, libc, X11, XTest
+sudo apt install gcc libc6-dev libx11-dev xorg-dev libxtst-dev
 
-"이벤트-Gohook": xcb, xkb, libxkbcommon (오직 "hook"에서만 사용.)
-```
-
-##### Ubuntu:
-
-```yml
-# sudo apt install golang
-sudo snap install go  --classic
-
-# gcc
-sudo apt install gcc libc6-dev
-
-# x11
-sudo apt install libx11-dev xorg-dev libxtst-dev
-
-# Clipboard
+# 클립보드(X11)
 sudo apt install xsel xclip
 
-# Bitmap
+# Bitmap: libpng
 sudo apt install libpng++-dev
 
-# GoHook
+# GoHook: XCB, XKB
 sudo apt install xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev libxkbcommon-dev
 ```
 
-##### Fedora:
+**Fedora:**
 
-```yml
-# x11
-sudo dnf install libXtst-devel
+```sh
+# 핵심(Cgo): 컴파일러, libc, X11, XTest
+sudo dnf install gcc glibc-devel libX11-devel libXtst-devel
 
-# Clipboard
+# 클립보드(X11)
 sudo dnf install xsel xclip
 
-# Bitmap
+# Bitmap: libpng
 sudo dnf install libpng-devel
 
-# GoHook
+# GoHook: XKB (Fedora 34 미만: xkbcomp-devel 대신 xorg-x11-xkb-utils-devel)
 sudo dnf install libxkbcommon-devel libxkbcommon-x11-devel xkbcomp-devel
-xorg-x11-xkb-utils-devel (< Fedora 34)
 ```
+
+### Feature-specific dependencies
+
+핵심 설정에 더해, 사용하는 기능에만 필요합니다:
+
+- **Linux 클립보드(Cgo와 순수 Go 공통):** X11에서는 `xclip` 또는 `xsel`,
+  Wayland에서는 `wl-clipboard`:
+
+  ```sh
+  sudo apt install wl-clipboard   # Ubuntu / Debian
+  sudo dnf install wl-clipboard   # Fedora
+  ```
+
+- **[Bitmap](https://github.com/vcaesar/bitmap):** libpng 헤더.
+- **[GoHook](https://github.com/robotn/gohook):** Linux에서는 XCB/XKB 헤더.
+
+Bitmap과 GoHook은 별도의 Cgo 패키지입니다. 순수 Go RobotGo 백엔드를 써도 이들의 C
+의존성은 없어지지 않습니다.
+
+## Cgo-free Builds
+
+**실험적인 순수 Go 백엔드**는 `CGO_ENABLED=0`으로 빌드 및 크로스 컴파일됩니다
+(GCC, MinGW, Xcode, X11 헤더 불필요). import 경로와 API는 동일하며 **빌드 태그**로
+백엔드를 선택합니다 — `CGO_ENABLED=0`만으로는 아무것도 선택되지 않습니다.
+
+| 대상 `GOOS`   | 빌드 태그 | 패키지                 | 런타임 요구 사항                                                        |
+| ------------- | --------- | ---------------------- | ----------------------------------------------------------------------- |
+| `windows`     | `win`     | [win](../win/)         | Win32만 사용, 추가 런타임 없음                                          |
+| `darwin`      | `mac`     | [darwin](../darwin/)   | 시스템 프레임워크와 [개인정보 권한](#macos)                             |
+| `linux`       | `x11`     | [x11](../x11/)         | XTEST를 지원하는 X 서버, `DISPLAY` 설정                                 |
+| `linux`       | `wayland` | [wayland](../wayland/) | wlroots 컴포지터, [Wayland](#wayland) 참조                              |
+| `linux`       | `libei`   | [libei](../libei/)     | RemoteDesktop portal(GNOME/KDE), [libei](#libei-gnome--kde) 참조        |
+
+**`purego`**는 단축 태그입니다: macOS에서는 `mac`, Windows에서는 `win`, Linux에서는
+`wayland`. Linux에서 재정의하려면 `x11` 또는 `libei`를 추가하세요(`-tags "purego,x11"`).
+
+`GOOS`에 맞는 **백엔드 태그 하나**만 사용하세요. `x11,libei` 같은 조합은 컴파일에
+실패합니다(`purego`와 Linux 재정의 하나를 함께 쓰는 경우만 예외).
+
+### Build commands
+
+```sh
+# 현재 OS
+CGO_ENABLED=0 go build -tags purego .
+
+# 크로스 컴파일
+CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags win .
+CGO_ENABLED=0 GOOS=darwin  GOARCH=arm64 go build -tags mac .
+CGO_ENABLED=0 GOOS=linux   GOARCH=amd64 go build -tags x11 .
+CGO_ENABLED=0 GOOS=linux   GOARCH=amd64 go build -tags wayland .
+CGO_ENABLED=0 GOOS=linux   GOARCH=amd64 go build -tags libei .
+```
+
+PowerShell: `$env:CGO_ENABLED = "0"; go build -tags purego .`
+
+`./...`가 아니라 모듈 루트(`.`) 또는 직접 만든 패키지를 빌드하세요. `examples/`와
+일부 하위 패키지는 Cgo 전용 API가 필요합니다.
+
+### Limitations
+
+위의 런타임 요구 사항은 그대로 적용됩니다. `CaptureScreen` / `FreeBitmap` 같은 Cgo
+전용 API는 존재하지 않으므로 `CaptureImg`를 사용하세요. 지원되지 않는 동작은
+`ErrNotSupported`를 반환합니다(또는 빈 결과).
+
+- **`mac`:** 창 관리 없음 — `ActiveName`은 `ErrNotSupported`를 반환하고,
+  `GetTitle`은 `""`를 반환하며, 최소화/최대화/닫기는 아무 동작도 하지 않습니다.
+- **`wayland`, `libei`:** `Location()`은 실제 커서가 아니라 RobotGo가 마지막으로
+  주입한 위치를 반환합니다. 클립보드에는 `wl-clipboard`가 필요합니다.
 
 #### Wayland
 
-Wayland 백엔드는 **순수 Go(Cgo 없음)** 구현이므로 시스템 C 라이브러리가 필요하지
-않습니다. 다음 프로토콜을 지원하는 wlroots 기반 컴포지터(Sway, Hyprland, Wayfire 등)가
-필요합니다:
+`WAYLAND_DISPLAY`와 `XDG_RUNTIME_DIR`가 설정되어 있고 다음을 노출하는 wlroots
+컴포지터(Sway, Hyprland, Wayfire 등):
 
-```
-zwlr_virtual_pointer_v1            (마우스 제어)
-zwp_virtual_keyboard_v1            (키보드 제어)
-zwlr_screencopy_v1                 (화면 캘처)
-zwlr_foreign_toplevel_management_v1 (창 관리)
-```
+| 기능        | 프로토콜 global                    |
+| ----------- | ---------------------------------- |
+| 마우스 제어 | `zwlr_virtual_pointer_manager_v1`  |
+| 키보드 제어 | `zwp_virtual_keyboard_manager_v1`  |
+| 화면 캡처   | `zwlr_screencopy_manager_v1`       |
+| 창 관리     | `zwlr_foreign_toplevel_manager_v1` |
 
-GNOME과 KDE는 이러한 프로토콜을 기본적으로 지원하지 **않습니다**.
+GNOME과 KDE는 이러한 프로토콜을 제공하지 않으므로, 그곳에서는 `libei`를 사용하세요.
 
-#### libei(GNOME / KDE)
+#### libei (GNOME / KDE)
 
-libei 백엔드도 **순수 Go(Cgo 없음)** 구현입니다. freedesktop의
-`xdg-desktop-portal` RemoteDesktop 인터페이스를 통해 입력을 구동하므로, wlroots
-Wayland 백엔드와 달리 GNOME과 KDE에서 작동합니다. 다음이 필요합니다:
+입력은 `xdg-desktop-portal`의 **RemoteDesktop** D-Bus 인터페이스를 통해 전달됩니다.
+세션 버스, `xdg-desktop-portal`, 그리고 이를 구현하는 백엔드
+(`xdg-desktop-portal-gnome`, `-kde`, `-wlr`)가 필요합니다. 첫 실행 시 동의 대화상자가
+표시되며, 복원 토큰은 `$XDG_STATE_HOME/robotgo`에 캐시됩니다.
 
-```
-xdg-desktop-portal               (portal D-Bus 서비스)
-xdg-desktop-portal-gnome / -kde  (데스크톱의 portal 백엔드)
-```
-
-참고: libei 백엔드는 마우스와 키보드 입력만 처리합니다. 화면 캘처와 창 관리는
+절대 좌표 이동은 연결된 ScreenCast 스트림을 사용합니다(기본값). 상대 이동만 쓰려면
+`libei.LinkScreenCast = false`로 설정하세요. 화면 캡처와 창 관리는
 `ErrNotSupported`를 반환합니다.
 
-## Installation:
+## Installation
 
-Go 모듈을 지원하는 경우(Go 1.11+), import만 하면 됩니다:
+```sh
+go get github.com/go-vgo/robotgo
+```
 
 ```go
 import "github.com/go-vgo/robotgo"
 ```
 
-그렇지 않으면 다음 명령을 실행하여 robotgo 패키지를 설치하세요:
+Bitmap에서 `png.h: No such file or directory`가 발생하면 해당 프로젝트의 libpng 요구
+사항과 [issues/47](https://github.com/go-vgo/robotgo/issues/47)을 참조하세요.
 
-```
-go get github.com/go-vgo/robotgo
-```
+## Update
 
-png.h: No such file or directory? [issues/47](https://github.com/go-vgo/robotgo/issues/47)을 참조하세요.
-
-## Update:
-
-```
+```sh
 go get -u github.com/go-vgo/robotgo
 ```
 
 go1.10.x의 C 파일 컴파일 캐시 문제에 주의하세요, [golang #24355](https://github.com/golang/go/issues/24355).
 `go mod vendor` 문제, [golang #26366](https://github.com/golang/go/issues/26366).
 
-## Cgo-free Builds:
-
-RobotGo는 Windows, macOS, X11, Wayland, libei(Linux)용 **순수 Go(Cgo 없음)** 백엔드를 제공합니다. 현재는 실험적 기능입니다.
-동일한 `robotgo` API를 노출하므로 코드를 변경할 필요 없이 빌드 태그만 지정하면 됩니다.
-이 백엔드는 `CGO_ENABLED=0`으로 크로스 컴파일됩니다(GCC, MinGW, Xcode, X11 헤더 불필요).
-
-| 백엔드                         | 빌드 태그 | Go 패키지                           |
-| ------------------------------ | --------- | ----------------------------------- |
-| Windows(Cgo 없음)              | `win`     | `github.com/go-vgo/robotgo/win`     |
-| macOS(purego를 통한 Quartz)    | `mac`     | `github.com/go-vgo/robotgo/darwin`  |
-| X11(Linux, 순수 Go X 프로토콜) | `x11`     | `github.com/go-vgo/robotgo/x11`     |
-| Wayland(Linux, wlroots)        | `wayland` | `github.com/go-vgo/robotgo/wayland` |
-| libei(Linux, GNOME/KDE portal) | `libei`   | `github.com/go-vgo/robotgo/libei`   |
-| 순수 Go 기본값(모든 플랫폼)    | `purego`  | 위의 `mac`/`win`/`wayland` 선택     |
-
-```sh
-# 플랫폼별 순수 Go 기본 백엔드, 모든 대상에 하나의 태그 사용:
-# macOS -> mac, Windows -> win, Linux -> wayland(x11/libei와 조합해 재정의 가능)
-go build -tags purego .
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags "purego,x11" .
-
-# Windows, Cgo / MinGW 불필요
-CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags win .
-
-# macOS, purego를 통해 런타임에 Quartz/CoreGraphics 로드(Xcode 불필요)
-CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -tags mac .
-
-# X11, 순수 Go X 프로토콜(XTEST) — X11 헤더 불필요
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags x11 .
-
-# Wayland, wlroots 기반 컴포지터(Sway, Hyprland, Wayfire 등)
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags wayland .
-
-# libei, xdg-desktop-portal RemoteDesktop를 통한 GNOME/KDE 지원
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags libei .
-```
-
-참고: `examples/` 및 일부 OS별 하위 패키지는 기본 Cgo 백엔드에서만 사용할 수 있는 API를 사용하므로, 위 예제는 `./...` 대신 모듈 루트(`.`)를 빌드합니다.
-
-`win` 태그에서는 기본 Cgo/Win32 백엔드가 제외되고 호출이 순수 Go `win` 패키지로 전달됩니다. `mac` 태그에서는 기본 Cgo/Quartz 백엔드가 제외되고 호출이 순수 Go `darwin` 패키지로 전달됩니다(창 관리는 `ErrNotSupported`를 반환합니다). `x11` 태그에서는 Cgo/X11 백엔드가 제외되고 호출이 순수 Go `x11` 패키지로 전달됩니다. `wayland` 태그에서는 Cgo/X11 백엔드가 제외되고 호출이 순수 Go `wayland` 패키지로 전달됩니다. `libei` 태그에서는 Cgo/X11과 wlroots Wayland 백엔드가 모두 제외되고 호출이 순수 Go `libei` 패키지로 전달됩니다.
-
-`purego` 태그는 크로스 플랫폼 단축 태그입니다. 모든 플랫폼에서 Cgo 백엔드를 제외하고 대상 OS의 순수 Go 기본 백엔드(macOS는 `mac`, Windows는 `win`, Linux는 `wayland`)를 선택합니다. Linux에서는 `x11` 또는 `libei`와 조합하여(예: `-tags "purego,libei"`) 다른 순수 Go 백엔드를 선택할 수 있습니다.
-
-## [Examples:](https://github.com/go-vgo/robotgo/blob/master/examples)
+## [Examples](https://github.com/go-vgo/robotgo/blob/master/examples)
 
 #### [마우스](https://github.com/go-vgo/robotgo/blob/master/examples/mouse/main.go)
 
@@ -602,9 +610,7 @@ func main() {
 
 ## Plans
 
-- 일부 C 코드를 Go로 리팩터링 (예: x11, windows)
 - 더 나은 멀티 스크린 지원
-- Wayland 지원
 - 윈도우 핸들 업데이트
 - Android 및 iOS 지원 시도
 

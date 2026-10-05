@@ -33,9 +33,9 @@ RobotGo 支援 Mac、Windows 和 Linux；並且支援 arm64 與 x86-amd64 架構
 - [文件](#docs)
 - [綁定](#binding)
 - [環境需求](#requirements)
+- [無 Cgo 建置](#cgo-free-builds)
 - [安裝](#installation)
 - [更新](#update)
-- [無 Cgo 構建](#cgo-free-builds)
 - [範例](#examples)
 - [型別轉換與按鍵](https://github.com/go-vgo/robotgo/blob/master/docs/keys.md)
 - [交叉編譯](https://github.com/go-vgo/robotgo/blob/master/docs/install.md#crosscompiling)
@@ -48,212 +48,215 @@ RobotGo 支援 Mac、Windows 和 Linux；並且支援 arm64 與 x86-amd64 架構
 - [GoDoc](https://godoc.org/github.com/go-vgo/robotgo) <br>
 - [API 文件](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md)（已棄用，不再更新）
 
-## Binding:
+## Binding
 
 [ADB](https://github.com/vcaesar/adb)，封裝的 Android adb API。
 
-## Requirements:
+## Requirements
 
-現在，請在安裝 RobotGo 之前確保 `Golang、GCC` 已被正確安裝。
+**Go 1.26+**（見 [go.mod](../go.mod)）以及一個後端：
 
-### 全部平台：
+- **預設（Cgo）：** `CGO_ENABLED=1`、一個 C 編譯器，以及下列平台函式庫。
+- **純 Go（實驗性）：** 無需 C 工具鏈；見[無 Cgo 建置](#cgo-free-builds)。
 
-```
-Golang
+兩者都需要為你所用功能安裝對應的[功能相關依賴](#feature-specific-dependencies)。
 
-GCC
-```
+### Default Cgo setup
 
-#### MacOS：
+#### macOS
 
-```
+Go 和 Xcode 命令列工具（Clang）：
+
+```sh
 brew install go
-```
-
-Xcode 命令列工具；<br>
-並在隱私設定中，於以下位置新增「螢幕錄製」和「輔助使用」權限：<br>
-`系統設定 > 隱私權與安全性 > 輔助使用、螢幕與系統音訊錄製`。
-
-```
 xcode-select --install
 ```
 
-#### Windows：
+**權限（Cgo 與純 Go）：** 在 **系統設定 > 隱私權與安全性** 中，為應用程式或終端機
+授予**輔助使用**（輸入）和**螢幕錄製**（擷取）權限。
 
-```
-winget install Golang.go
+#### Windows
+
+```powershell
+winget install GoLang.Go
 ```
 
-[llvm-mingw](https://github.com/mstorsjo/llvm-mingw)
+此外還需**一個** C 工具鏈。[LLVM-MinGW](https://github.com/mstorsjo/llvm-mingw)：
 
-```
+```powershell
 winget install MartinStorsjo.LLVM-MinGW.UCRT
+$env:CC = "clang"
 ```
 
-或者 [Mingw-w64](https://sourceforge.net/projects/mingw-w64/files)
+或 [MinGW-w64 (WinLibs)](https://winlibs.com/)：
 
-```
+```powershell
 winget install BrechtSanders.WinLibs.POSIX.UCRT
+$env:CC = "gcc"
 ```
 
-或者下載 [Mingw-w64](https://sourceforge.net/projects/mingw-w64/files) 以及其他 gcc，然後將類似 `C:\mingw64\bin` 的路徑設定到系統環境變數 `Path` 中。
-[設定環境變數以便從命令列執行 GCC](https://www.youtube.com/results?search_query=Set+environment+variables+to+run+GCC+from+command+line)。
+工具鏈的 `bin` 目錄（例如 `C:\mingw64\bin`）必須位於 `PATH` 中且與 `GOARCH`
+相符。其他任何相容 Cgo 的編譯器同樣可用，例如手動安裝的
+[MinGW-w64](https://sourceforge.net/projects/mingw-w64/files)。
 
-`或者使用其他 GCC`（除 Mingw-w64 之外，使用 [bitmap](https://github.com/vcaesar/bitmap) 時你需要自行編譯「libpng」。）
+[Bitmap](https://github.com/vcaesar/bitmap) 僅為 MinGW-w64 隨附 libpng；
+使用其他工具鏈時，需自行建置 libpng。
 
-#### 其他所有平台：
+#### Linux (X11)
 
-```
-GCC
+建置：GCC、libc 標頭檔、X11/XTest 標頭檔。執行：帶 XTEST 的 X 伺服器並設定
+`DISPLAY`。原生 Wayland 請見[無 Cgo 建置](#cgo-free-builds)。
 
-帶 XTest 擴充功能的 X11（即 Xtst 函式庫）
+**Ubuntu / Debian：**
 
-「剪貼簿」：xsel xclip
+```sh
+# Go（發行版自帶的套件過舊時用 Snap）
+sudo snap install go --classic
+# 或：sudo apt install golang
 
-「點陣圖」：libpng（僅「bitmap」使用。）
+# 核心（Cgo）：編譯器、libc、X11、XTest
+sudo apt install gcc libc6-dev libx11-dev xorg-dev libxtst-dev
 
-「事件-Gohook」：xcb, xkb, libxkbcommon（僅「hook」使用。）
-```
-
-##### Ubuntu：
-
-```yml
-# sudo apt install golang
-sudo snap install go  --classic
-
-# gcc
-sudo apt install gcc libc6-dev
-
-# x11
-sudo apt install libx11-dev xorg-dev libxtst-dev
-
-# Clipboard
+# 剪貼簿（X11）
 sudo apt install xsel xclip
 
-# Bitmap
+# Bitmap：libpng
 sudo apt install libpng++-dev
 
-# GoHook
+# GoHook：XCB、XKB
 sudo apt install xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev libxkbcommon-dev
 ```
 
-##### Fedora：
+**Fedora：**
 
-```yml
-# x11
-sudo dnf install libXtst-devel
+```sh
+# 核心（Cgo）：編譯器、libc、X11、XTest
+sudo dnf install gcc glibc-devel libX11-devel libXtst-devel
 
-# Clipboard
+# 剪貼簿（X11）
 sudo dnf install xsel xclip
 
-# Bitmap
+# Bitmap：libpng
 sudo dnf install libpng-devel
 
-# GoHook
+# GoHook：XKB（Fedora < 34：用 xorg-x11-xkb-utils-devel 取代 xkbcomp-devel）
 sudo dnf install libxkbcommon-devel libxkbcommon-x11-devel xkbcomp-devel
-xorg-x11-xkb-utils-devel (< Fedora 34)
 ```
+
+### Feature-specific dependencies
+
+在核心環境之上，僅在使用相應功能時才需要：
+
+- **Linux 剪貼簿（Cgo 與純 Go）：** X11 上需 `xclip` 或 `xsel`；
+  Wayland 上需 `wl-clipboard`：
+
+  ```sh
+  sudo apt install wl-clipboard   # Ubuntu / Debian
+  sudo dnf install wl-clipboard   # Fedora
+  ```
+
+- **[Bitmap](https://github.com/vcaesar/bitmap)：** libpng 標頭檔。
+- **[GoHook](https://github.com/robotn/gohook)：** Linux 上的 XCB/XKB 標頭檔。
+
+Bitmap 和 GoHook 是獨立的 Cgo 套件；純 Go 的 RobotGo 後端並不會消除它們對 C 的
+依賴。
+
+## Cgo-free Builds
+
+**實驗性的純 Go 後端**可在 `CGO_ENABLED=0` 下建置與交叉編譯（無需 GCC、MinGW、
+Xcode 或 X11 標頭檔）。匯入路徑和 API 不變；後端由**建置標籤**選擇 ——
+僅設定 `CGO_ENABLED=0` 不會選擇任何後端。
+
+| 目標 `GOOS`   | 建置標籤  | 套件                   | 執行時需求                                                       |
+| ------------- | --------- | ---------------------- | ---------------------------------------------------------------- |
+| `windows`     | `win`     | [win](../win/)         | 僅需 Win32，無額外執行時需求                                     |
+| `darwin`      | `mac`     | [darwin](../darwin/)   | 系統框架與[隱私權限](#macos)                                     |
+| `linux`       | `x11`     | [x11](../x11/)         | 帶 XTEST 的 X 伺服器，已設定 `DISPLAY`                           |
+| `linux`       | `wayland` | [wayland](../wayland/) | wlroots 合成器，見 [Wayland](#wayland)                           |
+| `linux`       | `libei`   | [libei](../libei/)     | RemoteDesktop portal（GNOME/KDE），見 [libei](#libei-gnome--kde) |
+
+**`purego`** 是一個捷徑：macOS 上為 `mac`，Windows 上為 `win`，Linux 上為
+`wayland`。在 Linux 上可追加 `x11` 或 `libei` 來覆寫（`-tags "purego,x11"`）。
+
+只使用**一個**與 `GOOS` 相符的後端標籤；諸如 `x11,libei` 的組合無法編譯
+（`purego` 加一個 Linux 覆寫標籤是唯一例外）。
+
+### Build commands
+
+```sh
+# 當前作業系統
+CGO_ENABLED=0 go build -tags purego .
+
+# 交叉編譯
+CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags win .
+CGO_ENABLED=0 GOOS=darwin  GOARCH=arm64 go build -tags mac .
+CGO_ENABLED=0 GOOS=linux   GOARCH=amd64 go build -tags x11 .
+CGO_ENABLED=0 GOOS=linux   GOARCH=amd64 go build -tags wayland .
+CGO_ENABLED=0 GOOS=linux   GOARCH=amd64 go build -tags libei .
+```
+
+PowerShell：`$env:CGO_ENABLED = "0"; go build -tags purego .`
+
+請建置模組根目錄（`.`）或你自己的套件，而不是 `./...`：`examples/` 和部分子套件
+需要僅 Cgo 可用的 API。
+
+### Limitations
+
+上述執行時需求依然適用。僅 Cgo 可用的 API，如 `CaptureScreen` / `FreeBitmap`，
+並不存在；請使用 `CaptureImg`。不支援的操作會回傳 `ErrNotSupported`（或空結果）。
+
+- **`mac`：** 無視窗管理 —— `ActiveName` 回傳 `ErrNotSupported`，
+  `GetTitle` 回傳 `""`，最小化/最大化/關閉為空操作。
+- **`wayland`、`libei`：** `Location()` 回傳 RobotGo 最後注入的位置，而非實際
+  游標位置。剪貼簿需要 `wl-clipboard`。
 
 #### Wayland
 
-Wayland 後端是 **純 Go（無 Cgo）** 實作，因此無需任何系統 C 函式庫。它需要一個
-基於 wlroots 的合成器（Sway、Hyprland、Wayfire 等），並支援以下協定：
+需要一個 wlroots 合成器（Sway、Hyprland、Wayfire 等），已設定 `WAYLAND_DISPLAY`
+和 `XDG_RUNTIME_DIR`，並公開：
 
+| 功能     | 協定全域物件                       |
+| -------- | ---------------------------------- |
+| 滑鼠控制 | `zwlr_virtual_pointer_manager_v1`  |
+| 鍵盤控制 | `zwp_virtual_keyboard_manager_v1`  |
+| 螢幕擷取 | `zwlr_screencopy_manager_v1`       |
+| 視窗管理 | `zwlr_foreign_toplevel_manager_v1` |
+
+GNOME 和 KDE 不提供這些協定；請在其上使用 `libei`。
+
+#### libei (GNOME / KDE)
+
+輸入透過 `xdg-desktop-portal` 的 **RemoteDesktop** D-Bus 介面完成：需要工作階段
+匯流排、`xdg-desktop-portal` 以及一個實作該介面的後端
+（`xdg-desktop-portal-gnome`、`-kde` 或 `-wlr`）。首次執行會顯示授權對話框；
+還原權杖會快取在 `$XDG_STATE_HOME/robotgo` 下。
+
+絕對移動使用連結的 ScreenCast 串流（預設）；設定 `libei.LinkScreenCast = false`
+則僅使用相對移動。螢幕擷取和視窗管理會回報 `ErrNotSupported`。
+
+## Installation
+
+```sh
+go get github.com/go-vgo/robotgo
 ```
-zwlr_virtual_pointer_v1            (滑鼠控制)
-zwp_virtual_keyboard_v1            (鍵盤控制)
-zwlr_screencopy_v1                 (螢幕擷取)
-zwlr_foreign_toplevel_management_v1 (視窗管理)
-```
-
-GNOME 和 KDE **不**原生支援這些協定。
-
-#### libei（GNOME / KDE）
-
-libei 後端同樣是 **純 Go（無 Cgo）** 實作。它透過 freedesktop 的
-`xdg-desktop-portal` RemoteDesktop 介面驅動輸入，因此可在 GNOME 和 KDE 上運作
-（不同於 wlroots Wayland 後端）。它需要：
-
-```
-xdg-desktop-portal               (portal D-Bus 服務)
-xdg-desktop-portal-gnome / -kde  (你桌面的 portal 後端)
-```
-
-注意：libei 後端僅處理滑鼠和鍵盤輸入。螢幕擷取和視窗管理會返回 `ErrNotSupported`。
-
-## Installation:
-
-在支援 Go module 的情況下（Go 1.11+），只需 import：
 
 ```go
 import "github.com/go-vgo/robotgo"
 ```
 
-否則，執行以下命令安裝 robotgo 套件：
+使用 Bitmap 時出現 `png.h: No such file or directory`：請查看其 libpng 需求以及
+[issues/47](https://github.com/go-vgo/robotgo/issues/47)。
 
-```
-go get github.com/go-vgo/robotgo
-```
+## Update
 
-png.h: No such file or directory？請參閱 [issues/47](https://github.com/go-vgo/robotgo/issues/47)。
-
-## Update:
-
-```
+```sh
 go get -u github.com/go-vgo/robotgo
 ```
 
 注意 go1.10.x 的 C 檔案編譯快取問題，[golang #24355](https://github.com/golang/go/issues/24355)。
 `go mod vendor` 問題，[golang #26366](https://github.com/golang/go/issues/26366)。
 
-## Cgo-free Builds:
-
-RobotGo 為 Windows、macOS、X11、Wayland 和 libei（Linux）提供了 **純 Go（無 Cgo）** 後端，目前為實驗性功能。
-它們暴露相同的 `robotgo` API，因此你的程式碼無需改動 —— 只需一個構建標籤。
-這些後端可在 `CGO_ENABLED=0` 下交叉編譯（無需 GCC、MinGW、Xcode 或 X11 頭檔案）。
-
-| 後端                             | 構建標籤  | Go 套件                             |
-| -------------------------------- | --------- | ----------------------------------- |
-| Windows（無 Cgo）                | `win`     | `github.com/go-vgo/robotgo/win`     |
-| macOS（透過 purego 呼叫 Quartz） | `mac`     | `github.com/go-vgo/robotgo/darwin`  |
-| X11（Linux，純 Go X 協定）       | `x11`     | `github.com/go-vgo/robotgo/x11`     |
-| Wayland（Linux，wlroots）        | `wayland` | `github.com/go-vgo/robotgo/wayland` |
-| libei（Linux，GNOME/KDE portal） | `libei`   | `github.com/go-vgo/robotgo/libei`   |
-| 純 Go 預設（所有平台）           | `purego`  | 選擇上面的 `mac`/`win`/`wayland`    |
-
-```sh
-# 每個平台的純 Go 預設後端，一個標籤適用於所有目標：
-# macOS -> mac，Windows -> win，Linux -> wayland（可與 x11/libei 組合以覆蓋）
-go build -tags purego .
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags "purego,x11" .
-
-# Windows，無需 Cgo / 無需 MinGW
-CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags win .
-
-# macOS，透過 purego 在執行時載入 Quartz/CoreGraphics（無需 Xcode）
-CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -tags mac .
-
-# X11，純 Go 實作的 X 協定（XTEST）—— 無需 X11 頭檔案
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags x11 .
-
-# Wayland，基於 wlroots 的合成器（Sway、Hyprland、Wayfire 等）
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags wayland .
-
-# libei，透過 xdg-desktop-portal RemoteDesktop 支援 GNOME/KDE
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags libei .
-```
-
-注意：上面的範例建置模組根目錄（`.`）而不是 `./...`，因為 `examples/` 和一些特定平台的子套件使用了僅在預設 Cgo 後端下可用的 API。
-
-在 `win` 標籤下，預設的 Cgo/Win32 後端被排除，呼叫轉發到純 Go 的 `win` 套件；
-在 `mac` 標籤下，預設的 Cgo/Quartz 後端被排除，呼叫轉發到純 Go 的 `darwin` 套件（視窗管理回報 `ErrNotSupported`）；
-在 `x11` 標籤下，Cgo/X11 後端被排除，呼叫轉發到純 Go 的 `x11` 套件；
-在 `wayland` 標籤下，Cgo/X11 後端被排除，呼叫轉發到純 Go 的 `wayland` 套件；
-在 `libei` 標籤下，Cgo/X11 和 wlroots Wayland 後端均被排除，呼叫轉發到純 Go 的 `libei` 套件。
-
-`purego` 標籤是一個跨平台快捷方式：它會在所有平台排除 Cgo 後端，並按目標 OS 選擇預設純 Go 後端 —— macOS 使用 `mac`，Windows 使用 `win`，Linux 使用 `wayland`。在 Linux 上，你可以將它與 `x11` 或 `libei` 組合（例如 `-tags "purego,libei"`）以選擇不同的純 Go 後端。
-
-## [Examples:](https://github.com/go-vgo/robotgo/blob/master/examples)
+## [Examples](https://github.com/go-vgo/robotgo/blob/master/examples)
 
 #### [滑鼠](https://github.com/go-vgo/robotgo/blob/master/examples/mouse/main.go)
 
@@ -604,9 +607,7 @@ func main() {
 
 ## Plans
 
-- 將部分 C 程式碼重構為 Go（例如 x11、windows）
 - 更好的多螢幕支援
-- Wayland 支援
 - 更新視窗控制代碼
 - 嘗試支援 Android 和 iOS
 
