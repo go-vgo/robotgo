@@ -194,7 +194,7 @@ const (
 	LightsKbdDown   = "lights_kbd_down"
 )
 
-type uMap map[string]uint16
+// type uMap map[string]uint16
 
 // MouseMap robotgo hook mouse's code map
 var MouseMap = keycode.MouseMap

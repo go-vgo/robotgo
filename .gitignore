@@ -20,6 +20,7 @@ test/test.png
 *.dSYM/
 *.su
 debug
+v1
 v0
 .v0
 test/tmp
@@ -100,3 +101,6 @@ examples/bitmap/imgToBitmap/test.png
 examples/bitmap/imgToBitmap/test_7.jpeg
 robot_img.png
 examples/bitmap/bitmapTobytes/out.jpg
+
+# go test -coverprofile output
+coverage.out

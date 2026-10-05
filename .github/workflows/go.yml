@@ -30,15 +30,15 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Set up Go
-        uses: actions/setup-go@v6
-        with:
-          go-version: ${{ env.GO_VERSION }}
-
       - name: Check out code
         uses: actions/checkout@v6
         with:
           persist-credentials: false
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ env.GO_VERSION }}
 
       - name: Install X11 dependencies
         if: runner.os == 'Linux'
@@ -60,13 +60,24 @@ jobs:
       - name: Vet
         run: go vet .
 
+      # Quoted: PowerShell splits an unquoted -coverprofile=coverage.out.
       - name: Test
         if: runner.os != 'Linux'
-        run: go test -v -count=1 ./...
+        run: go test -v -count=1 "-coverprofile=coverage.out" -covermode=atomic ./...
 
       - name: Test (xvfb)
         if: runner.os == 'Linux'
-        run: xvfb-run go test -v -count=1 ./...
+        run: xvfb-run go test -v -count=1 -coverprofile=coverage.out -covermode=atomic ./...
+
+      # README coverage badge; Codecov merges the per-OS reports of a commit.
+      # Fork PRs upload tokenless; upload errors never fail the build.
+      - name: Upload coverage
+        uses: codecov/codecov-action@v7
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.out
+          flags: cgo-${{ runner.os }}
+          fail_ci_if_error: false
 
       # robot_x11_test.go (#640 layout typing) reads keys back through an
       # Xlib harness, so it needs cgo; the purego job runs -tags x11 with
@@ -103,15 +114,15 @@ jobs:
       CGO_ENABLED: 0
 
     steps:
-      - name: Set up Go
-        uses: actions/setup-go@v6
-        with:
-          go-version: ${{ env.GO_VERSION }}
-
       - name: Check out code
         uses: actions/checkout@v6
         with:
           persist-credentials: false
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ env.GO_VERSION }}
 
       - name: Install Xvfb and headless sway
         if: runner.os == 'Linux'
@@ -170,15 +181,15 @@ jobs:
       CGO_ENABLED: 0
 
     steps:
-      - name: Set up Go
-        uses: actions/setup-go@v6
-        with:
-          go-version: ${{ env.GO_VERSION }}
-
       - name: Check out code
         uses: actions/checkout@v6
         with:
           persist-credentials: false
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ env.GO_VERSION }}
 
       - name: Build
         run: |

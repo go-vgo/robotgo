@@ -1,0 +1,54 @@
+version: "2"
+
+run:
+  timeout: 5m
+
+linters:
+  default: standard
+  settings:
+    errcheck:
+      exclude-functions:
+        # syscall procs always return a non-nil errno; callers read r1.
+        - (*golang.org/x/sys/windows.LazyProc).Call
+        # Best-effort cleanup on teardown and error paths.
+        - golang.org/x/sys/windows.CloseHandle
+        - golang.org/x/sys/unix.Munmap
+        - (*github.com/godbus/dbus/v5.Conn).RemoveMatchSignal
+    staticcheck:
+      checks:
+        - all
+        # golangci-lint defaults.
+        - -ST1000
+        - -ST1003
+        - -ST1016
+        - -ST1020
+        - -ST1021
+        - -ST1022
+        # Exported error strings and names are public API; keep them stable.
+        - -ST1005
+        - -ST1012
+        # Quickfix suggestions are style hints, not defects.
+        - -QF*
+  exclusions:
+    generated: lax
+    presets:
+      # Close, Flush, os.Remove, fmt.Print*, ... results.
+      - std-error-handling
+    paths:
+      - test/
+    rules:
+      # Wayland protocol object teardown; the connection is going away anyway.
+      - linters:
+          - errcheck
+        text: "Error return value of `.*\\.Destroy` is not checked"
+      # Examples are demos: they call deprecated v1 aliases on purpose and
+      # skip error handling to stay short.
+      - path: ^examples/
+        linters:
+          - errcheck
+          - staticcheck
+          - unused
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0

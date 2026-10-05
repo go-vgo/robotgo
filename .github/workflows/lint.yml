@@ -1,0 +1,72 @@
+name: golangci-lint
+# Replaces the Go Report Card badge: lint every backend on its native OS with
+# the repo's .golangci.yml. A newer run cancels the older one.
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  GO_VERSION: 1.27.x
+  GOLANGCI_LINT_VERSION: v2.14
+
+jobs:
+  # `cgo` lints the default backend (./...); every other target is a pure-Go
+  # backend tag linted with CGO_ENABLED=0 over the root package, its backend
+  # package and clipboard, mirroring the purego test job in go.yml.
+  lint:
+    name: lint (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            targets: cgo x11 wayland libei
+          - os: macos-latest
+            targets: cgo mac
+          - os: windows-latest
+            targets: cgo win
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Install X11 dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc libc6-dev libx11-dev xorg-dev libxtst-dev
+
+      - name: Install golangci-lint
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: ${{ env.GOLANGCI_LINT_VERSION }}
+          install-only: true
+
+      - name: Lint
+        shell: bash
+        run: |
+          for target in ${{ matrix.targets }}; do
+            echo "::group::golangci-lint $target"
+            case $target in
+              cgo) golangci-lint run ./... ;;
+              mac) CGO_ENABLED=0 golangci-lint run --build-tags=mac . ./darwin/... ./clipboard/... ;;
+              *) CGO_ENABLED=0 golangci-lint run --build-tags="$target" . "./$target/..." ./clipboard/... ;;
+            esac
+            echo "::endgroup::"
+          done

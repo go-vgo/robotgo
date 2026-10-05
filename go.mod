@@ -11,7 +11,7 @@ require (
 	github.com/tailscale/win v0.0.0-20260619195133-2d76c33a64c1
 	github.com/vcaesar/go-wayland v0.40.0
 	github.com/vcaesar/gops v0.43.0
-	github.com/vcaesar/imgo v0.43.0
+	github.com/vcaesar/imgo v0.44.0
 	github.com/vcaesar/keycode v0.20.0
 	github.com/vcaesar/screenshot v0.40.0
 	github.com/vcaesar/tt v0.40.0

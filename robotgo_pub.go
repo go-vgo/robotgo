@@ -169,7 +169,7 @@ func MoveSmoothRelative(x, y int, args ...interface{}) {
 func MovesClick(x, y int, args ...interface{}) {
 	MoveSmooth(x, y)
 	MilliSleep(50)
-	Click(args...)
+	Click(args...) //nolint:errcheck // v1 signature has no error result
 }
 
 // ScrollRelative scroll mouse with relative

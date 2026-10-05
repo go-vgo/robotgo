@@ -52,7 +52,7 @@ func GetMousePos() (int, int) {
 //
 // robotgo.MouseClick(button string, double bool)
 func MouseClick(args ...interface{}) {
-	Click(args...)
+	Click(args...) //nolint:errcheck // v1 signature has no error result
 }
 
 // Deprecated: use the TypeStr(),

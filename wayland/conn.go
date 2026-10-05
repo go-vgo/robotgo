@@ -91,7 +91,6 @@ type outputInfo struct {
 	width  int32
 	height int32
 	scale  int32 // wl_output.scale factor; 0 until the event arrives (treated as 1)
-	name   string
 }
 
 // toplevelInfo tracks a foreign toplevel handle.
