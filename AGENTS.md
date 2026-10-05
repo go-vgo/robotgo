@@ -19,7 +19,7 @@ Prerequisites (default Cgo backend): `GCC` must be installed. `CGO_ENABLED=1` (d
 - **Run an example**: `cd examples/mouse && go run main.go`
 - **Pure-Go backend test**: `go test -v -tags purego .` (picks `mac`/`win`/`wayland` per OS)
 - **Pure-Go Linux tests**: `CGO_ENABLED=0 go test -v -tags "purego,x11" . ./x11` and `CGO_ENABLED=0 go test -v -tags "purego,libei" . ./libei`
-- **Pure-Go cross build**: `CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -tags mac .` (likewise `win`, `x11`, `wayland`, `libei`). Build the module root `.`, not `./...` — `examples/` and some subpackages need the Cgo backend.
+- **Pure-Go cross build**: `CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -tags mac .`; `GOOS` must match the backend — `GOOS=windows` for `win`, `GOOS=linux` for `x11`/`wayland`/`libei` (a mismatched `GOOS` leaves the root package with no backend). Build the module root `.`, not `./...` — `examples/` and some subpackages need the Cgo backend.
 
 There is no Makefile / Taskfile / linter config. CI:
 - `.github/workflows/go.yml` — job `test` (macOS + Windows, Go 1.26.x): `go build -v .`, `go test -v robot_info_test.go`, `go test -v -tags purego .`; job `purego-linux` (ubuntu, `CGO_ENABLED=0`): `-tags "purego,x11" . ./x11` and `-tags "purego,libei" . ./libei`.
@@ -34,13 +34,13 @@ Single Go package `robotgo` at repo root (flat layout) with platform-specific fi
 | Tag | Package | Root wiring file | Notes |
 | --- | --- | --- | --- |
 | `win` | `win/` | `windows_n.go` | Win32 via tailscale/win |
-| `mac` | `darwin/` | `darwin.go` | Quartz/CoreGraphics via ebitengine/purego; window mgmt returns `ErrNotSupported` |
+| `mac` | `darwin/` | `darwin.go` | Quartz/CoreGraphics via ebitengine/purego; window mgmt unsupported: `ActiveName` returns `ErrNotSupported`, `GetTitle` returns `""`, `MinWindow`/`MaxWindow`/`CloseWindow` are no-ops |
 | `x11` | `x11/` | `x11_n.go` | XTEST/EWMH via jezek/xgb + xgbutil |
 | `wayland` | `wayland/` | `wayland_n.go` | wlroots virtual-input/screencopy protocols |
 | `libei` | `libei/` | `libei.go` | xdg-desktop-portal RemoteDesktop (GNOME/KDE) |
-| `purego` | — | — | shortcut: `mac` on darwin, `win` on windows, `wayland` on linux; combine with `x11`/`libei` on Linux to override |
+| `purego` | — | — | shortcut: `mac` on darwin, `win` on windows, `wayland` on linux; combine with `x11` or `libei` on Linux to override |
 
-Default Cgo files carry `//go:build !wayland && !win && !libei && !mac && !x11 && !purego` (`robotgo.go`, `key.go`, `robotgo_fn_v1.go`, `robot_info_test.go`, ...) so exactly one backend compiles. When adding a new pure-Go tag, extend these exclusions everywhere.
+Default Cgo files carry `//go:build !wayland && !win && !libei && !mac && !x11 && !purego` (`robotgo.go`, `key.go`, `robotgo_fn_v1.go`, `robot_info_test.go`, ...) so any pure-Go tag disables the Cgo backend. Select at most one backend tag per build (`purego` may be paired with one Linux override): the constraints do not enforce mutual exclusion, e.g. `-tags "x11,libei"` compiles both `x11_n.go` and `libei.go` and fails with duplicate declarations. When adding a new pure-Go tag, extend these exclusions everywhere.
 
 ```
 robotgo/
@@ -53,7 +53,7 @@ robotgo/
 ├── robotgo_win.go          # windows (shared by Cgo and win backends)
 ├── robotgo_x11.go          # Cgo X11: !darwin && !windows && no pure-Go tag
 ├── robotgo_android.go, robotgo_adb.go
-├── robotgo_ocr.go          # ocr (gosseract OCR)
+├── robotgo_ocr.go          # //go:build ocr only — not in normal builds (gosseract OCR)
 ├── darwin.go               # darwin && (mac || purego) — wires darwin/
 ├── windows_n.go            # windows && (win || purego) — wires win/
 ├── x11_n.go                # linux && x11 — wires x11/
@@ -116,7 +116,7 @@ Key subpackage relationships: the root `robotgo` package pulls C code from `scre
 ## Key Patterns
 
 - **Cgo + platform split is mandatory**. Any new OS-specific function must be gated by `//go:build` tags and have implementations (even stub) for darwin, linux, windows — examine `mouse/mouse_darwin.go`, `mouse_windows.go`, `mouse_x11.go` as the template.
-- **Keep backends in sync**: a new public `robotgo` API needs a forwarder in each pure-Go wiring file (`darwin.go`, `windows_n.go`, `x11_n.go`, `wayland_n.go`, `libei.go`) and an implementation (or `ErrNotSupported`) in the matching backend package, otherwise `-tags purego` builds break.
+- **Keep backends in sync**: a new public `robotgo` API added to the build-tagged Cgo surface (e.g. `robotgo.go`, `key.go`, `robotgo_mac*.go`) needs a forwarder in each pure-Go wiring file (`darwin.go`, `windows_n.go`, `x11_n.go`, `wayland_n.go`, `libei.go`) and an implementation (or `ErrNotSupported`) in the matching backend package, otherwise `-tags purego` builds break. APIs in untagged portable files (`robotgo_pub.go`, `ps.go`, `screen.go`, `img.go`, `keycode.go`) are already shared by every backend — do not redeclare them in wiring files.
 - **Free C-allocated bitmaps**: every `CaptureScreen`, `ToCBitmap`, etc. must be paired with `defer robotgo.FreeBitmap(bit)` or `robotgo.FreeBitmapArr(...)`. Leaking is a memory bug on all platforms.
 - **Global tunables** are package-level vars, not config structs: `MouseSleep`, `KeySleep`, `DisplayID`, `NotPid`, `Scale`. Callers mutate them directly (see README examples). Do not hide them behind getters.
 - **`robotgo_fn_v1.go`** contains deprecated v1 aliases — do not add new APIs there, but do not delete existing ones (backwards compatibility).
@@ -137,7 +137,7 @@ Key subpackage relationships: the root `robotgo` package pulls C code from `scre
 - `github.com/vcaesar/keycode` — cross-platform keycode mapping (used by `key/`).
 - `github.com/vcaesar/imgo`, `golang.org/x/image` — image encode/decode (PNG/JPEG save).
 - `github.com/vcaesar/screenshot` — screenshot backend.
-- `github.com/vcaesar/gops`, `github.com/shirou/gopsutil/v4` (indirect) — process enumeration (`FindIds`, `PidExists`, `Kill`).
+- `github.com/vcaesar/gops` (direct, imported by `ps.go`), `github.com/shirou/gopsutil/v4` (indirect) — process enumeration (`FindIds`, `PidExists`, `Kill`).
 - `github.com/vcaesar/tt` — testing assertions.
 - `github.com/otiai10/gosseract/v2` — OCR (used by `robotgo_ocr.go`; needs `libtesseract`).
 - Companion repos (not in `go.mod`, referenced in README/examples): `github.com/vcaesar/bitmap`, `github.com/vcaesar/gcv` (OpenCV), `github.com/jezek/gohook` (global event hook).
