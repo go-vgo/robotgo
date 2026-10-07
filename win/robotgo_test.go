@@ -17,6 +17,8 @@ package win
 import (
 	"fmt"
 	"testing"
+
+	"github.com/tailscale/win"
 )
 
 func TestKeyToVK(t *testing.T) {
@@ -153,8 +155,14 @@ func TestKeyHwndNotPid(t *testing.T) {
 	NotPid = true
 	defer func() { NotPid = old }()
 
-	if got := keyHwnd(0x1234); uintptr(got) != 0x1234 {
-		t.Errorf("keyHwnd(0x1234) with NotPid: got %#x, want %#x", uintptr(got), 0x1234)
+	oldThread := getWindowThreadProcessID
+	defer func() { getWindowThreadProcessID = oldThread }()
+	getWindowThreadProcessID = func(win.HWND, *uint32) uint32 { return 0 }
+	if got, err := keyHwnd(0x1234); err != nil || uintptr(got) != 0x1234 {
+		t.Errorf("keyHwnd(0x1234) with NotPid: got %#x, %v, want %#x", uintptr(got), err, 0x1234)
+	}
+	if _, err := keyHwnd(0); err != ErrNotFound {
+		t.Errorf("keyHwnd(0) with NotPid: %v, want ErrNotFound", err)
 	}
 }
 

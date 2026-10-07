@@ -64,18 +64,19 @@ func mouseButtonFlags(btn string) (down, up uint32) {
 	}
 }
 
-// Move moves the mouse to absolute position (x, y).
+// Move moves the mouse to absolute position (x, y) through the current
+// Backend.
 // The optional displayId is accepted for API parity but ignored on Windows,
 // where coordinates are in the unified virtual-desktop space.
 func Move(x, y int, displayId ...int) error {
-	err := setCursorPos(x, y)
+	err := InputMove(x, y)
 	mouseDelay()
 	return err
 }
 
 // MoveRelative moves the mouse relative to its current position.
 func MoveRelative(x, y int) error {
-	cx, cy := Location()
+	cx, cy := pointer()
 	return Move(cx+x, cy+y)
 }
 
@@ -98,7 +99,7 @@ func MoveSmooth(x, y int, args ...interface{}) bool {
 		steps = 1
 	}
 
-	sx, sy := Location()
+	sx, sy := pointer()
 	for i := 1; i <= steps; i++ {
 		t := float64(i) / float64(steps)
 		// Ease-in-out cubic.
@@ -109,7 +110,7 @@ func MoveSmooth(x, y int, args ...interface{}) bool {
 		}
 		cx := float64(sx) + float64(x-sx)*t
 		cy := float64(sy) + float64(y-sy)*t
-		if setCursorPos(int(math.Round(cx)), int(math.Round(cy))) != nil {
+		if InputMove(int(math.Round(cx)), int(math.Round(cy))) != nil {
 			return false
 		}
 		pub.MilliSleep(sleepMs)
@@ -131,25 +132,44 @@ func Click(args ...interface{}) error {
 		}
 	}
 
-	down, up := mouseButtonFlags(button)
+	err := InputClick(button, double)
+	mouseDelay()
+	return err
+}
+
+// InputClick clicks button through the current Backend.
+func InputClick(button string, double bool) error {
 	count := 1
 	if double {
 		count = 2
 	}
-	for i := 0; i < count; i++ {
-		if err := sendMouseInput(down, 0, 0, 0); err != nil {
+	for i := 1; i <= count; i++ {
+		if err := inputButton(button, false, i); err != nil {
 			return err
 		}
-		if err := sendMouseInput(up, 0, 0, 0); err != nil {
+		if err := inputButton(button, true, i); err != nil {
 			return err
 		}
-		if i < count-1 {
+		if i < count {
 			time.Sleep(50 * time.Millisecond)
 		}
 	}
-	mouseDelay()
 	return nil
 }
+
+// InputMove moves the pointer to screen point (x, y) through the current
+// Backend.
+func InputMove(x, y int) error { return inputMoveTo(x, y) }
+
+// InputPos returns the pointer position the current Backend moves from: the
+// virtual pointer under BackendMessage, otherwise the real cursor.
+func InputPos() (int, int) { return pointer() }
+
+// InputToggle presses or releases button through the current Backend.
+func InputToggle(button string, up bool) error { return inputButton(button, up, 1) }
+
+// InputScroll scrolls by wheel notches through the current Backend.
+func InputScroll(x, y int) error { return inputWheel(x, y) }
 
 // Toggle toggles a mouse button down or up.
 //
@@ -171,11 +191,7 @@ func Toggle(key ...interface{}) error {
 		}
 	}
 
-	downFlag, upFlag := mouseButtonFlags(button)
-	if up {
-		return sendMouseInput(upFlag, 0, 0, 0)
-	}
-	return sendMouseInput(downFlag, 0, 0, 0)
+	return InputToggle(button, up)
 }
 
 // MouseDown sends a mouse button down event.
@@ -201,18 +217,8 @@ func Scroll(x, y int, args ...int) error {
 		msDelay = args[0]
 	}
 
-	if y != 0 {
-		// Win32 wheel: positive delta scrolls up, same as robotgo.
-		if err := sendMouseInput(win.MOUSEEVENTF_WHEEL, uint32(int32(y*wheelDelta)), 0, 0); err != nil {
-			return err
-		}
-	}
-	if x != 0 {
-		// Win32 horizontal wheel: positive delta scrolls right, so negate for
-		// robotgo's left-positive convention.
-		if err := sendMouseInput(win.MOUSEEVENTF_HWHEEL, uint32(int32(-x*wheelDelta)), 0, 0); err != nil {
-			return err
-		}
+	if err := InputScroll(x, y); err != nil {
+		return err
 	}
 	pub.MilliSleep(msDelay)
 	return nil
