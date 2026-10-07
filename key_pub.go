@@ -12,9 +12,33 @@
 package robotgo
 
 import (
+	"math/rand"
 	"strings"
 	"unicode"
 )
+
+// KeyPress press key string
+func KeyPress(key string, args ...interface{}) error {
+	err := KeyDown(key, args...)
+	if err != nil {
+		return err
+	}
+
+	MilliSleep(1 + rand.Intn(3))
+	return KeyUp(key, args...)
+}
+
+// KeyDown press down a key
+func KeyDown(key string, args ...interface{}) error {
+	return KeyToggle(key, args...)
+}
+
+// KeyUp press up a key
+func KeyUp(key string, args ...interface{}) error {
+	arr := []interface{}{"up"}
+	arr = append(arr, args...)
+	return KeyToggle(key, arr...)
+}
 
 // getToggleArgs splits args into the pid (the first int, at any position, so
 // KeyUp("a", pid) keeps it after the prepended "up") and the key array;

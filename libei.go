@@ -59,14 +59,8 @@ func KeyTap(key string, args ...any) error { return lb.KeyTap(key, args...) }
 // KeyToggle toggle the keyboard.
 func KeyToggle(key string, args ...any) error { return lb.KeyToggle(key, args...) }
 
-// KeyDown press down a key.
-func KeyDown(key string, args ...any) error { return lb.KeyDown(key, args...) }
-
-// KeyUp release a key.
-func KeyUp(key string, args ...any) error { return lb.KeyUp(key, args...) }
-
-// KeyPress press and release a key.
-func KeyPress(key string, args ...any) error { return lb.KeyPress(key, args...) }
+// KeyDown, KeyUp and KeyPress live in key_pub.go (build-tag-free) and wrap
+// KeyToggle, so they are NOT re-declared here.
 
 // Type type a string (alias of TypeStr).
 func Type(str string, args ...int) int { return lb.Type(str, args...) }

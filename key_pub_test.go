@@ -102,3 +102,18 @@ func TestToggleArgs(t *testing.T) {
 	tt.Equal(t, 123, pid)
 	tt.Equal(t, []string{"ctrl"}, arr)
 }
+
+// TestKeyPubInvalidKey checks the shared KeyDown/KeyUp/KeyPress wrappers
+// surface the backend KeyToggle error for an unknown key without sending input.
+func TestKeyPubInvalidKey(t *testing.T) {
+	const bad = "not_a_real_key"
+	if err := KeyDown(bad); err == nil {
+		t.Error("KeyDown: want error for unknown key")
+	}
+	if err := KeyUp(bad, "ctrl"); err == nil {
+		t.Error("KeyUp: want error for unknown key")
+	}
+	if err := KeyPress(bad); err == nil {
+		t.Error("KeyPress: want error for unknown key")
+	}
+}

@@ -37,7 +37,7 @@ Single Go package `robotgo` at repo root (flat layout) with platform-specific fi
 | Tag | Package | Root wiring file | Notes |
 | --- | --- | --- | --- |
 | `win` | `win/` | `windows_n.go` | Win32 via tailscale/win |
-| `mac` | `darwin/` | `darwin.go` | Quartz/CoreGraphics via ebitengine/purego; window mgmt unsupported: `ActiveName` returns `ErrNotSupported`, `GetTitle` returns `""`, `MinWindow`/`MaxWindow`/`CloseWindow` are no-ops |
+| `mac` | `darwin/` | `darwin.go` | Quartz/CoreGraphics via ebitengine/purego; window mgmt (`GetTitle`, `GetBounds`, `ActivePid`/`ActiveName`, `MinWindow`/`MaxWindow`/`CloseWindow`) via Accessibility (AXUIElement) + AppKit in `darwin/window.go`, needs the Accessibility permission (`CheckAccess`) |
 | `x11` | `x11/` | `x11_n.go` | XTEST/EWMH via jezek/xgb + xgbutil |
 | `wayland` | `wayland/` | `wayland_n.go` | wlroots virtual-input/screencopy protocols |
 | `libei` | `libei/` | `libei.go` | xdg-desktop-portal RemoteDesktop (GNOME/KDE) |
@@ -62,11 +62,12 @@ robotgo/
 ├── x11_n.go                # linux && x11 — wires x11/
 ├── wayland_n.go            # linux && (wayland || purego) && !libei && !x11 — wires wayland/
 ├── libei.go                # linux && libei — wires libei/
-├── key.go                  # Cgo only; keycode.go, screen.go, img.go, ps.go untagged
+├── key.go                  # Cgo only: KeyTap/KeyToggle/Type/UnicodeType; keycode.go, screen.go, img.go, ps.go untagged
+├── key_pub.go              # portable (untagged): KeyDown/KeyUp/KeyPress (wrap each backend's KeyToggle) + arg helpers
 ├── robotgo_fn_v1.go        # deprecated v1 aliases (kept for compat), Cgo only
 ├── robot_info_test.go      # Cgo smoke tests (used by GitHub Actions)
 ├── robot_mac_test.go       # darwin && (mac || purego) tests
-├── key_c_test.go           # Cgo-only key/mouse-arg unit tests; img_test.go untagged
+├── key_c_test.go           # Cgo-only key/mouse-arg unit tests; img_test.go, key_pub_test.go untagged
 ├── robotgo_test.go         # interactive tests, (darwin || windows) Cgo only
 ├── base/       # C helpers (MMBitmap, rgb, microsleep, types, os, pubs, xdisplay)
 ├── mouse/      # Go pkg + C (mouse.h, mouse_c.h) with *_darwin.go/_windows.go/_x11.go
@@ -112,14 +113,14 @@ Key subpackage relationships: the root `robotgo` package pulls C code from `scre
 - **Cgo smoke tests** live in `robot_info_test.go` — explicitly selected by GitHub Actions on macOS/Windows. They query screen size/location/scale/window title (not truly headless) and are excluded from pure-Go test runs by build tags. Keep new lightweight Cgo tests here; match build tags to the APIs being tested.
 - **Pure-Go tests**: root `robot_mac_test.go` (darwin `mac`/`purego`) plus each backend's `*/robotgo_test.go` (`win/`, `darwin/`, `x11/`, `wayland/` + `keyboard_wire_test.go`, `libei/`). GitHub Actions runs `-tags purego .` on macOS/Windows and the x11/libei suites on Linux with `CGO_ENABLED=0`.
 - **Interactive / display-required tests** go in `robotgo_test.go`; its tags restrict it to darwin/windows Cgo, so CircleCI's Linux `xvfb-run go test -v ./...` does **not** include it (Linux root coverage there comes from `robot_info_test.go`, `key_c_test.go`, `img_test.go`).
-- Other unit tests: `key_c_test.go` (Cgo), `img_test.go` (untagged, also runs in pure-Go root jobs), `clipboard/*_test.go`.
+- Other unit tests: `key_c_test.go` (Cgo), `img_test.go` and `key_pub_test.go` (untagged, also run in pure-Go root jobs), `clipboard/*_test.go`.
 - Run one test: `go test -v -run TestGetScreenSize .`
 - No fixtures, snapshots, or golden files in use. Screenshots produced by examples are `.gitignore`d.
 
 ## Key Patterns
 
 - **Cgo + platform split is mandatory**. Any new OS-specific function must be gated by `//go:build` tags and have implementations (even stub) for darwin, linux, windows — examine `mouse/mouse_darwin.go`, `mouse_windows.go`, `mouse_x11.go` as the template.
-- **Keep backends in sync**: a new public `robotgo` API added to the build-tagged Cgo surface (e.g. `robotgo.go`, `key.go`, `robotgo_mac*.go`) needs a forwarder in each pure-Go wiring file (`darwin.go`, `windows_n.go`, `x11_n.go`, `wayland_n.go`, `libei.go`) and an implementation (or `ErrNotSupported`) in the matching backend package, otherwise `-tags purego` builds break. APIs in untagged portable files (`robotgo_pub.go`, `ps.go`, `screen.go`, `img.go`, `keycode.go`) are already shared by every backend — do not redeclare them in wiring files.
+- **Keep backends in sync**: a new public `robotgo` API added to the build-tagged Cgo surface (e.g. `robotgo.go`, `key.go`, `robotgo_mac*.go`) needs a forwarder in each pure-Go wiring file (`darwin.go`, `windows_n.go`, `x11_n.go`, `wayland_n.go`, `libei.go`) and an implementation (or `ErrNotSupported`) in the matching backend package, otherwise `-tags purego` builds break. APIs in untagged portable files (`robotgo_pub.go`, `key_pub.go`, `ps.go`, `screen.go`, `img.go`, `keycode.go`) are already shared by every backend — do not redeclare them in wiring files. E.g. `KeyDown`/`KeyUp`/`KeyPress` live in `key_pub.go` and call the root `KeyToggle` (Cgo `key.go` or the wiring forwarder), so wiring files forward only `KeyTap`/`KeyToggle`; backend `KeyToggle` must default to "down" and accept a leading `"up"`.
 - **Free C-allocated bitmaps**: every `CaptureScreen`, `ToCBitmap`, etc. must be paired with `defer robotgo.FreeBitmap(bit)` or `robotgo.FreeBitmapArr(...)`. Leaking is a memory bug on all platforms.
 - **Global tunables** are package-level vars, not config structs: `MouseSleep`, `KeySleep`, `DisplayID`, `NotPid`, `Scale`. Callers mutate them directly (see README examples). Do not hide them behind getters.
 - **`robotgo_fn_v1.go`** contains deprecated v1 aliases — do not add new APIs there, but do not delete existing ones (backwards compatibility).
