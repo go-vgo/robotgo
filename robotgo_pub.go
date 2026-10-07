@@ -13,6 +13,7 @@ package robotgo
 
 import (
 	"errors"
+	"fmt"
 	"runtime"
 	"strconv"
 	"strings"
@@ -46,6 +47,9 @@ var (
 	// Scale option the os screen scale
 	Scale bool
 )
+
+// Map a map[string]interface{}
+type Map map[string]interface{}
 
 // Bitmap define the go Bitmap struct
 //
@@ -91,6 +95,13 @@ func Try(fun func(), handler func(interface{})) {
 // MilliSleep sleep tm milli second
 func MilliSleep(tm int) {
 	time.Sleep(time.Duration(tm) * time.Millisecond)
+}
+
+// Deprecated: use the MilliSleep(),
+//
+// MicroSleep sleep tm milliseconds (fractions allowed)
+func MicroSleep(tm float64) {
+	time.Sleep(time.Duration(tm * float64(time.Millisecond)))
 }
 
 // Sleep time.Sleep tm second
@@ -142,6 +153,150 @@ func Scaled0(x int, f float64) int {
 // Scaled1 return int(x / f)
 func Scaled1(x int, f float64) int {
 	return int(float64(x) / f)
+}
+
+// Scaled get the screen scaled return scale size
+func Scaled(x int, displayId ...int) int {
+	return Scaled0(x, ScaleF(displayId...))
+}
+
+// MoveScale calculate the os scale factor x, y
+func MoveScale(x, y int, displayId ...int) (int, int) {
+	if Scale || runtime.GOOS == "windows" {
+		f := ScaleF()
+		// on Windows ScaleF takes a window handle, not a display id
+		if runtime.GOOS != "windows" {
+			f = ScaleF(displayId...)
+		}
+		x, y = Scaled1(x, f), Scaled1(y, f)
+	}
+
+	return x, y
+}
+
+// IsMain is main display
+func IsMain(displayId int) bool {
+	return displayId == GetMainId()
+}
+
+// GetLocationColor get the location pos's color
+func GetLocationColor(displayId ...int) string {
+	x, y := Location()
+	return GetPixelColor(x, y, displayId...)
+}
+
+// MoveClick move and click the mouse
+//
+// robotgo.MoveClick(x, y int, button string, double bool)
+//
+// Examples:
+//
+//	robotgo.MouseSleep = 100
+//	robotgo.MoveClick(10, 10)
+func MoveClick(x, y int, args ...interface{}) error {
+	if err := Move(x, y); err != nil {
+		return err
+	}
+	MilliSleep(50)
+	return Click(args...)
+}
+
+// MouseDown send mouse down event
+func MouseDown(key ...interface{}) error {
+	return Toggle(mouseToggleArgs(key, "down")...)
+}
+
+// MouseUp send mouse up event
+func MouseUp(key ...interface{}) error {
+	return Toggle(mouseToggleArgs(key, "up")...)
+}
+
+// mouseToggleArgs builds the Toggle args (button, dir, rest...) so dir always
+// wins over a caller-supplied key[1]; button defaults to "left".
+func mouseToggleArgs(key []interface{}, dir string) []interface{} {
+	args := []interface{}{"left", dir}
+	if len(key) > 0 {
+		args[0] = key[0]
+	}
+	if len(key) > 2 {
+		args = append(args, key[2:]...)
+	}
+	return args
+}
+
+// ScrollDir scroll the mouse with direction to (x, "up")
+// supported: "up", "down", "left", "right"
+//
+// Examples:
+//
+//	robotgo.ScrollDir(10, "down")
+//	robotgo.ScrollDir(10, "up")
+func ScrollDir(x int, direction ...interface{}) error {
+	d := "down"
+	if len(direction) > 0 {
+		s, ok := direction[0].(string)
+		if !ok {
+			return fmt.Errorf("unknown scroll direction: %v", direction[0])
+		}
+		d = s
+	}
+
+	switch d {
+	case "down":
+		return Scroll(0, -x)
+	case "up":
+		return Scroll(0, x)
+	case "left":
+		return Scroll(x, 0)
+	case "right":
+		return Scroll(-x, 0)
+	}
+	return fmt.Errorf("unknown scroll direction: %v", d)
+}
+
+// ScrollSmooth scroll the mouse smooth,
+// default scroll 5 times and sleep 100 millisecond
+//
+// robotgo.ScrollSmooth(toy, num, sleep, tox)
+//
+// Examples:
+//
+//	robotgo.ScrollSmooth(-10)
+//	robotgo.ScrollSmooth(-10, 6, 200, -10)
+func ScrollSmooth(to int, args ...int) error {
+	num := 5
+	if len(args) > 0 {
+		num = args[0]
+	}
+	tm := 100
+	if len(args) > 1 {
+		tm = args[1]
+	}
+	tox := 0
+	if len(args) > 2 {
+		tox = args[2]
+	}
+
+	for i := 0; i < num; i++ {
+		if err := Scroll(tox, to); err != nil {
+			return err
+		}
+		MilliSleep(tm)
+	}
+	MilliSleep(MouseSleep)
+	return nil
+}
+
+// alertArgs returns the Alert default and cancel button labels
+func alertArgs(args ...string) (string, string) {
+	defaultBtn, cancelBtn := "Ok", "Cancel"
+	if len(args) > 0 {
+		defaultBtn = args[0]
+	}
+	if len(args) > 1 {
+		cancelBtn = args[1]
+	}
+	return defaultBtn, cancelBtn
 }
 
 // MoveArgs get the mouse relative args

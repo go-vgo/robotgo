@@ -1,6 +1,3 @@
-//go:build !wayland && !win && !libei && !mac && !x11 && !purego
-// +build !wayland,!win,!libei,!mac,!x11,!purego
-
 // Copyright (c) 2016-2026 AtomAI, All rights reserved.
 //
 // See the COPYRIGHT file at the top-level directory of this distribution and at
@@ -14,7 +11,8 @@
 
 package robotgo
 
-import "github.com/vcaesar/tt"
+// log, not tt.Drop: tt pulls testing and net/http into every pure-Go binary
+import "log"
 
 // Deprecated: use the Move(),
 //
@@ -61,45 +59,6 @@ func MouseClick(args ...interface{}) {
 //
 // This function will be removed in version v1.0.0
 func TypeStringDelayed(str string, delay int) {
-	tt.Drop("TypeStringDelayed", "TypeStrDelay")
+	log.Println("robotgo: TypeStringDelayed is deprecated, use TypeStrDelay")
 	TypeStrDelay(str, delay) //nolint:errcheck // v1 signature has no error result
-}
-
-// Deprecated: use the ScaledF(),
-//
-// Scale1 get the screen scale (only windows old), drop
-func Scale1() int {
-	dpi := map[int]int{
-		0: 100,
-		// DPI Scaling Level
-		96:  100,
-		120: 125,
-		144: 150,
-		168: 175,
-		192: 200,
-		216: 225,
-		// Custom DPI
-		240: 250,
-		288: 300,
-		384: 400,
-		480: 500,
-	}
-
-	x := ScaleX()
-	return dpi[x]
-}
-
-// Deprecated: use the ScaledF(),
-//
-// Scale0 return ScaleX() / 0.96, drop
-func Scale0() int {
-	return int(float64(ScaleX()) / 0.96)
-}
-
-// Deprecated: use the ScaledF(),
-//
-// Mul mul the scale, drop
-func Mul(x int) int {
-	s := Scale1()
-	return x * s / 100
 }

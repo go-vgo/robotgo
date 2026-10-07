@@ -66,6 +66,10 @@ func GetScreenRect(displayId ...int) Rect {
 	return Rect{Point{int(s.x), int(s.y)}, Size{int(s.width), int(s.height)}}
 }
 
+// MainDisplayID returns the main display index: stream 0, the default used
+// when no displayId is given.
+func MainDisplayID() int { return 0 }
+
 // DisplaysNum returns the number of ScreenCast streams linked to the session
 // (0 unless a ScreenCast source was negotiated).
 func DisplaysNum() int {

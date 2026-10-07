@@ -23,6 +23,8 @@ import (
 	"github.com/jezek/xgb/xproto"
 	"github.com/jezek/xgbutil"
 	"github.com/jezek/xgbutil/ewmh"
+
+	"github.com/go-vgo/robotgo/internal/dialog"
 )
 
 var xu *xgbutil.XUtil
@@ -238,23 +240,7 @@ func GetMainId() int {
 //
 //	robotgo.Alert("hi", "window", "ok", "cancel")
 func Alert(title, msg string, args ...string) bool {
+	// argv, not a shell string: title/msg/labels can't inject commands
 	defaultBtn, cancelBtn := alertArgs(args...)
-	c := `xmessage -center ` + msg +
-		` -title ` + title + ` -buttons ` + defaultBtn + ":0,"
-	if cancelBtn != "" {
-		c += cancelBtn + ":1"
-	}
-	c += ` -default ` + defaultBtn
-	c += ` -geometry 400x200`
-
-	out, err := Run(c)
-	if err != nil {
-		// fmt.Println("Alert: ", err, ". ", string(out))
-		return false
-	}
-
-	if string(out) == "1" {
-		return false
-	}
-	return true
+	return dialog.Show(title, msg, defaultBtn, cancelBtn)
 }

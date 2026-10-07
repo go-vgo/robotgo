@@ -1,9 +1,9 @@
 // Copyright (c) 2016-2026 AtomAI, All rights reserved.
 //
-// See COPYRIGHT file at top-level directory of this distribution and at
+// See the COPYRIGHT file at the top-level directory of this distribution and at
 // https://github.com/go-vgo/robotgo/blob/master/LICENSE
 //
-// Licensed under Apache License, Version 2.0 <LICENSE-APACHE or
+// Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
 // http://www.apache.org/licenses/LICENSE-2.0>
 //
 // This file may not be copied, modified, or distributed
@@ -16,9 +16,11 @@ package robotgo
 
 import (
 	"os"
+	"runtime"
 	"slices"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/vcaesar/tt"
 )
@@ -104,4 +106,63 @@ func TestPidExistsUnknown(t *testing.T) {
 	ok, err := PidExists(1 << 30)
 	tt.Nil(t, err)
 	tt.False(t, ok)
+}
+
+func TestAlertArgs(t *testing.T) {
+	ok, cancel := alertArgs()
+	tt.Equal(t, "Ok", ok)
+	tt.Equal(t, "Cancel", cancel)
+
+	ok, cancel = alertArgs("Yes")
+	tt.Equal(t, "Yes", ok)
+	tt.Equal(t, "Cancel", cancel)
+
+	ok, cancel = alertArgs("Yes", "No", "ignored")
+	tt.Equal(t, "Yes", ok)
+	tt.Equal(t, "No", cancel)
+}
+
+func TestMicroSleep(t *testing.T) {
+	start := time.Now()
+	MicroSleep(2.5)
+	tt.True(t, time.Since(start) >= 2500*time.Microsecond)
+}
+
+// MouseDown must send down even when key[1] says "up" (and vice versa).
+func TestMouseToggleArgs(t *testing.T) {
+	tt.Equal(t, []interface{}{"left", "down"}, mouseToggleArgs(nil, "down"))
+	tt.Equal(t, []interface{}{"right", "up"}, mouseToggleArgs([]interface{}{"right"}, "up"))
+	tt.Equal(t, []interface{}{"left", "down"},
+		mouseToggleArgs([]interface{}{"left", "up"}, "down"))
+	tt.Equal(t, []interface{}{"left", "up", "sleep"},
+		mouseToggleArgs([]interface{}{"left", "down", "sleep"}, "up"))
+}
+
+func TestMoveScaleIdentity(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("Windows always applies the system scale")
+	}
+	saved := Scale
+	defer func() { Scale = saved }()
+
+	Scale = false
+	x, y := MoveScale(10, 20)
+	tt.Equal(t, 10, x)
+	tt.Equal(t, 20, y)
+}
+
+// Bad directions must error before any scroll event is sent.
+func TestScrollDirInvalidPub(t *testing.T) {
+	tt.NotNil(t, ScrollDir(1, "diagonal"))
+	tt.NotNil(t, ScrollDir(1, 42))
+}
+
+// A non-positive count must not scroll (it used to loop forever).
+func TestScrollSmoothZero(t *testing.T) {
+	saved := MouseSleep
+	defer func() { MouseSleep = saved }()
+
+	MouseSleep = 0
+	tt.Nil(t, ScrollSmooth(-10, 0))
+	tt.Nil(t, ScrollSmooth(-10, -1))
 }

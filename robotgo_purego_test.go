@@ -59,3 +59,12 @@ func TestMultiClickNoop(t *testing.T) {
 		}
 	}
 }
+
+func TestRgbToHex(t *testing.T) {
+	if got := RgbToHex(0x12, 0xab, 0xff); got != 0x12abff {
+		t.Errorf("RgbToHex: got %#x, want 0x12abff", got)
+	}
+	if got := PadHex(RgbToHex(0, 0, 1)); got != "000001" {
+		t.Errorf("PadHex(RgbToHex(0, 0, 1)): got %q", got)
+	}
+}

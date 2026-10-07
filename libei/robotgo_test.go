@@ -1001,3 +1001,9 @@ func TestGetPid(t *testing.T) {
 		t.Errorf("GetPid() returned %d", pid)
 	}
 }
+
+func TestMainDisplayID(t *testing.T) {
+	if got := MainDisplayID(); got != 0 {
+		t.Errorf("MainDisplayID: got %d, want 0", got)
+	}
+}

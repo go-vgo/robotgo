@@ -167,82 +167,6 @@ func TestKeyFlags(t *testing.T) {
 	tt.Equal(t, checkKeyFlags("ctrl"), getFlagsFromValue([]string{"ctrl", "ctrll", "control"}))
 }
 
-func TestGetKeyDown(t *testing.T) {
-	down, mods := getKeyDown(nil)
-	tt.True(t, down)
-	tt.Equal(t, 0, len(mods))
-
-	down, mods = getKeyDown([]string{"down"})
-	tt.True(t, down)
-	tt.Equal(t, 0, len(mods))
-
-	down, mods = getKeyDown([]string{"up"})
-	tt.False(t, down)
-	tt.Equal(t, 0, len(mods))
-
-	down, mods = getKeyDown([]string{"down", "ctrl", "shift"})
-	tt.True(t, down)
-	tt.Equal(t, []string{"ctrl", "shift"}, mods)
-
-	// only the first element is a direction
-	down, mods = getKeyDown([]string{"ctrl", "up"})
-	tt.True(t, down)
-	tt.Equal(t, []string{"ctrl", "up"}, mods)
-
-	tt.Equal(t, "down", getDown(true))
-	tt.Equal(t, "up", getDown(false))
-}
-
-func TestAppendShift(t *testing.T) {
-	key, args := appendShift("a", 0)
-	tt.Equal(t, "a", key)
-	tt.Equal(t, 0, len(args))
-
-	// upper case adds shift and lowers the key
-	key, args = appendShift("A", 0)
-	tt.Equal(t, "a", key)
-	tt.Equal(t, []interface{}{"shift"}, args)
-
-	// named keys are lowered without shift
-	key, args = appendShift("Enter", 0, "ctrl")
-	tt.Equal(t, "enter", key)
-	tt.Equal(t, []interface{}{"ctrl"}, args)
-
-	// shifted symbols become base key + shift
-	key, args = appendShift("!", 0)
-	tt.Equal(t, "1", key)
-	tt.Equal(t, []interface{}{"shift"}, args)
-
-	// KeyToggle("!", "up"): len1=1 accounts for the direction arg
-	key, args = appendShift("!", 1, "up")
-	tt.Equal(t, "1", key)
-	tt.Equal(t, []interface{}{"up", "shift"}, args)
-
-	// explicit modifiers beyond len1 are trusted as-is
-	key, args = appendShift("!", 0, "ctrl")
-	tt.Equal(t, "1", key)
-	tt.Equal(t, []interface{}{"ctrl"}, args)
-
-	key, args = appendShift("", 0)
-	tt.Equal(t, "", key)
-	tt.Equal(t, 0, len(args))
-}
-
-func TestGetToggleArgsSkipsUnknownTypes(t *testing.T) {
-	pid, arr := getToggleArgs(1.5, true, nil, "ctrl", int64(9), 7)
-	tt.Equal(t, 7, pid)
-	tt.Equal(t, []string{"ctrl"}, arr)
-
-	pid, arr = getToggleArgs()
-	tt.Equal(t, 0, pid)
-	tt.Equal(t, 0, len(arr))
-
-	// empty array contributes nothing
-	pid, arr = getToggleArgs([]string{}, "alt")
-	tt.Equal(t, 0, pid)
-	tt.Equal(t, []string{"alt"}, arr)
-}
-
 // Unknown keys must come back as keyErr from the internal tap/toggle paths
 // before any C call; modifiers in the array do not change that.
 func TestKeyErrBeforeC(t *testing.T) {
@@ -380,20 +304,6 @@ func TestFormatClickErrorButton(t *testing.T) {
 	}
 }
 
-func TestAlertArgs(t *testing.T) {
-	ok, cancel := alertArgs()
-	tt.Equal(t, "Ok", ok)
-	tt.Equal(t, "Cancel", cancel)
-
-	ok, cancel = alertArgs("Yes")
-	tt.Equal(t, "Yes", ok)
-	tt.Equal(t, "Cancel", cancel)
-
-	ok, cancel = alertArgs("Yes", "No", "ignored")
-	tt.Equal(t, "Yes", ok)
-	tt.Equal(t, "No", cancel)
-}
-
 func TestDisplayIdx(t *testing.T) {
 	saved := DisplayID
 	defer func() { DisplayID = saved }()
@@ -440,16 +350,6 @@ func TestGetToggleArgs(t *testing.T) {
 	pid, arr = getToggleArgs(123, []string{"ctrl"}, "shift")
 	tt.Equal(t, 123, pid)
 	tt.Equal(t, []string{"ctrl", "shift"}, arr)
-
-	// KeyUp("a", pid, "ctrl") prepends "up"; the pid must still be found.
-	pid, arr = getToggleArgs("up", 123, "ctrl")
-	tt.Equal(t, 123, pid)
-	tt.Equal(t, []string{"up", "ctrl"}, arr)
-
-	// Only the first int is the pid.
-	pid, arr = getToggleArgs([]string{"ctrl"}, 123, 456)
-	tt.Equal(t, 123, pid)
-	tt.Equal(t, []string{"ctrl"}, arr)
 
 	// appendShift appends "shift" after a []string; it must be kept.
 	key, args := appendShift("A", 0, []string{"ctrl"})

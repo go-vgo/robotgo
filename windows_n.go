@@ -89,20 +89,8 @@ func Click(args ...any) error { return win.Click(args...) }
 // Toggle toggle the mouse button.
 func Toggle(key ...any) error { return win.Toggle(key...) }
 
-// MouseDown send a mouse down event.
-func MouseDown(key ...any) error { return win.MouseDown(key...) }
-
-// MouseUp send a mouse up event.
-func MouseUp(key ...any) error { return win.MouseUp(key...) }
-
 // Scroll scroll the mouse to (x, y).
 func Scroll(x, y int, args ...int) error { return win.Scroll(x, y, args...) }
-
-// ScrollDir scroll the mouse to a direction.
-func ScrollDir(x int, direction ...any) error { return win.ScrollDir(x, direction...) }
-
-// ScrollSmooth scroll the mouse smoothly.
-func ScrollSmooth(to int, args ...int) error { return win.ScrollSmooth(to, args...) }
 
 // DragSmooth drag the mouse smoothly to (x, y).
 func DragSmooth(x, y int, args ...any) error { return win.DragSmooth(x, y, args...) }
@@ -110,14 +98,8 @@ func DragSmooth(x, y int, args ...any) error { return win.DragSmooth(x, y, args.
 // MultiClick click the mouse button count times; click is accepted for API parity.
 func MultiClick(button string, count int, click ...bool) error { return clickTimes(button, count) }
 
-// MoveClick move and click the mouse.
-func MoveClick(x, y int, args ...any) error { return win.MoveClick(x, y, args...) }
-
 // Location get the mouse location position, return x, y.
 func Location() (int, int) { return win.Location() }
-
-// GetMousePos get the mouse position, return x, y.
-func GetMousePos() (int, int) { return win.GetMousePos() }
 
 // --- Screen (capture lives in the backend; img.go provides Save*/Width/Height) ---
 
@@ -129,9 +111,6 @@ func GetScaleSize(displayId ...int) (int, int) { return win.GetScaleSize(display
 
 // SysScale get the sys scale (ScaleF itself comes from robotgo_win.go).
 func SysScale(displayId ...int) float64 { return win.ScaleF(displayId...) }
-
-// Scaled get the screen scaled return scale size.
-func Scaled(x int, displayId ...int) int { return Scaled0(x, ScaleF(displayId...)) }
 
 // GetScreenRect get the screen rect (x, y, w, h).
 func GetScreenRect(displayId ...int) Rect {
@@ -193,3 +172,13 @@ func GetClient(pid int, args ...int) (int, int, int, int) { return win.GetClient
 
 // GetPid get the current process id.
 func GetPid() int { return win.GetPid() }
+
+// Alert show a alert window, return true when the default button is chosen.
+// The optional args are the default and cancel button labels.
+func Alert(title, msg string, args ...string) bool {
+	ok, cancel := alertArgs(args...)
+	return win.Alert(title, msg, ok, cancel)
+}
+
+// GetHWNDByPid get the hwnd by pid, 0 when the pid has no visible window.
+func GetHWNDByPid(pid int) int { return win.GetHWNDByPid(pid) }
