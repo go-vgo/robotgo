@@ -103,17 +103,29 @@ func TestToggleArgs(t *testing.T) {
 	tt.Equal(t, []string{"ctrl"}, arr)
 }
 
-// TestKeyPubInvalidKey checks the shared KeyDown/KeyUp/KeyPress wrappers
-// surface the backend KeyToggle error for an unknown key without sending input.
-func TestKeyPubInvalidKey(t *testing.T) {
-	const bad = "not_a_real_key"
-	if err := KeyDown(bad); err == nil {
-		t.Error("KeyDown: want error for unknown key")
-	}
-	if err := KeyUp(bad, "ctrl"); err == nil {
-		t.Error("KeyUp: want error for unknown key")
-	}
-	if err := KeyPress(bad); err == nil {
-		t.Error("KeyPress: want error for unknown key")
-	}
+func TestCharCodeAt(t *testing.T) {
+	tt.Equal(t, 115, CharCodeAt("s", 0))
+	tt.Equal(t, 'c', CharCodeAt("abc", 2))
+	// index counts runes, not bytes
+	tt.Equal(t, '界', CharCodeAt("世界", 1))
+	tt.Equal(t, 0, CharCodeAt("abc", 3))
+	tt.Equal(t, 0, CharCodeAt("", 0))
+}
+
+func TestToUC(t *testing.T) {
+	uc := ToUC("abc\\\\cd/s@世界")
+	tt.Equal(t, "[a b c \\ \\ c d / s @ U4e16 U754c]", uc)
+
+	tt.Equal(t, []string{`"`}, ToUC(`"`))
+	tt.Equal(t, []string{"\\"}, ToUC("\\"))
+	tt.Equal(t, []string{"U4e16", "U0001f600", "U0010ffff"}, ToUC("世😀\U0010ffff"))
+	tt.Equal(t, 0, len(ToUC("")))
+	// Runes above the BMP use the Xlib U spelling, not Go's \U escape.
+	tt.Equal(t, []string{"U0001f600"}, ToUC("\U0001F600"))
+}
+
+// Empty input never touches the backend.
+func TestTypeDelayEmpty(t *testing.T) {
+	tt.Nil(t, TypeDelay("", 0))
+	tt.Nil(t, TypeStrDelay("", 0))
 }

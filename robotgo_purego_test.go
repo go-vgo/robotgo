@@ -71,18 +71,10 @@ func TestRgbToHex(t *testing.T) {
 	}
 }
 
-// TestDelaySync checks pub starts with the robotgo_pub.go config and
-// SetDelay updates both.
+// TestDelaySync checks init copied the robotgo_pub.go config into pub;
+// SetDelay keeping both in sync is covered by TestSetDelay.
 func TestDelaySync(t *testing.T) {
 	if pub.DisplayID != DisplayID {
 		t.Fatalf("pub.DisplayID = %d, want %d", pub.DisplayID, DisplayID)
-	}
-
-	k, m := KeySleep, MouseSleep
-	t.Cleanup(func() { SetDelay(k); MouseSleep, pub.MouseSleep = m, m })
-
-	SetDelay(37)
-	if pub.KeySleep != 37 || pub.MouseSleep != 37 {
-		t.Fatalf("pub KeySleep, MouseSleep = %d, %d, want 37, 37", pub.KeySleep, pub.MouseSleep)
 	}
 }

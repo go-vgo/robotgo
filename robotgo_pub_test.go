@@ -22,6 +22,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/go-vgo/robotgo/pub"
 	"github.com/vcaesar/tt"
 )
 
@@ -165,4 +166,26 @@ func TestScrollSmoothZero(t *testing.T) {
 	MouseSleep = 0
 	tt.Nil(t, ScrollSmooth(-10, 0))
 	tt.Nil(t, ScrollSmooth(-10, -1))
+}
+
+// SetDelay updates the root delays and pub, which the pure-Go backends read.
+func TestSetDelay(t *testing.T) {
+	k, m := KeySleep, MouseSleep
+	pk, pm := pub.KeySleep, pub.MouseSleep
+	defer func() {
+		KeySleep, MouseSleep = k, m
+		pub.KeySleep, pub.MouseSleep = pk, pm
+	}()
+
+	SetDelay()
+	tt.Equal(t, 10, KeySleep)
+	tt.Equal(t, 10, MouseSleep)
+	tt.Equal(t, 10, pub.KeySleep)
+	tt.Equal(t, 10, pub.MouseSleep)
+
+	SetDelay(25)
+	tt.Equal(t, 25, KeySleep)
+	tt.Equal(t, 25, MouseSleep)
+	tt.Equal(t, 25, pub.KeySleep)
+	tt.Equal(t, 25, pub.MouseSleep)
 }

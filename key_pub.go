@@ -13,6 +13,7 @@ package robotgo
 
 import (
 	"math/rand"
+	"strconv"
 	"strings"
 	"unicode"
 )
