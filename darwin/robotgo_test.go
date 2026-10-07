@@ -572,4 +572,11 @@ func TestAlertLoad(t *testing.T) {
 		t.Fatal(`cfStr("ok"): got 0`)
 	}
 	cfRelease(s)
+
+	// invalid UTF-8 must not yield NULL (dropped message / default "OK" label)
+	s = cfStr("bad\xff")
+	if s == 0 {
+		t.Fatal(`cfStr("bad\xff"): got 0`)
+	}
+	cfRelease(s)
 }

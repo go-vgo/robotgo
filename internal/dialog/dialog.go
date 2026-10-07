@@ -40,9 +40,9 @@ func command(lookPath func(string) (string, error), title, msg, ok, cancel strin
 		if cancel != "" {
 			buttons += "," + xmessageEscape(cancel) + ":1"
 		}
-		// -default matches the unescaped button name
+		// -default matches the unescaped button name; -geometry as the old Cgo Alert
 		return []string{p, "-center", "-title", title,
-			"-buttons", buttons, "-default", ok, "-file", "-"}
+			"-buttons", buttons, "-default", ok, "-geometry", "400x200", "-file", "-"}
 	}
 	return nil
 }

@@ -61,7 +61,8 @@ func cfStr(s string) uintptr {
 	if s == "" {
 		return 0
 	}
-	return cfStringCreateWithCString(0, s, cfStringEncodingUTF8)
+	// invalid UTF-8 makes CFStringCreateWithCString return NULL
+	return cfStringCreateWithCString(0, strings.ToValidUTF8(s, "\uFFFD"), cfStringEncodingUTF8)
 }
 
 // Alert shows a modal alert with the ok and cancel buttons and reports
