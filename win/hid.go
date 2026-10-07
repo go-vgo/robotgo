@@ -308,7 +308,7 @@ func normalize(v, origin, size int) int32 {
 	if size <= 1 {
 		return 0
 	}
-	return int32((v - origin) * 65535 / (size - 1))
+	return int32(int64(v-origin) * 65535 / int64(size-1))
 }
 
 // hidMove moves the pointer to screen point (x, y) with one absolute stroke.

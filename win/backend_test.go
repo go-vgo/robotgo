@@ -79,6 +79,9 @@ func TestNormalize(t *testing.T) {
 		{100, -100, 201, 65535},
 		{0, -100, 201, 32767},
 		{5, 0, 1, 0},
+		// (v-origin)*65535 overflows a 32-bit int.
+		{40000, 0, 40001, 65535},
+		{0, -20000, 40001, 32767},
 	} {
 		if got := normalize(c.v, c.origin, c.size); got != c.want {
 			t.Errorf("normalize(%d,%d,%d) = %d, want %d", c.v, c.origin, c.size, got, c.want)
