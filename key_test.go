@@ -11,7 +11,7 @@
 
 // Untagged on purpose: key tests that only use the public API every
 // backend wires (Cgo and -tags mac/win/x11/wayland/libei/purego) plus the
-// portable helpers in robotgo_pub.go / keycode.go / ps.go. Cgo-internal
+// portable helpers in key_pub.go / robotgo_pub.go / keycode.go / ps.go. Cgo-internal
 // key checks live in key_c_test.go.
 
 package robotgo
@@ -93,47 +93,11 @@ func TestToInterfacesStrings(t *testing.T) {
 	tt.Equal(t, 0, len(ToStrings(nil)))
 }
 
-func TestCharCodeAt(t *testing.T) {
-	tt.Equal(t, 115, CharCodeAt("s", 0))
-	tt.Equal(t, 'c', CharCodeAt("abc", 2))
-	// index counts runes, not bytes
-	tt.Equal(t, '界', CharCodeAt("世界", 1))
-	tt.Equal(t, 0, CharCodeAt("abc", 3))
-	tt.Equal(t, 0, CharCodeAt("", 0))
-}
-
-func TestToUC(t *testing.T) {
-	uc := ToUC("abc\\\\cd/s@世界")
-	tt.Equal(t, "[a b c \\ \\ c d / s @ U4e16 U754c]", uc)
-
-	tt.Equal(t, []string{`"`}, ToUC(`"`))
-	tt.Equal(t, []string{"\\"}, ToUC("\\"))
-	tt.Equal(t, []string{"U4e16", "U0001f600", "U0010ffff"}, ToUC("世😀\U0010ffff"))
-	tt.Equal(t, 0, len(ToUC("")))
-	// Runes above the BMP use the Xlib U spelling, not Go's \U escape.
-	tt.Equal(t, []string{"U0001f600"}, ToUC("\U0001F600"))
-}
-
-func TestSetDelay(t *testing.T) {
-	k, m := KeySleep, MouseSleep
-	defer func() { KeySleep, MouseSleep = k, m }()
-
-	SetDelay()
-	tt.Equal(t, 10, KeySleep)
-	tt.Equal(t, 10, MouseSleep)
-
-	SetDelay(25)
-	tt.Equal(t, 25, KeySleep)
-	tt.Equal(t, 25, MouseSleep)
-}
-
 // Empty input never touches the backend and reports zero typed runes.
 func TestTypeEmpty(t *testing.T) {
 	tt.Equal(t, 0, Type(""))
 	tt.Equal(t, 0, Type("", 0))
 	tt.Nil(t, TypeStr(""))
-	tt.Nil(t, TypeDelay("", 0))
-	tt.Nil(t, TypeStrDelay("", 0))
 }
 
 // Unknown key names must fail on every backend, with or without a session.

@@ -404,8 +404,8 @@ func KeyToggle(key string, args ...interface{}) error {
 	return keyToggles(key, keyArr, pid)
 }
 
-// KeyPress press key string
-func KeyPress(key string, args ...interface{}) error {
+// keyPress backs KeyPress: key down, a short random delay, then key up.
+func keyPress(key string, args ...interface{}) error {
 	err := KeyDown(key, args...)
 	if err != nil {
 		return err
@@ -413,18 +413,6 @@ func KeyPress(key string, args ...interface{}) error {
 
 	MilliSleep(1 + rand.Intn(3))
 	return KeyUp(key, args...)
-}
-
-// KeyDown press down a key
-func KeyDown(key string, args ...interface{}) error {
-	return KeyToggle(key, args...)
-}
-
-// KeyUp press up a key
-func KeyUp(key string, args ...interface{}) error {
-	arr := []interface{}{"up"}
-	arr = append(arr, args...)
-	return KeyToggle(key, arr...)
 }
 
 // UnicodeType tap the uint32 unicode

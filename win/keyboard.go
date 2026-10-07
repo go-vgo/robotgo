@@ -18,16 +18,13 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-	"time"
 	"unicode/utf16"
 	"unicode/utf8"
 	"unsafe"
 
+	"github.com/go-vgo/robotgo/pub"
 	"github.com/tailscale/win"
 )
-
-// KeySleep is the global keyboard delay in milliseconds.
-var KeySleep = 10
 
 // NotPid, when true, makes the pid argument of the keyboard APIs be treated as
 // a window handle (HWND) directly instead of a process id, mirroring the
@@ -333,7 +330,7 @@ func KeyTap(key string, args ...interface{}) error {
 	// keys that were actually pressed are released after a failure, so none
 	// is left stuck down and keys held by the user are not released.
 	pressed, err := pressKeys(send, vks)
-	time.Sleep(time.Duration(KeySleep) * time.Millisecond)
+	pub.MilliSleep(pub.KeySleep)
 	if upErr := releaseKeys(send, pressed); err == nil {
 		err = upErr
 	}
@@ -513,9 +510,7 @@ func typeRunes(str string, send func(u uint16) bool) int {
 			}
 		}
 		n++
-		if KeySleep > 0 {
-			time.Sleep(time.Duration(KeySleep) * time.Millisecond)
-		}
+		pub.MilliSleep(pub.KeySleep)
 	}
 	return n
 }
@@ -528,10 +523,10 @@ func TypeStr(str string, args ...int) error {
 
 // TypeDelay types a string with a per-character delay in milliseconds.
 func TypeDelay(str string, delay int) error {
-	old := KeySleep
-	KeySleep = delay
+	old := pub.KeySleep
+	pub.KeySleep = delay
 	n := Type(str)
-	KeySleep = old
+	pub.KeySleep = old
 	return typeErr(n, str)
 }
 
@@ -541,16 +536,6 @@ func typeErr(n int, str string) error {
 		return fmt.Errorf("robotgo: typed %d of %d characters", n, total)
 	}
 	return nil
-}
-
-// SetDelay sets both KeySleep and MouseSleep.
-func SetDelay(d ...int) {
-	delay := 10
-	if len(d) > 0 {
-		delay = d[0]
-	}
-	KeySleep = delay
-	MouseSleep = delay
 }
 
 // CmdCtrl returns "cmd" on macOS, "ctrl" elsewhere. On Windows: "ctrl".

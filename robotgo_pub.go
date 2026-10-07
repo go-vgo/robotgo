@@ -15,12 +15,11 @@ import (
 	"errors"
 	"fmt"
 	"runtime"
-	"strconv"
-	"strings"
 	"time"
 	"unicode/utf8"
 
 	"github.com/go-vgo/robotgo/clipboard"
+	"github.com/go-vgo/robotgo/pub"
 )
 
 const (
@@ -47,6 +46,37 @@ var (
 	// Scale option the os screen scale
 	Scale bool
 )
+
+// MilliSleep sleep tm milli second
+func MilliSleep(tm int) {
+	pub.MilliSleep(tm)
+}
+
+// Deprecated: use the MilliSleep(),
+//
+// MicroSleep sleep tm milliseconds (fractions allowed)
+func MicroSleep(tm float64) {
+	time.Sleep(time.Duration(tm * float64(time.Millisecond)))
+}
+
+// Sleep time.Sleep tm second
+func Sleep(tm int) {
+	pub.Sleep(tm)
+}
+
+// SetDelay sets the key and mouse delay
+// robotgo.SetDelay(100) option the robotgo.KeySleep and robotgo.MouseSleep = d
+func SetDelay(d ...int) {
+	v := 10
+	if len(d) > 0 {
+		v = d[0]
+	}
+
+	KeySleep = v
+	MouseSleep = v
+	//
+	pub.SetDelay(v)
+}
 
 // Map a map[string]interface{}
 type Map map[string]interface{}
@@ -90,23 +120,6 @@ func Try(fun func(), handler func(interface{})) {
 		}
 	}()
 	fun()
-}
-
-// MilliSleep sleep tm milli second
-func MilliSleep(tm int) {
-	time.Sleep(time.Duration(tm) * time.Millisecond)
-}
-
-// Deprecated: use the MilliSleep(),
-//
-// MicroSleep sleep tm milliseconds (fractions allowed)
-func MicroSleep(tm float64) {
-	time.Sleep(time.Duration(tm * float64(time.Millisecond)))
-}
-
-// Sleep time.Sleep tm second
-func Sleep(tm int) {
-	time.Sleep(time.Duration(tm) * time.Second)
 }
 
 // ToInterfaces convert []string to []interface{}
@@ -287,18 +300,6 @@ func ScrollSmooth(to int, args ...int) error {
 	return nil
 }
 
-// alertArgs returns the Alert default and cancel button labels
-func alertArgs(args ...string) (string, string) {
-	defaultBtn, cancelBtn := "Ok", "Cancel"
-	if len(args) > 0 {
-		defaultBtn = args[0]
-	}
-	if len(args) > 1 {
-		cancelBtn = args[1]
-	}
-	return defaultBtn, cancelBtn
-}
-
 // MoveArgs get the mouse relative args
 func MoveArgs(x, y int) (int, int) {
 	mx, my := Location()
@@ -346,45 +347,6 @@ func ScrollRelative(x, y int, args ...int) error {
 	return Scroll(mx, my, args...)
 }
 
-// CharCodeAt char code at utf-8
-func CharCodeAt(s string, n int) rune {
-	i := 0
-	for _, r := range s {
-		if i == n {
-			return r
-		}
-		i++
-	}
-
-	return 0
-}
-
-// ToUC trans string to unicode []string
-//
-// Runes outside ASCII become the Xlib keysym name ("U4e16", "U1F600").
-func ToUC(text string) []string {
-	var uc []string
-
-	for _, r := range text {
-		textQ := strconv.QuoteToASCII(string(r))
-		textUnQ := textQ[1 : len(textQ)-1]
-
-		// QuoteToASCII spells BMP runes as \uXXXX and the rest as \UXXXXXXXX;
-		// Xlib wants a plain U prefix for both.
-		st := strings.Replace(textUnQ, "\\u", "U", -1)
-		st = strings.Replace(st, "\\U", "U", -1)
-		if st == "\\\\" {
-			st = "\\"
-		}
-		if st == `\"` {
-			st = `"`
-		}
-		uc = append(uc, st)
-	}
-
-	return uc
-}
-
 // ReadAll read string from clipboard
 func ReadAll() (string, error) {
 	return clipboard.ReadAll()
@@ -425,29 +387,14 @@ func Paste(str string, pid ...int) (int, error) {
 	return utf8.RuneCountInString(str), nil
 }
 
-// TypeStrDelay type string width delay
-//
-// Deprecated: use the TypeDelay()
-func TypeStrDelay(str string, delay int) error {
-	return TypeDelay(str, delay)
-}
-
-// TypeDelay type string with delayed
-// And you can use robotgo.KeySleep = 100 to delayed not this function
-func TypeDelay(str string, delay int) error {
-	err := TypeStr(str)
-	MilliSleep(delay)
-	return err
-}
-
-// SetDelay sets the key and mouse delay
-// robotgo.SetDelay(100) option the robotgo.KeySleep and robotgo.MouseSleep = d
-func SetDelay(d ...int) {
-	v := 10
-	if len(d) > 0 {
-		v = d[0]
+// alertArgs returns the Alert default and cancel button labels
+func alertArgs(args ...string) (string, string) {
+	defaultBtn, cancelBtn := "Ok", "Cancel"
+	if len(args) > 0 {
+		defaultBtn = args[0]
 	}
-
-	KeySleep = v
-	MouseSleep = v
+	if len(args) > 1 {
+		cancelBtn = args[1]
+	}
+	return defaultBtn, cancelBtn
 }

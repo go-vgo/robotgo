@@ -12,9 +12,84 @@
 package robotgo
 
 import (
+	"strconv"
 	"strings"
 	"unicode"
 )
+
+// KeyPress press key string
+//
+// It dispatches to the backend keyPress (Cgo: down, short delay, up;
+// pure-Go: the backend's atomic KeyTap) so each keeps its timing and locking.
+func KeyPress(key string, args ...interface{}) error {
+	return keyPress(key, args...)
+}
+
+// KeyDown press down a key
+func KeyDown(key string, args ...interface{}) error {
+	return KeyToggle(key, args...)
+}
+
+// KeyUp press up a key
+func KeyUp(key string, args ...interface{}) error {
+	arr := []interface{}{"up"}
+	arr = append(arr, args...)
+	return KeyToggle(key, arr...)
+}
+
+// TypeStrDelay type string width delay
+//
+// Deprecated: use the TypeDelay()
+func TypeStrDelay(str string, delay int) error {
+	return TypeDelay(str, delay)
+}
+
+// TypeDelay type string with delayed
+// And you can use robotgo.KeySleep = 100 to delayed not this function
+func TypeDelay(str string, delay int) error {
+	err := TypeStr(str)
+	MilliSleep(delay)
+	return err
+}
+
+// CharCodeAt char code at utf-8
+func CharCodeAt(s string, n int) rune {
+	i := 0
+	for _, r := range s {
+		if i == n {
+			return r
+		}
+		i++
+	}
+
+	return 0
+}
+
+// ToUC trans string to unicode []string
+//
+// Runes outside ASCII become the Xlib keysym name ("U4e16", "U1F600").
+func ToUC(text string) []string {
+	var uc []string
+
+	for _, r := range text {
+		textQ := strconv.QuoteToASCII(string(r))
+		textUnQ := textQ[1 : len(textQ)-1]
+
+		// QuoteToASCII spells BMP runes as \uXXXX and the rest as \UXXXXXXXX;
+		// Xlib wants a plain U prefix for both.
+		st := strings.Replace(textUnQ, "\\u", "U", -1)
+		st = strings.Replace(st, "\\U", "U", -1)
+		if st == "\\\\" {
+			st = "\\"
+		}
+		if st == `\"` {
+			st = `"`
+		}
+		uc = append(uc, st)
+	}
+
+	return uc
+}
 
 // getToggleArgs splits args into the pid (the first int, at any position, so
 // KeyUp("a", pid) keeps it after the prepended "up") and the key array;

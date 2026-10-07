@@ -67,14 +67,9 @@ func KeyTap(key string, args ...any) error { return dm.KeyTap(key, args...) }
 // KeyToggle toggle the keyboard.
 func KeyToggle(key string, args ...any) error { return dm.KeyToggle(key, args...) }
 
-// KeyDown press down a key.
-func KeyDown(key string, args ...any) error { return dm.KeyDown(key, args...) }
-
-// KeyUp release a key.
-func KeyUp(key string, args ...any) error { return dm.KeyUp(key, args...) }
-
-// KeyPress press and release a key.
-func KeyPress(key string, args ...any) error { return dm.KeyPress(key, args...) }
+// KeyDown, KeyUp and KeyPress live in key_pub.go (build-tag-free); KeyPress
+// calls keyPress, which keeps the backend's atomic KeyTap.
+func keyPress(key string, args ...any) error { return dm.KeyPress(key, args...) }
 
 // Type type a string (alias of TypeStr).
 func Type(str string, args ...int) int { return dm.Type(str, args...) }

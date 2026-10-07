@@ -19,6 +19,7 @@ import (
 	"slices"
 	"testing"
 
+	"github.com/go-vgo/robotgo/pub"
 	"github.com/godbus/dbus/v5"
 )
 
@@ -837,9 +838,9 @@ func (f *keysymFailInjector) keyboardKeysym(s int32, state uint32) error {
 // typing stops early, and TypeDelay must restore KeySleep.
 func TestTypeStrPartial(t *testing.T) {
 	installFakeConn(t)
-	old := KeySleep
-	t.Cleanup(func() { KeySleep = old })
-	KeySleep = 0
+	old := pub.KeySleep
+	t.Cleanup(func() { pub.KeySleep = old })
+	pub.KeySleep = 0
 
 	// 4 keysym events = press+release of the first 2 runes.
 	globalConn.inj = &keysymFailInjector{n: 4}
@@ -847,13 +848,13 @@ func TestTypeStrPartial(t *testing.T) {
 		t.Errorf("TypeStr: got %v, want typed 2 of 5", err)
 	}
 
-	KeySleep = 7
+	pub.KeySleep = 7
 	globalConn.inj = &keysymFailInjector{n: 2}
 	if err := TypeDelay("abc", 0); err == nil || err.Error() != "robotgo: typed 1 of 3 characters" {
 		t.Errorf("TypeDelay: got %v, want typed 1 of 3", err)
 	}
-	if KeySleep != 7 {
-		t.Errorf("TypeDelay left KeySleep = %d, want 7", KeySleep)
+	if pub.KeySleep != 7 {
+		t.Errorf("TypeDelay left KeySleep = %d, want 7", pub.KeySleep)
 	}
 
 	globalConn.inj = &fakeInjector{}
@@ -939,9 +940,9 @@ func TestUnsupportedSurface(t *testing.T) {
 // a US-layout keycode, so '@' and '/' come out right on a German layout.
 func TestTypeUsesKeysyms(t *testing.T) {
 	inj := installFakeConn(t)
-	old := KeySleep
-	KeySleep = 0
-	t.Cleanup(func() { KeySleep = old })
+	old := pub.KeySleep
+	pub.KeySleep = 0
+	t.Cleanup(func() { pub.KeySleep = old })
 
 	const text = `test@example.org/ <>|{}\~7Qzy"'`
 	if n := Type(text); n != len(text) {

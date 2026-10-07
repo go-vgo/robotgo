@@ -20,6 +20,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/go-vgo/robotgo/pub"
 	"github.com/go-vgo/robotgo/wayland/internal/protocols/wlr_foreign_toplevel"
 )
 
@@ -783,9 +784,9 @@ func TestScrollDirUnknown(t *testing.T) {
 // keyboard nothing is typed, and TypeDelay still restores KeySleep.
 func TestTypeStrReportsUntyped(t *testing.T) {
 	installFakeConn(t) // no virtual keyboard
-	old := KeySleep
-	t.Cleanup(func() { KeySleep = old })
-	KeySleep = 7
+	old := pub.KeySleep
+	t.Cleanup(func() { pub.KeySleep = old })
+	pub.KeySleep = 7
 
 	if err := TypeStr("hé"); err == nil || err.Error() != "robotgo: typed 0 of 2 characters" {
 		t.Errorf("TypeStr: got %v", err)
@@ -793,8 +794,8 @@ func TestTypeStrReportsUntyped(t *testing.T) {
 	if err := TypeDelay("abc", 3); err == nil || err.Error() != "robotgo: typed 0 of 3 characters" {
 		t.Errorf("TypeDelay: got %v", err)
 	}
-	if KeySleep != 7 {
-		t.Errorf("TypeDelay left KeySleep = %d, want 7", KeySleep)
+	if pub.KeySleep != 7 {
+		t.Errorf("TypeDelay left KeySleep = %d, want 7", pub.KeySleep)
 	}
 	if err := TypeStr(""); err != nil {
 		t.Errorf("TypeStr(\"\"): got %v, want nil", err)

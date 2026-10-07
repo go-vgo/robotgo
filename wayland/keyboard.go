@@ -18,13 +18,11 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-	"time"
 	"unicode"
 	"unicode/utf8"
-)
 
-// KeySleep is the global keyboard delay in milliseconds.
-var KeySleep = 10
+	"github.com/go-vgo/robotgo/pub"
+)
 
 // Key constants matching robotgo's API.
 const (
@@ -214,11 +212,11 @@ func KeyTap(key string, args ...interface{}) error {
 	// Clamp the delay to a non-negative value: a negative KeySleep would skip
 	// the sleep but, more importantly, wrap uint32(KeySleep) into a huge value
 	// and corrupt the release timestamp.
-	ks := KeySleep
+	ks := pub.KeySleep
 	if ks < 0 {
 		ks = 0
 	}
-	time.Sleep(time.Duration(ks) * time.Millisecond)
+	pub.MilliSleep(ks)
 	err = c.sendKey(ts+uint32(ks), code, keyStateReleased)
 
 	// Release modifiers in reverse order (upKeyArr) even if the key release
@@ -373,10 +371,10 @@ func TypeDelay(str string, delay int) error {
 	if delay < 0 {
 		delay = 0
 	}
-	old := KeySleep
-	KeySleep = delay
+	old := pub.KeySleep
+	pub.KeySleep = delay
 	n := Type(str)
-	KeySleep = old
+	pub.KeySleep = old
 	return typeErr(n, str)
 }
 
@@ -386,16 +384,6 @@ func typeErr(n int, str string) error {
 		return fmt.Errorf("robotgo: typed %d of %d characters", n, total)
 	}
 	return nil
-}
-
-// SetDelay sets both KeySleep and MouseSleep.
-func SetDelay(d ...int) {
-	delay := 10
-	if len(d) > 0 {
-		delay = d[0]
-	}
-	KeySleep = delay
-	MouseSleep = delay
 }
 
 // CmdCtrl returns "cmd" on macOS, "ctrl" on other platforms.

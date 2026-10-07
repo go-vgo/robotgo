@@ -17,6 +17,8 @@ package robotgo
 import (
 	"strconv"
 	"testing"
+
+	"github.com/go-vgo/robotgo/pub"
 )
 
 func TestIs64Bit(t *testing.T) {
@@ -66,5 +68,24 @@ func TestRgbToHex(t *testing.T) {
 	}
 	if got := PadHex(RgbToHex(0, 0, 1)); got != "000001" {
 		t.Errorf("PadHex(RgbToHex(0, 0, 1)): got %q", got)
+	}
+}
+
+// TestDelaySync checks init copied the robotgo_pub.go config into pub;
+// SetDelay keeping both in sync is covered by TestSetDelay.
+func TestDelaySync(t *testing.T) {
+	if pub.DisplayID != DisplayID {
+		t.Fatalf("pub.DisplayID = %d, want %d", pub.DisplayID, DisplayID)
+	}
+}
+
+// KeyPress must dispatch to the backend's atomic KeyTap (via keyPress),
+// not the shared down/sleep/up sequence: an unknown key fails exactly
+// like KeyTap, before any key-down is posted.
+func TestKeyPressUsesBackendTap(t *testing.T) {
+	const bad = "no_such_key"
+	errTap, errPress := KeyTap(bad), KeyPress(bad)
+	if errTap == nil || errPress == nil || errTap.Error() != errPress.Error() {
+		t.Fatalf("KeyPress(%q) = %v, want KeyTap error %v", bad, errPress, errTap)
 	}
 }

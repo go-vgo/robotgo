@@ -19,6 +19,7 @@ import (
 	"math"
 	"time"
 
+	"github.com/go-vgo/robotgo/pub"
 	"github.com/jezek/xgb/xproto"
 )
 
@@ -32,10 +33,6 @@ const (
 	btnWheelLeft  = 6
 	btnWheelRight = 7
 )
-
-// MouseSleep is the global mouse delay in milliseconds, applied after a mouse
-// action completes.
-var MouseSleep = 0
 
 // resolveButton maps a button name to its X11 button number.
 func resolveButton(btn string) byte {
@@ -131,7 +128,7 @@ func moveSmooth(x, y int, args ...interface{}) error {
 		if err := c.motion(cx, cy); err != nil {
 			return err
 		}
-		time.Sleep(time.Duration(sleepMs) * time.Millisecond)
+		pub.MilliSleep(sleepMs)
 	}
 	mouseDelay()
 	return nil
@@ -255,9 +252,7 @@ func Scroll(x, y int, args ...int) error {
 			return err
 		}
 	}
-	if msDelay > 0 {
-		time.Sleep(time.Duration(msDelay) * time.Millisecond)
-	}
+	pub.MilliSleep(msDelay)
 	return nil
 }
 
@@ -319,9 +314,9 @@ func ScrollSmooth(to int, args ...int) error {
 		if err := Scroll(tox, to); err != nil {
 			return err
 		}
-		MilliSleep(tm)
+		pub.MilliSleep(tm)
 	}
-	MilliSleep(MouseSleep)
+	pub.MilliSleep(pub.MouseSleep)
 	return nil
 }
 
@@ -353,7 +348,7 @@ func MoveClick(x, y int, args ...interface{}) error {
 	if err := Move(x, y); err != nil {
 		return err
 	}
-	MilliSleep(50)
+	pub.MilliSleep(50)
 	return Click(args...)
 }
 
@@ -376,7 +371,5 @@ func GetMousePos() (int, int) {
 }
 
 func mouseDelay() {
-	if MouseSleep > 0 {
-		time.Sleep(time.Duration(MouseSleep) * time.Millisecond)
-	}
+	pub.MilliSleep(pub.MouseSleep)
 }

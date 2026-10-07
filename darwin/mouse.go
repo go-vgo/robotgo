@@ -18,10 +18,9 @@ import (
 	"fmt"
 	"math"
 	"time"
-)
 
-// MouseSleep is the global mouse delay in milliseconds.
-var MouseSleep = 0
+	"github.com/go-vgo/robotgo/pub"
+)
 
 // mouseButton resolves a robotgo button name to the CoreGraphics down/up
 // event types and the mouse-button number.
@@ -113,7 +112,7 @@ func MoveSmooth(x, y int, args ...interface{}) bool {
 			CGPoint{X: math.Round(cx), Y: math.Round(cy)}, kCGMouseButtonLeft); err != nil {
 			return false
 		}
-		time.Sleep(time.Duration(sleepMs) * time.Millisecond)
+		pub.MilliSleep(sleepMs)
 	}
 	mouseDelay()
 	return true
@@ -227,9 +226,7 @@ func Scroll(x, y int, args ...int) error {
 		return errEventCreate
 	}
 	postEvent(ev)
-	if msDelay > 0 {
-		time.Sleep(time.Duration(msDelay) * time.Millisecond)
-	}
+	pub.MilliSleep(msDelay)
 	return nil
 }
 
@@ -277,9 +274,9 @@ func ScrollSmooth(to int, args ...int) error {
 		if err := Scroll(tox, to); err != nil {
 			return err
 		}
-		MilliSleep(tm)
+		pub.MilliSleep(tm)
 	}
-	MilliSleep(MouseSleep)
+	pub.MilliSleep(pub.MouseSleep)
 	return nil
 }
 
@@ -351,7 +348,5 @@ func GetMousePos() (int, int) {
 }
 
 func mouseDelay() {
-	if MouseSleep > 0 {
-		time.Sleep(time.Duration(MouseSleep) * time.Millisecond)
-	}
+	pub.MilliSleep(pub.MouseSleep)
 }

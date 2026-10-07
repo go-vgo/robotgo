@@ -20,12 +20,9 @@ import (
 	"time"
 	"unicode/utf8"
 
+	"github.com/go-vgo/robotgo/pub"
 	"github.com/jezek/xgb/xproto"
 )
-
-// KeySleep is the global keyboard delay in milliseconds, applied after a key
-// action completes.
-var KeySleep = 10
 
 // keyDelay is the time spent between a key press and its release.
 const keyDelay = 5 * time.Millisecond
@@ -304,9 +301,7 @@ func Type(str string, args ...int) int {
 			return n
 		}
 		n++
-		if KeySleep > 0 {
-			time.Sleep(time.Duration(KeySleep) * time.Millisecond)
-		}
+		pub.MilliSleep(pub.KeySleep)
 	}
 	return n
 }
@@ -321,7 +316,7 @@ func TypeStr(str string, args ...int) error {
 // error if not every character was typed.
 func TypeDelay(str string, delay int) error {
 	n := Type(str)
-	MilliSleep(delay)
+	pub.MilliSleep(delay)
 	return typeErr(n, str)
 }
 
@@ -333,18 +328,6 @@ func typeErr(n int, str string) error {
 	return nil
 }
 
-// SetDelay sets the default keyboard and mouse delay (default 10).
-func SetDelay(d ...int) {
-	v := 10
-	if len(d) > 0 {
-		v = d[0]
-	}
-	KeySleep = v
-	MouseSleep = v
-}
-
 func keySleep() {
-	if KeySleep > 0 {
-		time.Sleep(time.Duration(KeySleep) * time.Millisecond)
-	}
+	pub.MilliSleep(pub.KeySleep)
 }
