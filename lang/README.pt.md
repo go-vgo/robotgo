@@ -56,7 +56,7 @@ Doadores, patrocinadores ou outros, contato: vzvway@gmail.com
 
 ## Binding
 
-[ADB](https://github.com/vcaesar/adb), encapsulamento da API adb do Android.
+[ADB](https://github.com/vcaesar/adb), encapsulamento do adb do Android e do WDA do iOS, com API compatível com o robotgo.
 
 ## Requirements
 
@@ -671,7 +671,6 @@ func main() {
 
 - Melhor suporte a múltiplas telas
 - Atualizar o Window Handle
-- Tentar oferecer suporte a Android e iOS
 
 ## Contributors
 

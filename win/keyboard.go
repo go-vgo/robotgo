@@ -34,9 +34,10 @@ var NotPid bool
 // Window messages used to post key events to a specific window (pid-directed
 // input), mirroring the PostMessageW path in key/keypress_c.h.
 const (
-	wmKeyDown = 0x0100
-	wmKeyUp   = 0x0101
-	wmChar    = 0x0102
+	wmKeyDown    = 0x0100
+	wmKeyUp      = 0x0101
+	wmSysKeyDown = 0x0104 // WM_SYSKEYUP is wmSysKeyDown+1
+	wmChar       = 0x0102
 )
 
 // Key constants matching robotgo's API.
@@ -257,50 +258,132 @@ func sendUnicode(u uint16, up bool) bool {
 	return win.SendInput(1, unsafe.Pointer(&in), int32(unsafe.Sizeof(in))) == 1
 }
 
-// hwndByPid returns the first top-level window owned by pid. It mirrors the C
-// GetHwndByPid helper in base/pubs.h and does not require the window to be
-// visible.
+// hwndByPid returns the main top-level window owned by pid: the first visible,
+// unowned one, else the first one found. It mirrors the C GetHwndByPid helper
+// in base/pubs.h.
 func hwndByPid(pid int) win.HWND {
 	var found win.HWND
-	enumWindows(func(hwnd win.HWND) bool {
-		if windowPid(hwnd) == pid {
+	enumTopWindows(func(hwnd win.HWND) bool {
+		if pidOfWindow(hwnd) != pid {
+			return true
+		}
+		if isMainWindow(hwnd) {
 			found = hwnd
-			return false // stop
+			return false
+		}
+		if found == 0 {
+			found = hwnd
 		}
 		return true
 	})
 	return found
 }
 
-// keyHwnd resolves the target window for pid-directed key input. When NotPid is
-// set the value is treated as an HWND directly (matching robotgo.NotPid in the
-// default backend); otherwise the first window owned by that pid is returned.
-func keyHwnd(pid int) win.HWND {
-	if NotPid {
-		return win.HWND(uintptr(pid))
+// Seams replaced in tests.
+var (
+	enumTopWindows = enumWindows
+	pidOfWindow    = windowPid
+	// isMainWindow skips hidden helper windows (IME, message-only, tooltips).
+	isMainWindow = func(hwnd win.HWND) bool {
+		return win.IsWindowVisible(hwnd) && win.GetWindow(hwnd, win.GW_OWNER) == 0
 	}
-	return hwndByPid(pid)
+)
+
+// keyHwnd resolves the key target for pid-directed input: the focused control
+// of the pid's main window. When NotPid is set the value is an HWND (matching
+// robotgo.NotPid in the default backend).
+func keyHwnd(pid int) (win.HWND, error) {
+	hwnd := win.HWND(uintptr(pid))
+	if !NotPid {
+		hwnd = hwndByPid(pid)
+	}
+	if hwnd == 0 {
+		return 0, ErrNotFound
+	}
+	return keyTarget(hwnd), nil
 }
 
-// postKey posts a WM_KEYDOWN/WM_KEYUP message for a virtual-key code to a
-// window, mirroring the PostMessageW path in key/keypress_c.h.
-func postKey(hwnd win.HWND, vk uint16, up bool) error {
-	msg := uintptr(wmKeyDown)
+// keyHeld tracks the Alt and Ctrl state of a posted key sequence. While Alt
+// is held without Ctrl, Windows delivers WM_SYSKEYDOWN/WM_SYSKEYUP, which is
+// what menus and Alt accelerators (Alt+F4, Alt+letter) handle.
+type keyHeld struct{ alt, ctrl bool }
+
+func (h *keyHeld) set(vk uint16, down bool) {
+	switch vk {
+	case win.VK_MENU, win.VK_LMENU, win.VK_RMENU:
+		h.alt = down
+	case win.VK_CONTROL, win.VK_LCONTROL, win.VK_RCONTROL:
+		h.ctrl = down
+	}
+}
+
+// post posts one key event to hwnd and updates the held state.
+func (h *keyHeld) post(hwnd win.HWND, vk uint16, up bool) error {
+	h.set(vk, !up)
+	msg, lp := uint32(wmKeyDown), keyLParam(vk, up)
+	if (h.alt && !h.ctrl) || vk == win.VK_F10 { // F10 is a system key
+		msg = wmSysKeyDown
+		if h.alt {
+			lp |= 1 << 29 // context code: Alt is down
+		}
+	}
 	if up {
-		msg = wmKeyUp
+		msg++ // WM_KEYUP / WM_SYSKEYUP
 	}
-	if r, _, _ := procPostMessageW.Call(uintptr(hwnd), msg, uintptr(vk), 0); r == 0 {
-		return errPostMessage
-	}
-	return nil
+	return postMessage(hwnd, msg, uintptr(genericVK(vk)), lp)
 }
 
-// postChar posts a WM_CHAR message carrying a single UTF-16 code unit to a
-// window, mirroring unicodeType()'s PostMessageW path in key/keypress_c.h.
-// It reports whether PostMessageW succeeded.
-func postChar(hwnd win.HWND, u uint16) bool {
-	r, _, _ := procPostMessageW.Call(uintptr(hwnd), uintptr(wmChar), uintptr(u), 0)
-	return r != 0
+// genericVK maps side-specific modifier keys to the generic VK that real key
+// messages carry in wParam; the side stays in the scan code / extended bit.
+func genericVK(vk uint16) uint16 {
+	switch vk {
+	case win.VK_LSHIFT, win.VK_RSHIFT:
+		return win.VK_SHIFT
+	case win.VK_LCONTROL, win.VK_RCONTROL:
+		return win.VK_CONTROL
+	case win.VK_LMENU, win.VK_RMENU:
+		return win.VK_MENU
+	}
+	return vk
+}
+
+// postKeySeq posts mods then vk (down), or vk then mods in reverse (up). A
+// partial press releases the keys posted so far; a release continues past
+// failures so no modifier is left stuck down.
+func postKeySeq(hwnd win.HWND, vk uint16, mods []uint16, up bool) error {
+	var h keyHeld
+	send := func(vk uint16, up bool) error { return h.post(hwnd, vk, up) }
+	vks := append(append([]uint16{}, mods...), vk)
+	if up {
+		for _, m := range mods {
+			h.set(m, true)
+		}
+		return releaseKeys(send, vks)
+	}
+	pressed, err := pressKeys(send, vks)
+	if err != nil {
+		releaseKeys(send, pressed) //nolint:errcheck // best-effort cleanup, the press error is reported
+	}
+	return err
+}
+
+// keyLParam builds WM_KEYDOWN/WM_KEYUP lParam: repeat count 1, the scan code,
+// the extended-key bit, and for key-up the previous-state and transition
+// bits. Apps and TranslateMessage read these; a zero lParam looks like a
+// bogus key.
+func keyLParam(vk uint16, up bool) uintptr {
+	lp := uintptr(1) | uintptr(scanCode(vk))<<16
+	switch {
+	case vk == win.VK_SNAPSHOT: // E0 37; MapVirtualKey reports 0x54 (SysRq)
+		lp = 1 | 0x37<<16 | 1<<24
+	case vk == win.VK_PAUSE: // 0x45 without E0; with it, it is NumLock
+	case extendedVKs[vk]:
+		lp |= 1 << 24
+	}
+	if up {
+		lp |= 0xC0000000
+	}
+	return lp
 }
 
 // KeyTap taps a key (press + release). Optional trailing modifiers (strings
@@ -321,18 +404,36 @@ func KeyTap(key string, args ...interface{}) error {
 	if err != nil {
 		return err
 	}
-	send, err := keySender(extractPid(args))
-	if err != nil {
+	pid := extractPid(args)
+	// Press modifiers then the key, and release in reverse order. A failed
+	// press releases only the keys pressed so far, so none is left stuck
+	// down and keys held by the user are not released.
+	if err := sendKeys(pid, vks, false); err != nil {
 		return err
 	}
-
-	// Press modifiers then the key, and release in reverse order. Only the
-	// keys that were actually pressed are released after a failure, so none
-	// is left stuck down and keys held by the user are not released.
-	pressed, err := pressKeys(send, vks)
 	pub.MilliSleep(pub.KeySleep)
-	if upErr := releaseKeys(send, pressed); err == nil {
-		err = upErr
+	return sendKeys(pid, vks, true)
+}
+
+// sendKeys presses vks in order (up false) or releases them in reverse order;
+// the last entry is the key, the others its modifiers. A non-zero pid posts
+// them to the pid's window (mirroring key/keypress_c.h), otherwise they go
+// through the current Backend.
+func sendKeys(pid int, vks []uint16, up bool) error {
+	n := len(vks) - 1
+	if pid != 0 {
+		hwnd, err := keyHwnd(pid)
+		if err != nil {
+			return err
+		}
+		return postKeySeq(hwnd, vks[n], vks[:n], up)
+	}
+	if up {
+		return releaseKeys(inputKey, vks)
+	}
+	pressed, err := pressKeys(inputKey, vks)
+	if err != nil {
+		releaseKeys(inputKey, pressed) //nolint:errcheck // best-effort cleanup, the press error is reported
 	}
 	return err
 }
@@ -358,20 +459,6 @@ func releaseKeys(send func(vk uint16, up bool) error, vks []uint16) error {
 		}
 	}
 	return err
-}
-
-// keySender returns the function delivering virtual-key events: PostMessageW
-// to the pid's window (mirroring key/keypress_c.h) when pid != 0, otherwise
-// SendInput to the focused window.
-func keySender(pid int) (func(vk uint16, up bool) error, error) {
-	if pid == 0 {
-		return sendVK, nil
-	}
-	hwnd := keyHwnd(pid)
-	if hwnd == 0 {
-		return nil, ErrNotFound
-	}
-	return func(vk uint16, up bool) error { return postKey(hwnd, vk, up) }, nil
 }
 
 // toggleKeys resolves a key and its modifiers into virtual keys in press
@@ -438,21 +525,30 @@ func KeyToggle(key string, args ...interface{}) error {
 	if err != nil {
 		return err
 	}
-	send, err := keySender(extractPid(args))
+	return sendKeys(extractPid(args), vks, up)
+}
+
+// InputKeyToggle presses (up false) or releases key through the current
+// Backend. Modifiers are pressed before the key and released after it; the
+// modifiers the key itself implies (shift for "A" or "@") are added like
+// KeyTap and KeyToggle do.
+func InputKeyToggle(key string, up bool, mods ...string) error {
+	if _, err := modVKs(mods); err != nil {
+		return err
+	}
+	args := make([]interface{}, len(mods))
+	for i, m := range mods {
+		args[i] = m
+	}
+	vks, _, err := toggleKeys(key, args)
 	if err != nil {
 		return err
 	}
-	if up {
-		return releaseKeys(send, vks)
-	}
-	// A partial press releases the keys pressed so far instead of leaving
-	// modifiers stuck down.
-	pressed, err := pressKeys(send, vks)
-	if err != nil {
-		releaseKeys(send, pressed) //nolint:errcheck // best-effort cleanup, the press error is reported
-	}
-	return err
+	return sendKeys(0, vks, up)
 }
+
+// InputType types str through the current Backend.
+func InputType(str string) error { return inputText(str) }
 
 // KeyDown presses a key down. Extra args (e.g. modifiers) are forwarded to
 // KeyToggle for API parity with the default robotgo backend.
@@ -488,15 +584,27 @@ func Type(str string, args ...int) int {
 	if len(args) > 0 {
 		pid = args[0]
 	}
-	send := func(u uint16) bool { return sendUnicode(u, false) && sendUnicode(u, true) }
 	if pid != 0 {
-		hwnd := keyHwnd(pid)
-		if hwnd == 0 {
+		hwnd, err := keyHwnd(pid)
+		if err != nil {
 			return 0
 		}
-		send = func(u uint16) bool { return postChar(hwnd, u) }
+		return typeRunes(str, func(u uint16) bool {
+			return postMessage(hwnd, wmChar, uintptr(u), 1) == nil
+		})
 	}
-	return typeRunes(str, send)
+	if GetBackend() != BackendSendInput {
+		// inputText applies the per-character KeySleep itself.
+		n := 0
+		for _, r := range str {
+			if InputType(string(r)) != nil {
+				return n
+			}
+			n++
+		}
+		return n
+	}
+	return typeRunes(str, func(u uint16) bool { return sendUnicode(u, false) && sendUnicode(u, true) })
 }
 
 // typeRunes sends each rune of str as UTF-16 code units via send and returns

@@ -56,7 +56,7 @@ RobotGo поддерживает Mac, Windows и Linux; а также подде
 
 ## Binding
 
-[ADB](https://github.com/vcaesar/adb) — обёртка над Android adb API.
+[ADB](https://github.com/vcaesar/adb) — обёртка над Android adb и iOS WDA с API, совместимым с robotgo.
 
 ## Requirements
 
@@ -673,7 +673,6 @@ func main() {
 
 - Улучшить поддержку нескольких экранов
 - Обновить работу с дескрипторами окон
-- Попробовать добавить поддержку Android и iOS
 
 ## Contributors
 

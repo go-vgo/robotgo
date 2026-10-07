@@ -56,7 +56,7 @@ RobotGo 支持 Mac、Windows 和 Linux；并且支持 arm64 与 x86-amd64 架构
 
 ## Binding
 
-[ADB](https://github.com/vcaesar/adb)，封装的 Android adb API。
+[ADB](https://github.com/vcaesar/adb)，封装了 Android adb 和 iOS WDA，提供与 robotgo 兼容的 API。
 
 ## Requirements
 
@@ -658,7 +658,6 @@ func main() {
 
 - 更好的多屏支持
 - 更新窗口句柄
-- 尝试支持 Android 和 iOS
 
 ## Contributors
 

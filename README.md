@@ -59,7 +59,7 @@ Donors and sponsors, or others, Contact: vzvway@gmail.com
 
 ## Binding
 
-[ADB](https://github.com/vcaesar/adb), packaging android adb API.
+[ADB](https://github.com/vcaesar/adb), packaging android adb and ios wda, robotgo compatible API.
 
 ## Requirements
 
@@ -667,7 +667,6 @@ func main() {
 
 - Better multiscreen support
 - Update Window Handle
-- Try to support Android and IOS
 
 ## Contributors
 

@@ -56,7 +56,7 @@ RobotGo は Mac、Windows、Linux に対応しており、arm64 および x86-am
 
 ## Binding
 
-[ADB](https://github.com/vcaesar/adb)、Android の adb API をラップしたものです。
+[ADB](https://github.com/vcaesar/adb)、Android の adb と iOS の WDA をラップし、robotgo 互換の API を提供します。
 
 ## Requirements
 
@@ -671,7 +671,6 @@ func main() {
 
 - マルチスクリーン対応の改善
 - ウィンドウハンドルの更新
-- Android と iOS への対応を試みる
 
 ## Contributors
 
