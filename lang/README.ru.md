@@ -280,7 +280,9 @@ go get -u github.com/go-vgo/robotgo
 package main
 
 import (
+  "errors"
   "fmt"
+
   "github.com/go-vgo/robotgo"
 )
 
@@ -313,6 +315,26 @@ func main() {
 
   robotgo.Toggle("left")
   robotgo.Toggle("left", "up")
+
+  // Проверяйте возвращаемые ошибки, неверные аргументы возвращают ошибку
+  if err := robotgo.Click("left", "double"); err != nil {
+    fmt.Println("robotgo.Click error:", err)
+  }
+  if err := robotgo.ScrollDir(10, "forward"); err != nil {
+    fmt.Println("robotgo.ScrollDir error:", err)
+  }
+
+  // MoveSmoothRelative сообщает о неудачном плавном перемещении как ErrSmoothMove
+  err := robotgo.MoveSmoothRelative(10, -10)
+  if errors.Is(err, robotgo.ErrSmoothMove) {
+    fmt.Println("smooth move failed:", err)
+  }
+
+  // Бэкенды на чистом Go возвращают ErrNotSupported для неподдерживаемых операций
+  err = robotgo.Move(100, 200)
+  if errors.Is(err, robotgo.ErrNotSupported) {
+    fmt.Println("robotgo.Move is not supported by this backend")
+  }
 }
 ```
 
@@ -322,6 +344,7 @@ func main() {
 package main
 
 import (
+  "errors"
   "fmt"
 
   "github.com/go-vgo/robotgo"
@@ -355,6 +378,24 @@ func main() {
   text, err := robotgo.ReadAll()
   if err == nil {
     fmt.Println(text)
+  }
+
+  // Неизвестное имя клавиши возвращает ошибку вместо нажатия неверной клавиши
+  if err := robotgo.KeyTap("notakey"); err != nil {
+    fmt.Println("robotgo.KeyTap error:", err)
+  }
+
+  // TypeStr возвращает первую ошибку ввода, Type возвращает только количество
+  if err := robotgo.TypeStr("Hello, 世界"); err != nil {
+    fmt.Println("robotgo.TypeStr error:", err)
+  }
+
+  // Удерживайте модификатор, затем всегда отпускайте его и проверяйте обе ошибки
+  if err := robotgo.KeyDown("shift"); err == nil {
+    err = errors.Join(robotgo.KeyTap("a"), robotgo.KeyUp("shift"))
+    if err != nil {
+      fmt.Println("shift + a error:", err)
+    }
   }
 }
 ```

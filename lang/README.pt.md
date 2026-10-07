@@ -278,7 +278,9 @@ Problema com `go mod vendor`, [golang #26366](https://github.com/golang/go/issue
 package main
 
 import (
+  "errors"
   "fmt"
+
   "github.com/go-vgo/robotgo"
 )
 
@@ -311,6 +313,26 @@ func main() {
 
   robotgo.Toggle("left")
   robotgo.Toggle("left", "up")
+
+  // Verifique os erros retornados, argumentos inválidos retornam um erro
+  if err := robotgo.Click("left", "double"); err != nil {
+    fmt.Println("robotgo.Click error:", err)
+  }
+  if err := robotgo.ScrollDir(10, "forward"); err != nil {
+    fmt.Println("robotgo.ScrollDir error:", err)
+  }
+
+  // MoveSmoothRelative informa um movimento suave com falha como ErrSmoothMove
+  err := robotgo.MoveSmoothRelative(10, -10)
+  if errors.Is(err, robotgo.ErrSmoothMove) {
+    fmt.Println("smooth move failed:", err)
+  }
+
+  // Os backends em Go puro retornam ErrNotSupported para operações não suportadas
+  err = robotgo.Move(100, 200)
+  if errors.Is(err, robotgo.ErrNotSupported) {
+    fmt.Println("robotgo.Move is not supported by this backend")
+  }
 }
 ```
 
@@ -320,6 +342,7 @@ func main() {
 package main
 
 import (
+  "errors"
   "fmt"
 
   "github.com/go-vgo/robotgo"
@@ -353,6 +376,24 @@ func main() {
   text, err := robotgo.ReadAll()
   if err == nil {
     fmt.Println(text)
+  }
+
+  // Nomes de tecla desconhecidos retornam um erro em vez de pressionar a tecla errada
+  if err := robotgo.KeyTap("notakey"); err != nil {
+    fmt.Println("robotgo.KeyTap error:", err)
+  }
+
+  // TypeStr retorna o primeiro erro de digitação, Type retorna apenas a contagem
+  if err := robotgo.TypeStr("Hello, 世界"); err != nil {
+    fmt.Println("robotgo.TypeStr error:", err)
+  }
+
+  // Segure um modificador, depois sempre solte-o e verifique os dois erros
+  if err := robotgo.KeyDown("shift"); err == nil {
+    err = errors.Join(robotgo.KeyTap("a"), robotgo.KeyUp("shift"))
+    if err != nil {
+      fmt.Println("shift + a error:", err)
+    }
   }
 }
 ```

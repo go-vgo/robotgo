@@ -278,7 +278,9 @@ Beachten Sie das Problem mit dem Kompilierungs-Cache für C-Dateien in go1.10.x,
 package main
 
 import (
+  "errors"
   "fmt"
+
   "github.com/go-vgo/robotgo"
 )
 
@@ -311,6 +313,26 @@ func main() {
 
   robotgo.Toggle("left")
   robotgo.Toggle("left", "up")
+
+  // Rückgabefehler prüfen, ungültige Argumente liefern einen Fehler
+  if err := robotgo.Click("left", "double"); err != nil {
+    fmt.Println("robotgo.Click error:", err)
+  }
+  if err := robotgo.ScrollDir(10, "forward"); err != nil {
+    fmt.Println("robotgo.ScrollDir error:", err)
+  }
+
+  // MoveSmoothRelative meldet eine fehlgeschlagene sanfte Bewegung als ErrSmoothMove
+  err := robotgo.MoveSmoothRelative(10, -10)
+  if errors.Is(err, robotgo.ErrSmoothMove) {
+    fmt.Println("smooth move failed:", err)
+  }
+
+  // Pure-Go-Backends liefern ErrNotSupported für nicht unterstützte Operationen
+  err = robotgo.Move(100, 200)
+  if errors.Is(err, robotgo.ErrNotSupported) {
+    fmt.Println("robotgo.Move is not supported by this backend")
+  }
 }
 ```
 
@@ -320,6 +342,7 @@ func main() {
 package main
 
 import (
+  "errors"
   "fmt"
 
   "github.com/go-vgo/robotgo"
@@ -353,6 +376,24 @@ func main() {
   text, err := robotgo.ReadAll()
   if err == nil {
     fmt.Println(text)
+  }
+
+  // Unbekannte Tastennamen liefern einen Fehler, statt eine falsche Taste zu drücken
+  if err := robotgo.KeyTap("notakey"); err != nil {
+    fmt.Println("robotgo.KeyTap error:", err)
+  }
+
+  // TypeStr liefert den ersten Tippfehler, Type nur die Anzahl
+  if err := robotgo.TypeStr("Hello, 世界"); err != nil {
+    fmt.Println("robotgo.TypeStr error:", err)
+  }
+
+  // Modifikator halten, dann immer loslassen und beide Fehler prüfen
+  if err := robotgo.KeyDown("shift"); err == nil {
+    err = errors.Join(robotgo.KeyTap("a"), robotgo.KeyUp("shift"))
+    if err != nil {
+      fmt.Println("shift + a error:", err)
+    }
   }
 }
 ```

@@ -277,7 +277,9 @@ Problème de `go mod vendor`, [golang #26366](https://github.com/golang/go/issue
 package main
 
 import (
+  "errors"
   "fmt"
+
   "github.com/go-vgo/robotgo"
 )
 
@@ -310,6 +312,26 @@ func main() {
 
   robotgo.Toggle("left")
   robotgo.Toggle("left", "up")
+
+  // Vérifiez les erreurs retournées, les arguments invalides retournent une erreur
+  if err := robotgo.Click("left", "double"); err != nil {
+    fmt.Println("robotgo.Click error:", err)
+  }
+  if err := robotgo.ScrollDir(10, "forward"); err != nil {
+    fmt.Println("robotgo.ScrollDir error:", err)
+  }
+
+  // MoveSmoothRelative signale un déplacement fluide échoué par ErrSmoothMove
+  err := robotgo.MoveSmoothRelative(10, -10)
+  if errors.Is(err, robotgo.ErrSmoothMove) {
+    fmt.Println("smooth move failed:", err)
+  }
+
+  // Les backends pur Go retournent ErrNotSupported pour les opérations non prises en charge
+  err = robotgo.Move(100, 200)
+  if errors.Is(err, robotgo.ErrNotSupported) {
+    fmt.Println("robotgo.Move is not supported by this backend")
+  }
 }
 ```
 
@@ -319,6 +341,7 @@ func main() {
 package main
 
 import (
+  "errors"
   "fmt"
 
   "github.com/go-vgo/robotgo"
@@ -352,6 +375,24 @@ func main() {
   text, err := robotgo.ReadAll()
   if err == nil {
     fmt.Println(text)
+  }
+
+  // Un nom de touche inconnu retourne une erreur au lieu d'appuyer sur une mauvaise touche
+  if err := robotgo.KeyTap("notakey"); err != nil {
+    fmt.Println("robotgo.KeyTap error:", err)
+  }
+
+  // TypeStr retourne la première erreur de saisie, Type ne retourne que le nombre
+  if err := robotgo.TypeStr("Hello, 世界"); err != nil {
+    fmt.Println("robotgo.TypeStr error:", err)
+  }
+
+  // Maintenez un modificateur, relâchez-le toujours et vérifiez les deux erreurs
+  if err := robotgo.KeyDown("shift"); err == nil {
+    err = errors.Join(robotgo.KeyTap("a"), robotgo.KeyUp("shift"))
+    if err != nil {
+      fmt.Println("shift + a error:", err)
+    }
   }
 }
 ```

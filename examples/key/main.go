@@ -12,6 +12,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/go-vgo/robotgo"
@@ -116,6 +117,36 @@ func cilp() {
 	fmt.Println("text: ", text)
 }
 
+// checkErr prints an error, telling unsupported operations apart
+func checkErr(name string, err error) {
+	switch {
+	case err == nil:
+	case errors.Is(err, robotgo.ErrNotSupported):
+		fmt.Println(name, "is not supported by this backend")
+	default:
+		fmt.Println(name, "error:", err)
+	}
+}
+
+func keyErr() {
+	// unknown key names return an error instead of pressing a wrong key
+	checkErr("robotgo.KeyTap", robotgo.KeyTap("notakey"))
+	checkErr("robotgo.KeyPress", robotgo.KeyPress("enter"))
+
+	// Type returns the typed count, TypeStr returns the first error
+	checkErr("robotgo.TypeStr", robotgo.TypeStr("Hello, 世界"))
+
+	// release the modifier even when typing fails
+	if err := robotgo.KeyDown("shift"); err != nil {
+		checkErr("robotgo.KeyDown", err)
+		return
+	}
+	defer func() {
+		checkErr("robotgo.KeyUp", robotgo.KeyUp("shift"))
+	}()
+	checkErr("robotgo.KeyTap", robotgo.KeyTap("a"))
+}
+
 func key() {
 	////////////////////////////////////////////////////////////////////////////////
 	// Control the keyboard
@@ -128,6 +159,8 @@ func key() {
 	keyToggle()
 
 	cilp()
+
+	keyErr()
 }
 
 func main() {

@@ -274,7 +274,9 @@ Note go1.10.x C file compilation cache problem, [golang #24355](https://github.c
 package main
 
 import (
+  "errors"
   "fmt"
+
   "github.com/go-vgo/robotgo"
 )
 
@@ -307,6 +309,26 @@ func main() {
 
   robotgo.Toggle("left")
   robotgo.Toggle("left", "up")
+
+  // Check the returned errors, invalid arguments return an error
+  if err := robotgo.Click("left", "double"); err != nil {
+    fmt.Println("robotgo.Click error:", err)
+  }
+  if err := robotgo.ScrollDir(10, "forward"); err != nil {
+    fmt.Println("robotgo.ScrollDir error:", err)
+  }
+
+  // MoveSmoothRelative reports a failed smooth move as ErrSmoothMove
+  err := robotgo.MoveSmoothRelative(10, -10)
+  if errors.Is(err, robotgo.ErrSmoothMove) {
+    fmt.Println("smooth move failed:", err)
+  }
+
+  // Pure-Go backends return ErrNotSupported for unsupported operations
+  err = robotgo.Move(100, 200)
+  if errors.Is(err, robotgo.ErrNotSupported) {
+    fmt.Println("robotgo.Move is not supported by this backend")
+  }
 }
 ```
 
@@ -316,6 +338,7 @@ func main() {
 package main
 
 import (
+  "errors"
   "fmt"
 
   "github.com/go-vgo/robotgo"
@@ -349,6 +372,24 @@ func main() {
   text, err := robotgo.ReadAll()
   if err == nil {
     fmt.Println(text)
+  }
+
+  // Unknown key names return an error instead of pressing a wrong key
+  if err := robotgo.KeyTap("notakey"); err != nil {
+    fmt.Println("robotgo.KeyTap error:", err)
+  }
+
+  // TypeStr returns the first typing error, Type only returns the count
+  if err := robotgo.TypeStr("Hello, 世界"); err != nil {
+    fmt.Println("robotgo.TypeStr error:", err)
+  }
+
+  // Hold a modifier, then always release it and check both errors
+  if err := robotgo.KeyDown("shift"); err == nil {
+    err = errors.Join(robotgo.KeyTap("a"), robotgo.KeyUp("shift"))
+    if err != nil {
+      fmt.Println("shift + a error:", err)
+    }
   }
 }
 ```
