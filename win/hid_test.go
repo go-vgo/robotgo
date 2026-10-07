@@ -154,6 +154,27 @@ func TestHIDDriverFallbackSlot(t *testing.T) {
 	}
 }
 
+func TestHIDDriverFallbackKeepsHandle(t *testing.T) {
+	// A closed slot may be taken by another process, so the fallback
+	// handle must be kept instead of reopened.
+	fakeDriver(t, map[int]bool{12: true}, nil)
+	create := hidCreateFile
+	opened := map[string]bool{}
+	hidCreateFile = func(name string) (windows.Handle, error) {
+		if opened[name] {
+			return windows.InvalidHandle, windows.ERROR_SHARING_VIOLATION
+		}
+		opened[name] = true
+		return create(name)
+	}
+	if err := InitHID(); err != nil {
+		t.Fatal(err)
+	}
+	if hid.keyboard.slot != 1 || hid.mouse.slot != 12 {
+		t.Errorf("slots = %d/%d, want 1/12", hid.keyboard.slot, hid.mouse.slot)
+	}
+}
+
 func TestHIDDriverMissing(t *testing.T) {
 	missing := map[int]bool{}
 	for s := 1; s <= hidMaxKeyboard+hidMaxMouse; s++ {

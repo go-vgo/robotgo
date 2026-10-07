@@ -212,9 +212,10 @@ func openHID() error {
 }
 
 // openHIDDevice opens the first of n slots from first that reports a
-// hardware id, or else the first slot that opens.
+// hardware id, or else the first slot that opens. The fallback handle is
+// kept open, since the devices are opened exclusively and may be taken.
 func openHIDDevice(first, n int) (hidDevice, error) {
-	fallback := 0
+	var fallback hidDevice
 	var openErr error
 	for slot := first; slot < first+n; slot++ {
 		d, err := openHIDSlot(slot)
@@ -223,19 +224,25 @@ func openHIDDevice(first, n int) (hidDevice, error) {
 			continue
 		}
 		if hidPresent(d) {
+			if fallback.slot != 0 {
+				if err := fallback.close(); err != nil {
+					return hidDevice{}, errors.Join(err, d.close())
+				}
+			}
 			return d, nil
 		}
-		if fallback == 0 {
-			fallback = slot
+		if fallback.slot == 0 {
+			fallback = d
+			continue
 		}
 		if err := d.close(); err != nil {
-			return hidDevice{}, err
+			return hidDevice{}, errors.Join(err, fallback.close())
 		}
 	}
-	if fallback == 0 {
+	if fallback.slot == 0 {
 		return hidDevice{}, openErr
 	}
-	return openHIDSlot(fallback)
+	return fallback, nil
 }
 
 // openHIDSlot opens device slot (1-based) and registers its input event,

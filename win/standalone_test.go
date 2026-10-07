@@ -151,20 +151,31 @@ func TestStandaloneKeyboardPosting(t *testing.T) {
 		kind, key uintptr
 	}
 	postErr := errors.New("PostMessageW failed")
+	// A failed press releases the keys already pressed; a release continues
+	// past failures. Other calls stop at the failing message.
+	pressCleanup := func(want []message, failAt int) []message {
+		got := append([]message{}, want[:failAt]...)
+		for i := failAt - 2; i >= 0; i-- {
+			got = append(got, message{wmKeyUp, want[i].key})
+		}
+		return got
+	}
+	releaseAll := func(want []message, _ int) []message { return want }
 	cases := []struct {
-		name string
-		call func() error
-		want []message
+		name   string
+		call   func() error
+		want   []message
+		onFail func(want []message, failAt int) []message
 	}{
 		{"down", func() error { return PostKeyToggle(w, "enter", "down", "ctrl", "shift") },
-			[]message{{wmKeyDown, win.VK_CONTROL}, {wmKeyDown, win.VK_SHIFT}, {wmKeyDown, win.VK_RETURN}}},
+			[]message{{wmKeyDown, win.VK_CONTROL}, {wmKeyDown, win.VK_SHIFT}, {wmKeyDown, win.VK_RETURN}}, pressCleanup},
 		{"up", func() error { return PostKeyToggle(w, "enter", "up", "ctrl", "shift") },
-			[]message{{wmKeyUp, win.VK_RETURN}, {wmKeyUp, win.VK_SHIFT}, {wmKeyUp, win.VK_CONTROL}}},
+			[]message{{wmKeyUp, win.VK_RETURN}, {wmKeyUp, win.VK_SHIFT}, {wmKeyUp, win.VK_CONTROL}}, releaseAll},
 		{"tap", func() error { return PostKeyTap(w, "enter") },
-			[]message{{wmKeyDown, win.VK_RETURN}, {wmKeyUp, win.VK_RETURN}}},
+			[]message{{wmKeyDown, win.VK_RETURN}, {wmKeyUp, win.VK_RETURN}}, nil},
 		{"text", func() error { return PostType(w, "a😀b") },
-			[]message{{wmChar, 'a'}, {wmChar, 0xd83d}, {wmChar, 0xde00}, {wmChar, 'b'}}},
-		{"empty text", func() error { return PostType(w, "") }, nil},
+			[]message{{wmChar, 'a'}, {wmChar, 0xd83d}, {wmChar, 0xde00}, {wmChar, 'b'}}, nil},
+		{"empty text", func() error { return PostType(w, "") }, nil, nil},
 	}
 	for _, tc := range cases {
 		for failAt := 0; failAt <= len(tc.want); failAt++ {
@@ -189,7 +200,11 @@ func TestStandaloneKeyboardPosting(t *testing.T) {
 				err := tc.call()
 				want := tc.want
 				if failAt > 0 {
-					want = want[:failAt]
+					if tc.onFail != nil {
+						want = tc.onFail(want, failAt)
+					} else {
+						want = want[:failAt]
+					}
 					if !errors.Is(err, postErr) {
 						t.Errorf("error = %v, want %v", err, postErr)
 					}
