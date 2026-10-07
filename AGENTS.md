@@ -63,7 +63,7 @@ robotgo/
 ├── wayland_n.go            # linux && (wayland || purego) && !libei && !x11 — wires wayland/
 ├── libei.go                # linux && libei — wires libei/
 ├── key.go                  # Cgo only: KeyTap/KeyToggle/Type/UnicodeType; keycode.go, screen.go, img.go, ps.go untagged
-├── key_pub.go              # portable (untagged): KeyDown/KeyUp/KeyPress (wrap each backend's KeyToggle) + arg helpers
+├── key_pub.go              # portable (untagged): KeyDown/KeyUp (wrap KeyToggle), KeyPress (wraps keyPress hook) + arg helpers
 ├── robotgo_fn_v1.go        # deprecated v1 aliases (kept for compat), Cgo only
 ├── robot_info_test.go      # Cgo smoke tests (used by GitHub Actions)
 ├── robot_mac_test.go       # darwin && (mac || purego) tests
@@ -121,7 +121,7 @@ Key subpackage relationships: the root `robotgo` package pulls C code from `scre
 ## Key Patterns
 
 - **Cgo + platform split is mandatory**. Any new OS-specific function must be gated by `//go:build` tags and have implementations (even stub) for darwin, linux, windows — examine `mouse/mouse_darwin.go`, `mouse_windows.go`, `mouse_x11.go` as the template.
-- **Keep backends in sync**: a new public `robotgo` API added to the build-tagged Cgo surface (e.g. `robotgo.go`, `key.go`, `robotgo_mac*.go`) needs a forwarder in each pure-Go wiring file (`darwin.go`, `windows_n.go`, `x11_n.go`, `wayland_n.go`, `libei.go`) and an implementation (or `ErrNotSupported`) in the matching backend package, otherwise `-tags purego` builds break. APIs in untagged portable files (`robotgo_pub.go`, `key_pub.go`, `ps.go`, `screen.go`, `img.go`, `keycode.go`) are already shared by every backend — do not redeclare them in wiring files. E.g. `KeyDown`/`KeyUp`/`KeyPress` live in `key_pub.go` and call the root `KeyToggle` (Cgo `key.go` or the wiring forwarder), so wiring files forward only `KeyTap`/`KeyToggle`; backend `KeyToggle` must default to "down" and accept a leading `"up"`.
+- **Keep backends in sync**: a new public `robotgo` API added to the build-tagged Cgo surface (e.g. `robotgo.go`, `key.go`, `robotgo_mac*.go`) needs a forwarder in each pure-Go wiring file (`darwin.go`, `windows_n.go`, `x11_n.go`, `wayland_n.go`, `libei.go`) and an implementation (or `ErrNotSupported`) in the matching backend package, otherwise `-tags purego` builds break. APIs in untagged portable files (`robotgo_pub.go`, `key_pub.go`, `ps.go`, `screen.go`, `img.go`, `keycode.go`) are already shared by every backend — do not redeclare them in wiring files. E.g. `KeyDown`/`KeyUp`/`KeyPress` live in `key_pub.go`: `KeyDown`/`KeyUp` call the root `KeyToggle` (Cgo `key.go` or the wiring forwarder), and `KeyPress` calls the unexported `keyPress` hook (Cgo `key.go`: down + 1-3 ms + up; wiring files: the backend `KeyPress`, i.e. its atomic `KeyTap`, so the x11 mutex covers the whole tap). Wiring files forward `KeyTap`/`KeyToggle`/`keyPress`; backend `KeyToggle` must default to "down" and accept a leading `"up"`.
 - **Free C-allocated bitmaps**: every `CaptureScreen`, `ToCBitmap`, etc. must be paired with `defer robotgo.FreeBitmap(bit)` or `robotgo.FreeBitmapArr(...)`. Leaking is a memory bug on all platforms.
 - **Global tunables** are package-level vars, not config structs: `MouseSleep`, `KeySleep`, `DisplayID`, `NotPid`, `Scale`. Callers mutate them directly (see README examples). Do not hide them behind getters.
 - **`robotgo_fn_v1.go`** contains deprecated v1 aliases — do not add new APIs there, but do not delete existing ones (backwards compatibility).

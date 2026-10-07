@@ -54,8 +54,9 @@ func KeyTap(key string, args ...any) error { return win.KeyTap(key, args...) }
 // KeyToggle toggle the keyboard.
 func KeyToggle(key string, args ...any) error { return win.KeyToggle(key, args...) }
 
-// KeyDown, KeyUp and KeyPress live in key_pub.go (build-tag-free) and wrap
-// KeyToggle, so they are NOT re-declared here.
+// KeyDown, KeyUp and KeyPress live in key_pub.go (build-tag-free); KeyPress
+// calls keyPress, which keeps the backend's atomic KeyTap.
+func keyPress(key string, args ...any) error { return win.KeyPress(key, args...) }
 
 // Type type a string (alias of TypeStr).
 func Type(str string, args ...int) int { return win.Type(str, args...) }

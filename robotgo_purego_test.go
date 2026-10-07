@@ -78,3 +78,14 @@ func TestDelaySync(t *testing.T) {
 		t.Fatalf("pub.DisplayID = %d, want %d", pub.DisplayID, DisplayID)
 	}
 }
+
+// KeyPress must dispatch to the backend's atomic KeyTap (via keyPress),
+// not the shared down/sleep/up sequence: an unknown key fails exactly
+// like KeyTap, before any key-down is posted.
+func TestKeyPressUsesBackendTap(t *testing.T) {
+	const bad = "no_such_key"
+	errTap, errPress := KeyTap(bad), KeyPress(bad)
+	if errTap == nil || errPress == nil || errTap.Error() != errPress.Error() {
+		t.Fatalf("KeyPress(%q) = %v, want KeyTap error %v", bad, errPress, errTap)
+	}
+}

@@ -23,6 +23,7 @@ import "C"
 import (
 	"errors"
 	"fmt"
+	"math/rand"
 	"runtime"
 	"unsafe"
 )
@@ -401,6 +402,17 @@ func KeyToggle(key string, args ...interface{}) error {
 	key, args = appendShift(key, 1, args...)
 	pid, keyArr := getToggleArgs(args...)
 	return keyToggles(key, keyArr, pid)
+}
+
+// keyPress backs KeyPress: key down, a short random delay, then key up.
+func keyPress(key string, args ...interface{}) error {
+	err := KeyDown(key, args...)
+	if err != nil {
+		return err
+	}
+
+	MilliSleep(1 + rand.Intn(3))
+	return KeyUp(key, args...)
 }
 
 // UnicodeType tap the uint32 unicode

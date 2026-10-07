@@ -12,21 +12,17 @@
 package robotgo
 
 import (
-	"math/rand"
 	"strconv"
 	"strings"
 	"unicode"
 )
 
 // KeyPress press key string
+//
+// It dispatches to the backend keyPress (Cgo: down, short delay, up;
+// pure-Go: the backend's atomic KeyTap) so each keeps its timing and locking.
 func KeyPress(key string, args ...interface{}) error {
-	err := KeyDown(key, args...)
-	if err != nil {
-		return err
-	}
-
-	MilliSleep(1 + rand.Intn(3))
-	return KeyUp(key, args...)
+	return keyPress(key, args...)
 }
 
 // KeyDown press down a key
