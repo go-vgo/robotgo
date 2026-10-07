@@ -32,7 +32,7 @@ func fakeHID(t *testing.T) (mice *[]hidMouseStroke, keys *[]hidKeyStroke) {
 	t.Cleanup(func() {
 		hidSendMouse, hidSendKey, hidOpen, virtualScreen = oldMouse, oldKey, oldOpen, oldScreen
 		pub.KeySleep = oldSleep
-		hid.ctx = 0
+		hid.open = false
 		if err := SetBackend(BackendSendInput); err != nil {
 			t.Errorf("reset backend: %v", err)
 		}
@@ -40,7 +40,7 @@ func fakeHID(t *testing.T) (mice *[]hidMouseStroke, keys *[]hidKeyStroke) {
 	mice, keys = &[]hidMouseStroke{}, &[]hidKeyStroke{}
 	hidSendMouse = func(s *hidMouseStroke) error { *mice = append(*mice, *s); return nil }
 	hidSendKey = func(s *hidKeyStroke) error { *keys = append(*keys, *s); return nil }
-	hidOpen = func() error { hid.ctx = 1; return nil }
+	hidOpen = func() error { hid.open = true; return nil }
 	virtualScreen = func() (int, int, int, int) { return -100, 0, 201, 101 }
 	pub.KeySleep = 0
 	if err := SetBackend(BackendHID); err != nil {
@@ -58,6 +58,15 @@ func TestHIDStrokeLayout(t *testing.T) {
 	}
 	if n := unsafe.Sizeof(hidKeyStroke{}); n != 8 {
 		t.Errorf("key stroke size = %d, want 8", n)
+	}
+	if n := unsafe.Sizeof(hidRawKey{}); n != 12 {
+		t.Errorf("KEYBOARD_INPUT_DATA size = %d, want 12", n)
+	}
+	if n := unsafe.Sizeof(hidRawMouse{}); n != 24 {
+		t.Errorf("MOUSE_INPUT_DATA size = %d, want 24", n)
+	}
+	if off := unsafe.Offsetof(hidRawMouse{}.LastX); off != 12 {
+		t.Errorf("MOUSE_INPUT_DATA LastX offset = %d, want 12", off)
 	}
 }
 

@@ -28,7 +28,8 @@ import (
 // HID-level input goes through the Interception kernel driver
 // (https://github.com/oblitum/Interception): strokes are injected below the
 // Win32 input stack, so they look like real device input to apps, games and
-// raw-input consumers. The driver and interception.dll must be installed.
+// raw-input consumers. Only the driver must be installed: robotgo talks to
+// its \\.\interceptionNN devices with DeviceIoControl, without interception.dll.
 
 // ErrDriverNotInstalled is returned when the Interception driver is missing.
 var ErrDriverNotInstalled = errors.New("robotgo: interception driver not installed or accessible")
@@ -38,6 +39,14 @@ const (
 	hidMaxKeyboard = 10
 	hidMaxMouse    = 10
 	hidFirstMouse  = hidMaxKeyboard + 1
+)
+
+// Interception driver IOCTLs:
+// CTL_CODE(FILE_DEVICE_UNKNOWN, fn, METHOD_BUFFERED, FILE_ANY_ACCESS).
+const (
+	ioctlSetEvent      = 0x222040 // fn 0x810
+	ioctlWrite         = 0x222080 // fn 0x820
+	ioctlGetHardwareID = 0x222200 // fn 0x880
 )
 
 // Interception mouse states and flags (interception.h).
@@ -89,121 +98,192 @@ type hidKeyStroke struct {
 	Information uint32
 }
 
+// hidRawKey mirrors KEYBOARD_INPUT_DATA (ntddkbd.h), the driver's input.
+type hidRawKey struct {
+	UnitID, MakeCode, Flags, Reserved uint16
+	ExtraInformation                  uint32
+}
+
+// hidRawMouse mirrors MOUSE_INPUT_DATA (ntddmou.h), the driver's input.
+type hidRawMouse struct {
+	UnitID, Flags, ButtonFlags, ButtonData uint16
+	RawButtons                             uint32
+	LastX, LastY                           int32
+	ExtraInformation                       uint32
+}
+
+// raw converts s the way interception_send does.
+func (s *hidKeyStroke) raw() hidRawKey {
+	return hidRawKey{MakeCode: s.Code, Flags: s.State, ExtraInformation: s.Information}
+}
+
+// raw converts s the way interception_send does.
+func (s *hidMouseStroke) raw() hidRawMouse {
+	return hidRawMouse{
+		Flags: s.Flags, ButtonFlags: s.State, ButtonData: uint16(s.Rolling),
+		LastX: s.X, LastY: s.Y, ExtraInformation: s.Information,
+	}
+}
+
+// hidDevice is an open \\.\interceptionNN handle and its registered event.
+type hidDevice struct {
+	slot          int
+	handle, event windows.Handle
+}
+
+func (d hidDevice) close() error {
+	return errors.Join(windows.CloseHandle(d.event), windows.CloseHandle(d.handle))
+}
+
 var hid struct {
-	mu       sync.Mutex
-	path     string
-	dll      *windows.LazyDLL
-	send     *windows.LazyProc
-	ctx      uintptr
-	keyboard uintptr
-	mouse    uintptr
+	mu              sync.Mutex
+	open            bool
+	keyboard, mouse hidDevice
 }
 
 // Seams replaced in tests.
 var (
-	hidSendMouse = func(s *hidMouseStroke) error { return hidSend(false, unsafe.Pointer(s)) }
-	hidSendKey   = func(s *hidKeyStroke) error { return hidSend(true, unsafe.Pointer(s)) }
-	hidOpen      = openHID
+	hidSendMouse = func(s *hidMouseStroke) error {
+		r := s.raw()
+		return hidWrite(false, unsafe.Pointer(&r), uint32(unsafe.Sizeof(r)))
+	}
+	hidSendKey = func(s *hidKeyStroke) error {
+		r := s.raw()
+		return hidWrite(true, unsafe.Pointer(&r), uint32(unsafe.Sizeof(r)))
+	}
+	hidOpen       = openHID
+	hidCreateFile = func(name string) (windows.Handle, error) {
+		p, err := windows.UTF16PtrFromString(name)
+		if err != nil {
+			return 0, err
+		}
+		return windows.CreateFile(p, windows.GENERIC_READ, 0, nil, windows.OPEN_EXISTING, 0, 0)
+	}
+	hidIoctl = func(h windows.Handle, code uint32, in unsafe.Pointer, inLen uint32,
+		out unsafe.Pointer, outLen uint32) (uint32, error) {
+		var n uint32
+		err := windows.DeviceIoControl(h, code, (*byte)(in), inLen, (*byte)(out), outLen, &n, nil)
+		return n, err
+	}
 )
 
-// SetHIDLibraryPath sets the interception.dll path used by the next HID
-// initialization (default "interception.dll" on the DLL search path).
-func SetHIDLibraryPath(path string) {
-	hid.mu.Lock()
-	hid.path = path
-	hid.mu.Unlock()
-}
+// SetHIDLibraryPath is a no-op kept for compatibility.
+//
+// Deprecated: the HID backend talks to the Interception driver directly and
+// no longer loads interception.dll.
+func SetHIDLibraryPath(path string) {}
 
-// InitHID loads interception.dll and opens a driver context. It is called
-// by SetBackend(BackendHID) and lazily by HID input.
+// InitHID opens the Interception driver devices. It is called by
+// SetBackend(BackendHID) and lazily by HID input.
 func InitHID() error {
 	hid.mu.Lock()
 	defer hid.mu.Unlock()
-	if hid.ctx != 0 {
+	if hid.open {
 		return nil
 	}
 	return hidOpen()
 }
 
-// CloseHID releases the Interception driver context.
+// CloseHID releases the Interception driver devices.
 func CloseHID() error {
 	hid.mu.Lock()
 	defer hid.mu.Unlock()
-	if hid.ctx == 0 {
+	if !hid.open {
 		return nil
 	}
-	destroy := hid.dll.NewProc("interception_destroy_context")
-	if err := destroy.Find(); err != nil {
+	err := errors.Join(hid.keyboard.close(), hid.mouse.close())
+	hid.open, hid.keyboard, hid.mouse = false, hidDevice{}, hidDevice{}
+	return err
+}
+
+// openHID opens the first keyboard and mouse slot that reports a hardware
+// id. Caller holds hid.mu.
+func openHID() error {
+	kb, err := openHIDDevice(1, hidMaxKeyboard)
+	if err != nil {
 		return err
 	}
-	// interception_destroy_context returns void; Call's error is a stale LastError.
-	destroy.Call(hid.ctx)
-	hid.ctx = 0
+	ms, err := openHIDDevice(hidFirstMouse, hidMaxMouse)
+	if err != nil {
+		return errors.Join(err, kb.close())
+	}
+	hid.open, hid.keyboard, hid.mouse = true, kb, ms
 	return nil
 }
 
-// openHID loads the DLL, creates a context and picks the first keyboard and
-// mouse slot that reports a hardware id. Caller holds hid.mu.
-func openHID() error {
-	path := hid.path
-	if path == "" {
-		path = "interception.dll"
-	}
-	dll := windows.NewLazyDLL(path)
-	if err := dll.Load(); err != nil {
-		return fmt.Errorf("%w: %v", ErrDriverNotInstalled, err)
-	}
-	create := dll.NewProc("interception_create_context")
-	send := dll.NewProc("interception_send")
-	hwid := dll.NewProc("interception_get_hardware_id")
-	for _, p := range []*windows.LazyProc{create, send, hwid} {
-		if err := p.Find(); err != nil {
-			return fmt.Errorf("%w: %v", ErrDriverNotInstalled, err)
+// openHIDDevice opens the first of n slots from first that reports a
+// hardware id, or else the first slot that opens.
+func openHIDDevice(first, n int) (hidDevice, error) {
+	fallback := 0
+	var openErr error
+	for slot := first; slot < first+n; slot++ {
+		d, err := openHIDSlot(slot)
+		if err != nil {
+			openErr = err
+			continue
+		}
+		if hidPresent(d) {
+			return d, nil
+		}
+		if fallback == 0 {
+			fallback = slot
+		}
+		if err := d.close(); err != nil {
+			return hidDevice{}, err
 		}
 	}
-	ctx, _, _ := create.Call()
-	if ctx == 0 {
-		return ErrDriverNotInstalled
+	if fallback == 0 {
+		return hidDevice{}, openErr
 	}
-
-	present := func(dev uintptr) bool {
-		var buf [512]byte
-		n, _, _ := hwid.Call(ctx, dev, uintptr(unsafe.Pointer(&buf[0])), uintptr(len(buf)))
-		return n > 0
-	}
-	hid.keyboard, hid.mouse = 1, hidFirstMouse
-	for d := uintptr(1); d <= hidMaxKeyboard; d++ {
-		if present(d) {
-			hid.keyboard = d
-			break
-		}
-	}
-	for d := uintptr(hidFirstMouse); d < hidFirstMouse+hidMaxMouse; d++ {
-		if present(d) {
-			hid.mouse = d
-			break
-		}
-	}
-	hid.dll, hid.send, hid.ctx = dll, send, ctx
-	return nil
+	return openHIDSlot(fallback)
 }
 
-func hidSend(keyboard bool, stroke unsafe.Pointer) error {
+// openHIDSlot opens device slot (1-based) and registers its input event,
+// like interception_create_context.
+func openHIDSlot(slot int) (hidDevice, error) {
+	h, err := hidCreateFile(fmt.Sprintf(`\\.\interception%02d`, slot-1))
+	if err != nil {
+		return hidDevice{}, fmt.Errorf("%w: %v", ErrDriverNotInstalled, err)
+	}
+	ev, err := windows.CreateEvent(nil, 1, 0, nil)
+	if err != nil {
+		return hidDevice{}, errors.Join(err, windows.CloseHandle(h))
+	}
+	d := hidDevice{slot: slot, handle: h, event: ev}
+	reg := [2]windows.Handle{ev}
+	if _, err := hidIoctl(h, ioctlSetEvent, unsafe.Pointer(&reg), uint32(unsafe.Sizeof(reg)), nil, 0); err != nil {
+		return hidDevice{}, errors.Join(fmt.Errorf("robotgo: interception set event on device %d: %w", slot, err), d.close())
+	}
+	return d, nil
+}
+
+// hidPresent reports whether a real device is attached to d's slot.
+func hidPresent(d hidDevice) bool {
+	var buf [512]byte
+	n, err := hidIoctl(d.handle, ioctlGetHardwareID, nil, 0, unsafe.Pointer(&buf[0]), uint32(len(buf)))
+	return err == nil && n > 0
+}
+
+// hidWrite sends one raw stroke of size bytes to the keyboard or mouse.
+func hidWrite(keyboard bool, raw unsafe.Pointer, size uint32) error {
 	hid.mu.Lock()
 	defer hid.mu.Unlock()
-	if hid.ctx == 0 {
+	if !hid.open {
 		if err := hidOpen(); err != nil {
 			return err
 		}
 	}
-	dev := hid.mouse
+	d := hid.mouse
 	if keyboard {
-		dev = hid.keyboard
+		d = hid.keyboard
 	}
-	// interception_send returns the number of strokes sent and sets no
-	// LastError, so a zero result is reported with the device instead.
-	if n, _, _ := hid.send.Call(hid.ctx, dev, uintptr(stroke), 1); n == 0 {
-		return fmt.Errorf("robotgo: interception_send to device %d failed", dev)
+	n, err := hidIoctl(d.handle, ioctlWrite, raw, size, nil, 0)
+	if err != nil {
+		return fmt.Errorf("robotgo: interception write to device %d: %w", d.slot, err)
+	}
+	// The driver reports the bytes it consumed; less than one stroke is a failure.
+	if n < size {
+		return fmt.Errorf("robotgo: interception write to device %d failed", d.slot)
 	}
 	return nil
 }
