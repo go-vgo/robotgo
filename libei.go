@@ -1,5 +1,5 @@
-//go:build linux && libei
-// +build linux,libei
+//go:build linux && libei && !x11
+// +build linux,libei,!x11
 
 // Copyright (c) 2016-2026 AtomAI, All rights reserved.
 //

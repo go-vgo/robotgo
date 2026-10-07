@@ -13,18 +13,36 @@
 // program (zenity, else xmessage), shared by the pure-Go Linux backends.
 package dialog
 
-import "os/exec"
+import (
+	"os/exec"
+	"strings"
+)
+
+// xmessageEscape escapes the xmessage -buttons separators "," and ":" and
+// its escape char "\\", so a label never splits or remaps the exit codes.
+var xmessageEscape = strings.NewReplacer(`\`, `\\`, `,`, `\,`, `:`, `\:`).Replace
 
 // command builds the alert command line with the first helper lookPath finds;
-// nil when none is installed.
+// an empty cancel omits the cancel button, nil when no helper is installed.
+// Labels and the message are kept as plain text: zenity gets --no-markup and
+// xmessage reads msg from stdin (see Show) so a leading "-" is not an option.
 func command(lookPath func(string) (string, error), title, msg, ok, cancel string) []string {
 	if p, err := lookPath("zenity"); err == nil {
-		return []string{p, "--question", "--title", title, "--text", msg,
+		if cancel == "" {
+			return []string{p, "--info", "--no-markup", "--title", title, "--text", msg,
+				"--ok-label", ok}
+		}
+		return []string{p, "--question", "--no-markup", "--title", title, "--text", msg,
 			"--ok-label", ok, "--cancel-label", cancel}
 	}
 	if p, err := lookPath("xmessage"); err == nil {
+		buttons := xmessageEscape(ok) + ":0"
+		if cancel != "" {
+			buttons += "," + xmessageEscape(cancel) + ":1"
+		}
+		// -default matches the unescaped button name
 		return []string{p, "-center", "-title", title,
-			"-buttons", ok + ":0," + cancel + ":1", "-default", ok, msg}
+			"-buttons", buttons, "-default", ok, "-file", "-"}
 	}
 	return nil
 }
@@ -36,6 +54,8 @@ func Show(title, msg, ok, cancel string) bool {
 	if args == nil {
 		return false
 	}
+	cmd := exec.Command(args[0], args[1:]...)
+	cmd.Stdin = strings.NewReader(msg) // xmessage -file -; zenity ignores it
 	// both helpers exit 0 for the ok button only
-	return exec.Command(args[0], args[1:]...).Run() == nil
+	return cmd.Run() == nil
 }

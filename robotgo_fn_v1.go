@@ -11,7 +11,8 @@
 
 package robotgo
 
-import "github.com/vcaesar/tt"
+// log, not tt.Drop: tt pulls testing and net/http into every pure-Go binary
+import "log"
 
 // Deprecated: use the Move(),
 //
@@ -58,6 +59,6 @@ func MouseClick(args ...interface{}) {
 //
 // This function will be removed in version v1.0.0
 func TypeStringDelayed(str string, delay int) {
-	tt.Drop("TypeStringDelayed", "TypeStrDelay")
+	log.Println("robotgo: TypeStringDelayed is deprecated, use TypeStrDelay")
 	TypeStrDelay(str, delay) //nolint:errcheck // v1 signature has no error result
 }

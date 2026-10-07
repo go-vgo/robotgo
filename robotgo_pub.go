@@ -164,6 +164,10 @@ func Scaled(x int, displayId ...int) int {
 func MoveScale(x, y int, displayId ...int) (int, int) {
 	if Scale || runtime.GOOS == "windows" {
 		f := ScaleF()
+		// on Windows ScaleF takes a window handle, not a display id
+		if runtime.GOOS != "windows" {
+			f = ScaleF(displayId...)
+		}
 		x, y = Scaled1(x, f), Scaled1(y, f)
 	}
 
@@ -199,15 +203,25 @@ func MoveClick(x, y int, args ...interface{}) error {
 
 // MouseDown send mouse down event
 func MouseDown(key ...interface{}) error {
-	return Toggle(key...)
+	return Toggle(mouseToggleArgs(key, "down")...)
 }
 
 // MouseUp send mouse up event
 func MouseUp(key ...interface{}) error {
-	if len(key) <= 0 {
-		key = append(key, "left")
+	return Toggle(mouseToggleArgs(key, "up")...)
+}
+
+// mouseToggleArgs builds the Toggle args (button, dir, rest...) so dir always
+// wins over a caller-supplied key[1]; button defaults to "left".
+func mouseToggleArgs(key []interface{}, dir string) []interface{} {
+	args := []interface{}{"left", dir}
+	if len(key) > 0 {
+		args[0] = key[0]
 	}
-	return Toggle(append(key, "up")...)
+	if len(key) > 2 {
+		args = append(args, key[2:]...)
+	}
+	return args
 }
 
 // ScrollDir scroll the mouse with direction to (x, "up")

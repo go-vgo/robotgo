@@ -1,9 +1,9 @@
 // Copyright (c) 2016-2026 AtomAI, All rights reserved.
 //
-// See COPYRIGHT file at top-level directory of this distribution and at
+// See the COPYRIGHT file at the top-level directory of this distribution and at
 // https://github.com/go-vgo/robotgo/blob/master/LICENSE
 //
-// Licensed under Apache License, Version 2.0 <LICENSE-APACHE or
+// Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
 // http://www.apache.org/licenses/LICENSE-2.0>
 //
 // This file may not be copied, modified, or distributed
@@ -126,6 +126,16 @@ func TestMicroSleep(t *testing.T) {
 	start := time.Now()
 	MicroSleep(2.5)
 	tt.True(t, time.Since(start) >= 2500*time.Microsecond)
+}
+
+// MouseDown must send down even when key[1] says "up" (and vice versa).
+func TestMouseToggleArgs(t *testing.T) {
+	tt.Equal(t, []interface{}{"left", "down"}, mouseToggleArgs(nil, "down"))
+	tt.Equal(t, []interface{}{"right", "up"}, mouseToggleArgs([]interface{}{"right"}, "up"))
+	tt.Equal(t, []interface{}{"left", "down"},
+		mouseToggleArgs([]interface{}{"left", "up"}, "down"))
+	tt.Equal(t, []interface{}{"left", "up", "sleep"},
+		mouseToggleArgs([]interface{}{"left", "down", "sleep"}, "up"))
 }
 
 func TestMoveScaleIdentity(t *testing.T) {

@@ -23,7 +23,7 @@ import (
 	"unicode/utf8"
 )
 
-// GetPxColor get the pixel color as a 0xRRGGBB value, 0 on failure
+// GetPxColor returns the pixel color as a 0xRRGGBB value, or 0 on failure.
 func GetPxColor(x, y int, displayId ...int) uint32 {
 	v, err := strconv.ParseUint(GetPixelColor(x, y, displayId...), 16, 32)
 	if err != nil {
@@ -32,7 +32,7 @@ func GetPxColor(x, y int, displayId ...int) uint32 {
 	return uint32(v)
 }
 
-// RgbToHex trans rgb to a 0xRRGGBB hex value
+// RgbToHex converts RGB bytes to a 0xRRGGBB value.
 func RgbToHex(r, g, b uint8) uint32 {
 	return uint32(r)<<16 | uint32(g)<<8 | uint32(b)
 }

@@ -15,6 +15,7 @@
 package darwin
 
 import (
+	"strings"
 	"sync"
 
 	"github.com/ebitengine/purego"
@@ -69,7 +70,10 @@ func Alert(title, msg, ok, cancel string) bool {
 	if !loadAlert() {
 		return false
 	}
-	refs := []uintptr{cfStr(title), cfStr(msg), cfStr(ok), cfStr(cancel)}
+	// the header must be non-NULL: always create it, from valid UTF-8
+	hdr := cfStringCreateWithCString(0, strings.ToValidUTF8(title, "\uFFFD"), cfStringEncodingUTF8)
+	refs := []uintptr{hdr,
+		cfStr(msg), cfStr(ok), cfStr(cancel)}
 	defer func() {
 		for _, r := range refs {
 			if r != 0 {
