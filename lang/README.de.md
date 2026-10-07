@@ -32,6 +32,7 @@ Ich entwickle jetzt [Codg](https://github.com/vcaesar/codg), ein einfach zu bedi
 ## Inhalt
 
 - [Dokumentation](#docs)
+- [Spenden](#donate)
 - [Bindings](#binding)
 - [Voraussetzungen](#requirements)
 - [Cgo-freie Builds](#cgo-free-builds)
@@ -48,6 +49,10 @@ Ich entwickle jetzt [Codg](https://github.com/vcaesar/codg), ein einfach zu bedi
 
 - [GoDoc](https://godoc.org/github.com/go-vgo/robotgo) <br>
 - [API-Dokumentation](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) (Veraltet, nicht aktualisiert)
+
+## Donate
+
+Spender, Sponsoren und andere, Kontakt: vzvway@gmail.com
 
 ## Binding
 
@@ -315,11 +320,13 @@ func main() {
   robotgo.Toggle("left", "up")
 
   // Rückgabefehler prüfen, ungültige Argumente liefern einen Fehler
-  if err := robotgo.Click("left", "double"); err != nil {
-    fmt.Println("robotgo.Click error:", err)
-  }
   if err := robotgo.ScrollDir(10, "forward"); err != nil {
     fmt.Println("robotgo.ScrollDir error:", err)
+  }
+
+  // Backends unterscheiden sich: Cgo liefert einen Fehler, Pure Go macht einen einfachen Linksklick und liefert nil
+  if err := robotgo.Click("left", "double"); err != nil {
+    fmt.Println("robotgo.Click error:", err)
   }
 
   // MoveSmoothRelative meldet eine fehlgeschlagene sanfte Bewegung als ErrSmoothMove

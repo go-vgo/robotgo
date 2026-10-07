@@ -32,6 +32,7 @@ Ahora estoy construyendo [Codg](https://github.com/vcaesar/codg), un sistema de 
 ## Contenido
 
 - [Documentación](#docs)
+- [Donar](#donate)
 - [Bindings](#binding)
 - [Requisitos](#requirements)
 - [Compilaciones sin Cgo](#cgo-free-builds)
@@ -48,6 +49,10 @@ Ahora estoy construyendo [Codg](https://github.com/vcaesar/codg), un sistema de 
 
 - [GoDoc](https://godoc.org/github.com/go-vgo/robotgo) <br>
 - [Documentación de la API](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) (Obsoleta, sin actualizar)
+
+## Donate
+
+Donantes, patrocinadores u otros, contacto: vzvway@gmail.com
 
 ## Binding
 
@@ -313,11 +318,13 @@ func main() {
   robotgo.Toggle("left", "up")
 
   // Compruebe los errores devueltos, los argumentos no válidos devuelven un error
-  if err := robotgo.Click("left", "double"); err != nil {
-    fmt.Println("robotgo.Click error:", err)
-  }
   if err := robotgo.ScrollDir(10, "forward"); err != nil {
     fmt.Println("robotgo.ScrollDir error:", err)
+  }
+
+  // Depende del backend: Cgo devuelve un error, Go puro hace un clic izquierdo simple y devuelve nil
+  if err := robotgo.Click("left", "double"); err != nil {
+    fmt.Println("robotgo.Click error:", err)
   }
 
   // MoveSmoothRelative informa un movimiento suave fallido como ErrSmoothMove

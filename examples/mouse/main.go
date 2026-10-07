@@ -98,8 +98,12 @@ func mouseErr() {
 	checkErr("robotgo.Move", robotgo.Move(100, 200))
 
 	// invalid arguments are reported as errors
-	checkErr("robotgo.Click", robotgo.Click("left", "double"))
 	checkErr("robotgo.ScrollDir", robotgo.ScrollDir(10, "forward"))
+
+	// backends differ: Cgo returns an error (second arg must be a bool),
+	// pure-Go returns nil and does a single left click ("double" is read
+	// as an unknown button name, which falls back to "left")
+	checkErr("robotgo.Click", robotgo.Click("left", "double"))
 
 	// MoveSmooth returns a bool, MoveSmoothRelative wraps it as ErrSmoothMove
 	err := robotgo.MoveSmoothRelative(10, -10)

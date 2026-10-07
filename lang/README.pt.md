@@ -32,6 +32,7 @@ O [RobotGo-Pro](https://github.com/vcaesar/robotgo-pro) oferece versões em Java
 ## Índice
 
 - [Documentação](#docs)
+- [Doar](#donate)
 - [Binding](#binding)
 - [Requisitos](#requirements)
 - [Builds sem Cgo](#cgo-free-builds)
@@ -48,6 +49,10 @@ O [RobotGo-Pro](https://github.com/vcaesar/robotgo-pro) oferece versões em Java
 
 - [GoDoc](https://godoc.org/github.com/go-vgo/robotgo) <br>
 - [Documentação da API](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) (Obsoleta, sem atualizações)
+
+## Donate
+
+Doadores, patrocinadores ou outros, contato: vzvway@gmail.com
 
 ## Binding
 
@@ -315,11 +320,13 @@ func main() {
   robotgo.Toggle("left", "up")
 
   // Verifique os erros retornados, argumentos inválidos retornam um erro
-  if err := robotgo.Click("left", "double"); err != nil {
-    fmt.Println("robotgo.Click error:", err)
-  }
   if err := robotgo.ScrollDir(10, "forward"); err != nil {
     fmt.Println("robotgo.ScrollDir error:", err)
+  }
+
+  // Depende do backend: Cgo retorna um erro, Go puro faz um clique esquerdo simples e retorna nil
+  if err := robotgo.Click("left", "double"); err != nil {
+    fmt.Println("robotgo.Click error:", err)
   }
 
   // MoveSmoothRelative informa um movimento suave com falha como ErrSmoothMove

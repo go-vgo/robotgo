@@ -32,6 +32,7 @@ RobotGo는 Mac, Windows, Linux를 지원하며, arm64와 x86-amd64 아키텍처�
 ## 목차
 
 - [문서](#docs)
+- [후원](#donate)
 - [바인딩](#binding)
 - [요구 사항](#requirements)
 - [Cgo 없는 빌드](#cgo-free-builds)
@@ -48,6 +49,10 @@ RobotGo는 Mac, Windows, Linux를 지원하며, arm64와 x86-amd64 아키텍처�
 
 - [GoDoc](https://godoc.org/github.com/go-vgo/robotgo) <br>
 - [API 문서](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) (지원 중단, 더 이상 업데이트되지 않음)
+
+## Donate
+
+기부자, 후원자 및 기타 문의: vzvway@gmail.com
 
 ## Binding
 
@@ -305,11 +310,13 @@ func main() {
   robotgo.Toggle("left", "up")
 
   // 반환된 오류를 확인합니다. 잘못된 인자는 오류를 반환합니다
-  if err := robotgo.Click("left", "double"); err != nil {
-    fmt.Println("robotgo.Click error:", err)
-  }
   if err := robotgo.ScrollDir(10, "forward"); err != nil {
     fmt.Println("robotgo.ScrollDir error:", err)
+  }
+
+  // 백엔드마다 다릅니다: Cgo는 오류를 반환하고, 순수 Go는 왼쪽 단일 클릭 후 nil을 반환합니다
+  if err := robotgo.Click("left", "double"); err != nil {
+    fmt.Println("robotgo.Click error:", err)
   }
 
   // MoveSmoothRelative는 부드러운 이동 실패를 ErrSmoothMove로 보고합니다

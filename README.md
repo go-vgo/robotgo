@@ -35,6 +35,7 @@ I build [Codg](https://github.com/vcaesar/codg) now, Easy code and work AI agent
 ## Contents
 
 - [Docs](#docs)
+- [Donate](#Donate)
 - [Binding](#binding)
 - [Requirements](#requirements)
 - [Cgo-free Builds](#cgo-free-builds)
@@ -51,6 +52,10 @@ I build [Codg](https://github.com/vcaesar/codg) now, Easy code and work AI agent
 
 - [GoDoc](https://godoc.org/github.com/go-vgo/robotgo) <br>
 - [API Docs](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) (Deprecated, no updated)
+
+## Donate
+
+Donors and sponsors, or others, Contact: vzvway@gmail.com
 
 ## Binding
 
@@ -311,11 +316,13 @@ func main() {
   robotgo.Toggle("left", "up")
 
   // Check the returned errors, invalid arguments return an error
-  if err := robotgo.Click("left", "double"); err != nil {
-    fmt.Println("robotgo.Click error:", err)
-  }
   if err := robotgo.ScrollDir(10, "forward"); err != nil {
     fmt.Println("robotgo.ScrollDir error:", err)
+  }
+
+  // Backends differ: Cgo returns an error, pure Go does a single left click and returns nil
+  if err := robotgo.Click("left", "double"); err != nil {
+    fmt.Println("robotgo.Click error:", err)
   }
 
   // MoveSmoothRelative reports a failed smooth move as ErrSmoothMove
