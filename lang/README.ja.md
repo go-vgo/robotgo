@@ -32,6 +32,7 @@ RobotGo は Mac、Windows、Linux に対応しており、arm64 および x86-am
 ## 目次
 
 - [ドキュメント](#docs)
+- [寄付](#donate)
 - [バインディング](#binding)
 - [動作環境](#requirements)
 - [Cgo 不要ビルド](#cgo-free-builds)
@@ -48,6 +49,10 @@ RobotGo は Mac、Windows、Linux に対応しており、arm64 および x86-am
 
 - [GoDoc](https://godoc.org/github.com/go-vgo/robotgo) <br>
 - [API ドキュメント](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md)（非推奨、更新されていません）
+
+## Donate
+
+寄付者・スポンサー・その他のお問い合わせ: vzvway@gmail.com
 
 ## Binding
 
@@ -315,11 +320,13 @@ func main() {
   robotgo.Toggle("left", "up")
 
   // 戻り値のエラーを確認する。不正な引数はエラーを返す
-  if err := robotgo.Click("left", "double"); err != nil {
-    fmt.Println("robotgo.Click error:", err)
-  }
   if err := robotgo.ScrollDir(10, "forward"); err != nil {
     fmt.Println("robotgo.ScrollDir error:", err)
+  }
+
+  // バックエンドで動作が異なる: Cgo はエラーを返し、純 Go は左シングルクリックして nil を返す
+  if err := robotgo.Click("left", "double"); err != nil {
+    fmt.Println("robotgo.Click error:", err)
   }
 
   // MoveSmoothRelative はスムーズ移動の失敗を ErrSmoothMove として返す

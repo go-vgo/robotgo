@@ -32,6 +32,7 @@ RobotGo 支援 Mac、Windows 和 Linux；並且支援 arm64 與 x86-amd64 架構
 ## 目錄
 
 - [文件](#docs)
+- [捐贈](#donate)
 - [綁定](#binding)
 - [環境需求](#requirements)
 - [無 Cgo 建置](#cgo-free-builds)
@@ -48,6 +49,10 @@ RobotGo 支援 Mac、Windows 和 Linux；並且支援 arm64 與 x86-amd64 架構
 
 - [GoDoc](https://godoc.org/github.com/go-vgo/robotgo) <br>
 - [API 文件](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md)（已棄用，不再更新）
+
+## Donate
+
+捐贈者、贊助商或其他事宜，請聯絡：vzvway@gmail.com
 
 ## Binding
 
@@ -302,11 +307,13 @@ func main() {
   robotgo.Toggle("left", "up")
 
   // 檢查回傳的錯誤, 無效參數會回傳錯誤
-  if err := robotgo.Click("left", "double"); err != nil {
-    fmt.Println("robotgo.Click error:", err)
-  }
   if err := robotgo.ScrollDir(10, "forward"); err != nil {
     fmt.Println("robotgo.ScrollDir error:", err)
+  }
+
+  // 不同後端行為不同: Cgo 回傳錯誤, 純 Go 執行一次左鍵單擊並回傳 nil
+  if err := robotgo.Click("left", "double"); err != nil {
+    fmt.Println("robotgo.Click error:", err)
   }
 
   // MoveSmoothRelative 將平滑移動失敗回報為 ErrSmoothMove

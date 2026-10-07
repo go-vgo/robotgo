@@ -32,6 +32,7 @@ RobotGo поддерживает Mac, Windows и Linux; а также подде
 ## Содержание
 
 - [Документация](#docs)
+- [Пожертвования](#donate)
 - [Привязки](#binding)
 - [Требования](#requirements)
 - [Сборки без Cgo](#cgo-free-builds)
@@ -48,6 +49,10 @@ RobotGo поддерживает Mac, Windows и Linux; а также подде
 
 - [GoDoc](https://godoc.org/github.com/go-vgo/robotgo) <br>
 - [Документация API](https://github.com/go-vgo/robotgo/blob/master/docs/doc.md) (устарела, больше не обновляется)
+
+## Donate
+
+Жертвователям, спонсорам и другим, контакт: vzvway@gmail.com
 
 ## Binding
 
@@ -317,11 +322,13 @@ func main() {
   robotgo.Toggle("left", "up")
 
   // Проверяйте возвращаемые ошибки, неверные аргументы возвращают ошибку
-  if err := robotgo.Click("left", "double"); err != nil {
-    fmt.Println("robotgo.Click error:", err)
-  }
   if err := robotgo.ScrollDir(10, "forward"); err != nil {
     fmt.Println("robotgo.ScrollDir error:", err)
+  }
+
+  // Зависит от бэкенда: Cgo возвращает ошибку, чистый Go делает одиночный левый клик и возвращает nil
+  if err := robotgo.Click("left", "double"); err != nil {
+    fmt.Println("robotgo.Click error:", err)
   }
 
   // MoveSmoothRelative сообщает о неудачном плавном перемещении как ErrSmoothMove
