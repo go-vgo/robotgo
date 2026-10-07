@@ -12,6 +12,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/go-vgo/robotgo"
@@ -81,6 +82,42 @@ func toggleAndScroll() {
 	robotgo.Toggle("right", "up")
 }
 
+// checkErr prints an error, telling unsupported operations apart
+func checkErr(name string, err error) {
+	switch {
+	case err == nil:
+	case errors.Is(err, robotgo.ErrNotSupported):
+		fmt.Println(name, "is not supported by this backend")
+	default:
+		fmt.Println(name, "error:", err)
+	}
+}
+
+func mouseErr() {
+	// the mouse APIs return an error, check it instead of ignoring it
+	checkErr("robotgo.Move", robotgo.Move(100, 200))
+
+	// invalid arguments are reported as errors
+	checkErr("robotgo.Click", robotgo.Click("left", "double"))
+	checkErr("robotgo.ScrollDir", robotgo.ScrollDir(10, "forward"))
+
+	// MoveSmooth returns a bool, MoveSmoothRelative wraps it as ErrSmoothMove
+	err := robotgo.MoveSmoothRelative(10, -10)
+	if errors.Is(err, robotgo.ErrSmoothMove) {
+		fmt.Println("smooth move failed:", err)
+	}
+
+	// release the button even when the drag fails
+	if err := robotgo.MouseDown("left"); err != nil {
+		checkErr("robotgo.MouseDown", err)
+		return
+	}
+	defer func() {
+		checkErr("robotgo.MouseUp", robotgo.MouseUp("left"))
+	}()
+	checkErr("robotgo.MoveRelative", robotgo.MoveRelative(20, 20))
+}
+
 func mouse() {
 	////////////////////////////////////////////////////////////////////////////////
 	// Control the mouse
@@ -93,6 +130,8 @@ func mouse() {
 	get()
 
 	toggleAndScroll()
+
+	mouseErr()
 }
 
 func main() {
