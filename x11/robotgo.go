@@ -22,7 +22,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 )
 
 // Version is the robotgo-x11 backend version string.
@@ -53,16 +52,6 @@ type Nps struct {
 // GetVersion returns the robotgo-x11 version.
 func GetVersion() string {
 	return Version
-}
-
-// Sleep sleeps for tm seconds.
-func Sleep(tm int) {
-	time.Sleep(time.Duration(tm) * time.Second)
-}
-
-// MilliSleep sleeps for tm milliseconds.
-func MilliSleep(tm int) {
-	time.Sleep(time.Duration(tm) * time.Millisecond)
 }
 
 // --- Image helpers (pure Go, no X11 dependency) ---

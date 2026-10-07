@@ -40,6 +40,60 @@ func KeyUp(key string, args ...interface{}) error {
 	return KeyToggle(key, arr...)
 }
 
+// TypeStrDelay type string width delay
+//
+// Deprecated: use the TypeDelay()
+func TypeStrDelay(str string, delay int) error {
+	return TypeDelay(str, delay)
+}
+
+// TypeDelay type string with delayed
+// And you can use robotgo.KeySleep = 100 to delayed not this function
+func TypeDelay(str string, delay int) error {
+	err := TypeStr(str)
+	MilliSleep(delay)
+	return err
+}
+
+// CharCodeAt char code at utf-8
+func CharCodeAt(s string, n int) rune {
+	i := 0
+	for _, r := range s {
+		if i == n {
+			return r
+		}
+		i++
+	}
+
+	return 0
+}
+
+// ToUC trans string to unicode []string
+//
+// Runes outside ASCII become the Xlib keysym name ("U4e16", "U1F600").
+func ToUC(text string) []string {
+	var uc []string
+
+	for _, r := range text {
+		textQ := strconv.QuoteToASCII(string(r))
+		textUnQ := textQ[1 : len(textQ)-1]
+
+		// QuoteToASCII spells BMP runes as \uXXXX and the rest as \UXXXXXXXX;
+		// Xlib wants a plain U prefix for both.
+		st := strings.Replace(textUnQ, "\\u", "U", -1)
+		st = strings.Replace(st, "\\U", "U", -1)
+		if st == "\\\\" {
+			st = "\\"
+		}
+		if st == `\"` {
+			st = `"`
+		}
+		uc = append(uc, st)
+	}
+
+	return uc
+}
+
 // getToggleArgs splits args into the pid (the first int, at any position, so
 // KeyUp("a", pid) keeps it after the prepended "up") and the key array;
 // string and []string args are flattened in order, other types are skipped.

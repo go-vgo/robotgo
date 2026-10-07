@@ -80,6 +80,7 @@ robotgo/
 ├── x11/        # pure-Go X11 backend (xgb/xgbutil); //go:build linux
 ├── wayland/    # pure-Go wlroots Wayland backend; internal/protocols/wlr_{foreign_toplevel,screencopy,virtual_keyboard,virtual_pointer}; libei/ (empty)
 ├── libei/      # pure-Go libei/xdg-portal backend (GNOME/KDE); //go:build linux
+├── pub/        # pure-Go shared config/helpers: KeySleep, MouseSleep, DisplayID, MilliSleep, Sleep, SetDelay
 ├── mcp/        # MCP server package (mcp.go, a bare `package mcp` stub)
 ├── cuse/       # computer/, browser/, gui/ — empty placeholder dirs
 ├── event/      # C headers for android/ios global hooks (event_c.h)

@@ -21,7 +21,15 @@ import (
 	"errors"
 	"strconv"
 	"unicode/utf8"
+
+	"github.com/go-vgo/robotgo/pub"
 )
+
+// init syncs the robotgo_pub.go config into pub, which every pure-Go backend
+// reads, once; SetDelay keeps the delays in sync afterwards.
+func init() {
+	pub.KeySleep, pub.MouseSleep, pub.DisplayID = KeySleep, MouseSleep, DisplayID
+}
 
 // GetPxColor returns the pixel color as a 0xRRGGBB value, or 0 on failure.
 func GetPxColor(x, y int, displayId ...int) uint32 {

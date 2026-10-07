@@ -20,14 +20,12 @@ import (
 	"time"
 	"unsafe"
 
+	"github.com/go-vgo/robotgo/pub"
 	"github.com/tailscale/win"
 )
 
 // WheelDelta is one notch of mouse-wheel movement (WHEEL_DELTA).
 const wheelDelta = 120
-
-// MouseSleep is the global mouse delay in milliseconds.
-var MouseSleep = 0
 
 // sendMouseInput dispatches a single synthesized mouse event.
 func sendMouseInput(flags, mouseData uint32, dx, dy int32) error {
@@ -114,7 +112,7 @@ func MoveSmooth(x, y int, args ...interface{}) bool {
 		if setCursorPos(int(math.Round(cx)), int(math.Round(cy))) != nil {
 			return false
 		}
-		time.Sleep(time.Duration(sleepMs) * time.Millisecond)
+		pub.MilliSleep(sleepMs)
 	}
 	return true
 }
@@ -216,9 +214,7 @@ func Scroll(x, y int, args ...int) error {
 			return err
 		}
 	}
-	if msDelay > 0 {
-		time.Sleep(time.Duration(msDelay) * time.Millisecond)
-	}
+	pub.MilliSleep(msDelay)
 	return nil
 }
 
@@ -266,9 +262,9 @@ func ScrollSmooth(to int, args ...int) error {
 		if err := Scroll(tox, to); err != nil {
 			return err
 		}
-		MilliSleep(tm)
+		pub.MilliSleep(tm)
 	}
-	MilliSleep(MouseSleep)
+	pub.MilliSleep(pub.MouseSleep)
 	return nil
 }
 
@@ -319,7 +315,5 @@ func GetMousePos() (int, int) {
 }
 
 func mouseDelay() {
-	if MouseSleep > 0 {
-		time.Sleep(time.Duration(MouseSleep) * time.Millisecond)
-	}
+	pub.MilliSleep(pub.MouseSleep)
 }

@@ -17,6 +17,8 @@ package libei
 import (
 	"fmt"
 	"time"
+
+	"github.com/go-vgo/robotgo/pub"
 )
 
 // Linux evdev button codes (input-event-codes.h). The RemoteDesktop portal's
@@ -26,9 +28,6 @@ const (
 	btnRight  = 0x111 // BTN_RIGHT
 	btnMiddle = 0x112 // BTN_MIDDLE
 )
-
-// MouseSleep is the global mouse delay in milliseconds.
-var MouseSleep = 0
 
 // cornerReset is the relative delta used to park the pointer in the top-left
 // corner when its position is unknown; larger than any screen.
@@ -160,9 +159,7 @@ func moveSmooth(x, y int, args ...interface{}) (bool, error) {
 		if err != nil {
 			return false, err
 		}
-		if sleepMs > 0 {
-			time.Sleep(time.Duration(sleepMs) * time.Millisecond)
-		}
+		pub.MilliSleep(sleepMs)
 	}
 	cx, cy, _ := c.position()
 	return cx == x && cy == y, nil
@@ -270,9 +267,7 @@ func Scroll(x, y int, args ...int) error {
 			return err
 		}
 	}
-	if msDelay > 0 {
-		time.Sleep(time.Duration(msDelay) * time.Millisecond)
-	}
+	pub.MilliSleep(msDelay)
 	return nil
 }
 
@@ -320,9 +315,9 @@ func ScrollSmooth(to int, args ...int) error {
 		if err := Scroll(tox, to); err != nil {
 			return err
 		}
-		MilliSleep(tm)
+		pub.MilliSleep(tm)
 	}
-	MilliSleep(MouseSleep)
+	pub.MilliSleep(pub.MouseSleep)
 	return nil
 }
 
@@ -405,7 +400,5 @@ func resolveButton(btn string) int32 {
 }
 
 func mouseDelay() {
-	if MouseSleep > 0 {
-		time.Sleep(time.Duration(MouseSleep) * time.Millisecond)
-	}
+	pub.MilliSleep(pub.MouseSleep)
 }

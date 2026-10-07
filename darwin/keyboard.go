@@ -18,15 +18,12 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-	"time"
 	"unicode/utf16"
 	"unicode/utf8"
 
+	"github.com/go-vgo/robotgo/pub"
 	"github.com/vcaesar/keycode"
 )
-
-// KeySleep is the global keyboard delay in milliseconds.
-var KeySleep = 10
 
 // letterCodes maps a-z to their macOS ANSI virtual key codes (kVK_ANSI_*).
 var letterCodes = map[rune]uint16{
@@ -232,7 +229,7 @@ func KeyTap(key string, args ...interface{}) error {
 		if err := sendMediaKey(mc, true); err != nil {
 			return err
 		}
-		time.Sleep(time.Duration(KeySleep) * time.Millisecond)
+		pub.MilliSleep(pub.KeySleep)
 		return sendMediaKey(mc, false)
 	}
 
@@ -243,7 +240,7 @@ func KeyTap(key string, args ...interface{}) error {
 	flags |= autoFlags
 
 	err := sendKeyCode(code, true, flags, pid)
-	time.Sleep(time.Duration(KeySleep) * time.Millisecond)
+	pub.MilliSleep(pub.KeySleep)
 	// The key up is always sent so nothing is left stuck down.
 	if upErr := sendKeyCode(code, false, flags, pid); err == nil {
 		err = upErr
@@ -354,9 +351,7 @@ func Type(str string, args ...int) int {
 			return n
 		}
 		n++
-		if KeySleep > 0 {
-			time.Sleep(time.Duration(KeySleep) * time.Millisecond)
-		}
+		pub.MilliSleep(pub.KeySleep)
 	}
 	return n
 }
@@ -369,10 +364,10 @@ func TypeStr(str string, args ...int) error {
 
 // TypeDelay types a string with a per-character delay in milliseconds.
 func TypeDelay(str string, delay int) error {
-	old := KeySleep
-	KeySleep = delay
+	old := pub.KeySleep
+	pub.KeySleep = delay
 	n := Type(str)
-	KeySleep = old
+	pub.KeySleep = old
 	return typeErr(n, str)
 }
 
@@ -382,16 +377,6 @@ func typeErr(n int, str string) error {
 		return fmt.Errorf("robotgo: typed %d of %d characters", n, total)
 	}
 	return nil
-}
-
-// SetDelay sets both KeySleep and MouseSleep.
-func SetDelay(d ...int) {
-	delay := 10
-	if len(d) > 0 {
-		delay = d[0]
-	}
-	KeySleep = delay
-	MouseSleep = delay
 }
 
 // CmdCtrl returns "cmd" on macOS.

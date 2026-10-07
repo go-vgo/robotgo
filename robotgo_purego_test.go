@@ -17,6 +17,8 @@ package robotgo
 import (
 	"strconv"
 	"testing"
+
+	"github.com/go-vgo/robotgo/pub"
 )
 
 func TestIs64Bit(t *testing.T) {
@@ -66,5 +68,21 @@ func TestRgbToHex(t *testing.T) {
 	}
 	if got := PadHex(RgbToHex(0, 0, 1)); got != "000001" {
 		t.Errorf("PadHex(RgbToHex(0, 0, 1)): got %q", got)
+	}
+}
+
+// TestDelaySync checks pub starts with the robotgo_pub.go config and
+// SetDelay updates both.
+func TestDelaySync(t *testing.T) {
+	if pub.DisplayID != DisplayID {
+		t.Fatalf("pub.DisplayID = %d, want %d", pub.DisplayID, DisplayID)
+	}
+
+	k, m := KeySleep, MouseSleep
+	t.Cleanup(func() { SetDelay(k); MouseSleep, pub.MouseSleep = m, m })
+
+	SetDelay(37)
+	if pub.KeySleep != 37 || pub.MouseSleep != 37 {
+		t.Fatalf("pub KeySleep, MouseSleep = %d, %d, want 37, 37", pub.KeySleep, pub.MouseSleep)
 	}
 }
