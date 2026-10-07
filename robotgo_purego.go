@@ -23,10 +23,18 @@ import (
 	"unicode/utf8"
 )
 
-// GetLocationColor get the color of the pixel at the mouse location
-func GetLocationColor(displayId ...int) string {
-	x, y := Location()
-	return GetPixelColor(x, y, displayId...)
+// GetPxColor get the pixel color as a 0xRRGGBB value, 0 on failure
+func GetPxColor(x, y int, displayId ...int) uint32 {
+	v, err := strconv.ParseUint(GetPixelColor(x, y, displayId...), 16, 32)
+	if err != nil {
+		return 0
+	}
+	return uint32(v)
+}
+
+// RgbToHex trans rgb to a 0xRRGGBB hex value
+func RgbToHex(r, g, b uint8) uint32 {
+	return uint32(r)<<16 | uint32(g)<<8 | uint32(b)
 }
 
 // CaptureGo capture the screen and return bitmap(go struct);

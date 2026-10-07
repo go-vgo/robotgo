@@ -556,3 +556,20 @@ func TestTypeErr(t *testing.T) {
 		t.Errorf("TypeStr(empty): got %v, want nil", err)
 	}
 }
+
+func TestAlertLoad(t *testing.T) {
+	if !loaded {
+		t.Skip("frameworks not loaded")
+	}
+	if !loadAlert() {
+		t.Fatal("CFUserNotificationDisplayAlert not resolved")
+	}
+	if cfStr("") != 0 {
+		t.Error(`cfStr(""): want 0 so the button is omitted`)
+	}
+	s := cfStr("ok")
+	if s == 0 {
+		t.Fatal(`cfStr("ok"): got 0`)
+	}
+	cfRelease(s)
+}

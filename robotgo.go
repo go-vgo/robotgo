@@ -66,8 +66,6 @@ import (
 )
 
 type (
-	// Map a map[string]interface{}
-	Map map[string]interface{}
 	// CHex define CHex as c rgb Hex type (C.MMRGBHex)
 	CHex C.MMRGBHex
 	// CBitmap define CBitmap as C.MMBitmapRef type
@@ -75,13 +73,6 @@ type (
 	// Handle define window Handle as C.MData type
 	Handle C.MData
 )
-
-// Deprecated: use the MilliSleep(),
-//
-// MicroSleep time C.microsleep(tm)
-func MicroSleep(tm float64) {
-	C.microsleep(C.double(tm))
-}
 
 // GoString trans C.char to string
 func GoString(char *C.char) string {
@@ -157,17 +148,6 @@ func GetPixelColor(x, y int, displayId ...int) string {
 	return PadHex(GetPxColor(x, y, displayId...))
 }
 
-// GetLocationColor get the location pos's color
-func GetLocationColor(displayId ...int) string {
-	x, y := Location()
-	return GetPixelColor(x, y, displayId...)
-}
-
-// IsMain is main display
-func IsMain(displayId int) bool {
-	return displayId == GetMainId()
-}
-
 func displayIdx(id ...int) int {
 	display := -1
 	if DisplayID != -1 {
@@ -194,12 +174,6 @@ func SysScale(displayId ...int) float64 {
 	display := displayIdx(displayId...)
 	s := C.sys_scale(C.int32_t(display))
 	return float64(s)
-}
-
-// Scaled get the screen scaled return scale size
-func Scaled(x int, displayId ...int) int {
-	f := ScaleF(displayId...)
-	return Scaled0(x, f)
 }
 
 // GetScreenSize get the screen size
@@ -454,16 +428,6 @@ func MouseButtonString(btn C.MMMouseButton) string {
 	}
 
 	return fmt.Sprintf("button%d", btn)
-}
-
-// MoveScale calculate the os scale factor x, y
-func MoveScale(x, y int, displayId ...int) (int, int) {
-	if Scale || runtime.GOOS == "windows" {
-		f := ScaleF()
-		x, y = Scaled1(x, f), Scaled1(y, f)
-	}
-
-	return x, y
 }
 
 // Move move the mouse to (x, y)
@@ -778,22 +742,6 @@ func codeDetail(code int) string {
 	return x11Errors[code]
 }
 
-// MoveClick move and click the mouse
-//
-// robotgo.MoveClick(x, y int, button string, double bool)
-//
-// Examples:
-//
-//	robotgo.MouseSleep = 100
-//	robotgo.MoveClick(10, 10)
-func MoveClick(x, y int, args ...interface{}) error {
-	if err := Move(x, y); err != nil {
-		return err
-	}
-	MilliSleep(50)
-	return Click(args...)
-}
-
 // Toggle toggle the mouse, support button:
 //
 //		"left", "center", "right",
@@ -821,19 +769,6 @@ func Toggle(key ...interface{}) error {
 	return formatClickError(int(code), button, getDown(down), 1)
 }
 
-// MouseDown send mouse down event
-func MouseDown(key ...interface{}) error {
-	return Toggle(key...)
-}
-
-// MouseUp send mouse up event
-func MouseUp(key ...interface{}) error {
-	if len(key) <= 0 {
-		key = append(key, "left")
-	}
-	return Toggle(append(key, "up")...)
-}
-
 // Scroll scroll the mouse to (x, y)
 //
 // robotgo.Scroll(x, y, msDelay int)
@@ -855,74 +790,6 @@ func Scroll(x, y int, args ...int) error {
 	return formatMouseError(int(code), "scroll")
 }
 
-// ScrollDir scroll the mouse with direction to (x, "up")
-// supported: "up", "down", "left", "right"
-//
-// Examples:
-//
-//	robotgo.ScrollDir(10, "down")
-//	robotgo.ScrollDir(10, "up")
-func ScrollDir(x int, direction ...interface{}) error {
-	d := "down"
-	if len(direction) > 0 {
-		s, ok := direction[0].(string)
-		if !ok {
-			return fmt.Errorf("unknown scroll direction: %v", direction[0])
-		}
-		d = s
-	}
-
-	switch d {
-	case "down":
-		return Scroll(0, -x)
-	case "up":
-		return Scroll(0, x)
-	case "left":
-		return Scroll(x, 0)
-	case "right":
-		return Scroll(-x, 0)
-	}
-	return fmt.Errorf("unknown scroll direction: %v", d)
-}
-
-// ScrollSmooth scroll the mouse smooth,
-// default scroll 5 times and sleep 100 millisecond
-//
-// robotgo.ScrollSmooth(toy, num, sleep, tox)
-//
-// Examples:
-//
-//	robotgo.ScrollSmooth(-10)
-//	robotgo.ScrollSmooth(-10, 6, 200, -10)
-func ScrollSmooth(to int, args ...int) error {
-	i := 0
-	num := 5
-	if len(args) > 0 {
-		num = args[0]
-	}
-	tm := 100
-	if len(args) > 1 {
-		tm = args[1]
-	}
-	tox := 0
-	if len(args) > 2 {
-		tox = args[2]
-	}
-
-	for {
-		if err := Scroll(tox, to); err != nil {
-			return err
-		}
-		MilliSleep(tm)
-		i++
-		if i == num {
-			break
-		}
-	}
-	MilliSleep(MouseSleep)
-	return nil
-}
-
 /*
 ____    __    ____  __  .__   __.  _______   ______   ____    __    ____
 \   \  /  \  /   / |  | |  \ |  | |       \ /  __  \  \   \  /  \  /   /
@@ -932,23 +799,6 @@ ____    __    ____  __  .__   __.  _______   ______   ____    __    ____
     \__/  \__/     |__| |__| \__| |_______/ \______/      \__/  \__/
 
 */
-
-func alertArgs(args ...string) (string, string) {
-	var (
-		defaultBtn = "Ok"
-		cancelBtn  = "Cancel"
-	)
-
-	if len(args) > 0 {
-		defaultBtn = args[0]
-	}
-
-	if len(args) > 1 {
-		cancelBtn = args[1]
-	}
-
-	return defaultBtn, cancelBtn
-}
 
 func showAlert(title, msg string, args ...string) bool {
 	defaultBtn, cancelBtn := alertArgs(args...)

@@ -95,20 +95,8 @@ func Click(args ...any) error { return x11.Click(args...) }
 // Toggle toggle the mouse button.
 func Toggle(key ...any) error { return x11.Toggle(key...) }
 
-// MouseDown send a mouse down event.
-func MouseDown(key ...any) error { return x11.MouseDown(key...) }
-
-// MouseUp send a mouse up event.
-func MouseUp(key ...any) error { return x11.MouseUp(key...) }
-
 // Scroll scroll the mouse to (x, y).
 func Scroll(x, y int, args ...int) error { return x11.Scroll(x, y, args...) }
-
-// ScrollDir scroll the mouse to a direction.
-func ScrollDir(x int, direction ...any) error { return x11.ScrollDir(x, direction...) }
-
-// ScrollSmooth scroll the mouse smoothly.
-func ScrollSmooth(to int, args ...int) error { return x11.ScrollSmooth(to, args...) }
 
 // DragSmooth drag the mouse smoothly to (x, y).
 func DragSmooth(x, y int, args ...any) error { return x11.DragSmooth(x, y, args...) }
@@ -116,14 +104,8 @@ func DragSmooth(x, y int, args ...any) error { return x11.DragSmooth(x, y, args.
 // MultiClick click the mouse button count times; click is accepted for API parity.
 func MultiClick(button string, count int, click ...bool) error { return clickTimes(button, count) }
 
-// MoveClick move and click the mouse.
-func MoveClick(x, y int, args ...any) error { return x11.MoveClick(x, y, args...) }
-
 // Location get the mouse location position, return x, y.
 func Location() (int, int) { return x11.Location() }
-
-// GetMousePos get the mouse position, return x, y.
-func GetMousePos() (int, int) { return x11.GetMousePos() }
 
 // --- Screen (capture lives in the backend; img.go provides Save*/Width/Height) ---
 
@@ -139,9 +121,6 @@ func SysScale(displayId ...int) float64 { return x11.ScaleF(displayId...) }
 // ScaleF get the system scale val.
 func ScaleF(displayId ...int) float64 { return SysScale(displayId...) }
 
-// Scaled get the screen scaled return scale size.
-func Scaled(x int, displayId ...int) int { return Scaled0(x, ScaleF(displayId...)) }
-
 // GetScreenRect get the screen rect (x, y, w, h).
 func GetScreenRect(displayId ...int) Rect {
 	r := x11.GetScreenRect(displayId...)
@@ -150,9 +129,6 @@ func GetScreenRect(displayId ...int) Rect {
 
 // GetMainId get the main display id.
 func GetMainId() int { return x11.MainDisplayID() }
-
-// IsMain is main display.
-func IsMain(displayId int) bool { return displayId == GetMainId() }
 
 // Deprecated: use the ScaledF(),
 //
@@ -215,3 +191,13 @@ func GetClient(pid int, args ...int) (int, int, int, int) { return x11.GetClient
 
 // GetPid get the current process id.
 func GetPid() int { return x11.GetPid() }
+
+// Alert show a alert window, return true when the default button is chosen.
+// The optional args are the default and cancel button labels.
+func Alert(title, msg string, args ...string) bool {
+	ok, cancel := alertArgs(args...)
+	return x11.Alert(title, msg, ok, cancel)
+}
+
+// CloseMainDisplay close the X11 connection (the same as Close).
+func CloseMainDisplay() { x11.Close() }

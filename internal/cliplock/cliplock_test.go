@@ -87,3 +87,38 @@ func TestLockPathPrivate(t *testing.T) {
 		t.Errorf("lock dir mode %v, want no group/other access", perm)
 	}
 }
+
+// A pre-existing world-readable lock dir must be tightened to 0700.
+func TestLockPathFixesExistingDir(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("POSIX permissions only")
+	}
+	t.Setenv("HOME", t.TempDir())
+	t.Setenv("XDG_CACHE_HOME", "")
+	base, err := os.UserCacheDir()
+	if err != nil {
+		t.Fatal(err)
+	}
+	dir := filepath.Join(base, "robotgo")
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chmod(dir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	path, err := lockPath()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if filepath.Dir(path) != dir {
+		t.Fatalf("lockPath %q not in %q", path, dir)
+	}
+	fi, err := os.Stat(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if perm := fi.Mode().Perm(); perm != 0o700 {
+		t.Errorf("lock dir mode %v, want 0700", perm)
+	}
+}

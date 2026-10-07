@@ -337,3 +337,11 @@ func TestWindowForHandle(t *testing.T) {
 		t.Errorf("GetClient(bogus, handle): got %d,%d,%d,%d", x, y, w, h)
 	}
 }
+
+func TestGetHWNDByPidInvalid(t *testing.T) {
+	for _, pid := range []int{0, -1} {
+		if got := GetHWNDByPid(pid); got != 0 {
+			t.Errorf("GetHWNDByPid(%d): got %d, want 0", pid, got)
+		}
+	}
+}

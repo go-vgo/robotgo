@@ -25,8 +25,6 @@ import (
 	"fmt"
 	"math/rand"
 	"runtime"
-	"strings"
-	"unicode"
 	"unsafe"
 )
 
@@ -325,29 +323,6 @@ func keyTaps(k string, keyArr []string, pid int) error {
 	return formatClickError(c1, k, stage, 1)
 }
 
-func getKeyDown(keyArr []string) (bool, []string) {
-	if len(keyArr) <= 0 {
-		keyArr = append(keyArr, "down")
-	}
-
-	down := true
-	if keyArr[0] == "up" {
-		down = false
-	}
-
-	if keyArr[0] == "up" || keyArr[0] == "down" {
-		keyArr = keyArr[1:]
-	}
-	return down, keyArr
-}
-
-func getDown(down bool) string {
-	if down {
-		return "down"
-	}
-	return "up"
-}
-
 func keyTogglesB(k string, down bool, keyArr []string, pid int) error {
 	flags := getFlagsFromValue(keyArr)
 	key, err := checkKeyCodes(k)
@@ -387,23 +362,6 @@ func toErr(str *C.char) error {
 	return errors.New(gstr)
 }
 
-func appendShift(key string, len1 int, args ...interface{}) (string, []interface{}) {
-	// only a single upper-case char implies shift; "Enter" is just "enter"
-	if r := []rune(key); len(r) == 1 && unicode.IsUpper(r[0]) {
-		args = append(args, "shift")
-	}
-
-	key = strings.ToLower(key)
-	if _, ok := Special[key]; ok {
-		key = Special[key]
-		if len(args) <= len1 {
-			args = append(args, "shift")
-		}
-	}
-
-	return key, args
-}
-
 // KeyTap taps the keyboard code;
 //
 // See keys supported:
@@ -424,26 +382,6 @@ func KeyTap(key string, args ...interface{}) error {
 	key, args = appendShift(key, 0, args...)
 	pid, keyArr := getToggleArgs(args...)
 	return keyTaps(key, keyArr, pid)
-}
-
-// getToggleArgs splits args into the pid (the first int, at any position, so
-// KeyUp("a", pid) keeps it after the prepended "up") and the key array;
-// string and []string args are flattened in order, other types are skipped.
-func getToggleArgs(args ...interface{}) (pid int, keyArr []string) {
-	hasPid := false
-	for _, arg := range args {
-		switch v := arg.(type) {
-		case int:
-			if !hasPid {
-				pid, hasPid = v, true
-			}
-		case string:
-			keyArr = append(keyArr, v)
-		case []string:
-			keyArr = append(keyArr, v...)
-		}
-	}
-	return
 }
 
 // KeyToggle toggles the keyboard, if there not have args default is "down"

@@ -101,20 +101,8 @@ func Click(args ...any) error { return dm.Click(args...) }
 // Toggle toggle the mouse button.
 func Toggle(key ...any) error { return dm.Toggle(key...) }
 
-// MouseDown send a mouse down event.
-func MouseDown(key ...any) error { return dm.MouseDown(key...) }
-
-// MouseUp send a mouse up event.
-func MouseUp(key ...any) error { return dm.MouseUp(key...) }
-
 // Scroll scroll the mouse to (x, y).
 func Scroll(x, y int, args ...int) error { return dm.Scroll(x, y, args...) }
-
-// ScrollDir scroll the mouse to a direction.
-func ScrollDir(x int, direction ...any) error { return dm.ScrollDir(x, direction...) }
-
-// ScrollSmooth scroll the mouse smoothly.
-func ScrollSmooth(to int, args ...int) error { return dm.ScrollSmooth(to, args...) }
 
 // DragSmooth drag the mouse smoothly to (x, y).
 func DragSmooth(x, y int, args ...any) error { return dm.DragSmooth(x, y, args...) }
@@ -125,14 +113,8 @@ func MultiClick(button string, count int, click ...bool) error {
 	return dm.MultiClick(button, count)
 }
 
-// MoveClick move and click the mouse.
-func MoveClick(x, y int, args ...any) error { return dm.MoveClick(x, y, args...) }
-
 // Location get the mouse location position, return x, y.
 func Location() (int, int) { return dm.Location() }
-
-// GetMousePos get the mouse position, return x, y.
-func GetMousePos() (int, int) { return dm.GetMousePos() }
 
 // --- Screen (the portable screen.go provides Capture/GetDisplayBounds; img.go
 // provides Save/Width/Height) ---
@@ -149,9 +131,6 @@ func SysScale(displayId ...int) float64 { return dm.ScaleF(displayId...) }
 // ScaleF get the system scale val.
 func ScaleF(displayId ...int) float64 { return SysScale(displayId...) }
 
-// Scaled get the screen scaled return scale size.
-func Scaled(x int, displayId ...int) int { return Scaled0(x, ScaleF(displayId...)) }
-
 // GetScreenRect get the screen rect (x, y, w, h).
 func GetScreenRect(displayId ...int) Rect {
 	r := dm.GetScreenRect(displayId...)
@@ -160,9 +139,6 @@ func GetScreenRect(displayId ...int) Rect {
 
 // GetMainId get the main display id.
 func GetMainId() int { return dm.MainDisplayID() }
-
-// IsMain is main display.
-func IsMain(displayId int) bool { return displayId == GetMainId() }
 
 // DisplaysNum get the number of displays.
 func DisplaysNum() int { return dm.DisplaysNum() }
@@ -220,3 +196,10 @@ func GetClient(pid int, args ...int) (int, int, int, int) { return dm.GetBounds(
 
 // GetPid get the current process id.
 func GetPid() int { return dm.GetPid() }
+
+// Alert show a alert window, return true when the default button is chosen.
+// The optional args are the default and cancel button labels.
+func Alert(title, msg string, args ...string) bool {
+	ok, cancel := alertArgs(args...)
+	return dm.Alert(title, msg, ok, cancel)
+}

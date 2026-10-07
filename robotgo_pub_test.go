@@ -16,9 +16,11 @@ package robotgo
 
 import (
 	"os"
+	"runtime"
 	"slices"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/vcaesar/tt"
 )
@@ -104,4 +106,53 @@ func TestPidExistsUnknown(t *testing.T) {
 	ok, err := PidExists(1 << 30)
 	tt.Nil(t, err)
 	tt.False(t, ok)
+}
+
+func TestAlertArgs(t *testing.T) {
+	ok, cancel := alertArgs()
+	tt.Equal(t, "Ok", ok)
+	tt.Equal(t, "Cancel", cancel)
+
+	ok, cancel = alertArgs("Yes")
+	tt.Equal(t, "Yes", ok)
+	tt.Equal(t, "Cancel", cancel)
+
+	ok, cancel = alertArgs("Yes", "No", "ignored")
+	tt.Equal(t, "Yes", ok)
+	tt.Equal(t, "No", cancel)
+}
+
+func TestMicroSleep(t *testing.T) {
+	start := time.Now()
+	MicroSleep(2.5)
+	tt.True(t, time.Since(start) >= 2500*time.Microsecond)
+}
+
+func TestMoveScaleIdentity(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("Windows always applies the system scale")
+	}
+	saved := Scale
+	defer func() { Scale = saved }()
+
+	Scale = false
+	x, y := MoveScale(10, 20)
+	tt.Equal(t, 10, x)
+	tt.Equal(t, 20, y)
+}
+
+// Bad directions must error before any scroll event is sent.
+func TestScrollDirInvalidPub(t *testing.T) {
+	tt.NotNil(t, ScrollDir(1, "diagonal"))
+	tt.NotNil(t, ScrollDir(1, 42))
+}
+
+// A non-positive count must not scroll (it used to loop forever).
+func TestScrollSmoothZero(t *testing.T) {
+	saved := MouseSleep
+	defer func() { MouseSleep = saved }()
+
+	MouseSleep = 0
+	tt.Nil(t, ScrollSmooth(-10, 0))
+	tt.Nil(t, ScrollSmooth(-10, -1))
 }

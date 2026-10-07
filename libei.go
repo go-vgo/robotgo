@@ -94,20 +94,8 @@ func Click(args ...any) error { return lb.Click(args...) }
 // Toggle toggle the mouse button.
 func Toggle(key ...any) error { return lb.Toggle(key...) }
 
-// MouseDown send a mouse down event.
-func MouseDown(key ...any) error { return lb.MouseDown(key...) }
-
-// MouseUp send a mouse up event.
-func MouseUp(key ...any) error { return lb.MouseUp(key...) }
-
 // Scroll scroll the mouse to (x, y).
 func Scroll(x, y int, args ...int) error { return lb.Scroll(x, y, args...) }
-
-// ScrollDir scroll the mouse to a direction.
-func ScrollDir(x int, direction ...any) error { return lb.ScrollDir(x, direction...) }
-
-// ScrollSmooth scroll the mouse smoothly.
-func ScrollSmooth(to int, args ...int) error { return lb.ScrollSmooth(to, args...) }
 
 // DragSmooth drag the mouse smoothly to (x, y).
 func DragSmooth(x, y int, args ...any) error { return lb.DragSmooth(x, y, args...) }
@@ -115,14 +103,8 @@ func DragSmooth(x, y int, args ...any) error { return lb.DragSmooth(x, y, args..
 // MultiClick click the mouse button count times; click is accepted for API parity.
 func MultiClick(button string, count int, click ...bool) error { return clickTimes(button, count) }
 
-// MoveClick move and click the mouse.
-func MoveClick(x, y int, args ...any) error { return lb.MoveClick(x, y, args...) }
-
 // Location get the mouse location position, return x, y.
 func Location() (int, int) { return lb.Location() }
-
-// GetMousePos get the mouse position, return x, y.
-func GetMousePos() (int, int) { return lb.GetMousePos() }
 
 // --- Screen (not supported by the libei backend; report ErrNotSupported) ---
 
@@ -138,14 +120,14 @@ func SysScale(displayId ...int) float64 { return lb.ScaleF(displayId...) }
 // ScaleF get the system scale val.
 func ScaleF(displayId ...int) float64 { return SysScale(displayId...) }
 
-// Scaled get the screen scaled return scale size.
-func Scaled(x int, displayId ...int) int { return Scaled0(x, ScaleF(displayId...)) }
-
 // GetScreenRect get the screen rect (x, y, w, h).
 func GetScreenRect(displayId ...int) Rect {
 	r := lb.GetScreenRect(displayId...)
 	return Rect{Point{r.X, r.Y}, Size{r.W, r.H}}
 }
+
+// GetMainId get the main display id.
+func GetMainId() int { return lb.MainDisplayID() }
 
 // DisplaysNum get the number of displays.
 func DisplaysNum() int { return lb.DisplaysNum() }
@@ -201,3 +183,10 @@ func GetClient(pid int, args ...int) (int, int, int, int) { return lb.GetClient(
 
 // GetPid get the current process id.
 func GetPid() int { return lb.GetPid() }
+
+// Alert show a alert window, return true when the default button is chosen.
+// The optional args are the default and cancel button labels.
+func Alert(title, msg string, args ...string) bool {
+	ok, cancel := alertArgs(args...)
+	return lb.Alert(title, msg, ok, cancel)
+}

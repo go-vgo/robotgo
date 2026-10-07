@@ -101,6 +101,10 @@ func GetScreenRect(displayId ...int) Rect {
 	}
 }
 
+// MainDisplayID returns the main display index: output 0, the default used
+// when no displayId is given.
+func MainDisplayID() int { return 0 }
+
 // DisplaysNum returns the number of displays.
 func DisplaysNum() int {
 	c, err := ensureConn()
