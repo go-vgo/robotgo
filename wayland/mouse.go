@@ -20,6 +20,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/go-vgo/robotgo/internal/wlcursor"
 	"github.com/go-vgo/robotgo/pub"
 )
 
@@ -51,6 +52,9 @@ var (
 	posMu      sync.Mutex
 	posX, posY int
 )
+
+// cursorPos queries the real pointer position from the compositor.
+var cursorPos = wlcursor.Position
 
 func setPos(x, y int) {
 	posMu.Lock()
@@ -380,13 +384,43 @@ func MoveClick(x, y int, args ...interface{}) error {
 }
 
 // Location returns the current mouse position.
-// NOTE: Wayland does not expose the global pointer position, so this returns
-// the last position injected by this backend (Move, MoveRelative, MoveSmooth).
-// It is (0, 0) until the first move and does not follow the physical mouse.
+//
+// Wayland has no protocol for the global pointer position. On Hyprland the
+// real position is read over its IPC socket and on KDE Plasma through a KWin
+// script; it also resyncs the tracked position. Elsewhere (Sway and other
+// wlroots compositors) this returns the last position injected by this
+// backend (Move, MoveRelative, MoveSmooth): (0, 0) until the first move, and
+// it does not follow the physical mouse.
 func Location() (int, int) {
+	if x, y, ok := realPos(); ok {
+		setPos(x, y)
+		return x, y
+	}
 	posMu.Lock()
 	defer posMu.Unlock()
 	return posX, posY
+}
+
+// realPos returns the compositor cursor position in the backend's space.
+// The compositor reports logical coordinates while warp uses output pixel
+// sizes, so the position is multiplied by the outputs' scale; with mixed
+// scales there is no single factor and the tracked position is used.
+func realPos() (int, int, bool) {
+	x, y, err := cursorPos()
+	if err != nil {
+		return 0, 0, false
+	}
+	connMu.Lock()
+	c := globalConn
+	connMu.Unlock()
+	if c == nil {
+		return x, y, true
+	}
+	s, ok := c.commonScale()
+	if !ok {
+		return 0, 0, false
+	}
+	return x * s, y * s, true
 }
 
 // GetMousePos returns the current mouse position.

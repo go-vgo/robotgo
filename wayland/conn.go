@@ -389,6 +389,22 @@ func (c *conn) output(idx int) (outputInfo, bool) {
 	return *c.outputs[idx], true
 }
 
+// commonScale returns the wl_output scale shared by all outputs (1 when
+// unknown) and false if outputs use different scales.
+func (c *conn) commonScale() (int, bool) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	scale := 0
+	for _, o := range c.outputs {
+		s := max(int(o.scale), 1)
+		if scale != 0 && s != scale {
+			return 0, false
+		}
+		scale = s
+	}
+	return max(scale, 1), true
+}
+
 // timestamp returns a Wayland-compatible millisecond timestamp.
 func timestamp() uint32 {
 	return uint32(time.Now().UnixMilli())
