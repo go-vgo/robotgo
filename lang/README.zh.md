@@ -63,7 +63,7 @@ RobotGo 支持 Mac、Windows 和 Linux；并且支持 arm64 与 x86-amd64 架构
 **Go 1.26+**（见 [go.mod](../go.mod)）以及一个后端：
 
 - **默认（Cgo）：** `CGO_ENABLED=1`、一个 C 编译器，以及下列平台库。
-- **纯 Go（实验性）：** 无需 C 工具链；见[无 Cgo 构建](#cgo-free-builds)。
+- **纯 Go（已测试）：** 无需 C 工具链；见[无 Cgo 构建](#cgo-free-builds)。
 
 两者都需要为你所用功能安装对应的[功能相关依赖](#feature-specific-dependencies)。
 
@@ -169,7 +169,7 @@ Bitmap 和 GoHook 是独立的 Cgo 包；纯 Go 的 RobotGo 后端并不会消�
 
 ## Cgo-free Builds
 
-**实验性的纯 Go 后端**可在 `CGO_ENABLED=0` 下构建与交叉编译（无需 GCC、MinGW、
+**经过测试的纯 Go 后端**可在 `CGO_ENABLED=0` 下构建与交叉编译（无需 GCC、MinGW、
 Xcode 或 X11 头文件）。导入路径和 API 不变；后端由**构建标签**选择 ——
 仅设置 `CGO_ENABLED=0` 不会选择任何后端。
 
@@ -213,8 +213,11 @@ PowerShell：`$env:CGO_ENABLED = "0"; go build -tags purego .`
 
 - **`mac`：** 无窗口管理 —— `ActiveName` 返回 `ErrNotSupported`，
   `GetTitle` 返回 `""`，最小化/最大化/关闭为空操作。
-- **`wayland`、`libei`：** `Location()` 返回 RobotGo 最后注入的位置，而非物理
-  光标位置。剪贴板需要 `wl-clipboard`。
+- **`wayland`、`libei`：** Wayland 没有获取全局光标位置的协议。`Location()` 在
+  Hyprland（IPC socket）和 KDE Plasma（通过 D-Bus 的 KWin 脚本）上查询成功时读取
+  真实光标；`wayland` 还要求所有输出的缩放比例一致（缩放不同或旋转的输出会回退）。
+  否则以及其他环境（GNOME、Sway 及其他 wlroots 合成器）返回 RobotGo 最后注入的
+  位置，而非物理光标位置。剪贴板需要 `wl-clipboard`。
 
 #### Wayland
 

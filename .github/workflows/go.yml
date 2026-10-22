@@ -107,7 +107,7 @@ jobs:
             pkgs: ./win ./clipboard
             tags: win
           - os: ubuntu-latest
-            pkgs: ./x11 ./wayland/... ./libei ./clipboard
+            pkgs: ./x11 ./wayland/... ./libei ./internal/wlcursor ./clipboard
             tags: x11 wayland libei
     runs-on: ${{ matrix.os }}
     env:

@@ -64,7 +64,7 @@ Donantes, patrocinadores u otros, contacto: vzvway@gmail.com
 
 - **Predeterminado (Cgo):** `CGO_ENABLED=1`, un compilador de C y las bibliotecas
   de la plataforma indicadas abajo.
-- **Go puro (experimental):** sin cadena de herramientas de C; consulte
+- **Go puro (probado):** sin cadena de herramientas de C; consulte
   [Compilaciones sin Cgo](#cgo-free-builds).
 
 Ambos necesitan las [dependencias por función](#feature-specific-dependencies)
@@ -175,7 +175,7 @@ no elimina sus requisitos de C.
 
 ## Cgo-free Builds
 
-Los **backends experimentales en Go puro** se compilan y se compilan de forma
+Los **backends probados en Go puro** se compilan y se compilan de forma
 cruzada con `CGO_ENABLED=0` (sin GCC, MinGW, Xcode ni encabezados X11). La misma
 ruta de importación y la misma API; una **etiqueta de compilación** selecciona el
 backend: `CGO_ENABLED=0` por sí sola no selecciona nada.
@@ -222,8 +222,14 @@ operaciones no soportadas devuelven `ErrNotSupported` (o un resultado vacío).
 
 - **`mac`:** sin gestión de ventanas: `ActiveName` devuelve `ErrNotSupported`,
   `GetTitle` devuelve `""` y minimizar/maximizar/cerrar no hacen nada.
-- **`wayland`, `libei`:** `Location()` devuelve la última posición inyectada por
-  RobotGo, no la del cursor físico. El portapapeles necesita `wl-clipboard`.
+- **`wayland`, `libei`:** Wayland no tiene un protocolo para la posición global
+  del cursor. `Location()` lee el cursor real en Hyprland (socket IPC) y
+  KDE Plasma (script de KWin a través de D-Bus) cuando esa consulta tiene éxito;
+  `wayland` además requiere que todas las salidas compartan la misma proporción
+  de escala (las salidas con escalas distintas o rotadas recurren al respaldo).
+  En caso contrario, y en otros entornos (GNOME, Sway, otros compositores
+  wlroots), devuelve la última posición inyectada por RobotGo, no la del cursor
+  físico. El portapapeles necesita `wl-clipboard`.
 
 #### Wayland
 

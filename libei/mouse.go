@@ -18,8 +18,20 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/go-vgo/robotgo/internal/wlcursor"
 	"github.com/go-vgo/robotgo/pub"
 )
+
+// cursorPos queries the real pointer position from the compositor.
+var cursorPos = wlcursor.Position
+
+// syncPos resyncs the tracked position from the compositor when it exposes
+// the real cursor, so relative moves start from where the pointer really is.
+func syncPos(c *conn) {
+	if x, y, err := cursorPos(); err == nil {
+		c.setPos(x, y)
+	}
+}
 
 // Linux evdev button codes (input-event-codes.h). The RemoteDesktop portal's
 // NotifyPointerButton expects these evdev codes.
@@ -55,6 +67,7 @@ func move(x, y int, displayId ...int) (bool, error) {
 	}
 
 	if len(c.streams) == 0 {
+		syncPos(c)
 		cx, cy, ok := c.position()
 		if !ok {
 			if err := c.inj.pointerMotion(-cornerReset, -cornerReset); err != nil {
@@ -139,6 +152,9 @@ func moveSmooth(x, y int, args ...interface{}) (bool, error) {
 		}
 	}
 
+	if len(c.streams) == 0 {
+		syncPos(c)
+	}
 	sx, sy, known := c.position()
 	if !known {
 		return move(x, y)
@@ -353,7 +369,9 @@ func MoveClick(x, y int, args ...interface{}) error {
 
 // Location returns the current mouse position.
 //
-// The RemoteDesktop portal does not expose the real cursor position, so this
+// The RemoteDesktop portal does not expose the real cursor position. On KDE
+// Plasma it is read through a KWin script (and on Hyprland over its IPC
+// socket), which also resyncs the tracked position. Elsewhere (GNOME) this
 // returns the last position injected by this backend (Move, MoveRelative,
 // MoveSmooth, ...). It is (0, 0) until the first move and does not follow
 // movement made by the physical mouse. Relative motion alone cannot establish
@@ -366,6 +384,12 @@ func Location() (int, int) {
 	connMu.Lock()
 	c := globalConn
 	connMu.Unlock()
+	if x, y, err := cursorPos(); err == nil {
+		if c != nil {
+			c.setPos(x, y)
+		}
+		return x, y
+	}
 	if c == nil {
 		return 0, 0
 	}

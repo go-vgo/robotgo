@@ -24,6 +24,7 @@ import (
 	"time"
 
 	"github.com/vcaesar/go-wayland/client"
+	xdg_output "github.com/vcaesar/go-wayland/unstable/xdg-output-v1"
 	"golang.org/x/sys/unix"
 
 	"github.com/go-vgo/robotgo/wayland/internal/protocols/wlr_foreign_toplevel"
@@ -58,6 +59,7 @@ type conn struct {
 	keyboard        *wlr_virtual_keyboard.ZwpVirtualKeyboardV1
 	screencopyMgr   *wlr_screencopy.ZwlrScreencopyManagerV1
 	toplevelMgr     *wlr_foreign_toplevel.ZwlrForeignToplevelManagerV1
+	xdgOutputMgr    *xdg_output.OutputManager
 
 	toplevels map[uint32]*toplevelInfo
 
@@ -91,6 +93,23 @@ type outputInfo struct {
 	width  int32
 	height int32
 	scale  int32 // wl_output.scale factor; 0 until the event arrives (treated as 1)
+	// logicalW/logicalH are the xdg_output logical size in the global
+	// compositor space; 0 until known.
+	logicalW, logicalH int32
+	// logicalX/logicalY are the xdg_output logical position, valid when
+	// hasLogicalPos (wlroots sends 0,0 in wl_output.geometry).
+	logicalX, logicalY int32
+	hasLogicalPos      bool
+}
+
+// origin returns the output position in the pixel space used by warp: the
+// logical position (xdg_output, else wl_output.geometry) scaled by num/den.
+func (o *outputInfo) origin(num, den int) (int32, int32) {
+	x, y := o.x, o.y
+	if o.hasLogicalPos {
+		x, y = o.logicalX, o.logicalY
+	}
+	return int32(scaleRound(int(x), num, den)), int32(scaleRound(int(y), num, den))
 }
 
 // toplevelInfo tracks a foreign toplevel handle.
@@ -245,6 +264,27 @@ func (c *conn) handleGlobal(e client.RegistryGlobalEvent) {
 		c.mu.Lock()
 		c.outputs = append(c.outputs, info)
 		c.mu.Unlock()
+		if c.xdgOutputMgr != nil {
+			c.watchLogicalSize(info)
+		}
+
+	case xdg_output.OutputManagerInterfaceName:
+		if c.xdgOutputMgr != nil {
+			return
+		}
+		mgr := xdg_output.NewOutputManager(c.display.Context())
+		if err := c.registry.Bind(e.Name, e.Interface, e.Version, mgr); err != nil {
+			log.Printf("robotgo: bind xdg output manager: %v", err)
+			return
+		}
+		c.xdgOutputMgr = mgr
+		// wl_output globals advertised before the manager.
+		c.mu.Lock()
+		outputs := append([]*outputInfo(nil), c.outputs...)
+		c.mu.Unlock()
+		for _, info := range outputs {
+			c.watchLogicalSize(info)
+		}
 
 	case wlr_virtual_pointer.ZwlrVirtualPointerManagerV1InterfaceName:
 		c.pointerManager = wlr_virtual_pointer.NewZwlrVirtualPointerManagerV1(c.display.Context())
@@ -274,6 +314,25 @@ func (c *conn) handleGlobal(e client.RegistryGlobalEvent) {
 			c.handleNewToplevel(te.Toplevel)
 		})
 	}
+}
+
+// watchLogicalSize tracks the xdg_output logical position and size of info.
+func (c *conn) watchLogicalSize(info *outputInfo) {
+	xo, err := c.xdgOutputMgr.GetXdgOutput(info.output)
+	if err != nil {
+		log.Printf("robotgo: get xdg output: %v", err)
+		return
+	}
+	xo.SetLogicalSizeHandler(func(e xdg_output.OutputLogicalSizeEvent) {
+		c.mu.Lock()
+		info.logicalW, info.logicalH = e.Width, e.Height
+		c.mu.Unlock()
+	})
+	xo.SetLogicalPositionHandler(func(e xdg_output.OutputLogicalPositionEvent) {
+		c.mu.Lock()
+		info.logicalX, info.logicalY, info.hasLogicalPos = e.X, e.Y, true
+		c.mu.Unlock()
+	})
 }
 
 // handleNewToplevel sets up event handlers for a newly discovered toplevel.
@@ -357,20 +416,27 @@ func (c *conn) dispatchLoop() {
 
 // outputBounds returns the union rectangle of all outputs, which is the
 // coordinate space wlr_virtual_pointer.motion_absolute maps onto when the
-// pointer is not bound to a single output.
+// pointer is not bound to a single output. Output origins are logical, so
+// they are scaled into pixel space by the layout ratio (unscaled when the
+// outputs have no single ratio).
 func (c *conn) outputBounds() (x, y, w, h int32) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	if len(c.outputs) == 0 {
 		return 0, 0, 0, 0
 	}
-	minX, minY := c.outputs[0].x, c.outputs[0].y
+	num, den, ok := c.layoutRatioLocked()
+	if !ok {
+		num, den = 1, 1
+	}
+	minX, minY := c.outputs[0].origin(num, den)
 	maxX, maxY := minX, minY
 	for _, o := range c.outputs {
-		minX = min(minX, o.x)
-		minY = min(minY, o.y)
-		maxX = max(maxX, o.x+o.width)
-		maxY = max(maxY, o.y+o.height)
+		ox, oy := o.origin(num, den)
+		minX = min(minX, ox)
+		minY = min(minY, oy)
+		maxX = max(maxX, ox+o.width)
+		maxY = max(maxY, oy+o.height)
 	}
 	return minX, minY, maxX - minX, maxY - minY
 }
@@ -387,6 +453,43 @@ func (c *conn) output(idx int) (outputInfo, bool) {
 		idx = 0
 	}
 	return *c.outputs[idx], true
+}
+
+// layoutRatio returns the factor num/den that maps compositor logical
+// coordinates onto the output pixel space used by warp: the mode size over
+// the xdg_output logical size (mode / wl_output.scale when the logical size
+// is unknown). It is false unless every output has the same exact ratio on
+// both axes (mixed scales, rotated outputs).
+func (c *conn) layoutRatio() (num, den int, ok bool) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	return c.layoutRatioLocked()
+}
+
+// layoutRatioLocked is layoutRatio with c.mu held.
+func (c *conn) layoutRatioLocked() (num, den int, ok bool) {
+	num, den = 1, 1
+	first := true
+	for _, o := range c.outputs {
+		if o.width <= 0 || o.height <= 0 {
+			continue
+		}
+		w, h := int(o.width), int(o.height)
+		lw, lh := int(o.logicalW), int(o.logicalH)
+		if lw <= 0 || lh <= 0 {
+			s := max(int(o.scale), 1)
+			lw, lh = w/s, h/s
+		}
+		if lw <= 0 || lh <= 0 || w*lh != h*lw {
+			return 0, 0, false
+		}
+		if first {
+			num, den, first = w, lw, false
+		} else if w*den != num*lw {
+			return 0, 0, false
+		}
+	}
+	return num, den, true
 }
 
 // timestamp returns a Wayland-compatible millisecond timestamp.

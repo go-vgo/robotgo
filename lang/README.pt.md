@@ -64,7 +64,7 @@ Doadores, patrocinadores ou outros, contato: vzvway@gmail.com
 
 - **Padrão (Cgo):** `CGO_ENABLED=1`, um compilador C e as bibliotecas da
   plataforma listadas abaixo.
-- **Go puro (experimental):** sem toolchain C; veja
+- **Go puro (testado):** sem toolchain C; veja
   [Builds sem Cgo](#cgo-free-builds).
 
 Ambos precisam das [dependências por recurso](#feature-specific-dependencies)
@@ -175,7 +175,7 @@ elimina os requisitos de C deles.
 
 ## Cgo-free Builds
 
-Os **backends experimentais em Go puro** compilam e fazem compilação cruzada com
+Os **backends testados em Go puro** compilam e fazem compilação cruzada com
 `CGO_ENABLED=0` (sem GCC, MinGW, Xcode ou cabeçalhos X11). Mesmo caminho de
 importação e mesma API; uma **tag de build** seleciona o backend —
 `CGO_ENABLED=0` sozinho não seleciona nada.
@@ -223,9 +223,13 @@ suporte retornam `ErrNotSupported` (ou um resultado vazio).
 - **`mac`:** sem gerenciamento de janelas — `ActiveName` retorna
   `ErrNotSupported`, `GetTitle` retorna `""` e minimizar/maximizar/fechar não
   fazem nada.
-- **`wayland`, `libei`:** `Location()` retorna a última posição injetada pelo
-  RobotGo, não a do cursor físico. A área de transferência precisa do
-  `wl-clipboard`.
+- **`wayland`, `libei`:** o Wayland não tem protocolo para a posição global do
+  cursor. `Location()` lê o cursor real no Hyprland (socket IPC) e no
+  KDE Plasma (script do KWin via D-Bus) quando essa consulta tem sucesso;
+  `wayland` também exige que todas as saídas compartilhem a mesma proporção de
+  escala (saídas com escalas diferentes ou rotacionadas usam o fallback). Caso
+  contrário, e nos demais (GNOME, Sway, outros compositores wlroots), retorna a
+  última posição injetada pelo RobotGo, não a do cursor físico. A área de transferência precisa do `wl-clipboard`.
 
 #### Wayland
 

@@ -63,7 +63,7 @@ RobotGo 支援 Mac、Windows 和 Linux；並且支援 arm64 與 x86-amd64 架構
 **Go 1.26+**（見 [go.mod](../go.mod)）以及一個後端：
 
 - **預設（Cgo）：** `CGO_ENABLED=1`、一個 C 編譯器，以及下列平台函式庫。
-- **純 Go（實驗性）：** 無需 C 工具鏈；見[無 Cgo 建置](#cgo-free-builds)。
+- **純 Go（已測試）：** 無需 C 工具鏈；見[無 Cgo 建置](#cgo-free-builds)。
 
 兩者都需要為你所用功能安裝對應的[功能相關依賴](#feature-specific-dependencies)。
 
@@ -169,7 +169,7 @@ Bitmap 和 GoHook 是獨立的 Cgo 套件；純 Go 的 RobotGo 後端並不會�
 
 ## Cgo-free Builds
 
-**實驗性的純 Go 後端**可在 `CGO_ENABLED=0` 下建置與交叉編譯（無需 GCC、MinGW、
+**經過測試的純 Go 後端**可在 `CGO_ENABLED=0` 下建置與交叉編譯（無需 GCC、MinGW、
 Xcode 或 X11 標頭檔）。匯入路徑和 API 不變；後端由**建置標籤**選擇 ——
 僅設定 `CGO_ENABLED=0` 不會選擇任何後端。
 
@@ -213,8 +213,11 @@ PowerShell：`$env:CGO_ENABLED = "0"; go build -tags purego .`
 
 - **`mac`：** 無視窗管理 —— `ActiveName` 回傳 `ErrNotSupported`，
   `GetTitle` 回傳 `""`，最小化/最大化/關閉為空操作。
-- **`wayland`、`libei`：** `Location()` 回傳 RobotGo 最後注入的位置，而非實際
-  游標位置。剪貼簿需要 `wl-clipboard`。
+- **`wayland`、`libei`：** Wayland 沒有取得全域游標位置的協定。`Location()` 在
+  Hyprland（IPC socket）和 KDE Plasma（透過 D-Bus 的 KWin 腳本）上查詢成功時讀取
+  真實游標；`wayland` 還要求所有輸出的縮放比例一致（縮放不同或旋轉的輸出會回退）。
+  否則以及其他環境（GNOME、Sway 及其他 wlroots 合成器）回傳 RobotGo 最後注入的
+  位置，而非實際游標位置。剪貼簿需要 `wl-clipboard`。
 
 #### Wayland
 

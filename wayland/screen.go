@@ -95,8 +95,13 @@ func GetScreenRect(displayId ...int) Rect {
 	if !ok {
 		return Rect{}
 	}
+	num, den, ok := c.layoutRatio()
+	if !ok {
+		num, den = 1, 1
+	}
+	x, y := o.origin(num, den)
 	return Rect{
-		Point: Point{X: int(o.x), Y: int(o.y)},
+		Point: Point{X: int(x), Y: int(y)},
 		Size:  Size{W: int(o.width), H: int(o.height)},
 	}
 }
