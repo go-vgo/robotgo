@@ -223,8 +223,10 @@ operations return `ErrNotSupported` (or an empty result).
   screen and `GetClient` equals `GetBounds`.
 - **`wayland`, `libei`:** Wayland has no protocol for the global cursor
   position. `Location()` reads the real cursor from Hyprland (IPC socket) and
-  KDE Plasma (KWin script over D-Bus); elsewhere (GNOME, Sway, other wlroots
-  compositors) it returns the last position injected by RobotGo, not the
+  KDE Plasma (KWin script over D-Bus) when that query succeeds; `wayland` also
+  needs every output to share one scale ratio (differently scaled or rotated
+  outputs fall back). Otherwise, and elsewhere (GNOME, Sway, other wlroots
+  compositors), it returns the last position injected by RobotGo, not the
   physical cursor. Clipboard needs `wl-clipboard`.
 
 #### Wayland

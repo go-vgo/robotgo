@@ -387,8 +387,9 @@ func MoveClick(x, y int, args ...interface{}) error {
 //
 // Wayland has no protocol for the global pointer position. On Hyprland the
 // real position is read over its IPC socket and on KDE Plasma through a KWin
-// script; it also resyncs the tracked position. Elsewhere (Sway and other
-// wlroots compositors) this returns the last position injected by this
+// script; it also resyncs the tracked position. When that query fails, the
+// outputs lack one exact scale ratio (see realPos), or elsewhere (Sway and
+// other wlroots compositors) this returns the last position injected by this
 // backend (Move, MoveRelative, MoveSmooth): (0, 0) until the first move, and
 // it does not follow the physical mouse.
 func Location() (int, int) {
@@ -403,8 +404,8 @@ func Location() (int, int) {
 
 // realPos returns the compositor cursor position in the backend's space.
 // The compositor reports logical coordinates while warp uses output pixel
-// sizes, so the position is multiplied by the outputs' scale; with mixed
-// scales there is no single factor and the tracked position is used.
+// sizes, so the position is scaled by the mode/logical size ratio (handles
+// fractional scaling); without one exact ratio the tracked position is used.
 func realPos() (int, int, bool) {
 	x, y, err := cursorPos()
 	if err != nil {
@@ -416,11 +417,16 @@ func realPos() (int, int, bool) {
 	if c == nil {
 		return x, y, true
 	}
-	s, ok := c.commonScale()
+	num, den, ok := c.layoutRatio()
 	if !ok {
 		return 0, 0, false
 	}
-	return x * s, y * s, true
+	return scaleRound(x, num, den), scaleRound(y, num, den), true
+}
+
+// scaleRound returns v*num/den rounded to the nearest integer.
+func scaleRound(v, num, den int) int {
+	return int(math.Round(float64(v) * float64(num) / float64(den)))
 }
 
 // GetMousePos returns the current mouse position.

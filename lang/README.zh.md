@@ -214,9 +214,10 @@ PowerShell：`$env:CGO_ENABLED = "0"; go build -tags purego .`
 - **`mac`：** 无窗口管理 —— `ActiveName` 返回 `ErrNotSupported`，
   `GetTitle` 返回 `""`，最小化/最大化/关闭为空操作。
 - **`wayland`、`libei`：** Wayland 没有获取全局光标位置的协议。`Location()` 在
-  Hyprland（IPC socket）和 KDE Plasma（通过 D-Bus 的 KWin 脚本）上读取真实光标；
-  其他环境（GNOME、Sway 及其他 wlroots 合成器）返回 RobotGo 最后注入的位置，
-  而非物理光标位置。剪贴板需要 `wl-clipboard`。
+  Hyprland（IPC socket）和 KDE Plasma（通过 D-Bus 的 KWin 脚本）上查询成功时读取
+  真实光标；`wayland` 还要求所有输出的缩放比例一致（缩放不同或旋转的输出会回退）。
+  否则以及其他环境（GNOME、Sway 及其他 wlroots 合成器）返回 RobotGo 最后注入的
+  位置，而非物理光标位置。剪贴板需要 `wl-clipboard`。
 
 #### Wayland
 

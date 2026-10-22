@@ -24,6 +24,7 @@ import (
 	"time"
 
 	"github.com/vcaesar/go-wayland/client"
+	xdg_output "github.com/vcaesar/go-wayland/unstable/xdg-output-v1"
 	"golang.org/x/sys/unix"
 
 	"github.com/go-vgo/robotgo/wayland/internal/protocols/wlr_foreign_toplevel"
@@ -58,6 +59,7 @@ type conn struct {
 	keyboard        *wlr_virtual_keyboard.ZwpVirtualKeyboardV1
 	screencopyMgr   *wlr_screencopy.ZwlrScreencopyManagerV1
 	toplevelMgr     *wlr_foreign_toplevel.ZwlrForeignToplevelManagerV1
+	xdgOutputMgr    *xdg_output.OutputManager
 
 	toplevels map[uint32]*toplevelInfo
 
@@ -91,6 +93,9 @@ type outputInfo struct {
 	width  int32
 	height int32
 	scale  int32 // wl_output.scale factor; 0 until the event arrives (treated as 1)
+	// logicalW/logicalH are the xdg_output logical size in the global
+	// compositor space; 0 until known.
+	logicalW, logicalH int32
 }
 
 // toplevelInfo tracks a foreign toplevel handle.
@@ -245,6 +250,27 @@ func (c *conn) handleGlobal(e client.RegistryGlobalEvent) {
 		c.mu.Lock()
 		c.outputs = append(c.outputs, info)
 		c.mu.Unlock()
+		if c.xdgOutputMgr != nil {
+			c.watchLogicalSize(info)
+		}
+
+	case xdg_output.OutputManagerInterfaceName:
+		if c.xdgOutputMgr != nil {
+			return
+		}
+		mgr := xdg_output.NewOutputManager(c.display.Context())
+		if err := c.registry.Bind(e.Name, e.Interface, e.Version, mgr); err != nil {
+			log.Printf("robotgo: bind xdg output manager: %v", err)
+			return
+		}
+		c.xdgOutputMgr = mgr
+		// wl_output globals advertised before the manager.
+		c.mu.Lock()
+		outputs := append([]*outputInfo(nil), c.outputs...)
+		c.mu.Unlock()
+		for _, info := range outputs {
+			c.watchLogicalSize(info)
+		}
 
 	case wlr_virtual_pointer.ZwlrVirtualPointerManagerV1InterfaceName:
 		c.pointerManager = wlr_virtual_pointer.NewZwlrVirtualPointerManagerV1(c.display.Context())
@@ -274,6 +300,20 @@ func (c *conn) handleGlobal(e client.RegistryGlobalEvent) {
 			c.handleNewToplevel(te.Toplevel)
 		})
 	}
+}
+
+// watchLogicalSize tracks the xdg_output logical size of info.
+func (c *conn) watchLogicalSize(info *outputInfo) {
+	xo, err := c.xdgOutputMgr.GetXdgOutput(info.output)
+	if err != nil {
+		log.Printf("robotgo: get xdg output: %v", err)
+		return
+	}
+	xo.SetLogicalSizeHandler(func(e xdg_output.OutputLogicalSizeEvent) {
+		c.mu.Lock()
+		info.logicalW, info.logicalH = e.Width, e.Height
+		c.mu.Unlock()
+	})
 }
 
 // handleNewToplevel sets up event handlers for a newly discovered toplevel.
@@ -389,20 +429,36 @@ func (c *conn) output(idx int) (outputInfo, bool) {
 	return *c.outputs[idx], true
 }
 
-// commonScale returns the wl_output scale shared by all outputs (1 when
-// unknown) and false if outputs use different scales.
-func (c *conn) commonScale() (int, bool) {
+// layoutRatio returns the factor num/den that maps compositor logical
+// coordinates onto the output pixel space used by warp: the mode size over
+// the xdg_output logical size (mode / wl_output.scale when the logical size
+// is unknown). It is false unless every output has the same exact ratio on
+// both axes (mixed scales, rotated outputs).
+func (c *conn) layoutRatio() (num, den int, ok bool) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	scale := 0
+	num, den = 1, 1
+	first := true
 	for _, o := range c.outputs {
-		s := max(int(o.scale), 1)
-		if scale != 0 && s != scale {
-			return 0, false
+		if o.width <= 0 || o.height <= 0 {
+			continue
 		}
-		scale = s
+		w, h := int(o.width), int(o.height)
+		lw, lh := int(o.logicalW), int(o.logicalH)
+		if lw <= 0 || lh <= 0 {
+			s := max(int(o.scale), 1)
+			lw, lh = w/s, h/s
+		}
+		if lw <= 0 || lh <= 0 || w*lh != h*lw {
+			return 0, 0, false
+		}
+		if first {
+			num, den, first = w, lw, false
+		} else if w*den != num*lw {
+			return 0, 0, false
+		}
 	}
-	return max(scale, 1), true
+	return num, den, true
 }
 
 // timestamp returns a Wayland-compatible millisecond timestamp.

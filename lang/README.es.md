@@ -224,9 +224,12 @@ operaciones no soportadas devuelven `ErrNotSupported` (o un resultado vacío).
   `GetTitle` devuelve `""` y minimizar/maximizar/cerrar no hacen nada.
 - **`wayland`, `libei`:** Wayland no tiene un protocolo para la posición global
   del cursor. `Location()` lee el cursor real en Hyprland (socket IPC) y
-  KDE Plasma (script de KWin a través de D-Bus); en otros entornos (GNOME, Sway,
-  otros compositores wlroots) devuelve la última posición inyectada por RobotGo,
-  no la del cursor físico. El portapapeles necesita `wl-clipboard`.
+  KDE Plasma (script de KWin a través de D-Bus) cuando esa consulta tiene éxito;
+  `wayland` además requiere que todas las salidas compartan la misma proporción
+  de escala (las salidas con escalas distintas o rotadas recurren al respaldo).
+  En caso contrario, y en otros entornos (GNOME, Sway, otros compositores
+  wlroots), devuelve la última posición inyectada por RobotGo, no la del cursor
+  físico. El portapapeles necesita `wl-clipboard`.
 
 #### Wayland
 

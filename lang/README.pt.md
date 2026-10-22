@@ -225,9 +225,11 @@ suporte retornam `ErrNotSupported` (ou um resultado vazio).
   fazem nada.
 - **`wayland`, `libei`:** o Wayland não tem protocolo para a posição global do
   cursor. `Location()` lê o cursor real no Hyprland (socket IPC) e no
-  KDE Plasma (script do KWin via D-Bus); nos demais (GNOME, Sway, outros
-  compositores wlroots) retorna a última posição injetada pelo RobotGo, não a do
-  cursor físico. A área de transferência precisa do `wl-clipboard`.
+  KDE Plasma (script do KWin via D-Bus) quando essa consulta tem sucesso;
+  `wayland` também exige que todas as saídas compartilhem a mesma proporção de
+  escala (saídas com escalas diferentes ou rotacionadas usam o fallback). Caso
+  contrário, e nos demais (GNOME, Sway, outros compositores wlroots), retorna a
+  última posição injetada pelo RobotGo, não a do cursor físico. A área de transferência precisa do `wl-clipboard`.
 
 #### Wayland
 

@@ -224,9 +224,11 @@ vide).
   aucun effet.
 - **`wayland`, `libei` :** Wayland n'a pas de protocole pour la position globale
   du curseur. `Location()` lit le vrai curseur sous Hyprland (socket IPC) et
-  KDE Plasma (script KWin via D-Bus) ; ailleurs (GNOME, Sway, autres compositeurs
-  wlroots), il renvoie la dernière position injectée par RobotGo, pas le curseur
-  physique. Le presse-papiers nécessite `wl-clipboard`.
+  KDE Plasma (script KWin via D-Bus) lorsque cette requête réussit ; `wayland`
+  exige aussi que toutes les sorties partagent le même rapport d'échelle (les
+  sorties à échelles différentes ou pivotées se replient). Sinon, et ailleurs
+  (GNOME, Sway, autres compositeurs wlroots), il renvoie la dernière position
+  injectée par RobotGo, pas le curseur physique. Le presse-papiers nécessite `wl-clipboard`.
 
 #### Wayland
 

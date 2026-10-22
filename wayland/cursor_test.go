@@ -67,6 +67,55 @@ func TestLocationRealCursorScaled(t *testing.T) {
 	}
 }
 
+// Fractional scaling: wl_output.scale is rounded up (2), but the xdg_output
+// logical size (1920x1080 for a 2880x1620 mode) gives the real 1.5 factor.
+func TestLocationRealCursorFractional(t *testing.T) {
+	installFakeConn(t, &outputInfo{width: 2880, height: 1620, scale: 2,
+		logicalW: 1920, logicalH: 1080})
+	cursorPos = func() (int, int, error) { return 101, 50, nil }
+	t.Cleanup(func() { cursorPos = noCursor })
+	if x, y := Location(); x != 152 || y != 75 {
+		t.Fatalf("Location: got (%d,%d), want (152,75)", x, y)
+	}
+}
+
+// Same fractional ratio on every output is still one exact factor.
+func TestLocationRealCursorFractionalMulti(t *testing.T) {
+	installFakeConn(t,
+		&outputInfo{width: 2880, height: 1620, logicalW: 1920, logicalH: 1080},
+		&outputInfo{x: 1920, width: 3840, height: 2160, logicalW: 2560, logicalH: 1440})
+	cursorPos = func() (int, int, error) { return 2000, 100, nil }
+	t.Cleanup(func() { cursorPos = noCursor })
+	if x, y := Location(); x != 3000 || y != 150 {
+		t.Fatalf("Location: got (%d,%d), want (3000,150)", x, y)
+	}
+}
+
+// A rotated output (logical size transposed from the mode) or differing
+// fractional ratios have no exact factor: fall back to the tracked position.
+func TestLocationRealCursorInexact(t *testing.T) {
+	cases := map[string][]*outputInfo{
+		"rotated": {{width: 1920, height: 1080, logicalW: 1080, logicalH: 1920}},
+		"mixed": {
+			{width: 2880, height: 1620, logicalW: 1920, logicalH: 1080},
+			{x: 1920, width: 2560, height: 1440, logicalW: 2048, logicalH: 1152},
+		},
+	}
+	for name, outs := range cases {
+		t.Run(name, func(t *testing.T) {
+			installFakeConn(t, outs...)
+			if err := Move(10, 20); err != nil {
+				t.Fatal(err)
+			}
+			cursorPos = func() (int, int, error) { return 100, 50, nil }
+			t.Cleanup(func() { cursorPos = noCursor })
+			if x, y := Location(); x != 10 || y != 20 {
+				t.Fatalf("Location: got (%d,%d), want tracked (10,20)", x, y)
+			}
+		})
+	}
+}
+
 // Mixed scales have no single factor: fall back to the tracked position.
 func TestLocationRealCursorMixedScale(t *testing.T) {
 	installFakeConn(t,

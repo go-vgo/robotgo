@@ -225,8 +225,11 @@ Ergebnis).
   No-Ops.
 - **`wayland`, `libei`:** Wayland hat kein Protokoll für die globale
   Cursorposition. `Location()` liest den echten Cursor unter Hyprland
-  (IPC-Socket) und KDE Plasma (KWin-Skript über D-Bus); anderswo (GNOME, Sway,
-  andere wlroots-Compositoren) gibt es die letzte von RobotGo injizierte Position
+  (IPC-Socket) und KDE Plasma (KWin-Skript über D-Bus), sofern diese Abfrage
+  gelingt; `wayland` verlangt zudem, dass alle Ausgaben dasselbe
+  Skalierungsverhältnis haben (unterschiedlich skalierte oder gedrehte Ausgaben
+  fallen zurück). Andernfalls und anderswo (GNOME, Sway, andere
+  wlroots-Compositoren) gibt es die letzte von RobotGo injizierte Position
   zurück, nicht den physischen Cursor. Die Zwischenablage braucht
   `wl-clipboard`.
 

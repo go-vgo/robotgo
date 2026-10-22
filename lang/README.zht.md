@@ -214,9 +214,10 @@ PowerShell：`$env:CGO_ENABLED = "0"; go build -tags purego .`
 - **`mac`：** 無視窗管理 —— `ActiveName` 回傳 `ErrNotSupported`，
   `GetTitle` 回傳 `""`，最小化/最大化/關閉為空操作。
 - **`wayland`、`libei`：** Wayland 沒有取得全域游標位置的協定。`Location()` 在
-  Hyprland（IPC socket）和 KDE Plasma（透過 D-Bus 的 KWin 腳本）上讀取真實游標；
-  其他環境（GNOME、Sway 及其他 wlroots 合成器）回傳 RobotGo 最後注入的位置，
-  而非實際游標位置。剪貼簿需要 `wl-clipboard`。
+  Hyprland（IPC socket）和 KDE Plasma（透過 D-Bus 的 KWin 腳本）上查詢成功時讀取
+  真實游標；`wayland` 還要求所有輸出的縮放比例一致（縮放不同或旋轉的輸出會回退）。
+  否則以及其他環境（GNOME、Sway 及其他 wlroots 合成器）回傳 RobotGo 最後注入的
+  位置，而非實際游標位置。剪貼簿需要 `wl-clipboard`。
 
 #### Wayland
 

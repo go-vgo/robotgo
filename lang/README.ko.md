@@ -217,8 +217,10 @@ PowerShell: `$env:CGO_ENABLED = "0"; go build -tags purego .`
   `GetTitle`은 `""`를 반환하며, 최소화/최대화/닫기는 아무 동작도 하지 않습니다.
 - **`wayland`, `libei`:** Wayland에는 전역 커서 위치를 위한 프로토콜이 없습니다.
   `Location()`은 Hyprland(IPC 소켓)와 KDE Plasma(D-Bus를 통한 KWin 스크립트)에서
-  실제 커서를 읽습니다. 그 외 환경(GNOME, Sway, 기타 wlroots 컴포지터)에서는 실제
-  커서가 아니라 RobotGo가 마지막으로 주입한 위치를 반환합니다. 클립보드에는
+  해당 조회가 성공하면 실제 커서를 읽습니다. `wayland`는 추가로 모든 출력의 배율
+  비율이 같아야 합니다(배율이 다르거나 회전된 출력은 대체 동작). 그렇지 않거나 그 외
+  환경(GNOME, Sway, 기타 wlroots 컴포지터)에서는 실제 커서가 아니라 RobotGo가
+  마지막으로 주입한 위치를 반환합니다. 클립보드에는
   `wl-clipboard`가 필요합니다.
 
 #### Wayland
