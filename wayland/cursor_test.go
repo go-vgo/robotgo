@@ -91,6 +91,38 @@ func TestLocationRealCursorFractionalMulti(t *testing.T) {
 	}
 }
 
+// wlroots sends 0,0 in wl_output.geometry; the xdg_output logical position
+// is the real origin and is scaled into pixel space like the cursor, so warp
+// and Location agree on outputs left of / above the primary one.
+func TestLocationRealCursorLogicalOrigin(t *testing.T) {
+	fp := installFakeConn(t,
+		&outputInfo{width: 3840, height: 2160, scale: 2,
+			logicalW: 1920, logicalH: 1080, hasLogicalPos: true},
+		&outputInfo{width: 3840, height: 2160, scale: 2,
+			logicalW: 1920, logicalH: 1080,
+			logicalX: -1920, logicalY: -540, hasLogicalPos: true})
+
+	x, y, w, h := globalConn.outputBounds()
+	if x != -3840 || y != -1080 || w != 7680 || h != 3240 {
+		t.Fatalf("outputBounds: got (%d,%d,%d,%d), want (-3840,-1080,7680,3240)", x, y, w, h)
+	}
+	if r := GetScreenRect(1); r.X != -3840 || r.Y != -1080 || r.W != 3840 || r.H != 2160 {
+		t.Fatalf("GetScreenRect(1): got %+v", r)
+	}
+
+	cursorPos = func() (int, int, error) { return -100, -10, nil }
+	t.Cleanup(func() { cursorPos = noCursor })
+	if x, y := Location(); x != -200 || y != -20 {
+		t.Fatalf("Location: got (%d,%d), want (-200,-20)", x, y)
+	}
+	if !MoveSmooth(-190, -20, 1, 0) {
+		t.Fatal("MoveSmooth returned false")
+	}
+	if len(fp.abs) != 1 || fp.abs[0] != [2]uint32{3650, 1060} {
+		t.Fatalf("motion_absolute: got %v, want [[3650 1060]]", fp.abs)
+	}
+}
+
 // A rotated output (logical size transposed from the mode) or differing
 // fractional ratios have no exact factor: fall back to the tracked position.
 func TestLocationRealCursorInexact(t *testing.T) {

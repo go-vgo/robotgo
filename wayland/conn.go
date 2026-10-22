@@ -96,6 +96,20 @@ type outputInfo struct {
 	// logicalW/logicalH are the xdg_output logical size in the global
 	// compositor space; 0 until known.
 	logicalW, logicalH int32
+	// logicalX/logicalY are the xdg_output logical position, valid when
+	// hasLogicalPos (wlroots sends 0,0 in wl_output.geometry).
+	logicalX, logicalY int32
+	hasLogicalPos      bool
+}
+
+// origin returns the output position in the pixel space used by warp: the
+// logical position (xdg_output, else wl_output.geometry) scaled by num/den.
+func (o *outputInfo) origin(num, den int) (int32, int32) {
+	x, y := o.x, o.y
+	if o.hasLogicalPos {
+		x, y = o.logicalX, o.logicalY
+	}
+	return int32(scaleRound(int(x), num, den)), int32(scaleRound(int(y), num, den))
 }
 
 // toplevelInfo tracks a foreign toplevel handle.
@@ -302,7 +316,7 @@ func (c *conn) handleGlobal(e client.RegistryGlobalEvent) {
 	}
 }
 
-// watchLogicalSize tracks the xdg_output logical size of info.
+// watchLogicalSize tracks the xdg_output logical position and size of info.
 func (c *conn) watchLogicalSize(info *outputInfo) {
 	xo, err := c.xdgOutputMgr.GetXdgOutput(info.output)
 	if err != nil {
@@ -312,6 +326,11 @@ func (c *conn) watchLogicalSize(info *outputInfo) {
 	xo.SetLogicalSizeHandler(func(e xdg_output.OutputLogicalSizeEvent) {
 		c.mu.Lock()
 		info.logicalW, info.logicalH = e.Width, e.Height
+		c.mu.Unlock()
+	})
+	xo.SetLogicalPositionHandler(func(e xdg_output.OutputLogicalPositionEvent) {
+		c.mu.Lock()
+		info.logicalX, info.logicalY, info.hasLogicalPos = e.X, e.Y, true
 		c.mu.Unlock()
 	})
 }
@@ -397,20 +416,27 @@ func (c *conn) dispatchLoop() {
 
 // outputBounds returns the union rectangle of all outputs, which is the
 // coordinate space wlr_virtual_pointer.motion_absolute maps onto when the
-// pointer is not bound to a single output.
+// pointer is not bound to a single output. Output origins are logical, so
+// they are scaled into pixel space by the layout ratio (unscaled when the
+// outputs have no single ratio).
 func (c *conn) outputBounds() (x, y, w, h int32) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	if len(c.outputs) == 0 {
 		return 0, 0, 0, 0
 	}
-	minX, minY := c.outputs[0].x, c.outputs[0].y
+	num, den, ok := c.layoutRatioLocked()
+	if !ok {
+		num, den = 1, 1
+	}
+	minX, minY := c.outputs[0].origin(num, den)
 	maxX, maxY := minX, minY
 	for _, o := range c.outputs {
-		minX = min(minX, o.x)
-		minY = min(minY, o.y)
-		maxX = max(maxX, o.x+o.width)
-		maxY = max(maxY, o.y+o.height)
+		ox, oy := o.origin(num, den)
+		minX = min(minX, ox)
+		minY = min(minY, oy)
+		maxX = max(maxX, ox+o.width)
+		maxY = max(maxY, oy+o.height)
 	}
 	return minX, minY, maxX - minX, maxY - minY
 }
@@ -437,6 +463,11 @@ func (c *conn) output(idx int) (outputInfo, bool) {
 func (c *conn) layoutRatio() (num, den int, ok bool) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
+	return c.layoutRatioLocked()
+}
+
+// layoutRatioLocked is layoutRatio with c.mu held.
+func (c *conn) layoutRatioLocked() (num, den int, ok bool) {
 	num, den = 1, 1
 	first := true
 	for _, o := range c.outputs {
