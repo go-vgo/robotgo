@@ -64,7 +64,7 @@ RobotGo は Mac、Windows、Linux に対応しており、arm64 および x86-am
 
 - **デフォルト（Cgo）：** `CGO_ENABLED=1`、C コンパイラ、および下記のプラット
   フォームライブラリ。
-- **純粋 Go（実験的）：** C ツールチェーン不要。[Cgo 不要ビルド](#cgo-free-builds)
+- **純粋 Go（テスト済み）：** C ツールチェーン不要。[Cgo 不要ビルド](#cgo-free-builds)
   を参照。
 
 どちらの場合も、使用する機能に応じた[機能別の依存関係](#feature-specific-dependencies)
@@ -175,7 +175,7 @@ Bitmap と GoHook は独立した Cgo パッケージです。純粋 Go の Robo
 
 ## Cgo-free Builds
 
-**実験的な純粋 Go バックエンド**は `CGO_ENABLED=0` でビルドおよびクロスコンパイル
+**テスト済みの純粋 Go バックエンド**は `CGO_ENABLED=0` でビルドおよびクロスコンパイル
 できます（GCC、MinGW、Xcode、X11 ヘッダーは不要）。インポートパスと API は同じで、
 バックエンドは**ビルドタグ**で選択します。`CGO_ENABLED=0` だけでは何も選択され
 ません。
@@ -223,8 +223,11 @@ Cgo 専用 API は存在しないため、`CaptureImg` を使用してくださ�
 
 - **`mac`：** ウィンドウ管理なし —— `ActiveName` は `ErrNotSupported` を返し、
   `GetTitle` は `""` を返します。最小化/最大化/クローズは何もしません。
-- **`wayland`、`libei`：** `Location()` は RobotGo が最後に注入した位置を返し、
-  実際のカーソル位置ではありません。クリップボードには `wl-clipboard` が必要です。
+- **`wayland`、`libei`：** Wayland にはグローバルなカーソル位置を取得するプロトコル
+  がありません。`Location()` は Hyprland（IPC ソケット）と KDE Plasma（D-Bus 経由の
+  KWin スクリプト）では実際のカーソルを読み取ります。それ以外（GNOME、Sway、その他の
+  wlroots コンポジター）では RobotGo が最後に注入した位置を返し、実際のカーソル位置
+  ではありません。クリップボードには `wl-clipboard` が必要です。
 
 #### Wayland
 

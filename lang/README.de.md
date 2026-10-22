@@ -64,7 +64,7 @@ Spender, Sponsoren und andere, Kontakt: vzvway@gmail.com
 
 - **Standard (Cgo):** `CGO_ENABLED=1`, ein C-Compiler und die unten genannten
   Plattformbibliotheken.
-- **Reines Go (experimentell):** keine C-Toolchain; siehe [Cgo-freie Builds](#cgo-free-builds).
+- **Reines Go (getestet):** keine C-Toolchain; siehe [Cgo-freie Builds](#cgo-free-builds).
 
 Beide benötigen die [funktionsspezifischen Abhängigkeiten](#feature-specific-dependencies)
 für die jeweils genutzten Funktionen.
@@ -173,7 +173,7 @@ deren C-Anforderungen nicht auf.
 
 ## Cgo-free Builds
 
-**Experimentelle reine Go-Backends** bauen und cross-kompilieren mit
+**Getestete reine Go-Backends** bauen und cross-kompilieren mit
 `CGO_ENABLED=0` (ohne GCC, MinGW, Xcode oder X11-Header). Gleicher Importpfad und
 gleiche API; ein **Build-Tag** wählt das Backend — `CGO_ENABLED=0` allein wählt
 nichts aus.
@@ -223,8 +223,11 @@ Ergebnis).
 - **`mac`:** keine Fensterverwaltung — `ActiveName` gibt `ErrNotSupported`
   zurück, `GetTitle` gibt `""` zurück, Minimieren/Maximieren/Schließen sind
   No-Ops.
-- **`wayland`, `libei`:** `Location()` gibt die letzte von RobotGo injizierte
-  Position zurück, nicht den physischen Cursor. Die Zwischenablage braucht
+- **`wayland`, `libei`:** Wayland hat kein Protokoll für die globale
+  Cursorposition. `Location()` liest den echten Cursor unter Hyprland
+  (IPC-Socket) und KDE Plasma (KWin-Skript über D-Bus); anderswo (GNOME, Sway,
+  andere wlroots-Compositoren) gibt es die letzte von RobotGo injizierte Position
+  zurück, nicht den physischen Cursor. Die Zwischenablage braucht
   `wl-clipboard`.
 
 #### Wayland

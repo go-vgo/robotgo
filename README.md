@@ -66,7 +66,7 @@ Donors and sponsors, or others, Contact: vzvway@gmail.com
 **Go 1.26+** (see [go.mod](go.mod)) and one backend:
 
 - **Default (Cgo):** `CGO_ENABLED=1`, a C compiler and the platform libraries below.
-- **Pure Go (experimental):** no C toolchain; see [Cgo-free Builds](#cgo-free-builds).
+- **Pure Go (tested):** no C toolchain; see [Cgo-free Builds](#cgo-free-builds).
 
 Both need the [feature-specific dependencies](#feature-specific-dependencies)
 for the features you use.
@@ -174,7 +174,7 @@ remove their C requirements.
 
 ## Cgo-free Builds
 
-**Experimental pure-Go backends** build and cross-compile with `CGO_ENABLED=0`
+**Tested pure-Go backends** build and cross-compile with `CGO_ENABLED=0`
 (no GCC, MinGW, Xcode or X11 headers). Same import path and API; a **build tag**
 selects the backend — `CGO_ENABLED=0` alone selects nothing.
 
@@ -221,8 +221,11 @@ operations return `ErrNotSupported` (or an empty result).
   `ActiveName`, `MinWindow`, `MaxWindow`, `CloseWindow`) uses Accessibility
   and needs the Accessibility permission; `MaxWindow` toggles native full
   screen and `GetClient` equals `GetBounds`.
-- **`wayland`, `libei`:** `Location()` returns the last position injected by
-  RobotGo, not the physical cursor. Clipboard needs `wl-clipboard`.
+- **`wayland`, `libei`:** Wayland has no protocol for the global cursor
+  position. `Location()` reads the real cursor from Hyprland (IPC socket) and
+  KDE Plasma (KWin script over D-Bus); elsewhere (GNOME, Sway, other wlroots
+  compositors) it returns the last position injected by RobotGo, not the
+  physical cursor. Clipboard needs `wl-clipboard`.
 
 #### Wayland
 

@@ -63,7 +63,7 @@ RobotGo는 Mac, Windows, Linux를 지원하며, arm64와 x86-amd64 아키텍처�
 **Go 1.26+**([go.mod](../go.mod) 참조)와 백엔드 하나가 필요합니다:
 
 - **기본(Cgo):** `CGO_ENABLED=1`, C 컴파일러, 그리고 아래의 플랫폼 라이브러리.
-- **순수 Go(실험적):** C 툴체인 불필요. [Cgo 없는 빌드](#cgo-free-builds) 참조.
+- **순수 Go(테스트됨):** C 툴체인 불필요. [Cgo 없는 빌드](#cgo-free-builds) 참조.
 
 두 방식 모두 사용하는 기능에 맞는 [기능별 의존성](#feature-specific-dependencies)이
 필요합니다.
@@ -170,7 +170,7 @@ Bitmap과 GoHook은 별도의 Cgo 패키지입니다. 순수 Go RobotGo 백엔�
 
 ## Cgo-free Builds
 
-**실험적인 순수 Go 백엔드**는 `CGO_ENABLED=0`으로 빌드 및 크로스 컴파일됩니다
+**테스트된 순수 Go 백엔드**는 `CGO_ENABLED=0`으로 빌드 및 크로스 컴파일됩니다
 (GCC, MinGW, Xcode, X11 헤더 불필요). import 경로와 API는 동일하며 **빌드 태그**로
 백엔드를 선택합니다 — `CGO_ENABLED=0`만으로는 아무것도 선택되지 않습니다.
 
@@ -215,8 +215,11 @@ PowerShell: `$env:CGO_ENABLED = "0"; go build -tags purego .`
 
 - **`mac`:** 창 관리 없음 — `ActiveName`은 `ErrNotSupported`를 반환하고,
   `GetTitle`은 `""`를 반환하며, 최소화/최대화/닫기는 아무 동작도 하지 않습니다.
-- **`wayland`, `libei`:** `Location()`은 실제 커서가 아니라 RobotGo가 마지막으로
-  주입한 위치를 반환합니다. 클립보드에는 `wl-clipboard`가 필요합니다.
+- **`wayland`, `libei`:** Wayland에는 전역 커서 위치를 위한 프로토콜이 없습니다.
+  `Location()`은 Hyprland(IPC 소켓)와 KDE Plasma(D-Bus를 통한 KWin 스크립트)에서
+  실제 커서를 읽습니다. 그 외 환경(GNOME, Sway, 기타 wlroots 컴포지터)에서는 실제
+  커서가 아니라 RobotGo가 마지막으로 주입한 위치를 반환합니다. 클립보드에는
+  `wl-clipboard`가 필요합니다.
 
 #### Wayland
 
