@@ -14,7 +14,7 @@
 [![GitHub release](https://img.shields.io/github/release/go-vgo/robotgo.svg)](https://github.com/go-vgo/robotgo/releases/latest)
 <a href="https://discord.gg/npPb3NzE4A"><img src="https://img.shields.io/discord/1484658282777018551.svg?logo=discord&logoColor=white&label=Discord&color=5865F2" alt="Join the Discord chat at https://discord.gg/npPb3NzE4A"></a>
 
-English | [简体中文](lang/README.zh.md) | [繁體中文](lang/README.zht.md) | [日本語](lang/README.ja.md) | [한국어](lang/README.ko.md) | [Français](lang/README.fr.md) | [Deutsch](lang/README.de.md) | [Español](lang/README.es.md) | [Русский](lang/README.ru.md) | [Português](lang/README.pt.md)
+English | [简体中文](langs/README.zh.md) | [繁體中文](langs/README.zht.md) | [日本語](langs/README.ja.md) | [한국어](langs/README.ko.md) | [Français](langs/README.fr.md) | [Deutsch](langs/README.de.md) | [Español](langs/README.es.md) | [Русский](langs/README.ru.md) | [Português](langs/README.pt.md)
 
 > Golang Desktop Automation, auto test and AI Computer Use. <br>
 > Control the mouse, keyboard, read the screen, process, Window Handle, image and bitmap and global event listener.

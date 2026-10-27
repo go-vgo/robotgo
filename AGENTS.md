@@ -86,7 +86,7 @@ robotgo/
 ├── event/      # C headers for android/ios global hooks (event_c.h)
 ├── cv/         # OpenCV helper (gocv.go)
 ├── examples/   # main.go + mouse, key, screen, window, scale — runnable main.go
-├── lang/       # translated READMEs (de, es, fr, ja, ko, pt, ru, zh, zht)
+├── langs/      # translated READMEs (de, es, fr, ja, ko, pt, ru, zh, zht)
 ├── skills/     # SKILL.md (agent skill descriptor)
 ├── docs/       # install.md, keys.md, CHANGELOG.md, README.md, robotgo-logo.svg, archive/
 ├── test/       # index.html; tmp/, logs/ are git-ignored scratch dirs
