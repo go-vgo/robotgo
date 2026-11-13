@@ -13,9 +13,9 @@ require (
 	github.com/vcaesar/gops v0.43.0
 	github.com/vcaesar/imgo v0.44.0
 	github.com/vcaesar/keycode v0.20.0
-	github.com/vcaesar/screenshot v0.40.0
+	github.com/vcaesar/screenshot v0.40.1
 	github.com/vcaesar/tt v0.40.0
-	golang.org/x/sys v0.49.0
+	golang.org/x/sys v0.50.0
 )
 
 require (
@@ -28,7 +28,7 @@ require (
 	github.com/tklauser/go-sysconf v0.4.0 // indirect
 	github.com/tklauser/numcpus v0.12.0 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
-	golang.org/x/exp v0.0.0-20261014143641-f0251eb4aa3e // indirect
+	golang.org/x/exp v0.0.0-20261109185158-a52e3aef5920 // indirect
 	golang.org/x/image v0.47.0 // indirect
 )
 
