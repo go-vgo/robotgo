@@ -20,11 +20,11 @@ test/test.png
 *.dSYM/
 *.su
 debug
+.codg
 v1
 v0
 .v0
-test/tmp
-test/logs
+test0
 
 # Architecture specific extensions/prefixes
 *.[568vq]
