@@ -471,6 +471,8 @@ func TestParseXftDPI(t *testing.T) {
 		{"Xcursor.size: 24\nXft.dpi: 192.5", 192.5, true},
 		{"Xft.antialias: 1\n", 0, false},
 		{"Xft.dpi: nope\n", 0, false},
+		{"Xft.dpi: NaN\n", 0, false},
+		{"Xft.dpi: +Inf\n", 0, false},
 		{"", 0, false},
 	}
 	for _, tt := range tests {
