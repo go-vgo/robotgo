@@ -17,6 +17,7 @@ package x11
 import (
 	"errors"
 	"image"
+	"math"
 	"strconv"
 	"strings"
 
@@ -88,7 +89,7 @@ func parseXftDPI(db string) (float64, bool) {
 			continue
 		}
 		f, err := strconv.ParseFloat(strings.TrimSpace(val), 64)
-		if err != nil || f <= 0 {
+		if err != nil || f <= 0 || math.IsNaN(f) || math.IsInf(f, 0) {
 			return 0, false
 		}
 		return f, true
